@@ -1,0 +1,16 @@
+{
+	"DND5E.ConsumablePotionTonic": "Tonic",
+	"DND5E.ConsumablePotionSalve": "Salve",
+	"DND5E.ConsumablePotionPill": "Pill",
+	"DND5E.ConsumablePotionWine": "Wine",
+	"DND5E.ConsumablePoisonIngested": "Ingested Poison",
+	"DND5E.ConsumablePoisonInhaled": "Inhaled Poison",
+	"DND5E.ConsumablePoisonInjury": "Injury Poison",
+	"DND5E.ConsumablePoisonContact": "Contact Poison",
+	"DND5E.ConsumableDrink": "Drink",
+	"DND5E.ConsumableTrap": "Trap",
+	"DND5E.ConsumableBomb": "Bomb",
+	"DND5E.ConsumableElixir": "Elixir",
+	"DND5E.ConsumableAmmo": "Ammunition",
+	"DND5E.AbilityPtyAbbr": "Pty"
+}
