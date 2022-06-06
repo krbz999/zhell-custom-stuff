@@ -9,7 +9,11 @@ export class api {
 	static globals(){
 		globalThis.ZHELL = {
 			toggleLR: ZHELL.toggleLR,
-			toggleSR: ZHELL.toggleSR
+			toggleSR: ZHELL.toggleSR,
+			fromCatalog: ZHELL.fromCatalog,
+			spawnCatalog: ZHELL.spawnFromCatalog,
+			mutateCatalog: ZHELL.mutateFromCatalog,
+			setForageDC: ZHELL.setMateriaMedicaForagingDC
 		};
 	}
 }

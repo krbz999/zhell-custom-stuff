@@ -144,9 +144,27 @@ function _registerSettings(){
 	game.settings.register(MODULE_NAME, SETTING_NAMES.SHEET_UNLOCKER, {
 		name: "Create Lock/Unlock Button",
 		hint: "Replace the currency converter with a lock/unlock button.",
-		scope: "world",
+		scope: "client",
 		config: true,
 		type: Boolean,
 		default: false
+	});
+	
+	game.settings.register(MODULE_NAME, SETTING_NAMES.MATERIA_MEDICA_COUNTER, {
+		name: "Enable Materia Medica Counter",
+		hint: "Create a counter on the character sheet to store the value of materials.",
+		scope: "client",
+		config: true,
+		type: Boolean,
+		default: true
+	});
+	
+	game.settings.register(MODULE_NAME, SETTING_NAMES.FORAGE_DC, {
+		name: "Foraging DC",
+		hint: "The current DC for foraging.",
+		scope: "world",
+		config: false,
+		type: Number,
+		default: 15
 	});
 }

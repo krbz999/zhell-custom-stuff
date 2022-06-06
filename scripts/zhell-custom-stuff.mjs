@@ -2,15 +2,64 @@ import { MODULE_NAME, SETTING_NAMES } from "./const.mjs";
 
 export class ZHELL {
 	static toggleLR = async (bool) => {
+		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
 		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR) : !bool;
 		await game.settings.set(MODULE_NAME, SETTING_NAMES.TOGGLE_LR, !currentValue);
 		return game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR);
 	};
 	
 	static toggleSR = async (bool) => {
+		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
 		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR) : !bool;
 		await game.settings.set(MODULE_NAME, SETTING_NAMES.TOGGLE_SR, !currentValue);
 		return game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR);
+	};
+	
+	static fromCatalog = async (catalog, entryName, object = false) => {
+		const key = `zhell-custom-stuff.catalog-of-${catalog}`;
+		const pack = game.packs.get(key);
+		if(!pack) return ui.notifications.warn("Pack not found.");
+		const index = await pack.getIndex();
+		const entry = index.getName(entryName);
+		if(!entry) return ui.notifications.warn("Entry not found.");
+		const entryId = entry._id;
+		const entryDoc = await pack.getDocument(entryId);
+		if(object) return entryDoc.toObject();
+		else return entryDoc;
+	};
+	
+	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy") => {
+		const updates = await ZHELL.fromCatalog(catalog, actorName, false);
+		if(!updates) return ui.notifications.warn("Monster not found.");
+		const updatesActor = updates.toObject();
+		const updatesToken = updates.data.token;
+		// preload image:
+		await loadTexture(updatesToken.img);
+		await warpgate.spawn(dummyNPC, {actor: updatesActor, token: updatesToken});
+	};
+	
+	static mutateFromCatalog = async (actorName, catalog = "monsters") => {
+		const token = canvas.tokens.controlled[0];
+		if(!token) return ui.notifications.warn("You have no token selected.");
+		const tokenDoc = token.document;	
+		const updates = await ZHELL.fromCatalog(catalog, actorName, false);
+		if(!updates) return ui.notifications.warn("Monster not found.");
+		const updatesActor = updates.toObject();
+		const updatesToken = updates.data.token;
+		// preload image:
+		await loadTexture(updatesToken.img);
+		// data to keep:
+		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc.data;
+		await warpgate.mutate(tokenDoc, {
+			actor: updatesActor,
+			token: {...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision}
+		});	
+	}
+	
+	static setMateriaMedicaForagingDC = async (number) => {
+		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
+		await game.settings.set(MODULE_NAME, SETTING_NAMES.FORAGE_DC, number);
+		return game.settings.get(MODULE_NAME, SETTING_NAMES.FORAGE_DC);
 	};
 }
 
@@ -18,26 +67,25 @@ export class ZHELL {
 Hooks.on("renderLongRestDialog", (dialog, html, data) => {
 	const restDisabled = game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR);
 	if(!restDisabled) return;
-	data.buttons.rest.callback = () => {
-		ui.notifications.info("You cannot take a long rest.");
-	};
+	const restButton = html[0].querySelector("button[data-button='rest']");
+	restButton.setAttribute("disabled", true);
 });
 
 // disable long rest.
 Hooks.on("renderShortRestDialog", (dialog, html, data) => {
 	const restDisabled = game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR);
 	if(!restDisabled) return;
-	data.buttons.rest.callback = () => {
-		ui.notifications.info("You cannot take a short rest.");
-	};
+	const rollButton = html[0].querySelector("#roll-hd");
+	rollButton.setAttribute("disabled", true);
+	const restButton = html[0].querySelector("button[data-button='rest']");
+	restButton.setAttribute("disabled", true);
 });
 
-Hooks.on("ready", () => {
-	// add more consumable types
+Hooks.once("setup", () => {
+	// add more consumable types.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_CONSUMABLE_TYPES)){
 		CONFIG.DND5E.consumableTypes = {
 			ammo: "Ammunition",
-			bomb: "Bomb",
 			drink: "Drink",
 			food: "Food",
 			poison: "Poison",
@@ -46,32 +94,31 @@ Hooks.on("ready", () => {
 			poisonInhaled: "Inhaled Poison",
 			poisonInjury: "Injury Poison",
 			potion: "Potion",
-			potionTonic: "Tonic",
-			potionSalve: "Salve",
-			potionPill: "Pill",
-			potionWine: "Wine",
+			elixir: "Elixir",
 			scroll: "Scroll",
+			bomb: "Bomb",
 			trap: "Trap",
-			trinket: "Trinket",
-			elixir: "Elixir"
+			trinket: "Trinket"
 		};
 	}
 	
-	// add more equipment types
+	// add more equipment types.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_EQUIPMENT_TYPES)){
 		CONFIG.DND5E.equipmentTypes["wand"] = "Wand";
 		CONFIG.DND5E.miscEquipmentTypes["wand"] = "Wand";
 	}
 	
-	// add new spell school
+	// add new spell schools.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_SPELL_SCHOOL)){
 		CONFIG.DND5E.spellSchools["divine"] = "Divine";
 	}
 	
+	// add new condition types.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_CONDITIONS)){
 		CONFIG.DND5E.conditionTypes["turned"] = "Turned";
 	}
 	
+	// change languages.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_LANGUAGES)){
 		CONFIG.DND5E.languages = {
 			common: "Common",
@@ -80,7 +127,7 @@ Hooks.on("ready", () => {
 			dwarvish: "Dwarvish",
 			elvish: "Elvish",
 			infernal: "Infernal",
-			leonin: "Leonin",
+			cait: "Cait",
 			orc: "Orcish",
 			abyssal: "Abyssal",
 			celestial: "Celestial",
@@ -90,7 +137,6 @@ Hooks.on("ready", () => {
 			ignan: "Ignan",
 			terran: "Terran",
 			sylvan: "Sylvan",
-			ancient: "Ancient Common",
 			undercommon: "Undercommon",
 			cant: "Thieves' Cant",
 			druidic: "Druidic"
@@ -99,16 +145,12 @@ Hooks.on("ready", () => {
 	
 	// replace tools
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_TOOLS)){
-	
-		/*CONFIG.DND5E.toolTypes = {
-			...CONFIG.DND5E.toolTypes,
-			other: "Other Tools"
-		};
 		
-		CONFIG.DND5E.toolProficiencies = {
-			...CONFIG.DND5E.toolProficiencies,
-			other: "Other Tools"
-		};*/
+		// pluralising gaming set and instrument:
+		CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
+		CONFIG.DND5E.toolTypes["music"] = "Musical Instruments";
+		CONFIG.DND5E.toolProficiencies["game"] = "Gaming Sets";
+		CONFIG.DND5E.toolProficiencies["music"] = "Musical Instruments";
 		
 		CONFIG.DND5E.toolIds = {
 			guiro: "zhell-custom-stuff.catalog-of-items.0bn6X8GmJPTb8kee",
@@ -242,9 +284,7 @@ Hooks.on("ready", () => {
 		//	bulwark: "zhell-custom-stuff.base-items.fuxvJ7oNJx4v1ZlP"
 		//};
 	}
-});
 
-Hooks.once("setup", () => {
 	// add piety ability
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ABILITY_SCORES)){
 		CONFIG.DND5E.abilities["pty"] = "Piety";
@@ -253,11 +293,165 @@ Hooks.once("setup", () => {
 	
 	// remove some default character flags
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_SPECIAL_TRAITS)){
-		const flags = CONFIG.DND5E.characterFlags;
+		/*const flags = CONFIG.DND5E.characterFlags;
 		
 		delete flags.diamondSoul;
 		delete flags.observantFeat;
-		delete flags.initiativeAlert;
+		delete flags.initiativeAlert;*/
+	}
+	
+	// add more status effects
+	if(true){
+		
+		const {ADD, MULTIPLY, UPGRADE} = CONST.ACTIVE_EFFECT_MODES;
+		
+		CONFIG.statusEffects = [
+			{id: "zhell_spell_bane", label: "Bane", "duration.seconds": 60,
+				"flags.convenientDescription": "You subtract 1d4 from all saving throws and attack rolls.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_bane.webp",
+				changes: [
+					{key: "data.bonuses.abilities.save", mode: ADD, value: "-1d4"},
+					{key: "data.bonuses.msak.attack", mode: ADD, value: "-1d4"},
+					{key: "data.bonuses.mwak.attack", mode: ADD, value: "-1d4"},
+					{key: "data.bonuses.rsak.attack", mode: ADD, value: "-1d4"},
+					{key: "data.bonuses.rwak.attack", mode: ADD, value: "-1d4"}
+				]
+			},
+			{id: "zhell_spell_bless", label: "Bless", "duration.seconds": 60,
+				"flags.convenientDescription": "You add a 1d4 bonus to all saving throws and attack rolls.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_bless.webp",
+				changes: [
+					{key: "data.bonuses.abilities.save", mode: ADD, value: "+1d4"},
+					{key: "data.bonuses.msak.attack", mode: ADD, value: "+1d4"},
+					{key: "data.bonuses.mwak.attack", mode: ADD, value: "+1d4"},
+					{key: "data.bonuses.rsak.attack", mode: ADD, value: "+1d4"},
+					{key: "data.bonuses.rwak.attack", mode: ADD, value: "+1d4"}
+				]
+			},
+			{id: "zhell_spell_speed_haste", label: "Haste", "duration.seconds": 60,
+				"flags.convenientDescription": "Your movement speed is doubled, you have +2 to AC, and you have advantage on Dexterity saving throws.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_haste.webp",
+				changes: [
+					{key: "data.attributes.ac.bonus", mode: ADD, value: '+2'},
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "2"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "2"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "2"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "2"}
+				]
+			},
+			{id: "zhell_spell_speed_slow", label: "Slow", "duration.seconds": 60,
+				"flags.convenientDescription": "Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_slowed.webp",
+				changes: [
+					{key: "data.attributes.ac.bonus", mode: ADD, value: "-2"},
+					{key: "data.abilities.dex.bonuses.save", mode: ADD, value: "-2"},
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: ".5"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: ".5"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: ".5"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: ".5"}
+				]
+			},
+			{id: "zhell_condition_sense_blind", label: "Blinded",
+				"flags.convenientDescription": "You cannot see, and you automatically fail any ability check that requires sight. Attack rolls against you have advantage, and your attack rolls have disadvantage.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_blinded.webp"
+			},
+			{id: "zhell_condition_charm", label: "Charmed",
+				"flags.convenientDescription": "You cannot attack the charmer or target them with harmful abilities or magical effects; the charmer has advantage on any ability check to interact socially with you.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_charmed.webp"
+			},
+			{id: "dead", label: "Dead",
+				"flags.convenientDescription": "You are dead.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/skull.webp"
+			},
+			{id: "zhell_condition_sense_deaf", label: "Deafened",
+				"flags.convenientDescription": "You cannot hear and automatically fail any ability check that requires hearing.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_deafened.webp"
+			},
+			{id: "zhell_condition_sense_mute", label: "Muted",
+				"flags.convenientDescription": "You cannot speak, cannot cast spells with a verbal component, and you automatically fail any ability check that requires speech.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_muted.webp"
+			},
+			{id: "zhell_condition_fear", label: "Frightened",
+				"flags.convenientDescription": "You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight. You cannot willingly move closer to the source of your fear.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_frightened.webp"
+			},
+			{id: "zhell_condition_move_grappled", label: "Grappled",
+				"flags.convenientDescription": "Your speed is 0.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_grappled.webp",
+				changes: [
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
+				]
+			},
+			{id: "zhell_condition_incapacitated", label: "Incapacitated",
+				"flags.convenientDescription": "You cannot take actions or reactions.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_incapacitated.webp"
+			},
+			{id: "zhell_condition_invisible", label: "Invisible",
+				"flags.convenientDescription": "You are impossible to see, and are considered heavily obscured. Attack rolls against you have disadvantage, and your attack rolls have advantage.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_invisible.webp"
+			},
+			{id: "zhell_condition_paralysis", label: "Paralyzed",
+				"flags.convenientDescription": "You are incapacitated, cannot move or speak, automatically fail Strength and Dexterity saving throws, attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_paralyzed.webp",
+				changes: [
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
+				]
+			},
+			{id: "zhell_condition_petrified", label: "Petrified", 
+				"flags.convenientDescription": "You are inanimate, incapacitated, unaware of your surroundings, your weight is increased by a factor of ten, you cannot move or speak, attack rolls against you have advantage, and you automatically fail all Strength and Dexterity saving throws. You have resistance to all damage, and you are immune to poison and disease.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_petrified.webp"
+			},
+			{id: "zhell_condition_poison", label: "Poisoned",
+				"flags.convenientDescription": "You have disadvantage on all attack rolls and ability checks.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_poisoned.webp"
+			},
+			{id: "zhell_condition_prone", label: "Prone",
+				"flags.convenientDescription": "You can only crawl unless you expend half your movement to stand up. You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you, it otherwise has disadvantage.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_prone.webp"
+			},
+			{id: "zhell_condition_move_restrain", label: "Restrained", 
+				"flags.convenientDescription": "Your speed is 0, attack rolls against you have advantage, and your attack rolls have disadvantage. You have disadvantage on Dexterity saving throws.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_restrained.webp",
+				changes: [
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
+				]
+			},
+			{id: "zhell_condition_stun", label: "Stunned",
+				"flags.convenientDescription": "You are incapacitated, cannot move, and can speak only falteringly. You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_stunned.webp",
+				changes: [
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
+				]
+			},
+			{id: "zhell_condition_unconscious", label: "Unconscious",
+				"flags.convenientDescription": "You are incapacitated, cannot move or speak, you fall prone, fail all Strength and Dexterity saving throws, attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_unconscious.webp",
+				changes: [
+					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.swim", mode: MULTIPLY, value: "0"},
+					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
+				]
+			},
+			{id: "zhell_spell_fly", label: "Flying", "duration.seconds": 600,
+				"flags.convenientDescription": "You have a flying speed of 60 feet.",
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_flying.webp",
+				changes: [{key: "data.attributes.movement.fly", mode: UPGRADE, value: "60"}]
+			}
+		].sort((a,b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
+		CONFIG.statusEffects = [...CONFIG.statusEffects.filter(i => i.id === "dead"), ...CONFIG.statusEffects.filter(i => i.id !== "dead")];
 	}
 });
 
@@ -270,11 +464,13 @@ Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
 	
 	// minor edits to the sheet.
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MINOR_SHEET_EDITS)){
-		// change 'S. Rest' and 'L. Rest' to 'SR' and 'LR'.
+		// change 'S. Rest' and 'L. Rest' to 'SR' and 'LR', and remove Alignment field.
 		const SR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.short-rest");
 		const LR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.long-rest");
+		const AL = html[0].querySelector("input[name='data.details.alignment']");
 		if(SR) SR.innerHTML = "SR";
 		if(LR) LR.innerHTML = "LR";
+		if(AL) AL.parentElement?.remove();
 	}
 	
 	// replace currency converter with a lock/unlock feature.
@@ -306,5 +502,39 @@ Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
 				sheet.render();
 			}
 		}
+	}
+	
+	// create materia medica counter on the sheet below exhaustion.
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MATERIA_MEDICA_COUNTER)){
+		// get actor.
+		const actor = sheet.actor;
+		
+		// bail if not a character.
+		if(!sheetData.isCharacter) return;
+		
+		// create element:
+		const value = actor.getFlag("zhell-custom-stuff", "materia-medica.value") ?? 0;
+		const materia = document.createElement("div");
+		materia.setAttribute("class", "counter flexrow materia");
+		materia.innerHTML = `
+			<h4>Foraged Materials</h4>
+			<div class="counter-value">
+				<input
+					class="material"
+					name="flags.zhell-custom-stuff.materia-medica.value"
+					type="number"
+					value="${value}"
+					data-dtype="Number"
+					min="0"
+					max="999"
+					oninput="validity.valid || (value=${value})"
+					placeholder="0"
+				>
+			</div>
+		`;
+		
+		// insert element
+		const belowThis = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > div.counters > div.counter.flexrow.exhaustion");
+		belowThis.parentNode.insertBefore(materia, belowThis.nextSibling);
 	}
 });

@@ -17,5 +17,7 @@ export const SETTING_NAMES = {
 	ADD_SPELL_SCHOOL: "addSpellSchool",
 	TOGGLE_SR: "toggleSR",
 	TOGGLE_LR: "toggleLR",
-	SHEET_UNLOCKER: "sheetUnlocker"
+	SHEET_UNLOCKER: "sheetUnlocker",
+	MATERIA_MEDICA_COUNTER: "materiaMedicaCounter",
+	FORAGE_DC: "foragingDC"
 }
