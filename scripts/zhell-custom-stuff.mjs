@@ -17,7 +17,7 @@ export class ZHELL {
 	
 	static fromCatalog = async (catalog, entryName, object = false) => {
 		const key = `zhell-custom-stuff.catalog-of-${catalog}`;
-		const pack = game.packs.get(key);
+		const pack = !!game.packs.get(key) ? game.packs.get(key) : game.packs.get(catalog);
 		if(!pack) return ui.notifications.warn("Pack not found.");
 		const index = await pack.getIndex();
 		const entry = index.getName(entryName);
@@ -28,32 +28,105 @@ export class ZHELL {
 		else return entryDoc;
 	};
 	
-	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy") => {
-		const updates = await ZHELL.fromCatalog(catalog, actorName, false);
-		if(!updates) return ui.notifications.warn("Monster not found.");
-		const updatesActor = updates.toObject();
-		const updatesToken = updates.data.token;
+	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}) => {
+		const spawnDoc = await ZHELL.fromCatalog(catalog, actorName, false);
+		if(!spawnDoc) return ui.notifications.warn("Monster not found.");
+		const updatesActor = spawnDoc.toObject();
+		const updatesToken = spawnDoc.data.token.toObject();
+		
+		// edits and merges to updates:
+		delete updatesToken.actorId; // as to not overwrite the source actorId of dummy.
+		mergeObject(updatesActor, warpgateObjects.actor);
+		mergeObject(updatesToken, warpgateObjects.token);
+		
+		const updates = {
+			actor: updatesActor,
+			token: updatesToken,
+			embedded: warpgateObjects.embedded
+		}
+		
+		const callbacks = warpgateObjects.callbacks ?? {};
+		const options = warpgateObjects.options ?? {};
+
 		// preload image:
 		await loadTexture(updatesToken.img);
-		await warpgate.spawn(dummyNPC, {actor: updatesActor, token: updatesToken});
+		await warpgate.spawn(dummyNPC, updates, callbacks, options);
 	};
 	
 	static mutateFromCatalog = async (actorName, catalog = "monsters") => {
 		const token = canvas.tokens.controlled[0];
 		if(!token) return ui.notifications.warn("You have no token selected.");
-		const tokenDoc = token.document;	
+		const tokenDoc = token.document;
+		
 		const updates = await ZHELL.fromCatalog(catalog, actorName, false);
 		if(!updates) return ui.notifications.warn("Monster not found.");
 		const updatesActor = updates.toObject();
 		const updatesToken = updates.data.token;
+		
+		// handle items:
+		const updatesItems = {};
+		for(let item of updatesActor.items) updatesItems[item.name] = item;
+		for(let item of tokenDoc.actor.toObject().items) updatesItems[item.name] = warpgate.CONST.DELETE;
+		
+		// handle effects:
+		const updatesEffects = {};
+		for(let effect of updatesActor.effects) updatesEffects[effect.label] = effect;
+		for(let effect of tokenDoc.actor.effects){
+			if(!effect.isTemporary) updatesEffects[effect.data.label] = warpgate.CONST.DELETE;
+		}
+		delete updatesActor.effects;
+		delete updatesActor.items;
+		
 		// preload image:
 		await loadTexture(updatesToken.img);
+		
 		// data to keep:
 		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc.data;
+		const {type} = tokenDoc.actor.data;
 		await warpgate.mutate(tokenDoc, {
-			actor: updatesActor,
-			token: {...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision}
-		});	
+			actor: {...updatesActor, type},
+			token: {...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision},
+			embedded: {
+				Item: updatesItems,
+				ActiveEffect: updatesEffects
+			}
+		}, {}, {comparisonKeys: {ActiveEffect: "label"}, name: `Polymorph: ${actorName}`});	
+	}
+	
+	// cast a spell directly from a compendium.
+	static castFromCatalog = async (spellName, catalog = "spells", updates = {}, rollOptions = {}) => {
+		const parent = game.user.character ?? canvas.tokens.controlled[0]?.actor;
+		if(!parent) return ui.notifications.warn("No valid actor.");
+		
+		const object = await ZHELL.fromCatalog(catalog, spellName, true);
+		if(!object) return ui.notifications.warn("Spell not found.");
+		const original = duplicate(object);
+		mergeObject(object, updates);
+		
+		const [spell] = await parent.createEmbeddedDocuments("Item", [object], {temporary: true});
+		
+		// Trigger the item roll (code modified from itemacro).
+		const roll = spell.hasMacro() ? await spell.executeMacro() : await spell.roll(rollOptions); // MRE breaks here
+		if(!roll) return;
+
+		// fix saving throw buttons to include DC and type.
+		const content = roll.data.content;
+		const template = document.createElement("template");
+		template.innerHTML = content;
+		const html = template.content.firstChild;
+		const saveButtons = html.querySelectorAll("button[data-action=save]");
+		const {spelldc, spellcasting} = parent.data.data.attributes;
+		for(let saveButton of saveButtons){
+			let abilityS = saveButtons[0].getAttribute("data-ability");
+			let abilityL = CONFIG.DND5E.abilities[abilityS];
+			saveButton.innerHTML = `Saving Throw DC ${spelldc} ${abilityL}`;
+		}
+
+		// update message.
+		await roll.update({
+			"flags.dnd5e.itemData": original,
+			content: html.outerHTML
+		});
 	}
 	
 	static setMateriaMedicaForagingDC = async (number) => {
@@ -270,38 +343,14 @@ Hooks.once("setup", () => {
 		};
 	}
 	
-	// replace vehicle types
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_VEHICLES)){
-		//CONFIG.DND5E.vehicleTypes["chariot"] = "Chariot";
-	}
-		
-	// replace armors and shields
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_ARMORS)){
-		//CONFIG.DND5E.armorIds = {
-		//	...CONFIG.DND5E.armorIds,
-		//	buckler: "zhell-custom-stuff.base-items.ARQF1JAl7FNMam8T",
-		//	kite: "zhell-custom-stuff.base-items.vJR8L6fxQI34u7of",
-		//	bulwark: "zhell-custom-stuff.base-items.fuxvJ7oNJx4v1ZlP"
-		//};
-	}
-
 	// add piety ability
 	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ABILITY_SCORES)){
 		CONFIG.DND5E.abilities["pty"] = "Piety";
 		CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
 	}
 	
-	// remove some default character flags
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_SPECIAL_TRAITS)){
-		/*const flags = CONFIG.DND5E.characterFlags;
-		
-		delete flags.diamondSoul;
-		delete flags.observantFeat;
-		delete flags.initiativeAlert;*/
-	}
-	
 	// add more status effects
-	if(true){
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_STATUS_EFFECTS)){
 		
 		const {ADD, MULTIPLY, UPGRADE} = CONST.ACTIVE_EFFECT_MODES;
 		
@@ -456,21 +505,35 @@ Hooks.once("setup", () => {
 });
 
 Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
+	
+	// minor edits to the sheet.
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MINOR_SHEET_EDITS)){
+		// Change 'S. Rest' and 'L. Rest' to 'SR' and 'LR'
+		const SR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.short-rest");
+		const LR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.long-rest");
+		if(SR) SR.innerHTML = "SR";
+		if(LR) LR.innerHTML = "LR";
+	}
+	
 	// remove resources from the character sheet.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_SHEET_RESOURCES)){
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_RESOURCES)){
 		const resources = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul");
 		if(resources) resources.remove();
 	}
 	
-	// minor edits to the sheet.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MINOR_SHEET_EDITS)){
-		// change 'S. Rest' and 'L. Rest' to 'SR' and 'LR', and remove Alignment field.
-		const SR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.short-rest");
-		const LR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.long-rest");
+	// Remove alignment field.
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_ALIGNMENT)){
 		const AL = html[0].querySelector("input[name='data.details.alignment']");
-		if(SR) SR.innerHTML = "SR";
-		if(LR) LR.innerHTML = "LR";
 		if(AL) AL.parentElement?.remove();
+	}
+	
+	// Remove functionality of initiative button (use Requestor instead).
+	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_INITIATIVE)){
+		const initButton = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.initiative > h4");
+		if(initButton){
+			initButton.classList.remove("rollable");
+			initButton.removeAttribute("data-action");
+		}
 	}
 	
 	// replace currency converter with a lock/unlock feature.

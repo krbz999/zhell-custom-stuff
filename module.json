@@ -3,7 +3,7 @@
     "title": "Zhell's Custom Stuff",
     "description": "Personal module for replacing or adding to many things. Modular (see settings).",
     "system": ["dnd5e"],
-    "version": "5.02",
+    "version": "5.08",
     "author": "Zhell",
     "minimumCoreVersion": "9",
     "compatibleCoreVersion": "9",
@@ -104,6 +104,12 @@
 			"type": "Item",
 			"name": "catalog-of-races",
 			"path": "./packs/catalog-of-races.db"
+		},
+		{
+			"label": "Catalog of Scenes",
+			"type": "Scene",
+			"name": "catalog-of-scenes",
+			"path": "./packs/catalog-of-scenes.db"
 		}
     ],
 	"esmodules": [

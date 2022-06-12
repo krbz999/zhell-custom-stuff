@@ -13,6 +13,7 @@ export class api {
 			fromCatalog: ZHELL.fromCatalog,
 			spawnCatalog: ZHELL.spawnFromCatalog,
 			mutateCatalog: ZHELL.mutateFromCatalog,
+			castCatalog: ZHELL.castFromCatalog,
 			setForageDC: ZHELL.setMateriaMedicaForagingDC
 		};
 	}
