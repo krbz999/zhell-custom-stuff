@@ -14,6 +14,7 @@ export class api {
 			spawnCatalog: ZHELL.spawnFromCatalog,
 			mutateCatalog: ZHELL.mutateFromCatalog,
 			castCatalog: ZHELL.castFromCatalog,
+			castCharges: ZHELL.magicItemCast,
 			setForageDC: ZHELL.setMateriaMedicaForagingDC
 		};
 	}

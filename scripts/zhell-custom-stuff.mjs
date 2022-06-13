@@ -100,17 +100,35 @@ export class ZHELL {
 		
 		const object = await ZHELL.fromCatalog(catalog, spellName, true);
 		if(!object) return ui.notifications.warn("Spell not found.");
+		
+		// fix for MRE:
+		if(game.modules.get("mre-dnd5e")?.active){
+			if(!object.flags["mre-dnd5e"]?.formulaGroups){
+				const number_of_groups = object.data.damage?.parts?.length ?? 0;
+				if(number_of_groups > 0){
+					object.flags["mre-dnd5e"] = {formulaGroups: []};
+					
+					for(let i = 0; i < number_of_groups; i++){
+						let label = i === 0 ? "Primary" : i === 1 ? "Secondary" : i === 2 ? "Tertiary" : "New Formula";
+						object.flags["mre-dnd5e"].formulaGroups.push({formulaSet: [i], label});
+					}
+				}else{
+					object.flags["mre-dnd5e"] = {formulaGroups: [{formulaSet: [], label: "Primary"}]};
+				}
+			}
+		}
+		
 		const original = duplicate(object);
 		mergeObject(object, updates);
 		
 		const [spell] = await parent.createEmbeddedDocuments("Item", [object], {temporary: true});
 		
 		// Trigger the item roll (code modified from itemacro).
-		const roll = spell.hasMacro() ? await spell.executeMacro() : await spell.roll(rollOptions); // MRE breaks here
+		const roll = spell.hasMacro() ? await spell.executeMacro() : await spell.roll({...rollOptions, createMessage: false});
 		if(!roll) return;
-
+		
 		// fix saving throw buttons to include DC and type.
-		const content = roll.data.content;
+		const content = roll.content;
 		const template = document.createElement("template");
 		template.innerHTML = content;
 		const html = template.content.firstChild;
@@ -121,12 +139,26 @@ export class ZHELL {
 			let abilityL = CONFIG.DND5E.abilities[abilityS];
 			saveButton.innerHTML = `Saving Throw DC ${spelldc} ${abilityL}`;
 		}
-
+		
 		// update message.
-		await roll.update({
-			"flags.dnd5e.itemData": original,
-			content: html.outerHTML
-		});
+		roll["flags.dnd5e.itemData"] = original;
+		roll["content"] = html.outerHTML;
+		
+		return ChatMessage.create(roll);
+	}
+	
+	static magicItemCast = async (spellName, level, rollOptions = {}) => {
+		return ZHELL.castFromCatalog(spellName, "spells", {
+			"data.preparation.mode": "atwill",
+			"data.level": level,
+			"data.components.material": false,
+			"data.materials": {
+				consumed: false,
+				cost: 0,
+				supply: 0,
+				value: ""
+			}
+		}, rollOptions);
 	}
 	
 	static setMateriaMedicaForagingDC = async (number) => {
