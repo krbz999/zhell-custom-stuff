@@ -1,0 +1,10 @@
+{
+	"DND5E.ConsumablePoisonIngested": "Ingested Poison",
+	"DND5E.ConsumablePoisonInhaled": "Inhaled Poison",
+	"DND5E.ConsumablePoisonInjury": "Injury Poison",
+	"DND5E.ConsumablePoisonContact": "Contact Poison",
+	"DND5E.ConsumableDrink": "Drink",
+	"DND5E.ConsumableTrap": "Trap",
+	"DND5E.ConsumableBomb": "Bomb",
+	"DND5E.ConsumableElixir": "Elixir"
+}
