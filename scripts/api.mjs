@@ -15,7 +15,8 @@ export class api {
 			mutateCatalog: ZHELL.mutateFromCatalog,
 			castCatalog: ZHELL.castFromCatalog,
 			castCharges: ZHELL.magicItemCast,
-			setForageDC: ZHELL.setMateriaMedicaForagingDC
+			setForageDC: ZHELL.setMateriaMedicaForagingDC,
+			rollItemMacro: ZHELL.rollItemMacro
 		};
 	}
 }
