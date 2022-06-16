@@ -36,8 +36,8 @@ export class ZHELL {
 		
 		// edits and merges to updates:
 		delete updatesToken.actorId; // as to not overwrite the source actorId of dummy.
-		mergeObject(updatesActor, warpgateObjects.actor);
-		mergeObject(updatesToken, warpgateObjects.token);
+		mergeObject(updatesActor, warpgateObjects.updates?.actor ?? {});
+		mergeObject(updatesToken, warpgateObjects.updates?.token ?? {});
 		
 		const updates = {
 			actor: updatesActor,
@@ -45,15 +45,27 @@ export class ZHELL {
 			embedded: warpgateObjects.embedded
 		}
 		
-		const callbacks = warpgateObjects.callbacks ?? {};
+		const callbackPre = async (loc, updates) => {
+			const {img} = await spawnDoc.getTokenData();
+			console.log("PRE", img);
+			await loadTexture(img);
+			updates.token.img = img;
+		}
+		
+		const callbackPost = async (loc, tokenDoc, updates) => {
+			const {img} = await spawnDoc.getTokenData();
+			console.log("POST", img);
+			await loadTexture(img);
+			updates.token.img = img;
+		}
+		
+		const callbacks = mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
 		const options = warpgateObjects.options ?? {};
-
-		// preload image:
-		await loadTexture(updatesToken.img);
+		
 		await warpgate.spawn(dummyNPC, updates, callbacks, options);
 	};
 	
-	static mutateFromCatalog = async (actorName, catalog = "monsters") => {
+	static mutateFromCatalog = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
 		const token = canvas.tokens.controlled[0];
 		if(!token) return ui.notifications.warn("You have no token selected.");
 		const tokenDoc = token.document;
@@ -78,24 +90,35 @@ export class ZHELL {
 		delete updatesActor.items;
 		
 		// preload image:
-		await loadTexture(updatesToken.img);
+		const callbackPre = async (loc, updates) => {
+			const {img} = await spawnDoc.getTokenData();
+			await loadTexture(img);
+			updates.token.img = img;
+		}
+		const callbackPost = async (loc, tokenDoc, updates) => {
+			const {img} = await spawnDoc.getTokenData();
+			await loadTexture(img);
+			updates.token.img = img;
+		}
 		
 		// data to keep:
 		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc.data;
 		const {type} = tokenDoc.actor.data;
-		await warpgate.mutate(tokenDoc, {
-			actor: {...updatesActor, type},
-			token: {...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision},
-			embedded: {
-				Item: updatesItems,
-				ActiveEffect: updatesEffects
-			}
-		}, {}, {comparisonKeys: {ActiveEffect: "label"}, name: `Polymorph: ${actorName}`});	
+		
+		// merge with passed objects:
+		const mergeActor = mergeObject({...updatesActor, type}, (warpgateObjects.updates?.actor ?? {}));
+		const mergeToken = mergeObject({...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision}, (warpgateObjects.updates?.token ?? {}));
+		const mergeEmbedded = mergeObject({Item: updatesItems, ActiveEffect: updatesEffects}, (warpgateObjects.updates?.embedded ?? {}));
+		const mergeCallbacks = mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
+		const mergeOptions = mergeObject({comparisonKeys: {ActiveEffect: "label"}, name: `Polymorph: ${actorName}`}, (warpgateObjects.options ?? {}));
+		
+		await warpgate.mutate(tokenDoc, {actor: mergeActor, token: mergeToken, embedded: mergeEmbedded}, mergeCallbacks, mergeOptions);	
 	}
 	
 	// cast a spell directly from a compendium.
-	static castFromCatalog = async (spellName, catalog = "spells", updates = {}, rollOptions = {}) => {
-		const parent = game.user.character ?? canvas.tokens.controlled[0]?.actor;
+	static castFromCatalog = async (spellName, catalog = "spells", caster, updates = {}, rollOptions = {}) => {
+		
+		const parent = caster.actor ?? caster ?? canvas.tokens.controlled[0]?.actor ?? game.user.character;
 		if(!parent) return ui.notifications.warn("No valid actor.");
 		
 		const object = await ZHELL.fromCatalog(catalog, spellName, true);
@@ -147,8 +170,8 @@ export class ZHELL {
 		return ChatMessage.create(roll);
 	}
 	
-	static magicItemCast = async (spellName, level, rollOptions = {}) => {
-		return ZHELL.castFromCatalog(spellName, "spells", {
+	static magicItemCast = async (spellName, level, caster, rollOptions = {}) => {
+		return ZHELL.castFromCatalog(spellName, "spells", caster, {
 			"data.preparation.mode": "atwill",
 			"data.level": level,
 			"data.components.material": false,
@@ -161,10 +184,18 @@ export class ZHELL {
 		}, rollOptions);
 	}
 	
+	// execute an item's Item Macro if it has one, otherwise roll normally.
+	static rollItemMacro = async (item, options = {}) => {
+		if(item.hasMacro()){
+			return await item.executeMacro(options);
+		}else{
+			return await item.roll(options);
+		}
+	}
+	
 	static setMateriaMedicaForagingDC = async (number) => {
 		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		await game.settings.set(MODULE_NAME, SETTING_NAMES.FORAGE_DC, number);
-		return game.settings.get(MODULE_NAME, SETTING_NAMES.FORAGE_DC);
+		return game.settings.set(MODULE_NAME, SETTING_NAMES.FORAGE_DC, number);
 	};
 }
 

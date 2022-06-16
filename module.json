@@ -3,7 +3,7 @@
     "title": "Zhell's Custom Stuff",
     "description": "Personal module for replacing or adding to many things. Modular (see settings).",
     "system": ["dnd5e"],
-    "version": "5.09",
+    "version": "5.10",
     "author": "Zhell",
     "minimumCoreVersion": "9",
     "compatibleCoreVersion": "9",
