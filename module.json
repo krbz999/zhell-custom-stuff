@@ -1,14 +1,25 @@
 {
-    "name": "zhell-custom-stuff",
-    "title": "Zhell's Custom Stuff",
-    "description": "Personal module for replacing or adding to many things. Modular (see settings).",
-    "system": ["dnd5e"],
-    "version": "5.10",
-    "author": "Zhell",
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
-	"styles": ["./scripts/styles.css"],
-    "packs": [
+	"name": "zhell-custom-stuff",
+	"id": "zhell-custom-stuff",
+	"title": "Zhell's Custom Stuff",
+	"description": "Personal module for replacing or adding to many things. Modular (see settings).",
+	"system": ["dnd5e"],
+	"version": "5.19",
+	"authors": [{
+		"name": "Zhell",
+		"url": "https://github.com/krbz999",
+		"discord": "Zhell#9201",
+		"ko-fi": "https://ko-fi.com/zhell"
+	}],
+	"minimumCoreVersion": "9",
+	"compatibleCoreVersion": "9",
+	"styles": [
+		"./styles/styles.css",
+		"./styles/sheet_coloring.css",
+		"./styles/raritycolors.css",
+		"./styles/effect-panel.css"
+	],
+	"packs": [
 		{
 			"label": "Catalog of Spells",
 			"type": "Item",
@@ -32,6 +43,12 @@
 			"type": "Item",
 			"name": "catalog-of-features",
 			"path": "./packs/catalog-of-features.db"
+		},
+		{
+			"label": "Catalog of Monster Features",
+			"type": "Item",
+			"name": "catalog-of-features-monster",
+			"path": "./packs/catalog-of-features-monster.db"
 		},
 		{
 			"label": "Catalog of Classes",
@@ -111,20 +128,14 @@
 			"name": "catalog-of-scenes",
 			"path": "./packs/catalog-of-scenes.db"
 		}
-    ],
-	"esmodules": [
-		"./setup.js",
-		"./scripts/zhell-custom-stuff.mjs",
-		"./scripts/api.mjs"
 	],
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "languages/en.json"
-		}
-	],
-    "url": "https://github.com/krbz999/zhell-custom-stuff",
-    "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
-    "download": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.zip"
+	"esmodules": ["./setup.js"],
+	"languages": [{
+		"lang": "en",
+		"name": "English",
+		"path": "languages/en.json"
+	}],
+	"url": "https://github.com/krbz999/zhell-custom-stuff",
+	"manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
+	"download": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.zip"
 }

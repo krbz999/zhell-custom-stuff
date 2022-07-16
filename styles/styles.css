@@ -1,0 +1,49 @@
+.dnd5e.sheet.actor .counters .counter input[type="number"].material {
+    max-width: 40px;
+	width: fit-content;
+	text-align: right;
+	padding-right: 5px;
+}
+
+
+#token-hud .status-effects .effect-control {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    opacity: 0.15;
+}
+
+#token-hud .status-effects {
+    visibility: hidden;
+    position: absolute;
+    left: 65px;
+    top: 0;
+    display: grid;
+    padding: 3px;
+    box-sizing: content-box;
+    width: 148px;
+    grid-template-columns: repeat(4, 25%);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 15px var(--color-shadow-dark);
+    border: 1px solid var(--color-border-dark-3);
+    border-radius: 4px;
+    pointer-events: all;
+}
+
+
+
+label.zhell-custom-stuff.zhell-label-name {
+    font-weight: bold;
+}
+.zhell-custom-stuff.zhell-settings-save {
+    width: 200px;
+    background-color: rgb(190, 189, 178);
+    border: 2px groove var(--color-border-light-highlight);
+}
+.zhell-custom-stuff.zhell-submenu-header{
+    display: flex;
+    align-content: flex-start;
+    justify-content: space-around;
+}

@@ -1,68 +1,95 @@
-import { MODULE_NAME, SETTING_NAMES } from "./const.mjs";
+import { MODULE_NAME } from "./const.mjs";
+import { EffectsPanelApp } from "./effect-panel-classes.mjs";
 
 export class ZHELL {
 	static toggleLR = async (bool) => {
 		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR) : !bool;
-		await game.settings.set(MODULE_NAME, SETTING_NAMES.TOGGLE_LR, !currentValue);
-		return game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR);
+		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, "toggleLR") : !bool;
+		await game.settings.set(MODULE_NAME, "toggleLR", !currentValue);
+		return game.settings.get(MODULE_NAME, "toggleLR");
 	};
 	
 	static toggleSR = async (bool) => {
 		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR) : !bool;
-		await game.settings.set(MODULE_NAME, SETTING_NAMES.TOGGLE_SR, !currentValue);
-		return game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR);
+		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, "toggleSR") : !bool;
+		await game.settings.set(MODULE_NAME, "toggleSR", !currentValue);
+		return game.settings.get(MODULE_NAME, "toggleSR");
 	};
 	
-	static fromCatalog = async (catalog, entryName, object = false) => {
+	static fromCatalog = async (entryName, catalog, object = false) => {
 		const key = `zhell-custom-stuff.catalog-of-${catalog}`;
 		const pack = !!game.packs.get(key) ? game.packs.get(key) : game.packs.get(catalog);
 		if(!pack) return ui.notifications.warn("Pack not found.");
-		const index = await pack.getIndex();
-		const entry = index.getName(entryName);
+		const entry = pack.index.getName(entryName);
 		if(!entry) return ui.notifications.warn("Entry not found.");
-		const entryId = entry._id;
-		const entryDoc = await pack.getDocument(entryId);
+		const entryDoc = await pack.getDocument(entry._id);
 		if(object) return entryDoc.toObject();
 		else return entryDoc;
 	};
 	
-	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}) => {
-		const spawnDoc = await ZHELL.fromCatalog(catalog, actorName, false);
+	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}, at) => {
+		const spawnDoc = await ZHELL.fromCatalog(actorName, catalog, false);
 		if(!spawnDoc) return ui.notifications.warn("Monster not found.");
+		
+		// save whether the actor is wildcard img and if the token img is webm.
+		const isWildcard = !!spawnDoc.data.token.randomImg;
+		const isWebm = !!spawnDoc.data.token.img.endsWith(".webm");
+		
+		// create stuff.
 		const updatesActor = spawnDoc.toObject();
 		const updatesToken = spawnDoc.data.token.toObject();
 		
 		// edits and merges to updates:
 		delete updatesToken.actorId; // as to not overwrite the source actorId of dummy.
-		mergeObject(updatesActor, warpgateObjects.updates?.actor ?? {});
-		mergeObject(updatesToken, warpgateObjects.updates?.token ?? {});
 		
 		const updates = {
-			actor: updatesActor,
-			token: updatesToken,
-			embedded: warpgateObjects.embedded
+			actor: mergeObject(updatesActor, warpgateObjects.updates?.actor ?? {}),
+			token: mergeObject(updatesToken, warpgateObjects.updates?.token ?? {}),
+			embedded: warpgateObjects.updates?.embedded
 		}
 		
+		// load images so we don't get weird errors.
 		const callbackPre = async (loc, updates) => {
-			const {img} = await spawnDoc.getTokenData();
-			console.log("PRE", img);
-			await loadTexture(img);
-			updates.token.img = img;
+			// if a specific image was provided in update, use that.
+			const provided = getProperty(warpgateObjects, "updates.token.img");
+			if(!!provided){
+				await loadTexture(provided);
+				updates.token.img = provided;
+			}
+			// else get the token image(s) and load it.
+			else{
+				const tokenImages = await spawnDoc.getTokenImages();
+				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
+				await loadTexture(img);
+				updates.token.img = img;
+			}
 		}
 		
+		// not a necessary function if we just spawn 1 token, but if there are duplicates, and they are wildcards, oh no.
 		const callbackPost = async (loc, tokenDoc, updates) => {
-			const {img} = await spawnDoc.getTokenData();
-			console.log("POST", img);
-			await loadTexture(img);
-			updates.token.img = img;
+			// if a specific image was provided in update, use that.
+			const provided = getProperty(warpgateObjects, "updates.token.img");
+			if(!!provided){
+				await loadTexture(provided);
+				updates.token.img = provided;
+			}
+			// else get the token image(s) and load it.
+			else{
+				const tokenImages = await spawnDoc.getTokenImages();
+				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
+				await loadTexture(img);
+				updates.token.img = img;
+			}
 		}
 		
 		const callbacks = mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
-		const options = warpgateObjects.options ?? {};
+		const options = mergeObject(
+			{crosshairs: (isWildcard || isWebm) ? {drawIcon: false, icon: "icons/svg/dice-target.svg"} : {}},
+			warpgateObjects.options ?? {});
 		
-		await warpgate.spawn(dummyNPC, updates, callbacks, options);
+		// either spawn or spawnAt:
+		if(at?.x !== undefined && at?.y !== undefined) return await warpgate.spawnAt({x: at.x, y: at.y}, dummyNPC, updates, callbacks, options);
+		else return await warpgate.spawn(dummyNPC, updates, callbacks, options);
 	};
 	
 	static mutateFromCatalog = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
@@ -70,10 +97,10 @@ export class ZHELL {
 		if(!token) return ui.notifications.warn("You have no token selected.");
 		const tokenDoc = token.document;
 		
-		const updates = await ZHELL.fromCatalog(catalog, actorName, false);
-		if(!updates) return ui.notifications.warn("Monster not found.");
-		const updatesActor = updates.toObject();
-		const updatesToken = updates.data.token;
+		const mutateDoc = await ZHELL.fromCatalog(actorName, catalog, false);
+		if(!mutateDoc) return ui.notifications.warn("Monster not found.");
+		const updatesActor = mutateDoc.toObject();
+		const updatesToken = mutateDoc.data.token;
 		
 		// handle items:
 		const updatesItems = {};
@@ -89,17 +116,23 @@ export class ZHELL {
 		delete updatesActor.effects;
 		delete updatesActor.items;
 		
-		// preload image:
+		// load images so we don't get weird errors.
 		const callbackPre = async (loc, updates) => {
-			const {img} = await spawnDoc.getTokenData();
-			await loadTexture(img);
-			updates.token.img = img;
+			// if a specific image was provided in update, use that.
+			const provided = getProperty(warpgateObjects, "updates.token.img");
+			if(!!provided){
+				await loadTexture(provided);
+				updates.token.img = provided;
+			}
+			// else get the token image(s) and load it.
+			else{
+				const tokenImages = await mutateDoc.getTokenImages();
+				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
+				await loadTexture(img);
+				updates.token.img = img;
+			}
 		}
-		const callbackPost = async (loc, tokenDoc, updates) => {
-			const {img} = await spawnDoc.getTokenData();
-			await loadTexture(img);
-			updates.token.img = img;
-		}
+		const callbackPost = async () => {}
 		
 		// data to keep:
 		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc.data;
@@ -112,16 +145,16 @@ export class ZHELL {
 		const mergeCallbacks = mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
 		const mergeOptions = mergeObject({comparisonKeys: {ActiveEffect: "label"}, name: `Polymorph: ${actorName}`}, (warpgateObjects.options ?? {}));
 		
-		await warpgate.mutate(tokenDoc, {actor: mergeActor, token: mergeToken, embedded: mergeEmbedded}, mergeCallbacks, mergeOptions);	
+		return await warpgate.mutate(tokenDoc, {actor: mergeActor, token: mergeToken, embedded: mergeEmbedded}, mergeCallbacks, mergeOptions);	
 	}
 	
 	// cast a spell directly from a compendium.
 	static castFromCatalog = async (spellName, catalog = "spells", caster, updates = {}, rollOptions = {}) => {
 		
-		const parent = caster.actor ?? caster ?? canvas.tokens.controlled[0]?.actor ?? game.user.character;
+		const parent = caster?.actor ?? caster ?? canvas.tokens.controlled[0]?.actor ?? game.user.character;
 		if(!parent) return ui.notifications.warn("No valid actor.");
 		
-		const object = await ZHELL.fromCatalog(catalog, spellName, true);
+		const object = await ZHELL.fromCatalog(spellName, catalog, true);
 		if(!object) return ui.notifications.warn("Spell not found.");
 		
 		// fix for MRE:
@@ -145,33 +178,20 @@ export class ZHELL {
 		mergeObject(object, updates);
 		
 		const [spell] = await parent.createEmbeddedDocuments("Item", [object], {temporary: true});
+		spell.prepareFinalAttributes(); // this fixes saving throw buttons.
 		
 		// Trigger the item roll (code modified from itemacro).
 		const roll = spell.hasMacro() ? await spell.executeMacro() : await spell.roll({...rollOptions, createMessage: false});
 		if(!roll) return;
 		
-		// fix saving throw buttons to include DC and type.
-		const content = roll.content;
-		const template = document.createElement("template");
-		template.innerHTML = content;
-		const html = template.content.firstChild;
-		const saveButtons = html.querySelectorAll("button[data-action=save]");
-		const {spelldc, spellcasting} = parent.data.data.attributes;
-		for(let saveButton of saveButtons){
-			let abilityS = saveButtons[0].getAttribute("data-ability");
-			let abilityL = CONFIG.DND5E.abilities[abilityS];
-			saveButton.innerHTML = `Saving Throw DC ${spelldc} ${abilityL}`;
-		}
-		
 		// update message.
 		roll["flags.dnd5e.itemData"] = original;
-		roll["content"] = html.outerHTML;
 		
-		return ChatMessage.create(roll);
+		return await ChatMessage.create(roll);
 	}
 	
 	static magicItemCast = async (spellName, level, caster, rollOptions = {}) => {
-		return ZHELL.castFromCatalog(spellName, "spells", caster, {
+		return await ZHELL.castFromCatalog(spellName, "spells", caster, {
 			"data.preparation.mode": "atwill",
 			"data.level": level,
 			"data.components.material": false,
@@ -195,31 +215,271 @@ export class ZHELL {
 	
 	static setMateriaMedicaForagingDC = async (number) => {
 		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		return game.settings.set(MODULE_NAME, SETTING_NAMES.FORAGE_DC, number);
+		return game.settings.set(MODULE_NAME, "foragingDC", number);
 	};
+	
+	static teleportTokens = async (size = 4, {fade = true, fadeDuration = 500, clearTargets = true} = {}) => {
+		// pick area of tokens.
+		const origin = await warpgate.crosshairs.show({size, drawIcon: false, fillAlpha: 0.1, lockSize: false, label: "Pick Up Tokens"});
+		const {x: ox, y: oy, cancelled: oc} = origin;
+		if(oc) return;
+		
+		// get the tokens.
+		const tokens = warpgate.crosshairs.collect(origin);
+		game.user.updateTokenTargets(tokens.map(i => i.id));
+		
+		// pick new area.
+		const target = await warpgate.crosshairs.show({size: origin.size, drawIcon: false, fillAlpha: 0.1, lockSize: true, label: "Select Target"});
+		const {x: nx, y: ny, cancelled: nc} = target;
+		if(nc) return game.user.updateTokenTargets(); // clear targets.
+		
+		if(clearTargets) game.user.updateTokenTargets(); // clear targets.
+		
+		if(fade){
+			const sequence = new Sequence();
+			for(let token of tokens){
+				sequence.animation().on(token).fadeOut(fadeDuration);
+			}
+			await sequence.play();
+			await warpgate.wait(fadeDuration);
+		}
+		
+		// teleport!
+		const updates = tokens.map(i => ({_id: i.id, x: i.data.x - ox + nx, y: i.data.y - oy + ny}));
+		const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, {animate: false});
+		
+		if(fade){
+			await warpgate.wait(fadeDuration);
+			const sequence = new Sequence();
+			for(let token of tokens){
+				sequence.animation().on(token).fadeIn(fadeDuration);
+			}
+			await sequence.play();
+		}
+		
+		return update;
+	}
+	
+	static targetTokens = async (size = 4) => {
+		// pick area of tokens.
+		const origin = await warpgate.crosshairs.show({size, drawIcon: false, fillAlpha: 0.1, lockSize: false, rememberControlled: true, label: "Pick Targets"});
+		const {x: ox, y: oy, cancelled: oc} = origin;
+		if(oc) return;
+		
+		// get the tokens.
+		const tokens = warpgate.crosshairs.collect(origin);
+		const tokenIds = tokens.map(i => i.id);
+		game.user.updateTokenTargets(tokenIds);
+		
+		return tokenIds;
+	}
+	
+	// pass the target and an array of arrays (numeric value + damage type).
+	static apply_damage = async (actor, damages, showrolls = false) => {
+		// all values must be provided.
+		if(!actor || !damages) return;
+		
+		// make sure it's an actor, not token.
+		const target = actor.actor ? actor.actor : actor;
+		
+		// if damages is a string, that's fine, but convert to array.
+		const damageArray = typeof damages === "string" ? [[damages, ""]] : damages;
+		
+		// get the actor's immunities, resistances, and vulnerabilities.
+		const {di, dr, dv} = target.data.data.traits;
+		
+		// convert each die expression to a numeric value and apply resistances.
+		let sum = 0;
+		for(let i = 0; i < damageArray.length; i++){
+			const [dmg, type] = damageArray[i];
+			
+			if(!dmg) continue;
+			
+			const label = CONFIG.DND5E.damageResistanceTypes[type] ?? "Other";
+			
+			// get the multiplier from resistances etc.
+			const [multiplier, flavor] = arrInclude(di, type) ? [
+				0, `${label} damage (immune)`
+			] : arrInclude(dr, type) ? [
+				0.5, `${label} damage (resistant)`
+			] : arrInclude(dv, type) ? [
+				2, `${label} damage (vulnerable)`
+			] : [
+				1, `${label} damage`
+			];
+			
+			// get the damage total before resistances.
+			const formula = Roll.replaceFormulaData(dmg, target.getRollData());
+			if(!Roll.validate(formula)) continue;
+			
+			const roll = new Roll(formula);
+			const {total} = await roll.evaluate({async: true});
+			if(showrolls) roll.toMessage({
+				flavor,
+				speaker: ChatMessage.getSpeaker({actor: target})
+			});
+			
+			// add to sum.
+			sum += Math.floor(total * multiplier);
+		}
+		
+		// apply damage.
+		return target.applyDamage(sum);
+		
+		// function to return true or false if a combined array contains another thing.
+		function arrInclude(obj, val){
+			const values = obj.value;
+			const customs = obj.custom ?? "";
+			
+			return [...values, ...customs.split(";")].includes(val);
+		}
+	}
+	
+	// takes an array of tokens or tokenDocuments and returns an array of player owner ids.
+	static get_token_owner_ids = (tokens = [], excludeGM = false) => {
+		const permissions = tokens.map(t => t.actor.data.permission);
+		const userIds = game.users.filter(user => {
+			return permissions.some(permission => permission[user.id] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+		}).map(i => i.id);
+		if(excludeGM) return userIds.filter(i => !game.users.get(i).isGM);
+		else return userIds;
+	}
+	
+	// whisper players.
+	static whisper_players = () => {
+		const users = game.users.filter(u => u.id !== game.user.id);
+		const characterIds = users.map(u => u.character?.id).filter(i => !!i);
+		const selectedPlayerIds = canvas.tokens.controlled.map(i => i.actor.id).filter(i => characterIds.includes(i));
+		const options = users.reduce((acc, {id, name, character}) => {
+			const checked = (!!character && selectedPlayerIds.includes(character.id)) ? "selected" : "";
+			return acc + `<span class="whisper-dialog-player-name ${checked}" id="${id}">${name}</span>`;
+		}, `<form><div class="form-fields whisper-dialog">`) + `</div></form>`;
+		const style = `
+		<style>
+			.form-fields {
+				display: grid;
+				grid-template-columns: auto auto auto auto;
+			}
+			
+			.whisper-dialog-player-name.selected {
+				background-color: cornflowerblue;
+				font-weight: bold;
+			}
+			
+			.whisper-dialog-player-name:hover {
+				text-shadow: 0 0 8px var(--color-shadow-primary)!important;
+			}
+			
+			.whisper-dialog-player-name {
+				padding: 5px 0 5px 0;
+				border: 1px solid var(--color-border-dark-tertiary);
+				border-radius: 5px;
+				margin: 1px 1px 1px 1px;
+				text-align: center;
+				line-height: normal;
+			}
+			
+			.whisper-dialog-textarea {
+				resize: none;
+			}
+			
+			.form-fields.whisper-dialog {
+				display: grid;
+				grid-template-columns: 24% 24% 24% 24%;
+				justify-content: space-around;
+			}
+			
+		</style>`;
+
+		new Dialog({
+			title: "Whisper",
+			content: style + `
+			<p>Whisper to:</p>${options} <hr>
+			<label for="message">Message:</label>
+			<textarea class="whisper-dialog-textarea" id="message" name="message" rows="6" cols="50"></textarea>
+			<hr>`,
+			buttons: {go: {
+				icon: `<i class="fas fa-check"></i>`,
+				label: "Whisper",
+				callback: async (html) => {
+					const whisperIds = new Set();
+					for(let {id} of users){
+						if(!!html[0].querySelector(`span[id="${id}"].selected`)){
+							whisperIds.add(id);
+						}
+					}
+					const content = html[0].querySelector("textarea[id=message]").value.split("\n").reduce((acc, e) => acc += `<p>${e}</p>`, ``);
+					if(!whisperIds.size) return;
+					const whisper = Array.from(whisperIds);
+					await ChatMessage.create({content, whisper});
+				}
+			}},
+			render: (html) => {
+				html.css("height", "auto");
+				for(let playerName of html[0].querySelectorAll(".whisper-dialog-player-name")){
+					playerName.addEventListener("click", () => {
+						playerName.classList.toggle("selected");
+					});
+				}
+			}
+		}).render(true);
+	}
+	
+	// function to wait for a specified amount of time.
+	static wait = async (ms) => {
+		return new Promise(resolve => setTimeOut(resolve, Number(ms)));
+	}
+	
+	// function to turn integer into cardinal number.
+	static nth = (number) => {
+		const num = Number(number);
+		const index = ((num + 90) % 100 - 10) % 10 - 1;
+		return ["st", "nd", "rd"][index] || "th";
+	}
+	
+	// function to turn integer into roman numeral.
+	static romanize = (number) => {
+		let num = Number(number);
+		const roman = {
+			M: 1000, CM: 900, D: 500,
+			CD: 400, C: 100, XC: 90,
+			L: 50, XL: 40, X: 10,
+			IX: 9, V: 5, IV: 4, I: 1
+		}
+		let str = '';
+		
+		for(let i of Object.keys(roman)){
+			let q = Math.floor(num / roman[i]);
+			num -= q * roman[i];
+			str += i.repeat(q);
+		}
+		
+		return str;
+	}
+	
 }
 
-// disable long rest.
-Hooks.on("renderLongRestDialog", (dialog, html, data) => {
-	const restDisabled = game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_LR);
-	if(!restDisabled) return;
-	const restButton = html[0].querySelector("button[data-button='rest']");
-	restButton.setAttribute("disabled", true);
-});
-
-// disable long rest.
-Hooks.on("renderShortRestDialog", (dialog, html, data) => {
-	const restDisabled = game.settings.get(MODULE_NAME, SETTING_NAMES.TOGGLE_SR);
-	if(!restDisabled) return;
-	const rollButton = html[0].querySelector("#roll-hd");
-	rollButton.setAttribute("disabled", true);
-	const restButton = html[0].querySelector("button[data-button='rest']");
-	restButton.setAttribute("disabled", true);
-});
-
-Hooks.once("setup", () => {
-	// add more consumable types.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_CONSUMABLE_TYPES)){
+export class ZHELLHOOKS {
+	static disable_long_rest = (dialog, html, data) => {
+		const restDisabled = game.settings.get(MODULE_NAME, "toggleLR");
+		if(!restDisabled) return;
+		
+		const restButton = html[0].querySelector("button[data-button='rest']");
+		restButton.setAttribute("disabled", true);
+	}
+	
+	static disable_short_rest = (dialog, html, data) => {
+		const restDisabled = game.settings.get(MODULE_NAME, "toggleSR");
+		if(!restDisabled) return;
+		
+		const rollButton = html[0].querySelector("#roll-hd");
+		rollButton.setAttribute("disabled", true);
+		const restButton = html[0].querySelector("button[data-button='rest']");
+		restButton.setAttribute("disabled", true);
+	}
+	
+	static replace_consumable_types = () => {
+		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_consumable_types) return;
 		CONFIG.DND5E.consumableTypes = {
 			ammo: "Ammunition",
 			drink: "Drink",
@@ -235,27 +495,27 @@ Hooks.once("setup", () => {
 			bomb: "Bomb",
 			trap: "Trap",
 			trinket: "Trinket"
-		};
+		}
 	}
 	
-	// add more equipment types.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_EQUIPMENT_TYPES)){
+	static add_equipment_types = () => {
+		if(!game.settings.get(MODULE_NAME, "additionSettings").add_equipment_types) return;
 		CONFIG.DND5E.equipmentTypes["wand"] = "Wand";
 		CONFIG.DND5E.miscEquipmentTypes["wand"] = "Wand";
 	}
 	
-	// add new spell schools.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_SPELL_SCHOOL)){
+	static add_divine = () => {
+		if(!game.settings.get(MODULE_NAME, "additionSettings").add_divine) return;
 		CONFIG.DND5E.spellSchools["divine"] = "Divine";
 	}
 	
-	// add new condition types.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ADD_CONDITIONS)){
+	static add_conditions = () => {
+		if(!game.settings.get(MODULE_NAME, "additionSettings").add_conditions) return;
 		CONFIG.DND5E.conditionTypes["turned"] = "Turned";
 	}
 	
-	// change languages.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_LANGUAGES)){
+	static replace_languages = () => {
+		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_languages) return;
 		CONFIG.DND5E.languages = {
 			common: "Common",
 			aarakocra: "Aarakocra",
@@ -276,11 +536,11 @@ Hooks.once("setup", () => {
 			undercommon: "Undercommon",
 			cant: "Thieves' Cant",
 			druidic: "Druidic"
-		};
+		}
 	}
 	
-	// replace tools
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_TOOLS)){
+	static replace_tools = () => {
+		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_tools) return;
 		
 		// pluralising gaming set and instrument:
 		CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
@@ -339,12 +599,12 @@ Hooks.once("setup", () => {
 			tantan: "zhell-custom-stuff.catalog-of-items.x0MtEjLGydd5MHcf",
 			card: "zhell-custom-stuff.catalog-of-items.xpcEdLZpuwatrD1g",
 			carpenter: "zhell-custom-stuff.catalog-of-items.zSyPecV8GvlwRBnb",
-		};
+		}
 	}
-
-	// replace weapons
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_WEAPONS)){
 	
+	static replace_weapons = () => {
+		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_weapons) return;
+		
 		CONFIG.DND5E.weaponIds = {
 			battleaxe: "zhell-custom-stuff.catalog-of-items.5YvvZ5KsGgzlVBJg",
 			blowgun: "zhell-custom-stuff.catalog-of-items.7mIrXgEFREdCZoq6",
@@ -384,8 +644,7 @@ Hooks.once("setup", () => {
 			warpick: "zhell-custom-stuff.catalog-of-items.evvPCgenUmPXFSb0",
 			warhammer: "zhell-custom-stuff.catalog-of-items.YZzXPxRgpYcPh61M",
 			whip: "zhell-custom-stuff.catalog-of-items.KGH7gJe5mvpbRoFZ"
-		};
-
+		}
 		
 		CONFIG.DND5E.weaponProperties = {
 			ada: "Adamantine",
@@ -403,24 +662,27 @@ Hooks.once("setup", () => {
 			thr: "Thrown",
 			two: "Two-Handed",
 			ver: "Versatile"
-		};
+		}
 	}
 	
-	// add piety ability
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.ABILITY_SCORES)){
+	static add_piety = () => {
+		if(!game.settings.get(MODULE_NAME, "additionSettings").add_piety) return;
 		CONFIG.DND5E.abilities["pty"] = "Piety";
 		CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
 	}
 	
-	// add more status effects
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REPLACE_STATUS_EFFECTS)){
+	static replace_status_effects = () => {
+		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_status_effects) return;
 		
 		const {ADD, MULTIPLY, UPGRADE} = CONST.ACTIVE_EFFECT_MODES;
 		
 		CONFIG.statusEffects = [
-			{id: "zhell_spell_bane", label: "Bane", "duration.seconds": 60,
-				"flags.convenientDescription": "You subtract 1d4 from all saving throws and attack rolls.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_bane.webp",
+			{
+				id: "zhell_spell_bane",
+				label: "Bane",
+				duration: {seconds: 60},
+				flags: {convenientDescription: "<p>You subtract <strong>1d4</strong> from all saving throws and attack rolls.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/bane.webp",
 				changes: [
 					{key: "data.bonuses.abilities.save", mode: ADD, value: "-1d4"},
 					{key: "data.bonuses.msak.attack", mode: ADD, value: "-1d4"},
@@ -429,9 +691,12 @@ Hooks.once("setup", () => {
 					{key: "data.bonuses.rwak.attack", mode: ADD, value: "-1d4"}
 				]
 			},
-			{id: "zhell_spell_bless", label: "Bless", "duration.seconds": 60,
-				"flags.convenientDescription": "You add a 1d4 bonus to all saving throws and attack rolls.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_bless.webp",
+			{
+				id: "zhell_spell_bless",
+				label: "Bless",
+				duration: {seconds: 60},
+				flags: {convenientDescription: "<p>You add a <strong>1d4</strong> bonus to all saving throws and attack rolls.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/bless.webp",
 				changes: [
 					{key: "data.bonuses.abilities.save", mode: ADD, value: "+1d4"},
 					{key: "data.bonuses.msak.attack", mode: ADD, value: "+1d4"},
@@ -440,9 +705,12 @@ Hooks.once("setup", () => {
 					{key: "data.bonuses.rwak.attack", mode: ADD, value: "+1d4"}
 				]
 			},
-			{id: "zhell_spell_speed_haste", label: "Haste", "duration.seconds": 60,
-				"flags.convenientDescription": "Your movement speed is doubled, you have +2 to AC, and you have advantage on Dexterity saving throws.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_haste.webp",
+			{
+				id: "zhell_spell_speed_haste",
+				label: "Haste",
+				duration: {seconds: 60},
+				flags: {convenientDescription: "<p>Your movement speed is doubled, you have a +2 bonus to AC, and you have advantage on Dexterity saving throws.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/haste.webp",
 				changes: [
 					{key: "data.attributes.ac.bonus", mode: ADD, value: '+2'},
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "2"},
@@ -451,9 +719,12 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "2"}
 				]
 			},
-			{id: "zhell_spell_speed_slow", label: "Slow", "duration.seconds": 60,
-				"flags.convenientDescription": "Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_slowed.webp",
+			{
+				id: "zhell_spell_speed_slow",
+				label: "Slow",
+				duration: {seconds: 60},
+				flags: {convenientDescription: "<p>Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/slowed.webp",
 				changes: [
 					{key: "data.attributes.ac.bonus", mode: ADD, value: "-2"},
 					{key: "data.abilities.dex.bonuses.save", mode: ADD, value: "-2"},
@@ -463,33 +734,47 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: ".5"}
 				]
 			},
-			{id: "zhell_condition_sense_blind", label: "Blinded",
-				"flags.convenientDescription": "You cannot see, and you automatically fail any ability check that requires sight. Attack rolls against you have advantage, and your attack rolls have disadvantage.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_blinded.webp"
+			{
+				id: "zhell_condition_sense_blind",
+				label: "Blinded",
+				flags: {convenientDescription: "<p>You cannot see, and you automatically fail any ability checks that require sight.</p><p>Attack rolls against you have advantage, and your attack rolls have disadvantage.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/blinded.webp"
 			},
-			{id: "zhell_condition_charm", label: "Charmed",
-				"flags.convenientDescription": "You cannot attack the charmer or target them with harmful abilities or magical effects; the charmer has advantage on any ability check to interact socially with you.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_charmed.webp"
+			{
+				id: "zhell_condition_charm",
+				label: "Charmed",
+				flags: {convenientDescription: "<p>You cannot attack the charmer or target them with harmful abilities or magical effects.</p><p>The charmer has advantage on any ability check to interact socially with you.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/charmed.webp"
 			},
-			{id: "dead", label: "Dead",
-				"flags.convenientDescription": "You are dead.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/skull.webp"
+			{
+				id: "dead",
+				label: "Dead",
+				flags: {convenientDescription: "<p>You have met an unfortunate end.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/dead.webp"
 			},
-			{id: "zhell_condition_sense_deaf", label: "Deafened",
-				"flags.convenientDescription": "You cannot hear and automatically fail any ability check that requires hearing.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_deafened.webp"
+			{
+				id: "zhell_condition_sense_deaf",
+				label: "Deafened",
+				flags: {convenientDescription: "<p>You cannot hear and automatically fail any ability checks that require hearing.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/deafened.webp"
 			},
-			{id: "zhell_condition_sense_mute", label: "Muted",
-				"flags.convenientDescription": "You cannot speak, cannot cast spells with a verbal component, and you automatically fail any ability check that requires speech.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_muted.webp"
+			{
+				id: "zhell_condition_sense_mute",
+				label: "Muted",
+				flags: {convenientDescription: "<p>You cannot speak, cannot cast spells with a verbal component, and you automatically fail any ability checks that require speech.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/muted.webp"
 			},
-			{id: "zhell_condition_fear", label: "Frightened",
-				"flags.convenientDescription": "You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight. You cannot willingly move closer to the source of your fear.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_frightened.webp"
+			{
+				id: "zhell_condition_fear",
+				label: "Frightened",
+				flags: {convenientDescription: "<p>You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight.</p><p>You cannot willingly move closer to the source of your fear.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/frightened.webp"
 			},
-			{id: "zhell_condition_move_grappled", label: "Grappled",
-				"flags.convenientDescription": "Your speed is 0.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_grappled.webp",
+			{
+				id: "zhell_condition_move_grappled",
+				label: "Grappled",
+				flags: {convenientDescription: "<p>Your speed is zero.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/grappled.webp",
 				changes: [
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
 					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
@@ -497,17 +782,26 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
 				]
 			},
-			{id: "zhell_condition_incapacitated", label: "Incapacitated",
-				"flags.convenientDescription": "You cannot take actions or reactions.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_incapacitated.webp"
+			{
+				id: "zhell_condition_incapacitated",
+				label: "Incapacitated",
+				flags: {convenientDescription: "<p>You cannot take actions or reactions.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/incapacitated.webp"
 			},
-			{id: "zhell_condition_invisible", label: "Invisible",
-				"flags.convenientDescription": "You are impossible to see, and are considered heavily obscured. Attack rolls against you have disadvantage, and your attack rolls have advantage.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_invisible.webp"
+			{
+				id: "zhell_condition_invisible",
+				label: "Invisible",
+				flags: {convenientDescription: "<p>You are impossible to see, and are considered heavily obscured.</p><p>Attack rolls against you have disadvantage, and your attack rolls have advantage.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/invisible.webp"
 			},
-			{id: "zhell_condition_paralysis", label: "Paralyzed",
-				"flags.convenientDescription": "You are incapacitated, cannot move or speak, automatically fail Strength and Dexterity saving throws, attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_paralyzed.webp",
+			{
+				id: "zhell_condition_paralysis",
+				label: "Paralyzed",
+				flags: {convenientDescription: `
+					<p>You are incapacitated, and you cannot move or speak.</p>
+					<p>You automatically fail Strength and Dexterity saving throws, attack rolls against you have advantage,
+					and any attacks against you is a critical hit if the attacker is within 5 feet of you.</p>`},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/paralyzed.webp",
 				changes: [
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
 					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
@@ -515,21 +809,35 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
 				]
 			},
-			{id: "zhell_condition_petrified", label: "Petrified", 
-				"flags.convenientDescription": "You are inanimate, incapacitated, unaware of your surroundings, your weight is increased by a factor of ten, you cannot move or speak, attack rolls against you have advantage, and you automatically fail all Strength and Dexterity saving throws. You have resistance to all damage, and you are immune to poison and disease.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_petrified.webp"
+			{
+				id: "zhell_condition_petrified",
+				label: "Petrified", 
+				flags: {convenientDescription: `
+					<p>You are inanimate, incapacitated, and unaware of your surroundings.</p>
+					<p>Your weight is increased by a factor of ten, you cannot move or speak, and attack rolls against you have advantage.</p>
+					<p>You automatically fail all Strength and Dexterity saving throws.</p>
+					<p>You have resistance to all damage, and you are immune to poison and disease.</p>`},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/petrified.webp"
 			},
-			{id: "zhell_condition_poison", label: "Poisoned",
-				"flags.convenientDescription": "You have disadvantage on all attack rolls and ability checks.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_poisoned.webp"
+			{
+				id: "zhell_condition_poison",
+				label: "Poisoned",
+				flags: {convenientDescription: "<p>You have disadvantage on all attack rolls and ability checks.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/poisoned.webp"
 			},
-			{id: "zhell_condition_prone", label: "Prone",
-				"flags.convenientDescription": "You can only crawl unless you expend half your movement to stand up. You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you, it otherwise has disadvantage.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_prone.webp"
+			{
+				id: "zhell_condition_prone",
+				label: "Prone",
+				flags: {convenientDescription: `
+					<p>You can only crawl unless you expend half your movement to stand up.</p>
+					<p>You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you; it otherwise has disadvantage.</p>`},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/prone.webp"
 			},
-			{id: "zhell_condition_move_restrain", label: "Restrained", 
-				"flags.convenientDescription": "Your speed is 0, attack rolls against you have advantage, and your attack rolls have disadvantage. You have disadvantage on Dexterity saving throws.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_restrained.webp",
+			{
+				id: "zhell_condition_move_restrain",
+				label: "Restrained", 
+				flags: {convenientDescription: "<p>Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage.</p><p>You have disadvantage on Dexterity saving throws.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/restrained.webp",
 				changes: [
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
 					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
@@ -537,9 +845,11 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
 				]
 			},
-			{id: "zhell_condition_stun", label: "Stunned",
-				"flags.convenientDescription": "You are incapacitated, cannot move, and can speak only falteringly. You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_stunned.webp",
+			{
+				id: "zhell_condition_stun",
+				label: "Stunned",
+				flags: {convenientDescription: "<p>You are incapacitated, cannot move, and can speak only falteringly.</p><p>You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/stunned.webp",
 				changes: [
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
 					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
@@ -547,9 +857,13 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
 				]
 			},
-			{id: "zhell_condition_unconscious", label: "Unconscious",
-				"flags.convenientDescription": "You are incapacitated, cannot move or speak, you fall prone, fail all Strength and Dexterity saving throws, attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_unconscious.webp",
+			{
+				id: "zhell_condition_unconscious",
+				label: "Unconscious",
+				flags: {convenientDescription: `
+					<p>You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws.</p>
+					<p>Attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.</p>`},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/unconscious.webp",
 				changes: [
 					{key: "data.attributes.movement.walk", mode: MULTIPLY, value: "0"},
 					{key: "data.attributes.movement.fly", mode: MULTIPLY, value: "0"},
@@ -557,41 +871,41 @@ Hooks.once("setup", () => {
 					{key: "data.attributes.movement.climb", mode: MULTIPLY, value: "0"}
 				]
 			},
-			{id: "zhell_spell_fly", label: "Flying", "duration.seconds": 600,
-				"flags.convenientDescription": "You have a flying speed of 60 feet.",
-				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/modules/zhell-custom-stuff/images/symbols/condition_flying.webp",
-				changes: [{key: "data.attributes.movement.fly", mode: UPGRADE, value: "60"}]
+			{
+				id: "zhell_spell_fly",
+				label: "Flying", "duration.seconds": 600,
+				flags: {convenientDescription: "<p>You have a flying speed of 60 feet.</p>"},
+				icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/flying.webp",
+				changes: [
+					{key: "data.attributes.movement.fly", mode: UPGRADE, value: "60"}
+				]
 			}
 		].sort((a,b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
 		CONFIG.statusEffects = [...CONFIG.statusEffects.filter(i => i.id === "dead"), ...CONFIG.statusEffects.filter(i => i.id !== "dead")];
 	}
-});
 
-Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
-	
-	// minor edits to the sheet.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MINOR_SHEET_EDITS)){
-		// Change 'S. Rest' and 'L. Rest' to 'SR' and 'LR'
+	static rename_rest_labels = (sheet, html, sheetData) => {
+		if(!game.settings.get(MODULE_NAME, "sheetSettings").rename_rest_labels) return;
 		const SR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.short-rest");
 		const LR = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.hit-dice > footer > a.rest.long-rest");
 		if(SR) SR.innerHTML = "SR";
 		if(LR) LR.innerHTML = "LR";
 	}
 	
-	// remove resources from the character sheet.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_RESOURCES)){
+	static remove_resources = (sheet, html, sheetData) => {
+		if(!game.settings.get(MODULE_NAME, "sheetSettings").remove_resources) return;
 		const resources = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul");
 		if(resources) resources.remove();
 	}
 	
-	// Remove alignment field.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_ALIGNMENT)){
+	static remove_alignment = (sheet, html, sheetData) => {
+		if(!game.settings.get(MODULE_NAME, "sheetSettings").remove_alignment) return;
 		const AL = html[0].querySelector("input[name='data.details.alignment']");
 		if(AL) AL.parentElement?.remove();
 	}
 	
-	// Remove functionality of initiative button (use Requestor instead).
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.REMOVE_INITIATIVE)){
+	static disable_initiative_button = (sheet, html, sheetData) => {
+		if(!game.settings.get(MODULE_NAME, "sheetSettings").disable_initiative_button) return;
 		const initButton = html[0].querySelector("section > form > header > section > ul.attributes.flexrow > li.attribute.initiative > h4");
 		if(initButton){
 			initButton.classList.remove("rollable");
@@ -599,47 +913,12 @@ Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
 		}
 	}
 	
-	// replace currency converter with a lock/unlock feature.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.SHEET_UNLOCKER)){
-		/* Get locked state */
-		const locked = sheet.document.getFlag(MODULE_NAME, "sheet.locked") ?? true;
-		
-		/* Hide delete buttons */
-		const deleteButtons = html[0].querySelectorAll("a.item-control.item-delete");
-		for(let el of deleteButtons) el.hidden = locked;
-		
-		/* Replace text with "Lock" */
-		const currencyText = html[0].querySelector("section > form > section > div.tab.inventory.flexcol > div.inventory-filters.flexrow > ol > h3");
-		if(currencyText) currencyText.firstChild.textContent = "Lock";
-		
-		/* Replace icon with lock */
-		const coins = html[0].querySelector("i[class='fas fa-coins']");
-		if(coins){
-			coins.setAttribute("class", locked ? "fas fa-lock" : "fas fa-unlock");
-			coins.setAttribute("title", "Lock/Unlock");
-		}
-		
-		/* Replace currency converter with lock */
-		const currencyRoll = html[0].querySelector("a[class='currency-convert rollable']");
-		if(currencyRoll){
-			currencyRoll.removeAttribute("data-action");
-			currencyRoll.onclick = async () => {
-				await sheet.document.setFlag(MODULE_NAME, "sheet.locked", !locked);
-				sheet.render();
-			}
-		}
-	}
-	
-	// create materia medica counter on the sheet below exhaustion.
-	if(game.settings.get(MODULE_NAME, SETTING_NAMES.MATERIA_MEDICA_COUNTER)){
-		// get actor.
+	static create_forage_counter = (sheet, html, sheetData) => {
+		if(!game.settings.get(MODULE_NAME, "sheetSettings").create_forage_counter) return;
 		const actor = sheet.actor;
-		
-		// bail if not a character.
 		if(!sheetData.isCharacter) return;
 		
-		// create element:
-		const value = actor.getFlag("zhell-custom-stuff", "materia-medica.value") ?? 0;
+		const value = actor.getFlag(MODULE_NAME, "materia-medica.value") ?? 0;
 		const materia = document.createElement("div");
 		materia.setAttribute("class", "counter flexrow materia");
 		materia.innerHTML = `
@@ -658,9 +937,208 @@ Hooks.on("renderActorSheet5e", (sheet, html, sheetData) => {
 				>
 			</div>
 		`;
-		
-		// insert element
 		const belowThis = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > div.counters > div.counter.flexrow.exhaustion");
 		belowThis.parentNode.insertBefore(materia, belowThis.nextSibling);
 	}
-});
+	
+	static mark_defeated_combatant = async (tokenDoc, updates) => {
+		if(!game.settings.get(MODULE_NAME, "markDefeatedCombatants")) return;
+		if(tokenDoc.actor.hasPlayerOwner) return;
+		if(!tokenDoc.combatant) return;
+		const hpUpdate = getProperty(updates, "actorData.data.attributes.hp.value");
+		if(hpUpdate === undefined || hpUpdate > 0) return;
+		const effect = CONFIG.statusEffects.find(i => i.id === "dead");
+		await tokenDoc.object.toggleEffect(effect, {overlay: true});
+		await tokenDoc.combatant.update({defeated: true});
+	}
+	
+	static flag_attack_to_show_ammo_if_it_has_save = (message, messageData, context, userId) => {
+		if(!game.settings.get(MODULE_NAME, "displaySavingThrowAmmo")) return;
+		
+		// must be an attack roll.
+		if(getProperty(messageData, "flags.dnd5e.roll.type") !== "attack") return;
+		
+		// get the item id.
+		const itemId = getProperty(messageData, "flags.dnd5e.roll.itemId");
+		if(!itemId) return;
+		
+		// get the actor.
+		const actorId = getProperty(messageData, "speaker.actor");
+		const actor = game.actors.get(actorId);
+		if(!actor) return;
+		
+		// attempt to find the item.
+		const item = actor.items.get(itemId);
+		if(!item) return;
+		
+		// find ammo on the actor.
+		const consume = getProperty(item, "data.data.consume");
+		if(!consume) return;
+		const {amount, target: ammoId, type} = consume;
+		if(!ammoId || type !== "ammo") return;
+		const ammo = actor.items.get(ammoId);
+		if(!ammo) return;
+		
+		// does ammo have save?
+		const ammoHasSave = getProperty(ammo, "data.data.save.ability");
+		if(!ammoHasSave) return;
+		
+		// display ammo.
+		context["display-ammo"] = {display: true, userId, actorId, ammoId}
+	}
+
+	static show_ammo_if_it_has_save = async (message, context, userId) => {
+		if(!game.settings.get(MODULE_NAME, "displaySavingThrowAmmo")) return;
+		
+		// display ammo?
+		if(!getProperty(context, "display-ammo.display")) return;
+		
+		// only for the user.
+		if(getProperty(context, "display-ammo.userId") !== userId) return;
+		
+		// get ids.
+		const {actorId, ammoId} = getProperty(context, "display-ammo");
+		
+		// display ammo card.
+		return game.actors.get(actorId).items.get(ammoId).displayCard();
+	}
+	
+	static create_dots = (sheet, html) => {
+		const limited_use_dots = !!game.settings.get(MODULE_NAME, "colorSettings").limited_use_dots;
+		const spell_slot_dots = !!game.settings.get(MODULE_NAME, "colorSettings").spell_slot_dots;
+		
+		// create spell slot dots.
+		if(spell_slot_dots){
+			const options = ["pact", "spell1", "spell2", "spell3", "spell4",
+				"spell5", "spell6", "spell7", "spell8", "spell9"];
+			for(let o of options){
+				const max = html.find(`.spell-max[data-level=${o}]`);
+				const name = max.closest(".spell-slots");
+				const data = sheet.object.data.data.spells[o];
+				if(data.max === 0) continue;
+				let contents = "";
+				for(let i = data.max; i > 0; i--){
+					if(i <= data.value) contents += `<span class="dot"></span>`;
+					else contents += `<span class="dot empty"></span>`;
+				}
+				name.before(contents);
+			}
+		}
+		
+		// create limited use dots.
+		if(limited_use_dots){
+			const itemUses = sheet.object.items.filter(i => !!i.hasLimitedUses);
+			for(let o of itemUses){
+				const itemHTML = html.find(`.item[data-item-id=${o.id}]`);
+				let name = itemHTML.find(".item-name");
+				const {value, max} = o.data.data.uses;
+				if(max === 0) continue;
+				let contents = "";
+				for(let i = max; i > 0; i--){
+					if(i <= value) contents += `<span class="dot"></span>`;
+					else contents += `<span class="dot empty"></span>`;
+				}
+				if(o.type === "spell"){
+					name = name.find(".item-detail.spell-uses");
+					name.before(contents);
+				}
+				else name.after(contents);
+			}
+		}
+		
+		// create listeners.
+		if(spell_slot_dots || limited_use_dots){
+			for(let dot of html[0].querySelectorAll(".dot")){
+				dot.addEventListener("click", async (ev) => {
+					const actor = sheet.object;
+					const li = $(ev.currentTarget).parents(".item");
+					const item = actor.items.get(li.data("itemId"));
+					let spellLevel;
+					if(!item){
+						spellLevel = ev.currentTarget.parentElement.outerHTML.match(/data-level="(.*?)"/)[1];
+					}
+					if(!item && spellLevel){
+						const path = `data.spells.${spellLevel}.value`;
+						if(ev.currentTarget.classList.contains("empty")){
+							await actor.update({[path]: actor.data.data.spells[spellLevel].value + 1});
+						}
+						else{
+							await actor.update({[path]: actor.data.data.spells[spellLevel].value - 1});
+						}
+					}
+					else if(ev.currentTarget.classList.contains("empty")){
+						await item.update({"data.uses.value": item.data.data.uses.value + 1});
+					}
+					else{
+						await item.update({"data.uses.value": item.data.data.uses.value - 1});
+					}
+				});
+			}
+		}
+	}
+	
+	static create_toggle_on_attunement_button = (sheet, html) => {
+		html[0].addEventListener("click", (event) => {
+			const attunement_icon = event.target?.closest(".item-detail.attunement");
+			if(!attunement_icon) return;
+			
+			// item attuned or nah.
+			const attuned = attunement_icon.querySelector(".attuned");
+			const not_attuned = attunement_icon.querySelector(".not-attuned");
+			if(!attuned && !not_attuned) return;
+			
+			// get item id.
+			const itemId = attunement_icon.closest(".item").dataset.itemId;
+			if(!itemId) return;
+			
+			// get the item.
+			const item = sheet.actor.items.get(itemId);
+			if(!item) return;
+			
+			if(!!attuned){
+				item.update({"data.attunement": CONFIG.DND5E.attunementTypes.REQUIRED});
+			}
+			else if(!!not_attuned){
+				item.update({"data.attunement": CONFIG.DND5E.attunementTypes.ATTUNED});
+			}
+		});
+	}
+	
+	static color_magic_items = (sheet, html) => {
+		const items = html[0].querySelectorAll(".items-list .item");
+		for(let i of items){
+			const id = i.outerHTML.match(/data-item-id="(.*?)"/);
+			if(!id) continue;
+			const rarity = sheet.object.items.get(id[1]).data.data?.rarity;
+			if(rarity !== "" && rarity !== undefined) i.classList.add(rarity.slugify().toLowerCase());
+		}
+	}
+	
+	static refreshColors = () => {
+		// set icon colors on sheet.
+		const [a, b, cf, ca, cna, ce, cne, cp, cnp, cap] = Object.values(game.settings.get(MODULE_NAME, "colorSettings"));
+		document.documentElement.style.setProperty("--full_color", cf);
+		document.documentElement.style.setProperty("--attuned_color", ca);
+		document.documentElement.style.setProperty("--not_attuned_color", cna);
+		document.documentElement.style.setProperty("--equipped_color", ce);
+		document.documentElement.style.setProperty("--not_equipped_color", cne);
+		document.documentElement.style.setProperty("--prepared_color", cp);
+		document.documentElement.style.setProperty("--not_prepared_color", cnp);
+		document.documentElement.style.setProperty("--always_prepared_color", cap);
+		
+		// set item rarity colors on sheet.
+		const {uncommon, rare, very_rare, legendary, artifact} = game.settings.get(MODULE_NAME, "rarityColorSettings");
+		document.documentElement.style.setProperty("--rarity-color-uncommon", uncommon);
+		document.documentElement.style.setProperty("--rarity-color-rare", rare);
+		document.documentElement.style.setProperty("--rarity-color-very-rare", very_rare);
+		document.documentElement.style.setProperty("--rarity-color-legendary", legendary);
+		document.documentElement.style.setProperty("--rarity-color-artifact", artifact);
+	}
+	
+	static createEffectsPanel = () => {
+		this.effectsPanel = new EffectsPanelApp();
+	}
+	
+	
+}
+

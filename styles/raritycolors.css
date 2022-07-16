@@ -1,0 +1,26 @@
+body :root {
+    --rarity-color-uncommon: #008000;
+	--rarity-color-rare: #0000ff;
+	--rarity-color-very-rare: #800080;
+	--rarity-color-legendary: #ffa500;
+    --rarity-color-artifact: #d2691e;
+}
+.item.uncommon .item-name h4 {
+    color : var(--rarity-color-uncommon) !important;
+} 
+
+.item.rare .item-name h4 {
+    color : var(--rarity-color-rare) !important;
+} 
+
+.item.veryrare .item-name h4 {
+    color : var(--rarity-color-very-rare) !important;
+} 
+
+.item.legendary .item-name h4 {
+    color : var(--rarity-color-legendary) !important;
+} 
+
+.item.artifact .item-name h4{
+    color : var(--rarity-color-artifact) !important;
+}
