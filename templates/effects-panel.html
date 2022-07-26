@@ -1,4 +1,4 @@
-<section id="effects-panel" class="effect-panel" style="{{topStyle}}">
+<section id="effects-panel" class="effect-panel">
     {{#each enabledEffects as |effect|}}
 		<div class="effect-item">
 			<div class="effect-info">
@@ -9,6 +9,7 @@
 					{{else}}
 						<h2></h2>
 					{{/if}}
+					<hr>
 					<div class="tags">
 						<div class="tag tag_primary">
 							{{#if effect.isTemporary}}
@@ -47,6 +48,7 @@
 					{{else}}
 						<h2></h2>
 					{{/if}}
+					<hr>
 					<div class="tags">
 						<div class="tag tag_primary">
 							{{#if effect.isTemporary}}

@@ -1,3 +1,4 @@
+/* Default color of magic items. */
 body :root {
     --rarity-color-uncommon: #008000;
 	--rarity-color-rare: #0000ff;
@@ -5,22 +6,28 @@ body :root {
 	--rarity-color-legendary: #ffa500;
     --rarity-color-artifact: #d2691e;
 }
+
+/* Uncommon items. */
 .item.uncommon .item-name h4 {
     color : var(--rarity-color-uncommon) !important;
 } 
 
+/* Rare items. */
 .item.rare .item-name h4 {
     color : var(--rarity-color-rare) !important;
 } 
 
+/* Very rare items. */
 .item.veryrare .item-name h4 {
     color : var(--rarity-color-very-rare) !important;
 } 
 
+/* Legendary items. */
 .item.legendary .item-name h4 {
     color : var(--rarity-color-legendary) !important;
 } 
 
+/* Artifacts. */
 .item.artifact .item-name h4{
     color : var(--rarity-color-artifact) !important;
 }

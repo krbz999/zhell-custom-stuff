@@ -1,5 +1,5 @@
 import { MODULE_NAME } from "./const.mjs";
-import { ZHELL } from "./zhell-custom-stuff.mjs";
+import { ZHELL_SHEET } from "./hooks/sheet_edits.mjs";
 
 export function registerSettings() {
 	_registerSettings();
@@ -8,16 +8,16 @@ export function registerSettings() {
 
 function _registerSettings(){
 	game.settings.register(MODULE_NAME, "toggleLR", {
-		name: "Toggle Long Rest",
-		hint: "Toggle LR on or off.",
+		name: "Disable Long Rest",
+		hint: "If checked, players cannot take a long rest.",
 		scope: "world",
 		config: true,
 		type: Boolean,
 		default: false
 	});
 	game.settings.register(MODULE_NAME, "toggleSR", {
-		name: "Toggle Short Rest",
-		hint: "Toggle SR on or off.",
+		name: "Disable Short Rest",
+		hint: "If checked, players cannot take a short rest.",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -54,7 +54,7 @@ class ReplacementsSubmenu extends FormApplication {
         super({});
     }
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ['form'],
             popOut: true,
             width: "550",
@@ -72,25 +72,24 @@ class ReplacementsSubmenu extends FormApplication {
 			await game.settings.set(MODULE_NAME, "replacementSettings", {
 				replace_status_effects: html[0].querySelector(".zhell-replace-status-effects").checked,
 				replace_languages: html[0].querySelector(".zhell-replace-languages").checked,
+				rename_currency_labels: html[0].querySelector(".zhell-rename-currency-labels").checked,
 				replace_tools: html[0].querySelector(".zhell-replace-tools").checked,
 				replace_weapons: html[0].querySelector(".zhell-replace-weapons").checked,
 				replace_consumable_types: html[0].querySelector(".zhell-replace-consumable-types").checked
 			});
-			window.location.reload();
 		});
 	}
 	getData() {
-		let source = game.settings.get(MODULE_NAME, "replacementSettings");
-		if (foundry.utils.isObjectEmpty(source)) {
-			source = {
-				replace_status_effects: true,
-				replace_languages: true,
-				replace_tools: true,
-				replace_weapons: true,
-				replace_consumable_types: true
-			}
+		const source = game.settings.get(MODULE_NAME, "replacementSettings");
+		const defaults = {
+			replace_status_effects: true,
+			replace_languages: true,
+			rename_currency_labels: true,
+			replace_tools: true,
+			replace_weapons: true,
+			replace_consumable_types: true
 		}
-		return source;
+		return foundry.utils.mergeObject(defaults, source);
 	}
 }
 
@@ -112,6 +111,7 @@ class AdditionsSubmenu extends FormApplication {
     }
 	activateListeners(html) {
 		super.activateListeners(html);
+		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
 			await game.settings.set(MODULE_NAME, "additionSettings", {
@@ -120,20 +120,19 @@ class AdditionsSubmenu extends FormApplication {
 				add_piety: html[0].querySelector(".zhell-add-piety").checked,
 				add_divine: html[0].querySelector(".zhell-add-divine").checked
 			});
-			window.location.reload();
+			dialog.close();
 		});
 	}
 	getData() {
-		let source = game.settings.get(MODULE_NAME, "additionSettings");
-		if (foundry.utils.isObjectEmpty(source)) {
-			source = {
-				add_conditions: true,
-				add_equipment_types: true,
-				add_piety: true,
-				add_divine: true
-			}
+		const source = game.settings.get(MODULE_NAME, "additionSettings");
+		const defaults = {
+			add_conditions: true,
+			add_equipment_types: true,
+			add_piety: true,
+			add_divine: true
 		}
-		return source;
+		
+		return foundry.utils.mergeObject(defaults, source);
 	}
 }
 
@@ -142,7 +141,7 @@ class SheetSubmenu extends FormApplication {
         super({});
     }
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ['form'],
             popOut: true,
             width: "550",
@@ -155,6 +154,7 @@ class SheetSubmenu extends FormApplication {
     }
 	activateListeners(html) {
 		super.activateListeners(html);
+		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
 			await game.settings.set(MODULE_NAME, "sheetSettings", {
@@ -162,23 +162,26 @@ class SheetSubmenu extends FormApplication {
 				remove_resources: html[0].querySelector(".zhell-remove-resources").checked,
 				remove_alignment: html[0].querySelector(".zhell-remove-alignment").checked,
 				disable_initiative_button: html[0].querySelector(".zhell-disable-initiative-button").checked,
-				create_forage_counter: html[0].querySelector(".zhell-create-forage-counter").checked
+				create_forage_counter: html[0].querySelector(".zhell-create-forage-counter").checked,
+				pretty_trait_selector: html[0].querySelector(".zhell-pretty-trait-selector").checked,
+				collapsible_headers: html[0].querySelector(".zhell-collapsible-headers").checked
 			});
-			window.location.reload();
+			dialog.close();
 		});
 	}
 	getData() {
-		let source = game.settings.get(MODULE_NAME, "sheetSettings");
-		if (foundry.utils.isObjectEmpty(source)) {
-			source = {
-				rename_rest_labels: true,
-				remove_resources: true,
-				remove_alignment: true,
-				disable_initiative_button: true,
-				create_forage_counter: true
-			}
+		const source = game.settings.get(MODULE_NAME, "sheetSettings");
+		const defaults = {
+			rename_rest_labels: true,
+			remove_resources: true,
+			remove_alignment: true,
+			disable_initiative_button: true,
+			create_forage_counter: true,
+			pretty_trait_selector: true,
+			collapsible_headers: true
 		}
-		return source;
+		
+		return foundry.utils.mergeObject(defaults, source);
 	}
 }
 
@@ -213,29 +216,33 @@ class ColorPickerSubmenu extends FormApplication {
 				color_not_equipped: html[0].querySelector(".zhell-color-not-equipped").value,
 				color_prepared: html[0].querySelector(".zhell-color-prepared").value,
 				color_not_prepared: html[0].querySelector(".zhell-color-not-prepared").value,
-				color_always_prepared: html[0].querySelector(".zhell-color-always-prepared").value
+				color_always_prepared: html[0].querySelector(".zhell-color-always-prepared").value,
+				color_proficient: html[0].querySelector(".zhell-color-proficient").value,
+				color_half_proficient: html[0].querySelector(".zhell-color-half-proficient").value,
+				color_twice_proficient: html[0].querySelector(".zhell-color-twice-proficient").value
 			});
-			ZHELL.refreshColors();
+			ZHELL_SHEET.refreshColors();
 			dialog.close();
 		});
 	}
 	getData() {
-		let source = game.settings.get(MODULE_NAME, "colorSettings");
-		if (foundry.utils.isObjectEmpty(source)) {
-			source = {
-				limited_use_dots: false,
-				spell_slot_dots: false,
-				color_full: "#ff2e2e",
-				color_attuned: "#21c050",
-				color_not_attuned: "#c2c2c2",
-				color_equipped: "#6dff38",
-				color_not_equipped: "#c2c2c2",
-				color_prepared: "#0000ff",
-				color_not_prepared: "#c2c2c2",
-				color_always_prepared: "#ff0004"
-			}
+		const source = game.settings.get(MODULE_NAME, "colorSettings");
+		const defaults = {
+			limited_use_dots: false,
+			spell_slot_dots: false,
+			color_full: "#ff2e2e",
+			color_attuned: "#21c050",
+			color_not_attuned: "#c2c2c2",
+			color_equipped: "#6dff38",
+			color_not_equipped: "#c2c2c2",
+			color_prepared: "#0000ff",
+			color_not_prepared: "#c2c2c2",
+			color_always_prepared: "#ff0004",
+			color_proficient: "#228b22",
+			color_half_proficient: "#696969",
+			color_twice_proficient: "#ff6347"
 		}
-		return source;
+		return foundry.utils.mergeObject(defaults, source);
 	}
 }
 
@@ -267,22 +274,20 @@ class RarityColorsSubmenu extends FormApplication {
 				legendary: html[0].querySelector(".zhell-color-legendary").value,
 				artifact: html[0].querySelector(".zhell-color-artifact").value
 			});
-			ZHELL.refreshColors();
+			ZHELL_SHEET.refreshColors();
 			dialog.close();
 		});
 	}
 	getData() {
-		let source = game.settings.get(MODULE_NAME, "rarityColorSettings");
-		if(foundry.utils.isObjectEmpty(source)){
-			source = {
-				uncommon: "#008000",
-				rare: "#0000ff",
-				very_rare: "#800080",
-				legendary: "#ffa500",
-				artifact: "#d2691e"
-			}
+		const source = game.settings.get(MODULE_NAME, "rarityColorSettings");
+		const defaults = {
+			uncommon: "#008000",
+			rare: "#0000ff",
+			very_rare: "#800080",
+			legendary: "#ffa500",
+			artifact: "#d2691e"
 		}
-		return source;
+		return foundry.utils.mergeObject(defaults, source);
 	}
 }
 
@@ -295,10 +300,12 @@ const registerSettingsMenus = function () {
 		default: {
 			replace_status_effects: true,
 			replace_languages: true,
+			rename_currency_labels: true,
 			replace_tools: true,
 			replace_weapons: true,
 			replace_consumable_types: true
-		}
+		},
+		onChange: () => window.location.reload()
 	});
 	game.settings.registerMenu(MODULE_NAME, "replacementSettings", {
 		label: "Replacement Settings",
@@ -317,7 +324,8 @@ const registerSettingsMenus = function () {
 			add_equipment_types: true,
 			add_piety: true,
 			add_divine: true
-		}
+		},
+		onChange: () => window.location.reload()
 	});
 	game.settings.registerMenu(MODULE_NAME, "additionSettings", {
 		label: "Addition Settings",
@@ -336,7 +344,9 @@ const registerSettingsMenus = function () {
 			remove_resources: true,
 			remove_alignment: true,
 			disable_initiative_button: true,
-			create_forage_counter: true
+			create_forage_counter: true,
+			pretty_trait_selector: true,
+			collapsible_headers: true
 		}
 	});
 	game.settings.registerMenu(MODULE_NAME, "sheetSettings", {
@@ -361,7 +371,10 @@ const registerSettingsMenus = function () {
 			color_not_equipped: "#c2c2c2",
 			color_prepared: "#0000ff",
 			color_not_prepared: "#c2c2c2",
-			color_always_prepared: "#ff0004"
+			color_always_prepared: "#ff0004",
+			color_proficient: "#228b22",
+			color_half_proficient: "#696969",
+			color_twice_proficient: "#ff6347"
 		}
 	});
 	game.settings.registerMenu(MODULE_NAME, "colorSettings", {

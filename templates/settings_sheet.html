@@ -58,6 +58,30 @@
         <p class="notes">Create a counter on the core sheet to track the quantity of foraged materials.</p>
     </div>
     <div><hr></div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name" for="zhell-pretty-trait-selector">Reformat Trait Selectors</label>
+        <div class="form-fields">
+            {{#if create_forage_counter}}
+            <input class="zhell-custom-stuff zhell-pretty-trait-selector" id="zhell-pretty-trait-selector" type="checkbox" checked>
+            {{else}}
+            <input class="zhell-custom-stuff zhell-pretty-trait-selector" id="zhell-pretty-trait-selector" type="checkbox">
+            {{/if}}
+        </div>
+        <p class="notes">Make the language, resistances, and proficiency selectors less of an eye-sore.</p>
+    </div>
+    <div><hr></div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name" for="zhell-collapsible-headers">Collapsible Headers</label>
+        <div class="form-fields">
+            {{#if create_forage_counter}}
+            <input class="zhell-custom-stuff zhell-collapsible-headers" id="zhell-collapsible-headers" type="checkbox" checked>
+            {{else}}
+            <input class="zhell-custom-stuff zhell-collapsible-headers" id="zhell-collapsible-headers" type="checkbox">
+            {{/if}}
+        </div>
+        <p class="notes">Makes the headers on the sheet collapsible.</p>
+    </div>
+    <div><hr></div>
 </form>
 <header class="zhell-custom-stuff zhell-submenu-header">
     <button type="submit" name="submit" class="zhell-custom-stuff zhell-settings-save">

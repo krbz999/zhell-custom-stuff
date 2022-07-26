@@ -22,6 +22,17 @@
         </div>
         <p class="notes">A total replace of all default languages, but using same keys if available.</p>
     </div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name" for="zhell-rename-currency-labels">Rename Currency Labels</label>
+        <div class="form-fields">
+            {{#if rename_currency_labels}}
+            <input class="zhell-custom-stuff zhell-rename-currency-labels" id="zhell-rename-currency-labels" type="checkbox" checked>
+            {{else}}
+            <input class="zhell-custom-stuff zhell-rename-currency-labels" id="zhell-rename-currency-labels" type="checkbox">
+            {{/if}}
+        </div>
+        <p class="notes">Rename the labels on currency to short abbreviations.</p>
+    </div>
     <div><hr></div>
     <div class="form-group">
         <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-tools">Replace Tools</label>

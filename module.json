@@ -3,8 +3,7 @@
 	"id": "zhell-custom-stuff",
 	"title": "Zhell's Custom Stuff",
 	"description": "Personal module for replacing or adding to many things. Modular (see settings).",
-	"system": ["dnd5e"],
-	"version": "5.19",
+	"version": "5.30",
 	"authors": [{
 		"name": "Zhell",
 		"url": "https://github.com/krbz999",

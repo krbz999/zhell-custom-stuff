@@ -180,3 +180,8 @@ export class EffectsPanelApp extends Application {
 	
 }
 
+export class ZHELL_EFFECTS_PANEL {
+	static createEffectsPanel = () => {
+		this.effectsPanel = new EffectsPanelApp();
+	}
+}

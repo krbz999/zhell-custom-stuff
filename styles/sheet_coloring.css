@@ -1,3 +1,4 @@
+/* Default colors. */
 body :root {
     --full_color: #b33737;
     --attuned_color: #7a7971;
@@ -7,9 +8,13 @@ body :root {
 	--always_prepared_color: #7F7F7F;
 	--equipped_color: #7a7971;
 	--not_equipped_color: #44191A;
+    --color_proficient: "#228b22";
+	--color_half_proficient: "#696969";
+	--color_twice_proficient: "#ff6347";
     color:rgb(0, 0, 0)
 }
 
+/* Style of the dots. */
 .dnd5e .items-list .dot {
     height: 15px;
     width: 15px;
@@ -18,63 +23,107 @@ body :root {
     background-color: var(--full_color);
     border-radius: 50%;
     display: inline-block;
+    cursor: pointer;
 }
 
+/* Style of the expended dots. */
 .dnd5e .items-list .dot.empty {
-    height: 15px;
-    width: 15px;
-    max-height: 15px;
-    max-width: 15px;
     background-color: rgb(169, 162, 162);
-    border-radius: 50%;
-    display: inline-block;
 }
 
+/* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name i.attuned {
     color: var(--attuned_color) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
-
 .dnd5e.sheet.actor .inventory-list .item .item-name i.not-attuned {
     color: var(--not_attuned_color)!important;
     filter: drop-shadow(0px 0px 1px black);
 }
-
-.dnd5e.sheet.actor .inventory-list .item .item-name i:hover {
+.dnd5e.sheet.actor .inventory-list .item .item-name i:hover:not(.original-class) {
     text-shadow: 0 0 8px var(--color-shadow-primary)!important;
 	padding-top: 8px;
 	padding-bottom: 8px;
 }
 
+/* Equipment State icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
     color: var(--equipped_color)!important;
     filter: drop-shadow(0px 0px 1px black);
 }
-
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle:not(.active) i {
     color: var(--not_equipped_color)!important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
+/* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
     color: var(--prepared_color) !important;
     filter: drop-shadow(0px 0px 1px black);	
 }
-
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
     color: var(--always_prepared_color) !important;
     filter: drop-shadow(0px 0px 1px black);	
 }
-
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
     color: var(--not_prepared_color)!important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
-.dnd5e.sheet.actor .item-controls .item-delete {
+/* Delete icon for items and effects. */
+.dnd5e.sheet.actor .item-controls .item-delete, .dnd5e.sheet.actor .item-controls .effect-control[data-action=delete] {
 	color: darkred;
 }
 
-.dnd5e.sheet.actor .item-controls .effect-control[data-action=delete] {
-	color: darkred;
+/* additional coloring: */
+
+/* traits, such as resistances, and tools. */
+.dnd5e .traits-list .tag {
+    background-color: burlywood;
+}
+.dnd5e.sheet.actor .traits :is(.trait-selector i.fas, .proficiency-selector i.fas, .config-button .fa-cog) {
+    color: blue;
+}
+
+/* headers for embedded documents */
+.dnd5e .items-list .items-header {
+    color: black;
+    border: 2px groove lightslategray;
+}
+
+/* hp colors: */
+/* if below 33% */
+.dnd5e.sheet.actor input[name="data.attributes.hp.value"].near-death {
+    color: red;
+}
+/* if below 66% and above 33% */
+.dnd5e.sheet.actor input[name="data.attributes.hp.value"].bloodied {
+    color: peru;
+}
+
+/* make appearance, personality, etc slightly wider. */
+.dnd5e.sheet.actor.character .characteristics {
+    flex: 0 0 250px;
+}
+.dnd5e.sheet.actor.character .biography {
+    flex: 0 0 calc(100% - 250px);
+}
+
+/* proficiencies */
+/* half proficient */
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust {
+    color: var(--color_half_proficient) !important;
+}
+/* proficient */
+.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check {
+    color: var(--color_proficient) !important;
+}
+/* twice proficient */
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
+    color: var(--color_twice_proficient) !important;
+}
+
+/* bold ability keys for skills */
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-ability {
+    font-weight: bold;
 }

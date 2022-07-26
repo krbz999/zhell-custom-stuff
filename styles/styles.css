@@ -1,3 +1,4 @@
+/* The materia medica counter on the character sheets. */
 .dnd5e.sheet.actor .counters .counter input[type="number"].material {
     max-width: 40px;
 	width: fit-content;
@@ -5,7 +6,7 @@
 	padding-right: 5px;
 }
 
-
+/* Token HUD status effects. */
 #token-hud .status-effects .effect-control {
     width: 36px;
     height: 36px;
@@ -14,7 +15,6 @@
     border: none;
     opacity: 0.15;
 }
-
 #token-hud .status-effects {
     visibility: hidden;
     position: absolute;
@@ -32,8 +32,7 @@
     pointer-events: all;
 }
 
-
-
+/* Setting Submenus. */
 label.zhell-custom-stuff.zhell-label-name {
     font-weight: bold;
 }
@@ -46,4 +45,40 @@ label.zhell-custom-stuff.zhell-label-name {
     display: flex;
     align-content: flex-start;
     justify-content: space-around;
+}
+
+
+/* traits list into columns...? */
+.trait-list li label.checkbox {
+    white-space: nowrap;
+}
+.trait-list.flexrow.zhell-traits li {
+    flex-basis: 50%;
+    width: 50%;
+    min-width: 50%;
+}
+.trait-list.flexcol.zhell-prof ol.trait-list {
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+.trait-list.flexcol.zhell-profs {
+    flex-direction: row;
+    width:max-content;
+}
+.trait-list.flexcol.zhell-profs li ol.trait-list {
+    width: max-content;
+}
+
+
+/* collapsible items and effect headers */
+.dnd5e .items-list .items-header h3:hover {
+    text-shadow: 0 0 8px var(--color-shadow-primary)!important;
+    cursor: pointer;
+}
+.dnd5e .item-control.item-create.no-create, .dnd5e .effect-control.no-create {
+    display: none;
+}
+.dnd5e .items-header.flexrow.no-create {
+    height: auto;
+    color: darkgray;
 }
