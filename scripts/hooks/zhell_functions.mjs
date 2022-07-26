@@ -215,11 +215,8 @@ export class ZHELL_UTILS {
 	
 	// execute an item's Item Macro if it has one, otherwise roll normally.
 	static rollItemMacro = async (item, options = {}) => {
-		if(item.hasMacro()){
-			return await item.executeMacro(options);
-		}else{
-			return await item.roll(options);
-		}
+		if(item.hasMacro()) return item.executeMacro(options);
+		else return item.roll(options);
 	}
 
 	static setMateriaMedicaForagingDC = async (number) => {
@@ -229,7 +226,13 @@ export class ZHELL_UTILS {
 	
 	static teleportTokens = async (size = 4, {fade = true, fadeDuration = 500, clearTargets = true} = {}) => {
 		// pick area of tokens.
-		const origin = await warpgate.crosshairs.show({size, drawIcon: false, fillAlpha: 0.1, lockSize: false, label: "Pick Up Tokens"});
+		const origin = await warpgate.crosshairs.show({
+			size,
+			drawIcon: false,
+			fillAlpha: 0.1,
+			lockSize: false,
+			label: "Pick Up Tokens"
+		});
 		const {x: ox, y: oy, cancelled: oc} = origin;
 		if(oc) return;
 		
@@ -238,7 +241,13 @@ export class ZHELL_UTILS {
 		game.user.updateTokenTargets(tokens.map(i => i.id));
 		
 		// pick new area.
-		const target = await warpgate.crosshairs.show({size: origin.size, drawIcon: false, fillAlpha: 0.1, lockSize: true, label: "Select Target"});
+		const target = await warpgate.crosshairs.show({
+			size: origin.size,
+			drawIcon: false,
+			fillAlpha: 0.1,
+			lockSize: true,
+			label: "Select Target"
+		});
 		const {x: nx, y: ny, cancelled: nc} = target;
 		if(nc) return game.user.updateTokenTargets(); // clear targets.
 		
@@ -246,23 +255,22 @@ export class ZHELL_UTILS {
 		
 		if(fade){
 			const sequence = new Sequence();
-			for(let token of tokens){
-				sequence.animation().on(token).fadeOut(fadeDuration);
-			}
+			for(let token of tokens) sequence.animation().on(token).fadeOut(fadeDuration);
 			await sequence.play();
 			await warpgate.wait(fadeDuration);
 		}
 		
 		// teleport!
-		const updates = tokens.map(i => ({_id: i.id, x: i.data.x - ox + nx, y: i.data.y - oy + ny}));
+		const updates = tokens.map(i => {
+			const {_id, x, y} = i.document.data;
+			return {_id, x: x - ox + nx, y: y - oy + ny};
+		});
 		const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, {animate: false});
 		
 		if(fade){
 			await warpgate.wait(fadeDuration);
 			const sequence = new Sequence();
-			for(let token of tokens){
-				sequence.animation().on(token).fadeIn(fadeDuration);
-			}
+			for(let token of tokens) sequence.animation().on(token).fadeIn(fadeDuration);
 			await sequence.play();
 		}
 		
@@ -271,9 +279,15 @@ export class ZHELL_UTILS {
 	
 	static targetTokens = async (size = 4) => {
 		// pick area of tokens.
-		const origin = await warpgate.crosshairs.show({size, drawIcon: false, fillAlpha: 0.1, lockSize: false, rememberControlled: true, label: "Pick Targets"});
-		const {x: ox, y: oy, cancelled: oc} = origin;
-		if(oc) return;
+		const origin = await warpgate.crosshairs.show({
+			size,
+			drawIcon: false,
+			fillAlpha: 0.1,
+			lockSize: false,
+			rememberControlled: true,
+			label: "Pick Targets"
+		});
+		if(origin.cancelled) return;
 		
 		// get the tokens.
 		const tokens = warpgate.crosshairs.collect(origin);
@@ -529,11 +543,8 @@ export class ZHELL_UTILS {
 
 		// if actor has exhaustion, update.
 		if(!!exhaustion){
-			await exhaustion.update({
-				label: EXHAUSTION_EFFECTS[num-1].label,
-				changes: EXHAUSTION_EFFECTS[num-1].changes,
-				flags: EXHAUSTION_EFFECTS[num-1].flags
-			});
+			const {label, changes, flags} = EXHAUSTION_EFFECTS[num-1];
+			await exhaustion.update({label, changes, flags});
 		}
 
 		// if actor not already exhausted, find and apply.

@@ -1,13 +1,12 @@
-
+/*
+    1000: Bless
+    1100: Bane
+    1200: Haste
+    1300: Slow
+    1400: Fly
+    1500: Invisible
+*/
 export const SPELL_EFFECTS = [
-    /*
-        1000: Bless
-        1100: Bane
-        1200: Haste
-        1300: Slow
-        1400: Fly
-        1500: Invisible
-    */
     {
         id: "bane", label: "Bane", sort: 1100,
         icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/bane.webp",
@@ -88,17 +87,16 @@ export const SPELL_EFFECTS = [
         ]
     }
 ];
-
+/*
+    100: Dead
+    200: Charmed, Frightened (250), Poisoned (280)
+    300: Blinded, Deafened (330), Muted (360)
+    400: Prone, Grappled (430), Restrained (450)
+    500: Incapacitated, Stunned (540), Unconscious (560)
+    600: Paralyzed, Petrified (650)
+    700: Invisible, Flying (750)
+*/
 export const STATUS_EFFECTS = [
-    /*
-        100: Dead
-        200: Charmed, Frightened (250), Poisoned (280)
-        300: Blinded, Deafened (330), Muted (360)
-        400: Prone, Grappled (430), Restrained (450)
-        500: Incapacitated, Stunned (540), Unconscious (560)
-        600: Paralyzed, Petrified (650)
-        700: Invisible, Flying (750)
-    */
     {
         id: "blind", label: "Blinded", sort: 300,
         icon: "https://assets.forge-vtt.com/6031826c83ef59f0ff7fedfa/images/conditions/blinded.webp",

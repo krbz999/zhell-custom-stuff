@@ -24,7 +24,8 @@ export class ZHELL_REPLACEMENTS {
 		for(let del of deletedConsumableTypes) delete oldObject[del];
 
 		// merge remaining with new types to add.
-		const newArray = Object.entries(addedConsumableTypes).concat(Object.entries(oldObject))
+		const newArray = Object.entries(addedConsumableTypes)
+			.concat(Object.entries(oldObject))
 			.sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 		
 		CONFIG.DND5E.consumableTypes = Object.fromEntries(newArray);

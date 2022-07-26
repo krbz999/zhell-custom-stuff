@@ -136,29 +136,22 @@ export class ZHELL_SHEET {
 					const li = $(ev.currentTarget).parents(".item");
 					const item = actor.items.get(li.data("itemId"));
 
-					// if it is not an item, find spell level.
-					let spellLevel;
+					// if it is not an item, find spell level and update spell slots.
 					if(!item){
-						spellLevel = ev.currentTarget.parentElement.outerHTML.match(/data-level="(.*?)"/)[1];
-					}
-
-					// update spell slots.
-					if(!item && spellLevel){
-						const path = `data.spells.${spellLevel}.value`;
-						if(ev.currentTarget.classList.contains("empty")){
-							await actor.update({[path]: actor.data.data.spells[spellLevel].value + 1});
-						}
-						else{
-							await actor.update({[path]: actor.data.data.spells[spellLevel].value - 1});
+						const spellLevel = ev.currentTarget.parentElement.outerHTML.match(/data-level="(.*?)"/)[1];
+						if(!!spellLevel){
+							const path = `data.spells.${spellLevel}.value`;
+							const {value} = actor.data.data.spells[spellLevel]
+							const diff = ev.currentTarget.classList.contains("empty") ? 1 : -1;
+							return actor.update({[path]: value + diff});
 						}
 					}
 
 					// it's an item, update uses.
-					else if(ev.currentTarget.classList.contains("empty")){
-						await item.update({"data.uses.value": item.data.data.uses.value + 1});
-					}
 					else{
-						await item.update({"data.uses.value": item.data.data.uses.value - 1});
+						const {value} = item.data.data.uses;
+						const diff = ev.currentTarget.classList.contains("empty") ? 1 : -1;
+						return item.update({"data.uses.value": value + diff});
 					}
 				});
 			}
