@@ -68,6 +68,7 @@ class ReplacementsSubmenu extends FormApplication {
 	activateListeners(html) {
 		super.activateListeners(html);
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+		const dialog = this;
 		saveButton.addEventListener("click", async function(){
 			await game.settings.set(MODULE_NAME, "replacementSettings", {
 				replace_status_effects: html[0].querySelector(".zhell-replace-status-effects").checked,
@@ -77,6 +78,7 @@ class ReplacementsSubmenu extends FormApplication {
 				replace_weapons: html[0].querySelector(".zhell-replace-weapons").checked,
 				replace_consumable_types: html[0].querySelector(".zhell-replace-consumable-types").checked
 			});
+			dialog.close();
 		});
 	}
 	getData() {
