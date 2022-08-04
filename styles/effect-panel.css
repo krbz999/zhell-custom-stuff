@@ -57,11 +57,7 @@
 	margin-bottom: 4px;
 }
 .effect-panel .effect-item:hover .effect-info {
-	display: block;
-}
-.effect-panel .effect-item .effect-info {
 	background-color: rgba(0, 0, 0, 0.75);
-	display: none;
 	border-radius: 5px;
 	height: fit-content;
 	margin-right: 0.5em;
@@ -70,6 +66,18 @@
 	padding-left: 1em;
 	padding-bottom: 0.5em;
 	padding-top: 0em;
+
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0.2s, opacity 0.25s linear;
+	max-width: 350px;
+	min-width: 350px;
+}
+.effect-panel .effect-item .effect-info {
+	visibility: hidden;
+	opacity: 0;
+	max-width: 0px;
+	min-width: 0px;
 }
 
 /* The name of the effect */
@@ -89,8 +97,6 @@
 	font-size: 16px;
 	margin: 0;
 	padding: 0;
-	max-width: 350px;
-	min-width: 350px;
 	margin-bottom: 10px;
 }
 .effect-panel .effect-item .effect-info .tags {
@@ -136,4 +142,9 @@
 }
 .effect-panel .effect-item .icon .badge.expired {
 	color: orange;
+}
+
+/* set color of inline roll text */
+.effect-panel .effect-item .effect-info .effect-info-details .inline-roll.roll {
+	color: black;
 }

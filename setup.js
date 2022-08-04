@@ -1,13 +1,12 @@
 import { MODULE_TITLE, MODULE_TITLE_SHORT } from "./scripts/const.mjs";
 import { registerSettings } from "./scripts/settings.mjs";
 import { api } from "./scripts/api.mjs";
-import { HandlebarHelpers } from "./scripts/effect-panel-classes.mjs";
-import { ZHELL_SOCKETS } from "./scripts/hooks/sockets.mjs";
-import { ZHELL_ADDITIONS } from "./scripts/hooks/game_additions.mjs";
-import { ZHELL_REPLACEMENTS } from "./scripts/hooks/game_replacements.mjs";
-import { ZHELL_EFFECTS_PANEL } from "./scripts/effect-panel-classes.mjs";
-import { ZHELL_SHEET } from "./scripts/hooks/sheet_edits.mjs";
-import { ZHELL_COMBAT } from "./scripts/hooks/combat_helpers.mjs";
+import { HandlebarHelpers, ZHELL_EFFECTS_PANEL } from "./scripts/modules/effect-panel-classes.mjs";
+import { ZHELL_SOCKETS } from "./scripts/modules/sockets.mjs";
+import { ZHELL_ADDITIONS } from "./scripts/modules/game_additions.mjs";
+import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
+import { ZHELL_SHEET } from "./scripts/modules/sheet_edits.mjs";
+import { ZHELL_COMBAT } from "./scripts/modules/combat_helpers.mjs";
 
 Hooks.once("init", () => {
     console.log(`${MODULE_TITLE_SHORT} | Initializing ${MODULE_TITLE}`);
@@ -73,12 +72,16 @@ Hooks.once("ready", () => {
 	new HandlebarHelpers().registerHelpers(); // init helper setup.
 	ZHELL_EFFECTS_PANEL.effectsPanel.render(true); // init render.
 	Hooks.on("collapseSidebar", (_, bool) => ZHELL_EFFECTS_PANEL.effectsPanel.handleExpand(bool));
-	for(let hook of ["updateWorldTime", "createActiveEffect", "updateActiveEffect", "deleteActiveEffect", "controlToken", "preUpdateToken"]){
+	for(let hook of [
+		"updateWorldTime", "createActiveEffect", "updateActiveEffect",
+		"deleteActiveEffect", "controlToken", "preUpdateToken"
+	]){
 		Hooks.on(hook, () => ZHELL_EFFECTS_PANEL.effectsPanel.refresh());
 	}
 	
 	// set up sockets.
 	ZHELL_SOCKETS.loadTextureSocketOn(); // loadTextureForAll
+	ZHELL_SOCKETS.routeTilesThroughGM(); // let players create tiles.
 	
 	// add 'view scene' to scene config headers.
 	if(game.user.isGM){
@@ -98,6 +101,3 @@ Hooks.once("canvasReady", () => {
 	// create initial effects panel in the class. CanvasReady happens before Ready.
 	ZHELL_EFFECTS_PANEL.createEffectsPanel();
 });
-
-
-

@@ -1,5 +1,6 @@
-import { ZHELL_CATALOG, ZHELL_REST, ZHELL_UTILS } from "./hooks/zhell_functions.mjs";
+import { ZHELL_CATALOG, ZHELL_REST, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
 import { EXHAUSTION_EFFECTS } from "../sources/conditions.js";
+import { ZhellDialog } from "./modules/zhell-dialog.mjs";
 
 export class api {
 	
@@ -29,7 +30,10 @@ export class api {
 				roman: ZHELL_UTILS.romanize,
 				rollItemMacro: ZHELL_UTILS.rollItemMacro,
 				whisperPlayers: ZHELL_UTILS.whisper_players,
-				loadTextureForAll: ZHELL_UTILS.loadTextureForAll
+				loadTextureForAll: ZHELL_UTILS.loadTextureForAll,
+				createTiles: ZHELL_UTILS.createTiles,
+				titleCard: ZHELL_UTILS.title_card,
+				dialog: ZhellDialog
 			},
 			exhaustion: {
 				increase: ZHELL_UTILS.increase_exhaustion,

@@ -41,7 +41,7 @@ label.zhell-custom-stuff.zhell-label-name {
     background-color: rgb(190, 189, 178);
     border: 2px groove var(--color-border-light-highlight);
 }
-.zhell-custom-stuff.zhell-submenu-header{
+.zhell-custom-stuff.zhell-submenu-header {
     display: flex;
     align-content: flex-start;
     justify-content: space-around;
@@ -69,16 +69,51 @@ label.zhell-custom-stuff.zhell-label-name {
     width: max-content;
 }
 
-
 /* collapsible items and effect headers */
-.dnd5e .items-list .items-header h3:hover {
+.dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover,
+.dnd5e.sheet.actor .characteristics label:hover {
     text-shadow: 0 0 8px var(--color-shadow-primary)!important;
     cursor: pointer;
 }
-.dnd5e .item-control.item-create.no-create, .dnd5e .effect-control.no-create {
-    display: none;
-}
-.dnd5e .items-header.flexrow.no-create {
+/* Make collapsed header gray text color and slighly slimmer. */
+.dnd5e.sheet.actor .items-header.flexrow.no-create {
     height: auto;
     color: darkgray;
+}
+/* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
+.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
+.dnd5e.sheet.actor .characteristics label.no-edit + textarea {
+    display: none;
+}
+
+/* whisper dialog */
+.form-fields {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+}
+.whisper-dialog-player-name.selected {
+	background-color: cornflowerblue;
+	font-weight: bold;
+}
+.whisper-dialog-player-name:hover {
+	text-shadow: 0 0 8px var(--color-shadow-primary) !important;
+}
+.whisper-dialog-player-name {
+    padding: 5px 0 5px 0;
+	border: 1px solid var(--color-border-dark-tertiary);
+	border-radius: 5px;
+	margin: 1px 1px 1px 1px;
+	text-align: center;
+	line-height: normal;
+}
+.whisper-dialog-textarea {
+	resize: none;
+}
+.form-fields.whisper-dialog {
+	display: grid;
+	grid-template-columns: 24% 24% 24% 24%;
+	justify-content: space-around;
 }

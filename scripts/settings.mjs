@@ -1,5 +1,5 @@
 import { MODULE_NAME } from "./const.mjs";
-import { ZHELL_SHEET } from "./hooks/sheet_edits.mjs";
+import { ZHELL_SHEET } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
 	_registerSettings();
@@ -407,5 +407,3 @@ const registerSettingsMenus = function () {
 	});
 	
 }
-
-

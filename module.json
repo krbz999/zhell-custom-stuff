@@ -3,7 +3,7 @@
 	"id": "zhell-custom-stuff",
 	"title": "Zhell's Custom Stuff",
 	"description": "Personal module for replacing or adding to many things. Modular (see settings).",
-	"version": "5.30",
+	"version": "6.0.0",
 	"authors": [{
 		"name": "Zhell",
 		"url": "https://github.com/krbz999",
@@ -16,117 +16,8 @@
 		"./styles/styles.css",
 		"./styles/sheet_coloring.css",
 		"./styles/raritycolors.css",
-		"./styles/effect-panel.css"
-	],
-	"packs": [
-		{
-			"label": "Catalog of Spells",
-			"type": "Item",
-			"name": "catalog-of-spells",
-			"path": "./packs/catalog-of-spells.db"
-		},
-		{
-			"label": "Catalog of Journals",
-			"type": "JournalEntry",
-			"name": "catalog-of-journals",
-			"path": "./packs/catalog-of-journals.db"
-		},
-		{
-			"label": "Catalog of Items",
-			"type": "Item",
-			"name": "catalog-of-items",
-			"path": "./packs/catalog-of-items.db"
-		},
-		{
-			"label": "Catalog of Features",
-			"type": "Item",
-			"name": "catalog-of-features",
-			"path": "./packs/catalog-of-features.db"
-		},
-		{
-			"label": "Catalog of Monster Features",
-			"type": "Item",
-			"name": "catalog-of-features-monster",
-			"path": "./packs/catalog-of-features-monster.db"
-		},
-		{
-			"label": "Catalog of Classes",
-			"type": "Item",
-			"name": "catalog-of-classes",
-			"path": "./packs/catalog-of-classes.db"
-		},
-		{
-			"label": "Catalog of Subclasses",
-			"type": "Item",
-			"name": "catalog-of-subclasses",
-			"path": "./packs/catalog-of-subclasses.db"
-		},
-		{
-			"label": "Catalog of Materia Medica",
-			"type": "Item",
-			"name": "catalog-of-materia-medica",
-			"path": "./packs/catalog-of-materia-medica.db"
-		},
-		{
-			"label": "Catalog of Backgrounds",
-			"type": "Item",
-			"name": "catalog-of-backgrounds",
-			"path": "./packs/catalog-of-backgrounds.db"
-		},
-		{
-			"label": "Catalog of Rolltables",
-			"type": "RollTable",
-			"name": "catalog-of-rolltables",
-			"path": "./packs/catalog-of-rolltables.db"
-		},
-		{
-			"label": "Catalog of Characters",
-			"type": "Actor",
-			"name": "catalog-of-characters",
-			"path": "./packs/catalog-of-characters.db"
-		},
-		{
-			"label": "Catalog of Monsters",
-			"type": "Actor",
-			"name": "catalog-of-monsters",
-			"path": "./packs/catalog-of-monsters.db"
-		},
-		{
-			"label": "Catalog of NPCs",
-			"type": "Actor",
-			"name": "catalog-of-npcs",
-			"path": "./packs/catalog-of-npcs.db"
-		},
-		{
-			"label": "Catalog of Spawns",
-			"type": "Actor",
-			"name": "catalog-of-spawns",
-			"path": "./packs/catalog-of-spawns.db"
-		},
-		{
-			"label": "Catalog of Macros",
-			"type": "Macro",
-			"name": "catalog-of-macros",
-			"path": "./packs/catalog-of-macros.db"
-		},
-		{
-			"label": "Catalog of Magic Items",
-			"type": "Item",
-			"name": "catalog-of-items-magic",
-			"path": "./packs/catalog-of-items-magic.db"
-		},
-		{
-			"label": "Catalog of Races",
-			"type": "Item",
-			"name": "catalog-of-races",
-			"path": "./packs/catalog-of-races.db"
-		},
-		{
-			"label": "Catalog of Scenes",
-			"type": "Scene",
-			"name": "catalog-of-scenes",
-			"path": "./packs/catalog-of-scenes.db"
-		}
+		"./styles/effect-panel.css",
+		"./styles/template-styles.css"
 	],
 	"esmodules": ["./setup.js"],
 	"languages": [{
