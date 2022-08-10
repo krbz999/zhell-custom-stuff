@@ -31,6 +31,14 @@
     border-radius: 4px;
     pointer-events: all;
 }
+/*#token-hud .status-effects {
+	grid-template-columns: 9% 24% 9% 24% 9% 24%;
+	width: 444px;
+}
+#token-hud .status-effects-label {
+    color: darkgray;
+    font-size: 22px;
+}*/
 
 /* Setting Submenus. */
 label.zhell-custom-stuff.zhell-label-name {
@@ -116,4 +124,11 @@ label.zhell-custom-stuff.zhell-label-name {
 	display: grid;
 	grid-template-columns: 24% 24% 24% 24%;
 	justify-content: space-around;
+}
+
+
+/* Pause Icon */
+#pause figcaption {
+    color: white;
+    text-shadow: 1px 1px 15px red;
 }

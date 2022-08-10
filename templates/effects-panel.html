@@ -2,26 +2,22 @@
     {{#each enabledEffects as |effect|}}
 		<div class="effect-item">
 			<div class="effect-info">
-				<h1>{{effect.label}}</h1>
+				<h1 class="effect-info-header">{{effect.label}}</h1>
 				<div class="effect-info-details">
 					{{#if effect.flags.convenientDescription}}
-						<h2>{{encodeMyString effect.flags.convenientDescription}}</h2>
-					{{else}}
-						<h2></h2>
+						{{encodeMyString effect.flags.convenientDescription}}
+						<hr>
 					{{/if}}
-					<hr>
-					<div class="tags">
-						<div class="tag tag_primary">
-							{{#if effect.isTemporary}}
-								temporary
-							{{else}}
-								passive
-							{{/if}}
-						</div>
-						<div class="tag tag_secondary">
-							{{remainingTimeLabel effect}}
-						</div>
+				</div>
+				<div class="tags">
+					<div class="tag tag_primary">
+						{{#if effect.isTemporary}}
+							temporary
+						{{else}}
+							passive
+						{{/if}}
 					</div>
+					<div class="tag tag_secondary">{{remainingTimeLabel effect}}</div>
 				</div>
 			</div>
 			<div class="icon" data-effect-id="{{effect._id}}" style="background-image: url({{effect.icon}})">
@@ -43,29 +39,23 @@
 	{{#each disabledEffects as |effect|}}
 		<div class="effect-item">
 			<div class="effect-info">
-				<h1>{{effect.label}}</h1>
+				<h1 class="effect-info-header">{{effect.label}}</h1>
 				<div class="effect-info-details">
 					{{#if effect.flags.convenientDescription}}
-						<h2>{{encodeMyString effect.flags.convenientDescription}}</h2>
-					{{else}}
-						<h2></h2>
+						{{encodeMyString effect.flags.convenientDescription}}
+						<hr>
 					{{/if}}
-					<hr>
-					<div class="tags">
-						<div class="tag tag_primary">
-							{{#if effect.isTemporary}}
-								temporary
-							{{else}}
-								passive
-							{{/if}}
-						</div>
-						<div class="tag tag_secondary">
-							{{remainingTimeLabel effect}}
-						</div>
-						<div class="tag tag_tertiary">
-							disabled
-						</div>
+				</div>
+				<div class="tags">
+					<div class="tag tag_primary">
+						{{#if effect.isTemporary}}
+							temporary
+						{{else}}
+							passive
+						{{/if}}
 					</div>
+					<div class="tag tag_secondary">{{remainingTimeLabel effect}}</div>
+					<div class="tag tag_tertiary">disabled</div>
 				</div>
 			</div>
 			<div class="disabled icon" data-effect-id="{{effect._id}}" style="background-image: url({{effect.icon}});">

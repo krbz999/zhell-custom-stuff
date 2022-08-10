@@ -181,4 +181,5 @@ export class ZHELL_REPLACEMENTS {
 		const statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a,b) => a.sort - b.sort);
 		CONFIG.statusEffects = statusEffects;
 	}
+
 }

@@ -101,3 +101,16 @@ Hooks.once("canvasReady", () => {
 	// create initial effects panel in the class. CanvasReady happens before Ready.
 	ZHELL_EFFECTS_PANEL.createEffectsPanel();
 });
+
+
+
+/*Hooks.on("renderTokenHUD", (HUD, html, token) => {
+	const effects = html[0].querySelectorAll("img.effect-control");
+	for(let effect of effects){
+		let label = document.createElement("label");
+		label.classList.add("effect-control-label");
+		label.innerText = effect.getAttribute("title");
+		effect.insertAdjacentElement("afterEnd", label);
+	}
+});*/
+

@@ -45,8 +45,7 @@ export class HandlebarHelpers {
 	
 	_registerEncodingDescription(){
 		Handlebars.registerHelper("encodeMyString", function(inputData){
-			const description = inputData.startsWith("<") ? inputData : `<p>${inputData}</p>`;
-			return new Handlebars.SafeString(description);
+			return new Handlebars.SafeString(inputData);
 		});
 	}
 }
@@ -74,10 +73,10 @@ export class EffectsPanelController {
 		if (!actor) return [];
 		
 		return actor.effects.map((effect) => {
-			const effectData = effect.clone({}, {keepId: true}).data;
+			const effectData = effect.clone({}, {keepId: true});
 			effectData.remainingSeconds = this._getSecondsRemaining(effectData.duration);
 			effectData.turns = effectData.duration.turns;
-			effectData.isTemporary = effect.isTemporary;
+			//effectData.isTemporary = effect.isTemporary;
 			effectData.isExpired = effectData.remainingSeconds <= 0;
 			return effectData;
 		}).sort((a, b) => {
@@ -85,7 +84,7 @@ export class EffectsPanelController {
 			if(b.isTemporary) return 1;
 			return 0;
 		}).filter((effectData) => {
-			return !!effectData.document.isTemporary;
+			return !!effectData.isTemporary;
 		});
 	}
 	
@@ -98,7 +97,7 @@ export class EffectsPanelController {
 		
 		await Dialog.confirm({
 			title: "Delete Effect",
-			content: `<h4>Delete ${effect.data.label}?</h4>`,
+			content: `<h4>Delete ${effect.label}?</h4>`,
 			yes: async () => {
 				await effect.delete();
 				this._viewMvc.refresh();
@@ -112,7 +111,7 @@ export class EffectsPanelController {
 		const actor = this._actor;
 		const effect = actor?.effects.get($target.attr("data-effect-id") ?? "");
 		if (!effect) return;
-		effect.update({disabled: !effect.data.disabled});
+		effect.update({disabled: !effect.disabled});
 	}
 	
 	get _actor(){
@@ -153,11 +152,11 @@ export class EffectsPanelApp extends Application {
 	async getData(options){
 		for(let eff of this._controller.data.enabledEffects){
 			const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-			if(!!desc) await eff.document.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc)});
+			if(!!desc) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
 		}
 		for(let eff of this._controller.data.disabledEffects){
 			const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-			if(!!desc) await eff.document.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc)});
+			if(!!desc) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
 		}
 		return this._controller.data;
 	}

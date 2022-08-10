@@ -37,12 +37,12 @@ export class ZHELL_CATALOG {
 		if(!spawnDoc) return ui.notifications.warn("Monster not found.");
 		
 		// save whether the actor is wildcard img and if the token img is webm.
-		const isWildcard = !!spawnDoc.data.token.randomImg;
-		const isWebm = !!spawnDoc.data.token.img.endsWith(".webm");
+		const isWildcard = !!spawnDoc.token.randomImg;
+		const isWebm = !!spawnDoc.token.texture.src.endsWith(".webm");
 		
 		// create stuff.
 		const updatesActor = spawnDoc.toObject();
-		const updatesToken = spawnDoc.data.token.toObject();
+		const updatesToken = spawnDoc.token.toObject();
 		
 		// edits and merges to updates:
 		delete updatesToken.actorId; // as to not overwrite the source actorId of dummy.
@@ -73,17 +73,17 @@ export class ZHELL_CATALOG {
 		// not a necessary function if we just spawn 1 token, but if there are duplicates, and they are wildcards, oh no.
 		const callbackPost = async (loc, tokenDoc, updates) => {
 			// if a specific image was provided in update, use that.
-			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.img");
+			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.texture.src");
 			if(!!provided){
 				await loadTexture(provided);
-				updates.token.img = provided;
+				updates.token.texture.src = provided;
 			}
 			// else get the token image(s) and load it.
 			else{
 				const tokenImages = await spawnDoc.getTokenImages();
-				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
-				await loadTexture(img);
-				updates.token.img = img;
+				const src = tokenImages[Math.floor(Math.random() * tokenImages.length)];
+				await loadTexture(src);
+				updates.token.texture.src = src;
 			}
 		}
 		
@@ -105,7 +105,7 @@ export class ZHELL_CATALOG {
 		const mutateDoc = await this.fromCatalog(actorName, catalog, false);
 		if(!mutateDoc) return ui.notifications.warn("Monster not found.");
 		const updatesActor = mutateDoc.toObject();
-		const updatesToken = mutateDoc.data.token;
+		const updatesToken = mutateDoc.token;
 		
 		// handle items:
 		const updatesItems = {};
@@ -116,7 +116,7 @@ export class ZHELL_CATALOG {
 		const updatesEffects = {};
 		for(let effect of updatesActor.effects) updatesEffects[effect.label] = effect;
 		for(let effect of tokenDoc.actor.effects){
-			if(!effect.isTemporary) updatesEffects[effect.data.label] = warpgate.CONST.DELETE;
+			if(!effect.isTemporary) updatesEffects[effect.label] = warpgate.CONST.DELETE;
 		}
 		delete updatesActor.effects;
 		delete updatesActor.items;
@@ -124,24 +124,24 @@ export class ZHELL_CATALOG {
 		// load images so we don't get weird errors.
 		const callbackPre = async (loc, updates) => {
 			// if a specific image was provided in update, use that.
-			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.img");
+			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.texture.src");
 			if(!!provided){
 				await loadTexture(provided);
-				updates.token.img = provided;
+				updates.token.texture.src = provided;
 			}
 			// else get the token image(s) and load it.
 			else{
 				const tokenImages = await mutateDoc.getTokenImages();
-				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
-				await loadTexture(img);
-				updates.token.img = img;
+				const src = tokenImages[Math.floor(Math.random() * tokenImages.length)];
+				await loadTexture(src);
+				updates.token.texture.src = src;
 			}
 		}
 		const callbackPost = async () => {}
 		
 		// data to keep:
-		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc.data;
-		const {type} = tokenDoc.actor.data;
+		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc;
+		const {type} = tokenDoc.actor;
 		
 		// merge with passed objects:
 		const mergeActor = foundry.utils.mergeObject({...updatesActor, type}, (warpgateObjects.updates?.actor ?? {}));
@@ -165,7 +165,7 @@ export class ZHELL_CATALOG {
 		// fix for MRE:
 		if(game.modules.get("mre-dnd5e")?.active){
 			if(!object.flags["mre-dnd5e"]?.formulaGroups){
-				const number_of_groups = object.data.damage?.parts?.length ?? 0;
+				const number_of_groups = object.system.damage?.parts?.length ?? 0;
 				if(number_of_groups > 0){
 					object.flags["mre-dnd5e"] = {formulaGroups: []};
 					
@@ -197,10 +197,10 @@ export class ZHELL_CATALOG {
 	
 	static magicItemCast = async (spellName, level, caster, rollOptions = {}) => {
 		return await this.castFromCatalog(spellName, "spells", caster, {
-			"data.preparation.mode": "atwill",
-			"data.level": level,
-			"data.components.material": false,
-			"data.materials": {
+			"system.preparation.mode": "atwill",
+			"system.level": level,
+			"system.components.material": false,
+			"system.materials": {
 				consumed: false,
 				cost: 0,
 				supply: 0,
@@ -238,8 +238,8 @@ export class ZHELL_UTILS {
 		if(oc) return;
 		
 		// get the tokens.
-		const tokens = warpgate.crosshairs.collect(origin);
-		game.user.updateTokenTargets(tokens.map(i => i.id));
+		const tokenDocs = warpgate.crosshairs.collect(origin);
+		game.user.updateTokenTargets(tokenDocs.map(i => i.id));
 		
 		// pick new area.
 		const target = await warpgate.crosshairs.show({
@@ -256,14 +256,14 @@ export class ZHELL_UTILS {
 		
 		if(fade){
 			const sequence = new Sequence();
-			for(let token of tokens) sequence.animation().on(token).fadeOut(fadeDuration);
+			for(let tokenDoc of tokenDocs) sequence.animation().on(tokenDoc).fadeOut(fadeDuration);
 			await sequence.play();
 			await warpgate.wait(fadeDuration);
 		}
 		
 		// teleport!
-		const updates = tokens.map(i => {
-			const {_id, x, y} = i.data;
+		const updates = tokenDocs.map(tokenDoc => {
+			const {_id, x, y} = tokenDoc;
 			return {_id, x: x - ox + nx, y: y - oy + ny};
 		});
 		const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, {animate: false});
@@ -271,7 +271,7 @@ export class ZHELL_UTILS {
 		if(fade){
 			await warpgate.wait(fadeDuration);
 			const sequence = new Sequence();
-			for(let token of tokens) sequence.animation().on(token).fadeIn(fadeDuration);
+			for(let tokenDoc of tokenDocs) sequence.animation().on(tokenDoc).fadeIn(fadeDuration);
 			await sequence.play();
 		}
 		
@@ -291,8 +291,8 @@ export class ZHELL_UTILS {
 		if(origin.cancelled) return;
 		
 		// get the tokens.
-		const tokens = warpgate.crosshairs.collect(origin);
-		const tokenIds = tokens.map(i => i.id);
+		const tokenDocs = warpgate.crosshairs.collect(origin);
+		const tokenIds = tokenDocs.map(i => i.id);
 		game.user.updateTokenTargets(tokenIds);
 		
 		return tokenIds;
@@ -308,7 +308,7 @@ export class ZHELL_UTILS {
 		const damageArray = typeof damages === "string" ? [[damages, ""]] : damages;
 		
 		// get the actor's immunities, resistances, and vulnerabilities.
-		const {di, dr, dv} = target.data.data.traits;
+		const {di, dr, dv} = target.system.traits;
 		
 		// convert each die expression to a numeric value and apply resistances.
 		let sum = 0;
@@ -355,7 +355,7 @@ export class ZHELL_UTILS {
 	
 	// takes an array of tokens or tokenDocuments and returns an array of player owner ids.
 	static get_token_owner_ids = (tokens = [], excludeGM = false) => {
-		const permissions = tokens.map(t => t.actor.data.permission);
+		const permissions = tokens.map(t => t.actor.ownership);
 		const userIds = game.users.filter(user => {
 			return permissions.some(permission => permission[user.id] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
 		}).map(i => i.id);
@@ -378,11 +378,11 @@ export class ZHELL_UTILS {
 			content: `
 				<p>Whisper to:</p>${options} <hr>
 				<label for="zhell-whisper-message">Message:</label>
-				<textarea class="whisper-dialog-textarea" id="message" name="message" rows="6" cols="50"></textarea>
+				<textarea class="whisper-dialog-textarea" id="message" name="message" rows="6" cols="50" autofocus></textarea>
 				<hr>
 			`,
 			buttons: {go: {
-				icon: `<i class="fas fa-check"></i>`,
+				icon: `<i class="fas fa-envelope"></i>`,
 				label: "Whisper",
 				callback: async (html) => {
 					let content = html[0].querySelector("textarea[id=message]").value;
@@ -401,14 +401,13 @@ export class ZHELL_UTILS {
 				}
 			}},
 			render: (html) => {
-				html.css("height", "auto");
-				for(let playerName of html[0].querySelectorAll(".whisper-dialog-player-name")){
-					playerName.addEventListener("click", () => {
-						playerName.classList.toggle("selected");
-					});
-				}
-			}
-		}).render(true);
+				html[0].addEventListener("click", (event) => {
+					let player = event.target.closest(".whisper-dialog-player-name");
+					if(!player) return;
+					player.classList.toggle("selected");
+				});
+			},
+		}).render(true, {height: "auto"});
 	}
 	
 	// function to wait for a specified amount of time.
@@ -532,12 +531,12 @@ export class ZHELL_UTILS {
 		}
 
 		// lastly, update actor hp.
-		const {value, max} = actor.data.data.attributes.hp;
-		return actor.update({"data.attributes.hp.value": Math.floor(Math.min(value, max))});
+		const {value, max} = actor.system.attributes.hp;
+		return actor.update({"system.attributes.hp.value": Math.floor(Math.min(value, max))});
 	}
 
 	// pop a title on each player's screen.
-	static title_card = async (text) => {
+	static title_card = async (text, fontSize = 80) => {
 		if(!text) return ui.notifications.warn("No text given.");
 
 		const textStyle = {
@@ -548,7 +547,7 @@ export class ZHELL_UTILS {
 			dropShadowColor: "#1f1f1f",
 			dropShadowDistance: 0,
 			fill: "#5a5a5a",
-			fontSize: 80,
+			fontSize,
 			lineJoin: "round",
 			strokeThickness: 4,
 			fontFamily: "Old Evils"
@@ -563,9 +562,5 @@ export class ZHELL_UTILS {
 			.fadeOut(2000);
 		return sequence.play();
 	}
-
-	/*static zhell_dialog = (...args) => {
-		return new ZhellDialog(args).render(true);
-	}*/
 	
 }

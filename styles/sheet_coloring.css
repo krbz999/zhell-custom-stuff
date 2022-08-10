@@ -10,7 +10,7 @@ body :root {
 	--not_equipped_color: #44191A;
     --color_proficient: "#228b22";
 	--color_half_proficient: "#696969";
-	--color_twice_proficient: "#ff6347";
+    --color_twice_proficient: "#ff6347";
     color:rgb(0, 0, 0)
 }
 
@@ -24,6 +24,7 @@ body :root {
     border-radius: 50%;
     display: inline-block;
     cursor: pointer;
+    box-shadow: inset 0 0 3px 0px rgb(0 0 0 / 50%);
 }
 
 /* Style of the expended dots. */
@@ -93,11 +94,11 @@ body :root {
 
 /* hp colors: */
 /* if below 33% */
-.dnd5e.sheet.actor input[name="data.attributes.hp.value"].near-death {
+.dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
     color: red;
 }
 /* if below 66% and above 33% */
-.dnd5e.sheet.actor input[name="data.attributes.hp.value"].bloodied {
+.dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
     color: peru;
 }
 

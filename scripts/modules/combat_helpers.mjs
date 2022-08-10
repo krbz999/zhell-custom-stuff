@@ -6,7 +6,7 @@ export class ZHELL_COMBAT {
 		if(!game.settings.get(MODULE_NAME, "markDefeatedCombatants")) return;
 		if(tokenDoc.actor.hasPlayerOwner) return;
 		if(!tokenDoc.combatant) return;
-		const hpUpdate = foundry.utils.getProperty(updates, "actorData.data.attributes.hp.value");
+		const hpUpdate = foundry.utils.getProperty(updates, "actorData.system.attributes.hp.value");
 		if(hpUpdate === undefined || hpUpdate > 0) return;
 		const effect = CONFIG.statusEffects.find(i => i.id === "dead");
 		await tokenDoc.object.toggleEffect(effect, {overlay: true});
@@ -33,7 +33,7 @@ export class ZHELL_COMBAT {
 		if(!item) return;
 		
 		// find ammo on the actor.
-		const consume = foundry.utils.getProperty(item, "data.data.consume");
+		const consume = foundry.utils.getProperty(item, "system.consume");
 		if(!consume) return;
 		const {amount, target: ammoId, type} = consume;
 		if(!ammoId || type !== "ammo") return;
@@ -41,7 +41,7 @@ export class ZHELL_COMBAT {
 		if(!ammo) return;
 		
 		// does ammo have save?
-		const ammoHasSave = foundry.utils.getProperty(ammo, "data.data.save.ability");
+		const ammoHasSave = foundry.utils.getProperty(ammo, "system.save.ability");
 		if(!ammoHasSave) return;
 		
 		// display ammo.

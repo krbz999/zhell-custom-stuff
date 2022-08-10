@@ -30,4 +30,5 @@ export class ZHELL_ADDITIONS {
 		CONFIG.DND5E.abilities["pty"] = "Piety";
 		CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
 	}
+	
 }

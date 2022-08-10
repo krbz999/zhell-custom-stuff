@@ -81,7 +81,7 @@ class ReplacementsSubmenu extends FormApplication {
 			dialog.close();
 		});
 	}
-	getData() {
+	async getData() {
 		const source = game.settings.get(MODULE_NAME, "replacementSettings");
 		const defaults = {
 			replace_status_effects: true,
@@ -125,7 +125,7 @@ class AdditionsSubmenu extends FormApplication {
 			dialog.close();
 		});
 	}
-	getData() {
+	async getData() {
 		const source = game.settings.get(MODULE_NAME, "additionSettings");
 		const defaults = {
 			add_conditions: true,
@@ -171,7 +171,7 @@ class SheetSubmenu extends FormApplication {
 			dialog.close();
 		});
 	}
-	getData() {
+	async getData() {
 		const source = game.settings.get(MODULE_NAME, "sheetSettings");
 		const defaults = {
 			rename_rest_labels: true,
@@ -227,7 +227,7 @@ class ColorPickerSubmenu extends FormApplication {
 			dialog.close();
 		});
 	}
-	getData() {
+	async getData() {
 		const source = game.settings.get(MODULE_NAME, "colorSettings");
 		const defaults = {
 			limited_use_dots: false,
@@ -280,7 +280,7 @@ class RarityColorsSubmenu extends FormApplication {
 			dialog.close();
 		});
 	}
-	getData() {
+	async getData() {
 		const source = game.settings.get(MODULE_NAME, "rarityColorSettings");
 		const defaults = {
 			uncommon: "#008000",
@@ -310,6 +310,8 @@ const registerSettingsMenus = function () {
 		onChange: () => window.location.reload()
 	});
 	game.settings.registerMenu(MODULE_NAME, "replacementSettings", {
+		name: "Replacements",
+		hint: "A collection of replacements for core and system content.",
 		label: "Replacement Settings",
 		icon: "fas fa-atlas",
 		type: ReplacementsSubmenu,
@@ -330,6 +332,8 @@ const registerSettingsMenus = function () {
 		onChange: () => window.location.reload()
 	});
 	game.settings.registerMenu(MODULE_NAME, "additionSettings", {
+		name: "Additions",
+		hint: "A collection of additions to dnd5e system content.",
 		label: "Addition Settings",
 		icon: "fas fa-atlas",
 		type: AdditionsSubmenu,
@@ -352,6 +356,8 @@ const registerSettingsMenus = function () {
 		}
 	});
 	game.settings.registerMenu(MODULE_NAME, "sheetSettings", {
+		name: "Sheet Edits",
+		hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
 		label: "Sheet Settings",
 		icon: "fas fa-atlas",
 		type: SheetSubmenu,
@@ -380,6 +386,8 @@ const registerSettingsMenus = function () {
 		}
 	});
 	game.settings.registerMenu(MODULE_NAME, "colorSettings", {
+		name: "Sheet Colors",
+		hint: "Settings for the colors that are applied to the actor sheets.",
 		label: "Sheet Color Settings",
 		icon: "fas fa-paint-roller",
 		type: ColorPickerSubmenu,
@@ -400,6 +408,8 @@ const registerSettingsMenus = function () {
 		}
 	});
 	game.settings.registerMenu(MODULE_NAME, "rarityColorSettings", {
+		name: "Rarity Colors",
+		hint: "Settings for the colors that are applied to items on an actor sheet depending on rarity.",
 		label: "Item Rarity Color Settings",
 		icon: "fas fa-paint-roller",
 		type: RarityColorsSubmenu,

@@ -44,7 +44,7 @@ export class ZHELL_SHEET {
 	
 	static remove_alignment = (sheet, html, sheetData) => {
 		if(!game.settings.get(MODULE_NAME, "sheetSettings").remove_alignment) return;
-		const AL = html[0].querySelector("input[name='data.details.alignment']");
+		const AL = html[0].querySelector("input[name='system.details.alignment']");
 		if(AL) AL.parentElement?.remove();
 	}
 	
@@ -64,7 +64,7 @@ export class ZHELL_SHEET {
 		
 		const value = actor.getFlag(MODULE_NAME, "materia-medica.value") ?? 0;
 		const materia = document.createElement("div");
-		materia.setAttribute("class", "counter flexrow materia");
+		materia.classList.add("counter", "flexrow", "materia");
 		materia.innerHTML = `
 			<h4>Foraged Materials</h4>
 			<div class="counter-value">
@@ -81,8 +81,9 @@ export class ZHELL_SHEET {
 				>
 			</div>
 		`;
-		const belowThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.exhaustion");
-		belowThis.parentNode.insertBefore(materia, belowThis.nextSibling);
+		// insert before inspiration tracker.
+		const beforeThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.inspiration");
+		beforeThis.parentNode.insertBefore(materia, beforeThis);
 	}
 	
 	static create_dots = (sheet, html) => {
@@ -93,17 +94,18 @@ export class ZHELL_SHEET {
 		if(spell_slot_dots){
 			const options = ["pact", "spell1", "spell2", "spell3", "spell4",
 				"spell5", "spell6", "spell7", "spell8", "spell9"];
+			const data = sheet.object.system.spells;
 			for(let o of options){
-				const max = html.find(`.spell-max[data-level=${o}]`);
-				const name = max.closest(".spell-slots");
-				const data = sheet.object.data.data.spells[o];
-				if(data.max === 0) continue;
-				let contents = "";
-				for(let i = data.max; i > 0; i--){
-					if(i <= data.value) contents += `<span class="dot"></span>`;
-					else contents += `<span class="dot empty"></span>`;
+				const max = html[0].querySelector(`.spell-max[data-level=${o}]`);
+				if(!max) continue;
+				const beforeThis = max.closest(".spell-slots");
+				if(data[o].max === 0) continue;
+				for(let i = data[o].max; i > 0; i--){
+					let span = document.createElement("SPAN");
+					beforeThis.insertAdjacentElement("beforeBegin", span)
+					if(i <= data[o].value) span.classList.add("dot");
+					else span.classList.add("dot", "empty");
 				}
-				name.before(contents);
 			}
 		}
 		
@@ -111,50 +113,56 @@ export class ZHELL_SHEET {
 		if(limited_use_dots){
 			const itemUses = sheet.object.items.filter(i => !!i.hasLimitedUses);
 			for(let o of itemUses){
-				const itemHTML = html.find(`.item[data-item-id=${o.id}]`);
-				let name = itemHTML.find(".item-name");
-				const {value, max} = o.data.data.uses;
+				const {value, max} = o.system.uses;
 				if(max === 0) continue;
-				let contents = "";
-				for(let i = max; i > 0; i--){
-					if(i <= value) contents += `<span class="dot"></span>`;
-					else contents += `<span class="dot empty"></span>`;
+				const itemHTML = html[0].querySelector(`.item[data-item-id='${o.id}']`);
+				const position = o.type === "spell" ? "beforeBegin" : "afterEnd";
+				const adjacent = o.type === "spell" ? itemHTML.querySelector(".item-detail.spell-uses") : itemHTML.querySelector(".item-name");
+
+				if(o.type !== "spell"){
+					for(let i = 0; i < max; i++){
+						let span = document.createElement("SPAN");
+						adjacent.insertAdjacentElement(position, span);
+						if(i < value) span.classList.add("dot");
+						else span.classList.add("dot", "empty");
+					}
 				}
-				if(o.type === "spell"){
-					name = name.find(".item-detail.spell-uses");
-					name.before(contents);
+				else{
+					for(let i = max; i > 0; i--){
+						let span = document.createElement("SPAN");
+						adjacent.insertAdjacentElement(position, span);
+						if(i <= value) span.classList.add("dot");
+						else span.classList.add("dot", "empty");
+					}
 				}
-				else name.after(contents);
 			}
 		}
 		
 		// create listeners.
 		if(spell_slot_dots || limited_use_dots){
-			for(let dot of html[0].querySelectorAll(".dot")){
-				dot.addEventListener("click", async (ev) => {
-					const actor = sheet.object;
-					const li = $(ev.currentTarget).parents(".item");
-					const item = actor.items.get(li.data("itemId"));
+			const actor = sheet.object;
+			html[0].addEventListener("click", async (event) => {
+				const dot = event.target.closest(".dot");
+				if(!dot) return;
 
-					// if it is not an item, find spell level and update spell slots.
-					if(!item){
-						const spellLevel = ev.currentTarget.parentElement.outerHTML.match(/data-level="(.*?)"/)[1];
-						if(!!spellLevel){
-							const path = `data.spells.${spellLevel}.value`;
-							const {value} = actor.data.data.spells[spellLevel]
-							const diff = ev.currentTarget.classList.contains("empty") ? 1 : -1;
-							return actor.update({[path]: value + diff});
-						}
-					}
+				const itemId = event.target.closest(".item")?.dataset.itemId;
+				const item = actor.items.get(itemId);
+				const diff = dot.classList.contains("empty") ? 1 : -1;
+				
+				// if not item, it's a spell slot.
+				if(!item){
+					const level = event.target.closest(".item-name")?.querySelector(".spell-max")?.dataset.level;
+					if(!level) return;
+					const value = actor.system.spells[level].value;
+					return actor.update({[`system.spells.${level}.value`]: value + diff});
+				}
+				else{
+					const {value} = item.system.uses;
+					if(value === undefined) return;
+					return item.update({"system.uses.value": value + diff});
+				}
 
-					// it's an item, update uses.
-					else{
-						const {value} = item.data.data.uses;
-						const diff = ev.currentTarget.classList.contains("empty") ? 1 : -1;
-						return item.update({"data.uses.value": value + diff});
-					}
-				});
-			}
+			});
 		}
 	}
 	
@@ -177,10 +185,10 @@ export class ZHELL_SHEET {
 			if(!item) return;
 			
 			if(!!attuned){
-				item.update({"data.attunement": CONFIG.DND5E.attunementTypes.REQUIRED});
+				item.update({"system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED});
 			}
 			else if(!!not_attuned){
-				item.update({"data.attunement": CONFIG.DND5E.attunementTypes.ATTUNED});
+				item.update({"system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED});
 			}
 		});
 	}
@@ -190,7 +198,7 @@ export class ZHELL_SHEET {
 		for(let i of items){
 			const id = i.outerHTML.match(/data-item-id="(.*?)"/);
 			if(!id) continue;
-			const rarity = sheet.object.items.get(id[1]).data.data?.rarity;
+			const rarity = sheet.object.items.get(id[1]).system?.rarity;
 			if(rarity !== "" && rarity !== undefined) i.classList.add(rarity.slugify().toLowerCase());
 		}
 	}
@@ -225,11 +233,11 @@ export class ZHELL_SHEET {
 
 	static set_hp_color = (sheet, html) => {
 		const actor = sheet.object;
-		const {value, max} = actor.data.data.attributes.hp;
+		const {value, max} = actor.system.attributes.hp;
 		const nearDeath = (Math.abs(value) ?? 0)/(max ?? 1) < 0.33;
 		const bloodied = (Math.abs(value) ?? 0)/(max ?? 1) < 0.66;
 		
-		const hp = html[0].querySelector("input[name='data.attributes.hp.value']");
+		const hp = html[0].querySelector("input[name='system.attributes.hp.value']");
 		if(nearDeath){
 			hp.classList.add("near-death");
 			hp.classList.remove("bloodied");
@@ -253,19 +261,19 @@ export class ZHELL_SHEET {
 	static pretty_trait_selector = (selector, html, context) => {
 		if(!game.settings.get(MODULE_NAME, "sheetSettings").pretty_trait_selector) return;
 		if([
-			"data.traits.languages",
-			"data.traits.di",
-			"data.traits.dr",
-			"data.traits.dv",
-			"data.traits.ci"
+			"system.traits.languages",
+			"system.traits.di",
+			"system.traits.dr",
+			"system.traits.dv",
+			"system.traits.ci"
 		].includes(selector.attribute)){
 			html[0].querySelector(".trait-list").classList.add("flexrow");
 			html[0].querySelector(".trait-list").classList.add("zhell-traits");
 			html.css("height", "auto");
 		}
 		else if([
-			"data.traits.toolProf",
-			"data.traits.armorProf"
+			"system.traits.toolProf",
+			"system.traits.armorProf"
 		].includes(selector.attribute)){
 			html[0].querySelector(".trait-list").classList.add("flexcol");
 			html[0].querySelector(".trait-list").classList.add("zhell-profs");
@@ -273,13 +281,15 @@ export class ZHELL_SHEET {
 			html.css("width", "auto");
 		}
 		else if([
-			"data.traits.weaponProf"
+			"system.traits.weaponProf"
 		].includes(selector.attribute)){
 			html[0].querySelector(".trait-list").classList.add("flexrow");
 			html[0].querySelector(".trait-list").classList.add("zhell-weapons");
 			html.css("height", "auto");
 			html.css("width", "auto");
 		}
+
+		selector.setPosition();
 	}
 
 	// makes headers collapsible.
@@ -325,4 +335,5 @@ export class ZHELL_SHEET {
 		}
 	
 	}
+    
 }
