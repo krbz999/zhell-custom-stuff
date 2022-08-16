@@ -140,29 +140,38 @@ export class ZHELL_SHEET {
 		
 		// create listeners.
 		if(spell_slot_dots || limited_use_dots){
-			const actor = sheet.object;
-			html[0].addEventListener("click", async (event) => {
-				const dot = event.target.closest(".dot");
-				if(!dot) return;
+			if(sheet.listening === undefined){
+				sheet.listening = this.dotToggle.bind(sheet.object);
+				sheet.element[0].addEventListener("click", sheet.listening);
+			}
+			else{
+				sheet.element[0].removeEventListener("click", sheet.listening);
+				sheet.element[0].addEventListener("click", sheet.listening);
+			}
+		}
+	}
 
-				const itemId = event.target.closest(".item")?.dataset.itemId;
-				const item = actor.items.get(itemId);
-				const diff = dot.classList.contains("empty") ? 1 : -1;
-				
-				// if not item, it's a spell slot.
-				if(!item){
-					const level = event.target.closest(".item-name")?.querySelector(".spell-max")?.dataset.level;
-					if(!level) return;
-					const value = actor.system.spells[level].value;
-					return actor.update({[`system.spells.${level}.value`]: value + diff});
-				}
-				else{
-					const {value} = item.system.uses;
-					if(value === undefined) return;
-					return item.update({"system.uses.value": value + diff});
-				}
+	// bound function (this === the actor);
+	static async dotToggle(event){
+		const actor = this;
+		const dot = event.target.closest(".dot");
+		if(!dot) return;
 
-			});
+		const itemId = event.target.closest(".item")?.dataset.itemId;
+		const item = actor.items.get(itemId);
+		const diff = dot.classList.contains("empty") ? 1 : -1;
+		
+		// if not item, it's a spell slot.
+		if(!item){
+			const level = event.target.closest(".item-name")?.querySelector(".spell-max")?.dataset.level;
+			if(!level) return;
+			const value = actor.system.spells[level].value;
+			return actor.update({[`system.spells.${level}.value`]: value + diff});
+		}
+		else{
+			const {value} = item.system.uses;
+			if(value === undefined) return;
+			return item.update({"system.uses.value": value + diff});
 		}
 	}
 	
