@@ -4,7 +4,7 @@ import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.js";
 export class ZHELL_REPLACEMENTS {
     
     static replace_consumable_types = () => {
-		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_consumable_types) return;
+		if ( !game.settings.get(MODULE_NAME, "replacementSettings").replace_consumable_types ) return;
 
 		// the new consumable types.
 		const addedConsumableTypes = {
@@ -21,7 +21,7 @@ export class ZHELL_REPLACEMENTS {
 		// delete unwanted consumable types.
 		const deletedConsumableTypes = ["rod", "wand"];
 		const oldObject = foundry.utils.duplicate(CONFIG.DND5E.consumableTypes);
-		for(let del of deletedConsumableTypes) delete oldObject[del];
+		for ( let del of deletedConsumableTypes ) delete oldObject[del];
 
 		// merge remaining with new types to add.
 		const newArray = Object.entries(addedConsumableTypes)
@@ -32,7 +32,7 @@ export class ZHELL_REPLACEMENTS {
 	}
     
     static replace_languages = () => {
-		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_languages) return;
+		if ( !game.settings.get(MODULE_NAME, "replacementSettings").replace_languages ) return;
 		CONFIG.DND5E.languages = {
 			common: "Common",
 			aarakocra: "Aarakocra",
@@ -57,7 +57,7 @@ export class ZHELL_REPLACEMENTS {
 	}
 	
 	static replace_tools = () => {
-		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_tools) return;
+		if ( !game.settings.get(MODULE_NAME, "replacementSettings").replace_tools ) return;
 		
 		// pluralising gaming set and instrument:
 		CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
@@ -122,7 +122,7 @@ export class ZHELL_REPLACEMENTS {
 	}
 	
 	static replace_weapons = () => {
-		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_weapons) return;
+		if ( !game.settings.get(MODULE_NAME, "replacementSettings").replace_weapons ) return;
 
         const key = "zhell-catalogs.items";
 		
@@ -170,16 +170,17 @@ export class ZHELL_REPLACEMENTS {
 		// delete some weapon properties.
 		const propertiesToDelete = ["fir", "rel"]; // firearm, reload.
 
-		for(let del of propertiesToDelete) delete CONFIG.DND5E.weaponProperties[del];
+		for ( let del of propertiesToDelete ) delete CONFIG.DND5E.weaponProperties[del];
 		
 	}
     
     static replace_status_effects = () => {
-		if(!game.settings.get(MODULE_NAME, "replacementSettings").replace_status_effects) return;
+		if ( !game.settings.get(MODULE_NAME, "replacementSettings").replace_status_effects ) return;
 		
 		// these are gotten from a different file, combined, and then sorted.
-		const statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a,b) => a.sort - b.sort);
+		const statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a,b) => {
+			return a.sort - b.sort;
+		});
 		CONFIG.statusEffects = statusEffects;
 	}
-
 }

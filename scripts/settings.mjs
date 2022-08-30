@@ -160,7 +160,6 @@ class SheetSubmenu extends FormApplication {
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
 			await game.settings.set(MODULE_NAME, "sheetSettings", {
-				rename_rest_labels: html[0].querySelector(".zhell-rename-rest-labels").checked,
 				remove_resources: html[0].querySelector(".zhell-remove-resources").checked,
 				remove_alignment: html[0].querySelector(".zhell-remove-alignment").checked,
 				disable_initiative_button: html[0].querySelector(".zhell-disable-initiative-button").checked,
@@ -174,7 +173,6 @@ class SheetSubmenu extends FormApplication {
 	async getData() {
 		const source = game.settings.get(MODULE_NAME, "sheetSettings");
 		const defaults = {
-			rename_rest_labels: true,
 			remove_resources: true,
 			remove_alignment: true,
 			disable_initiative_button: true,
@@ -346,7 +344,6 @@ const registerSettingsMenus = function () {
 		config: false,
 		type: Object,
 		default: {
-			rename_rest_labels: true,
 			remove_resources: true,
 			remove_alignment: true,
 			disable_initiative_button: true,
@@ -415,5 +412,4 @@ const registerSettingsMenus = function () {
 		type: RarityColorsSubmenu,
 		restricted: false
 	});
-	
 }

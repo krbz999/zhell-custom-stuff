@@ -3,46 +3,45 @@ import { EXHAUSTION_EFFECTS } from "../../sources/conditions.js";
 
 export class ZHELL_REST {
 
-	static toggleLR = async (bool) => {
-		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, "toggleLR") : !bool;
-		await game.settings.set(MODULE_NAME, "toggleLR", !currentValue);
-		return game.settings.get(MODULE_NAME, "toggleLR");
-	}
-	
-	static toggleSR = async (bool) => {
-		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
-		const currentValue = (bool === undefined) ? game.settings.get(MODULE_NAME, "toggleSR") : !bool;
-		await game.settings.set(MODULE_NAME, "toggleSR", !currentValue);
-		return game.settings.get(MODULE_NAME, "toggleSR");
+	static toggleSR = async (value = null) => {
+		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
+		const current = !!game.settings.get(MODULE_NAME, "toggleSR");
+		if ( value !== null ) return game.settings.set(MODULE_NAME, "toggleSR", value);
+		return game.settings.set(MODULE_NAME, "toggleSR", !current);
 	}
 
+	static toggleLR = async (value = null) => {
+		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
+		const current = !!game.settings.get(MODULE_NAME, "toggleLR");
+		if ( value !== null ) return game.settings.set(MODULE_NAME, "toggleLR", value);
+		return game.settings.set(MODULE_NAME, "toggleLR", !current);
+	}
 }
 
 export class ZHELL_CATALOG {
 	
-	static fromCatalog = async (entryName, catalog, object = false) => {
+	static getDocument = async (entryName, catalog, object = false) => {
 		const key = `zhell-catalogs.${catalog}`;
-		const pack = !!game.packs.get(key) ? game.packs.get(key) : game.packs.get(catalog);
-		if(!pack) return ui.notifications.warn("Pack not found.");
+		const pack = game.packs.get(key) ?? game.packs.get(catalog);
+		if ( !pack ) return ui.notifications.warn("Pack not found.");
 		const entry = pack.index.getName(entryName);
-		if(!entry) return ui.notifications.warn("Entry not found.");
+		if ( !entry ) return ui.notifications.warn("Entry not found.");
 		const entryDoc = await pack.getDocument(entry._id);
-		if(object) return entryDoc.toObject();
+		if ( object ) return entryDoc.toObject();
 		else return entryDoc;
 	}
 	
-	static spawnFromCatalog = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}, at) => {
-		const spawnDoc = await this.fromCatalog(actorName, catalog, false);
-		if(!spawnDoc) return ui.notifications.warn("Monster not found.");
+	static spawn = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}, at) => {
+		const spawnDoc = await this.getDocument(actorName, catalog, false);
+		if ( !spawnDoc ) return ui.notifications.warn("Monster not found.");
 		
 		// save whether the actor is wildcard img and if the token img is webm.
-		const isWildcard = !!spawnDoc.token.randomImg;
-		const isWebm = !!spawnDoc.token.texture.src.endsWith(".webm");
+		const isWildcard = spawnDoc.prototypeToken.randomImg;
+		const isWebm = spawnDoc.prototypeToken.texture.src.endsWith(".webm");
 		
 		// create stuff.
 		const updatesActor = spawnDoc.toObject();
-		const updatesToken = spawnDoc.token.toObject();
+		const updatesToken = spawnDoc.prototypeToken.toObject();
 		
 		// edits and merges to updates:
 		delete updatesToken.actorId; // as to not overwrite the source actorId of dummy.
@@ -56,17 +55,17 @@ export class ZHELL_CATALOG {
 		// load images so we don't get weird errors.
 		const callbackPre = async (loc, updates) => {
 			// if a specific image was provided in update, use that.
-			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.img");
-			if(!!provided){
+			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.texture.src");
+			if( !!provided ) {
 				await loadTexture(provided);
-				updates.token.img = provided;
+				foundry.utils.setProperty(updates, "token.texture.src", provided);
 			}
 			// else get the token image(s) and load it.
-			else{
+			else {
 				const tokenImages = await spawnDoc.getTokenImages();
 				const img = tokenImages[Math.floor(Math.random() * tokenImages.length)];
 				await loadTexture(img);
-				updates.token.img = img;
+				foundry.utils.setProperty(updates, "token.texture.src", img);
 			}
 		}
 		
@@ -74,49 +73,53 @@ export class ZHELL_CATALOG {
 		const callbackPost = async (loc, tokenDoc, updates) => {
 			// if a specific image was provided in update, use that.
 			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.texture.src");
-			if(!!provided){
+			if ( !!provided ) {
 				await loadTexture(provided);
-				updates.token.texture.src = provided;
+				foundry.utils.setProperty(updates, "token.texture.src", provided);
 			}
 			// else get the token image(s) and load it.
-			else{
+			else {
 				const tokenImages = await spawnDoc.getTokenImages();
 				const src = tokenImages[Math.floor(Math.random() * tokenImages.length)];
 				await loadTexture(src);
-				updates.token.texture.src = src;
+				foundry.utils.setProperty(updates, "token.texture.src", src);
 			}
 		}
 		
 		const callbacks = foundry.utils.mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
-		const options = foundry.utils.mergeObject(
-			{crosshairs: (isWildcard || isWebm) ? {drawIcon: false, icon: "icons/svg/dice-target.svg"} : {}},
-			warpgateObjects.options ?? {});
+		const options = foundry.utils.mergeObject({
+			crosshairs: (isWildcard || isWebm) ? {
+				drawIcon: false,
+				icon: "icons/svg/dice-target.svg"
+			} : {}
+		},
+		warpgateObjects.options ?? {});
 		
 		// either spawn or spawnAt:
-		if(at?.x !== undefined && at?.y !== undefined) return await warpgate.spawnAt({x: at.x, y: at.y}, dummyNPC, updates, callbacks, options);
-		else return await warpgate.spawn(dummyNPC, updates, callbacks, options);
+		if ( at?.x !== undefined && at?.y !== undefined ) return warpgate.spawnAt({ x: at.x, y: at.y }, dummyNPC, updates, callbacks, options);
+		else return warpgate.spawn(dummyNPC, updates, callbacks, options);
 	}
 	
-	static mutateFromCatalog = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
+	static mutate = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
 		const token = canvas.tokens.controlled[0];
-		if(!token) return ui.notifications.warn("You have no token selected.");
+		if ( !token ) return ui.notifications.warn("You have no token selected.");
 		const tokenDoc = token.document;
 		
-		const mutateDoc = await this.fromCatalog(actorName, catalog, false);
-		if(!mutateDoc) return ui.notifications.warn("Monster not found.");
+		const mutateDoc = await this.getDocument(actorName, catalog, false);
+		if ( !mutateDoc ) return ui.notifications.warn("Monster not found.");
 		const updatesActor = mutateDoc.toObject();
 		const updatesToken = mutateDoc.token;
 		
 		// handle items:
 		const updatesItems = {};
-		for(let item of updatesActor.items) updatesItems[item.name] = item;
-		for(let item of tokenDoc.actor.toObject().items) updatesItems[item.name] = warpgate.CONST.DELETE;
+		for ( let item of updatesActor.items ) updatesItems[item.name] = item;
+		for ( let item of tokenDoc.actor.toObject().items ) updatesItems[item.name] = warpgate.CONST.DELETE;
 		
 		// handle effects:
 		const updatesEffects = {};
-		for(let effect of updatesActor.effects) updatesEffects[effect.label] = effect;
-		for(let effect of tokenDoc.actor.effects){
-			if(!effect.isTemporary) updatesEffects[effect.label] = warpgate.CONST.DELETE;
+		for ( let effect of updatesActor.effects ) updatesEffects[effect.label] = effect;
+		for ( let effect of tokenDoc.actor.effects ) {
+			if ( !effect.isTemporary ) updatesEffects[effect.label] = warpgate.CONST.DELETE;
 		}
 		delete updatesActor.effects;
 		delete updatesActor.items;
@@ -125,56 +128,88 @@ export class ZHELL_CATALOG {
 		const callbackPre = async (loc, updates) => {
 			// if a specific image was provided in update, use that.
 			const provided = foundry.utils.getProperty(warpgateObjects, "updates.token.texture.src");
-			if(!!provided){
+			if ( !!provided ) {
 				await loadTexture(provided);
-				updates.token.texture.src = provided;
+				foundry.utils.setProperty(updates, "token.texture.src", provided);
 			}
 			// else get the token image(s) and load it.
-			else{
+			else {
 				const tokenImages = await mutateDoc.getTokenImages();
 				const src = tokenImages[Math.floor(Math.random() * tokenImages.length)];
 				await loadTexture(src);
-				updates.token.texture.src = src;
+				foundry.utils.setProperty(updates, "token.texture.src", src);
 			}
 		}
 		const callbackPost = async () => {}
 		
 		// data to keep:
-		const {actorLink, bar1, bar2, displayBars, displayName, disposition, elevation, lockRotation, vision} = tokenDoc;
+		const {
+			actorLink,
+			bar1,
+			bar2,
+			displayBars,
+			displayName,
+			disposition,
+			elevation,
+			lockRotation,
+			sight,
+			detectionModes
+		} = tokenDoc;
 		const {type} = tokenDoc.actor;
 		
 		// merge with passed objects:
-		const mergeActor = foundry.utils.mergeObject({...updatesActor, type}, (warpgateObjects.updates?.actor ?? {}));
-		const mergeToken = foundry.utils.mergeObject({...updatesToken, actorLink, bar1, bar2, displayBars, disposition, displayName, elevation, lockRotation, vision}, (warpgateObjects.updates?.token ?? {}));
-		const mergeEmbedded = foundry.utils.mergeObject({Item: updatesItems, ActiveEffect: updatesEffects}, (warpgateObjects.updates?.embedded ?? {}));
-		const mergeCallbacks = foundry.utils.mergeObject({pre: callbackPre, post: callbackPost}, (warpgateObjects.callbacks ?? {}));
-		const mergeOptions = foundry.utils.mergeObject({comparisonKeys: {ActiveEffect: "label"}, name: `Polymorph: ${actorName}`}, (warpgateObjects.options ?? {}));
+		const mergeActor = foundry.utils.mergeObject({
+			...updatesActor, type
+		}, (warpgateObjects.updates?.actor ?? {}));
 		
-		return await warpgate.mutate(tokenDoc, {actor: mergeActor, token: mergeToken, embedded: mergeEmbedded}, mergeCallbacks, mergeOptions);	
+		const mergeToken = foundry.utils.mergeObject({
+			...updatesToken, actorLink, bar1, bar2, displayBars,
+			disposition, displayName, elevation, lockRotation, sight, detectionModes
+		}, (warpgateObjects.updates?.token ?? {}));
+		
+		const mergeEmbedded = foundry.utils.mergeObject({
+			Item: updatesItems,
+			ActiveEffect: updatesEffects
+		}, (warpgateObjects.updates?.embedded ?? {}));
+		
+		const mergeCallbacks = foundry.utils.mergeObject({
+			pre: callbackPre,
+			post: callbackPost
+		}, (warpgateObjects.callbacks ?? {}));
+		
+		const mergeOptions = foundry.utils.mergeObject({
+			comparisonKeys: {ActiveEffect: "label"},
+			name: `Polymorph: ${actorName}`
+		}, (warpgateObjects.options ?? {}));
+		
+		return warpgate.mutate(tokenDoc, {
+			actor: mergeActor,
+			token: mergeToken,
+			embedded: mergeEmbedded
+		}, mergeCallbacks, mergeOptions);	
 	}
 	
 	// cast a spell directly from a compendium.
-	static castFromCatalog = async (spellName, catalog = "spells", caster, updates = {}, rollOptions = {}) => {
-		
+	static cast = async (spellName, catalog = "spells", caster, updates = {}, config = {}, options = {}) => {
 		const parent = caster?.actor ?? caster ?? canvas.tokens.controlled[0]?.actor ?? game.user.character;
-		if(!parent) return ui.notifications.warn("No valid actor.");
+		if ( !parent ) return ui.notifications.warn("No valid actor.");
 		
-		const object = await this.fromCatalog(spellName, catalog, true);
-		if(!object) return ui.notifications.warn("Spell not found.");
+		const object = await this.getDocument(spellName, catalog, true);
+		if ( !object ) return ui.notifications.warn("Spell not found.");
 		
 		// fix for MRE:
-		if(game.modules.get("mre-dnd5e")?.active){
-			if(!object.flags["mre-dnd5e"]?.formulaGroups){
+		if ( game.modules.get("mre-dnd5e")?.active ) {
+			if ( !object.flags["mre-dnd5e"]?.formulaGroups ) {
 				const number_of_groups = object.system.damage?.parts?.length ?? 0;
-				if(number_of_groups > 0){
-					object.flags["mre-dnd5e"] = {formulaGroups: []};
+				if ( number_of_groups > 0 ) {
+					object.flags["mre-dnd5e"] = { formulaGroups: [] };
 					
-					for(let i = 0; i < number_of_groups; i++){
+					for ( let i = 0; i < number_of_groups; i++ ) {
 						let label = i === 0 ? "Primary" : i === 1 ? "Secondary" : i === 2 ? "Tertiary" : "New Formula";
-						object.flags["mre-dnd5e"].formulaGroups.push({formulaSet: [i], label});
+						object.flags["mre-dnd5e"].formulaGroups.push({ formulaSet: [i], label });
 					}
-				}else{
-					object.flags["mre-dnd5e"] = {formulaGroups: [{formulaSet: [], label: "Primary"}]};
+				} else {
+					object.flags["mre-dnd5e"] = { formulaGroups: [{ formulaSet: [], label: "Primary" }] };
 				}
 			}
 		}
@@ -182,21 +217,22 @@ export class ZHELL_CATALOG {
 		const original = foundry.utils.duplicate(object);
 		foundry.utils.mergeObject(object, updates);
 		
-		const [spell] = await parent.createEmbeddedDocuments("Item", [object], {temporary: true});
+		const [spell] = await parent.createEmbeddedDocuments("Item", [object], { temporary: true });
 		spell.prepareFinalAttributes(); // this fixes saving throw buttons.
+
+		const rollConfig = foundry.utils.mergeObject(config, {
+			flags: { "dnd5e.itemData": original }
+		});
 		
 		// Trigger the item roll (code modified from itemacro).
-		const roll = spell.hasMacro() ? await spell.executeMacro() : await spell.roll({...rollOptions, createMessage: false});
-		if(!roll) return;
-		
-		// update message.
-		roll["flags.dnd5e.itemData"] = original;
-		
-		return await ChatMessage.create(roll);
+		if ( game.modules.get("itemacro")?.active && spell.hasMacro() ) {
+			return spell.executeMacro();
+		}
+		return spell.use(rollConfig, options);
 	}
 	
-	static magicItemCast = async (spellName, level, caster, rollOptions = {}) => {
-		return await this.castFromCatalog(spellName, "spells", caster, {
+	static castCharges = async (spellName, level, caster, config = {}, options = {}) => {
+		const rollConfig = foundry.utils.mergeObject({
 			"system.preparation.mode": "atwill",
 			"system.level": level,
 			"system.components.material": false,
@@ -206,36 +242,37 @@ export class ZHELL_CATALOG {
 				supply: 0,
 				value: ""
 			}
-		}, rollOptions);
+		}, config);
+		return this.cast(spellName, "spells", caster, rollConfig, options);
 	}
-
 }
 
 export class ZHELL_UTILS {
 	
 	// execute an item's Item Macro if it has one, otherwise roll normally.
-	static rollItemMacro = async (item, options = {}) => {
-		const itemMacro = !!game.modules.get("itemacro")?.active;
-		if(itemMacro && item.hasMacro()) return item.executeMacro(options);
-		else return item.roll(options);
+	static rollItemMacro = async (item, config = {}, options = {}) => {
+		const itemMacro = game.modules.get("itemacro")?.active;
+		if ( itemMacro && item.hasMacro() ) return item.executeMacro(options);
+		else return item.use(config, options);
 	}
 
-	static setMateriaMedicaForagingDC = async (number) => {
-		if(!game.user.isGM) return ui.notifications.warn("Excuse me?");
+	static setForageDC = async (number) => {
+		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
 		return game.settings.set(MODULE_NAME, "foragingDC", number);
 	}
 	
-	static teleportTokens = async (size = 4, {fade = true, fadeDuration = 500, clearTargets = true} = {}) => {
-		// pick area of tokens.
-		const origin = await warpgate.crosshairs.show({
-			size,
+	static teleportTokens = async (crosshairsConfig = {}, clearTargets = true, fade = true, fadeDuration = 500) => {
+		const config = foundry.utils.mergeObject({
+			size: 4,
 			drawIcon: false,
 			fillAlpha: 0.1,
 			lockSize: false,
 			label: "Pick Up Tokens"
-		});
-		const {x: ox, y: oy, cancelled: oc} = origin;
-		if(oc) return;
+		}, crosshairsConfig);
+		// pick area of tokens.
+		const origin = await warpgate.crosshairs.show(config);
+		const { x: ox, y: oy, cancelled: oc } = origin;
+		if ( oc ) return;
 		
 		// get the tokens.
 		const tokenDocs = warpgate.crosshairs.collect(origin);
@@ -249,14 +286,14 @@ export class ZHELL_UTILS {
 			lockSize: true,
 			label: "Select Target"
 		});
-		const {x: nx, y: ny, cancelled: nc} = target;
-		if(nc) return game.user.updateTokenTargets(); // clear targets.
+		const { x: nx, y: ny, cancelled: nc } = target;
+		if ( nc ) return game.user.updateTokenTargets(); // clear targets.
 		
-		if(clearTargets) game.user.updateTokenTargets(); // clear targets.
+		if ( clearTargets ) game.user.updateTokenTargets(); // clear targets.
 		
-		if(fade){
+		if ( fade ) {
 			const sequence = new Sequence();
-			for(let tokenDoc of tokenDocs) sequence.animation().on(tokenDoc).fadeOut(fadeDuration);
+			for ( let tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeOut(fadeDuration);
 			await sequence.play();
 			await warpgate.wait(fadeDuration);
 		}
@@ -268,27 +305,28 @@ export class ZHELL_UTILS {
 		});
 		const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, {animate: false});
 		
-		if(fade){
+		if ( fade ) {
 			await warpgate.wait(fadeDuration);
 			const sequence = new Sequence();
-			for(let tokenDoc of tokenDocs) sequence.animation().on(tokenDoc).fadeIn(fadeDuration);
+			for ( let tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeIn(fadeDuration);
 			await sequence.play();
 		}
 		
 		return update;
 	}
 	
-	static targetTokens = async (size = 4) => {
-		// pick area of tokens.
-		const origin = await warpgate.crosshairs.show({
-			size,
+	static targetTokens = async (crosshairsConfig = {}) => {
+		const config = foundry.utils.mergeObject({
+			size: 4,
 			drawIcon: false,
 			fillAlpha: 0.1,
 			lockSize: false,
 			rememberControlled: true,
-			label: "Pick Targets"
-		});
-		if(origin.cancelled) return;
+			label: "Pick Targets",
+		}, crosshairsConfig);
+		// pick area of tokens.
+		const origin = await warpgate.crosshairs.show(config);
+		if ( origin.cancelled ) return;
 		
 		// get the tokens.
 		const tokenDocs = warpgate.crosshairs.collect(origin);
@@ -302,7 +340,7 @@ export class ZHELL_UTILS {
 	static apply_damage = async (actor, damages, {showrolls = false, globalModifier = 1} = {}) => {
 		
 		// make sure it's an actor, not token.
-		const target = actor.actor ? actor.actor : actor;
+		const target = actor.actor ?? actor;
 		
 		// if damages is a string, that's fine, but convert to array.
 		const damageArray = typeof damages === "string" ? [[damages, ""]] : damages;
@@ -312,10 +350,9 @@ export class ZHELL_UTILS {
 		
 		// convert each die expression to a numeric value and apply resistances.
 		let sum = 0;
-		for(let i = 0; i < damageArray.length; i++){
+		for ( let i = 0; i < damageArray.length; i++ ) {
 			const [dmg, type] = damageArray[i];
-			
-			if(!dmg) continue;
+			if ( !dmg ) continue;
 			
 			const label = CONFIG.DND5E.damageResistanceTypes[type] ?? "Other";
 			
@@ -327,12 +364,12 @@ export class ZHELL_UTILS {
 			
 			// get the damage total before resistances.
 			const formula = Roll.replaceFormulaData(dmg, target.getRollData());
-			if(!Roll.validate(formula)) continue;
+			if ( !Roll.validate(formula) ) continue;
 			const roll = await new Roll(formula).evaluate({async: true});
 			
 			// throw rolls into chat.
-			const speaker = ChatMessage.getSpeaker({actor: target});
-			if(showrolls) roll.toMessage({flavor,speaker});
+			const speaker = ChatMessage.getSpeaker({ actor: target });
+			if (showrolls ) roll.toMessage({ flavor, speaker });
 			
 			// a global modifier in cases of half damage on saves for example
 			const total = Math.floor(roll.total * globalModifier);
@@ -357,9 +394,11 @@ export class ZHELL_UTILS {
 	static get_token_owner_ids = (tokens = [], excludeGM = false) => {
 		const permissions = tokens.map(t => t.actor.ownership);
 		const userIds = game.users.filter(user => {
-			return permissions.some(permission => permission[user.id] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+			return permissions.some(permission => {
+				return permission[user.id] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER;
+			});
 		}).map(i => i.id);
-		if(excludeGM) return userIds.filter(i => !game.users.get(i).isGM);
+		if ( excludeGM ) return userIds.filter(i => !game.users.get(i).isGM);
 		else return userIds;
 	}
 	
@@ -367,9 +406,13 @@ export class ZHELL_UTILS {
 	static whisper_players = () => {
 		const users = game.users.filter(u => u.id !== game.user.id);
 		const characterIds = users.map(u => u.character?.id).filter(i => !!i);
-		const selectedPlayerIds = canvas.tokens.controlled.map(i => i.actor.id).filter(i => characterIds.includes(i));
+		const selectedPlayerIds = canvas.tokens.controlled.map(i => {
+			return i.actor.id;
+		}).filter(i => {
+			return characterIds.includes(i);
+		});
 		const options = users.reduce((acc, {id, name, character}) => {
-			const checked = (!!character && selectedPlayerIds.includes(character.id)) ? "selected" : "";
+			const checked = ( !!character && selectedPlayerIds.includes(character.id) ) ? "selected" : "";
 			return acc + `<span class="whisper-dialog-player-name ${checked}" id="${id}">${name}</span>`;
 		}, `<form><div class="form-fields whisper-dialog">`) + `</div></form>`;
 		
@@ -378,36 +421,47 @@ export class ZHELL_UTILS {
 			content: `
 				<p>Whisper to:</p>${options} <hr>
 				<label for="zhell-whisper-message">Message:</label>
-				<textarea class="whisper-dialog-textarea" id="message" name="message" rows="6" cols="50" autofocus></textarea>
+				<textarea
+					class="whisper-dialog-textarea"
+					id="zhell-whisper-message"
+					name="message"
+					rows="6"
+					cols="50"
+					autofocus
+				></textarea>
 				<hr>
 			`,
-			buttons: {go: {
-				icon: `<i class="fas fa-envelope"></i>`,
-				label: "Whisper",
-				callback: async (html) => {
-					let content = html[0].querySelector("textarea[id=message]").value;
-					if(!content) return;
+			buttons: {
+				go: {
+					icon: `<i class="fas fa-envelope"></i>`,
+					label: "Whisper",
+					callback: async (html) => {
+						let content = html[0].querySelector("#zhell-whisper-message").value;
+						if ( !content ) return;
 
-					content = content.split("\n").reduce((acc, e) => acc += `<p>${e}</p>`, ``);
-					const whisperIds = new Set();
-					for(let {id} of users){
-						if(!!html[0].querySelector(`span[id="${id}"].selected`)){
-							whisperIds.add(id);
+						content = content.split("\n").reduce((acc, e) => {
+							return acc + `<p>${e}</p>`;
+						}, ``);
+						const whisperIds = new Set();
+						for ( let {id} of users ) {
+							if ( !!html[0].querySelector(`span[id="${id}"].selected`) ) {
+								whisperIds.add(id);
+							}
 						}
+						
+						const whisper = whisperIds.size > 0 ? Array.from(whisperIds) : [game.user.id];
+						await ChatMessage.create({ content, whisper });
 					}
-					
-					const whisper = whisperIds.size > 0 ? Array.from(whisperIds) : [game.user.id];
-					await ChatMessage.create({content, whisper});
 				}
-			}},
+			},
 			render: (html) => {
 				html[0].addEventListener("click", (event) => {
 					let player = event.target.closest(".whisper-dialog-player-name");
-					if(!player) return;
+					if ( !player ) return;
 					player.classList.toggle("selected");
 				});
 			},
-		}).render(true, {height: "auto"});
+		}).render(true, { height: "auto" });
 	}
 	
 	// function to wait for a specified amount of time.
@@ -434,7 +488,7 @@ export class ZHELL_UTILS {
 		}
 		let str = '';
 		
-		for(let i of Object.keys(roman)){
+		for ( let i of Object.keys(roman) ) {
 			let q = Math.floor(num / roman[i]);
 			num -= q * roman[i];
 			str += i.repeat(q);
@@ -445,51 +499,59 @@ export class ZHELL_UTILS {
 	
 	// load a texture for all clients.
 	static async loadTextureForAll(src, push = true){
-		if(push){
+		if ( push ) {
 			game.socket.emit(`world.${game.world.id}`, {
 				action: "loadTextureForAll",
-				data: {src}
+				data: { src }
 			});
 		}
 		return loadTexture(src);
 	}
 
 	static async createTiles(tileData, push = true){
-		if(push){
+		if ( push ) {
 			game.socket.emit(`world.${game.world.id}`, {
 				action: "createTiles",
-				data: {tileData}
+				data: { tileData }
 			});
 		}
-		if(game.user.isGM) return canvas.scene.createEmbeddedDocuments("Tile", tileData);
+		if ( game.user.isGM ) return canvas.scene.createEmbeddedDocuments("Tile", tileData);
 	}
 
 	// increase exhaustion.
 	static increase_exhaustion = async (actor) => {
-		if(!(actor instanceof Actor)) return ui.notifications.warn("Invalid actor provided.");
+		if ( !(actor instanceof Actor) ) {
+			return ui.notifications.warn("Invalid actor provided.");
+		}
 		
 		// get current exhaustion effect, if any.
-		const exhaustion = actor.effects.find(i => i.getFlag("core", "statusId") === "exhaustion");
+		const exhaustion = actor.effects.find(i => {
+			return i.getFlag("core", "statusId") === "exhaustion";
+		});
 
 		// if exhausted, increase the level.
-		if(!!exhaustion){
+		if ( !!exhaustion ) {
 			const currentLevel = exhaustion.getFlag("zhell-custom-stuff", "exhaustion");
 			return this.update_exhaustion(currentLevel + 1, actor);
 		}
 
 		// if not exhausted, set to 1.
-		if(!exhaustion) return this.update_exhaustion(1, actor);
+		if ( !exhaustion ) return this.update_exhaustion(1, actor);
 	}
 
 	// decrease exhaustion.
 	static decrease_exhaustion = async (actor) => {
-		if(!(actor instanceof Actor)) return ui.notifications.warn("Invalid actor provided.");
+		if ( !(actor instanceof Actor) ) {
+			return ui.notifications.warn("Invalid actor provided.");
+		}
 		
 		// get current exhaustion effect, if any.
-		const exhaustion = actor.effects.find(i => i.getFlag("core", "statusId") === "exhaustion");
+		const exhaustion = actor.effects.find(i => {
+			return i.getFlag("core", "statusId") === "exhaustion";
+		});
 
 		// if exhausted, decrease the level.
-		if(!!exhaustion){
+		if ( !!exhaustion ) {
 			const currentLevel = exhaustion.getFlag("zhell-custom-stuff", "exhaustion");
 			return this.update_exhaustion(currentLevel - 1, actor);
 		}
@@ -500,44 +562,55 @@ export class ZHELL_UTILS {
 
 	// update or set exhaustion to specific level
 	static update_exhaustion = async (num, actor) => {
-		if(![0,1,2,3,4,5,6].includes(num)) return ui.notifications.warn("The provided level was not valid.");
-		if(!(actor instanceof Actor)) return ui.notifications.warn("Invalid actor provided.");
+		if ( ![0,1,2,3,4,5,6].includes(num) ) {
+			return ui.notifications.warn("The provided level was not valid.");
+		}
+		if ( !(actor instanceof Actor) ) {
+			return ui.notifications.warn("Invalid actor provided.");
+		}
 
 		// attempt to find any current exhaustion effect.
-		let exhaustion = actor.effects.find(i => i.getFlag("core", "statusId") === "exhaustion");
+		let exhaustion = actor.effects.find(i => {
+			return i.getFlag("core", "statusId") === "exhaustion";
+		});
 
 		// if num===0, remove it.
-		if(num === 0) return exhaustion?.delete();
+		if ( num === 0 ) return exhaustion?.delete();
 
 		// if num===6, remove it and apply dead.
-		if(num === 6){
+		if ( num === 6 ) {
 			await exhaustion?.delete();
-			const dead = foundry.utils.duplicate(CONFIG.statusEffects.find(i => i.id === "dead"));
-			dead.flags.core = {statusId: dead.id, overlay: true};
+			const dead = foundry.utils.duplicate(CONFIG.statusEffects.find(i => {
+				return i.id === "dead";
+			}));
+			const coreFlag = { statusId: dead.id, overlay: true };
+			foundry.utils.setProperty(dead, "flags.core", coreFlag);
 			return actor.createEmbeddedDocuments("ActiveEffect", [dead]);
 		}
 
 		// if actor has exhaustion, update.
-		if(!!exhaustion){
+		if ( !!exhaustion ) {
 			const {label, changes, flags} = EXHAUSTION_EFFECTS[num-1];
 			await exhaustion.update({label, changes, flags});
 		}
 
 		// if actor not already exhausted, find and apply.
-		else if(!exhaustion){
+		else if ( !exhaustion ) {
 			exhaustion = foundry.utils.duplicate(EXHAUSTION_EFFECTS[num-1]);
-			exhaustion.flags.core = {statusId: exhaustion.id};
+			const coreFlag = { statusId: exhaustion.id };
+			foundry.utils.setProperty(exhaustion, "flags.core", coreFlag);
 			await actor.createEmbeddedDocuments("ActiveEffect", [exhaustion]);
 		}
 
 		// lastly, update actor hp.
 		const {value, max} = actor.system.attributes.hp;
-		return actor.update({"system.attributes.hp.value": Math.floor(Math.min(value, max))});
+		const newValue = Math.floor(Math.min(value, max));
+		return actor.update({"system.attributes.hp.value": newValue});
 	}
 
 	// pop a title on each player's screen.
 	static title_card = async (text, fontSize = 80) => {
-		if(!text) return ui.notifications.warn("No text given.");
+		if ( !text ) return ui.notifications.warn("No text given.");
 
 		const textStyle = {
 			align: "center",
@@ -562,5 +635,4 @@ export class ZHELL_UTILS {
 			.fadeOut(2000);
 		return sequence.play();
 	}
-	
 }

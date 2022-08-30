@@ -9,14 +9,14 @@ export class api {
 			setting: {
 				toggleLR: ZHELL_REST.toggleLR,
 				toggleSR: ZHELL_REST.toggleSR,
-				setForageDC: ZHELL_UTILS.setMateriaMedicaForagingDC
+				setForageDC: ZHELL_UTILS.setForageDC
 			},
 			catalog: {
-				getDocument: ZHELL_CATALOG.fromCatalog,
-				spawn: ZHELL_CATALOG.spawnFromCatalog,
-				mutate: ZHELL_CATALOG.mutateFromCatalog,
-				cast: ZHELL_CATALOG.castFromCatalog,
-				castCharges: ZHELL_CATALOG.magicItemCast
+				getDocument: ZHELL_CATALOG.getDocument,
+				spawn: ZHELL_CATALOG.spawn,
+				mutate: ZHELL_CATALOG.mutate,
+				cast: ZHELL_CATALOG.cast,
+				castCharges: ZHELL_CATALOG.castCharges
 			},
 			token: {
 				teleport: ZHELL_UTILS.teleportTokens,

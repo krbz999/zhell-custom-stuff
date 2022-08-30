@@ -63,25 +63,23 @@ export class EffectsPanelController {
 	get data(){
 		return {
 			enabledEffects: this._actorEffects.filter((effectData) => !effectData.disabled),
-			disabledEffects: this._actorEffects.filter((effectData) => effectData.disabled),
-			topStyle: "top: 15px;"
+			disabledEffects: this._actorEffects.filter((effectData) => effectData.disabled)
 		}
 	}
 	
 	get _actorEffects(){
 		const actor = this._actor;
-		if (!actor) return [];
+		if ( !actor ) return [];
 		
 		return actor.effects.map((effect) => {
 			const effectData = effect.clone({}, {keepId: true});
 			effectData.remainingSeconds = this._getSecondsRemaining(effectData.duration);
 			effectData.turns = effectData.duration.turns;
-			//effectData.isTemporary = effect.isTemporary;
 			effectData.isExpired = effectData.remainingSeconds <= 0;
 			return effectData;
 		}).sort((a, b) => {
-			if(a.isTemporary) return -1;
-			if(b.isTemporary) return 1;
+			if ( a.isTemporary ) return -1;
+			if ( b.isTemporary ) return 1;
 			return 0;
 		}).filter((effectData) => {
 			return !!effectData.isTemporary;
@@ -90,9 +88,8 @@ export class EffectsPanelController {
 	
 	// delete on right-click.
 	async onIconRightClick(event){
-		const $target = $(event.currentTarget);
-		const actor = this._actor;
-		const effect = actor?.effects.get($target.attr("data-effect-id") ?? "");
+		const effectId = event.target.dataset.effectId;
+		const effect = this._actor.effects.get(effectId);
 		if (!effect) return;
 		
 		await Dialog.confirm({
@@ -107,21 +104,19 @@ export class EffectsPanelController {
 	
 	// disable effect on double-click.
 	onIconDoubleClick(event){
-		const $target = $(event.currentTarget);
-		const actor = this._actor;
-		const effect = actor?.effects.get($target.attr("data-effect-id") ?? "");
+		const effectId = event.target.dataset.effectId;
+		const effect = this._actor.effects.get(effectId);
 		if (!effect) return;
-		effect.update({disabled: !effect.disabled});
+		return effect.update({disabled: !effect.disabled});
 	}
 	
 	get _actor(){
-		return canvas.tokens.controlled[0]?.actor ?? game.user?.character ?? null;
+		return canvas.tokens.controlled[0]?.actor ?? game.user.character ?? null;
 	}
 	
-	// TODO consider handling rounds/seconds/turns based on whatever is defined for the effect rather than do conversions
 	_getSecondsRemaining(duration){
-		if(duration.seconds || duration.rounds){
-			const seconds = duration.seconds ?? duration.rounds * (CONFIG.time?.roundTime ?? 6);
+		if ( duration.seconds || duration.rounds ) {
+			const seconds = duration.seconds ?? duration.rounds * (CONFIG.time.roundTime ?? 6);
 			return duration.startTime + seconds - game.time.worldTime;
 		} else return Infinity;
 	}
@@ -143,20 +138,21 @@ export class EffectsPanelApp extends Application {
 		super();
 		this._controller = new EffectsPanelController(this);
 		
-		// Debounce and slightly delayed request to re-render this panel. Necessary for situations where it is not possible to properly wait for promises to resolve before refreshing the UI.
+		// Debounce and slightly delayed request to re-render this panel.
+		// Necessary for situations where it is not possible to properly wait for promises to resolve before refreshing the UI.
 		this.refresh = foundry.utils.debounce(this.render.bind(this), 100);
 		this._initialSidebarWidth = ui.sidebar.element.outerWidth();
 	}
 	
 	/** @override */
 	async getData(options){
-		for(let eff of this._controller.data.enabledEffects){
+		for ( let eff of this._controller.data.enabledEffects ) {
 			const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-			if(!!desc) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
+			if ( !!desc ) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
 		}
-		for(let eff of this._controller.data.disabledEffects){
+		for ( let eff of this._controller.data.disabledEffects ) {
 			const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-			if(!!desc) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
+			if ( !!desc ) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
 		}
 		return this._controller.data;
 	}
@@ -165,7 +161,7 @@ export class EffectsPanelApp extends Application {
 	activateListeners(html){
 		this._rootView = html;
 		const icons = this._rootView[0].querySelectorAll("div[data-effect-id]");
-		for(let icon of icons){
+		for ( let icon of icons ) {
 			icon.addEventListener("contextmenu", this._controller.onIconRightClick.bind(this._controller));
 			icon.addEventListener("dblclick", this._controller.onIconDoubleClick.bind(this._controller));
 		}
@@ -173,7 +169,7 @@ export class EffectsPanelApp extends Application {
 	
 	// Handles when the sidebar expands or collapses. true: collapse, false: expand.
 	handleExpand(bool){
-		if(!bool){
+		if ( !bool ) {
 			const right = this._initialSidebarWidth + 18 + "px";
 			this.element.animate({right}, 150);
 		} else this.element.delay(250).animate({right: "50px"}, 150);
@@ -182,8 +178,8 @@ export class EffectsPanelApp extends Application {
 	/** @inheritdoc */
 	async _render(force = false, options = {}){
 		await super._render(force, options);
-		if(ui.sidebar._collapsed) this.element.css("right", "50px");
-		else this.element.css("right", this._initialSidebarWidth + 18 + "px");
+		if ( ui.sidebar._collapsed ) this.element.css("right", "50px");
+		else this.element.css("right", `${this._initialSidebarWidth + 18}px`);
 	}
 	
 }

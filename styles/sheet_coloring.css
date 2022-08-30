@@ -31,6 +31,16 @@ body :root {
 .dnd5e .items-list .dot.empty {
     background-color: rgb(169, 162, 162);
 }
+/* style of the 'not all dots shown' dot */
+.dnd5e .items-list .dot.has-more {
+    mix-blend-mode: color-burn;
+}
+/* dot container */
+.dnd5e .items-list div.zhell-dots {
+    flex: none;
+    max-height: 15px;
+    flex-direction: row-reverse;
+}
 
 /* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name i.attuned {
@@ -127,4 +137,9 @@ body :root {
 /* bold ability keys for skills */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-ability {
     font-weight: bold;
+}
+
+/* hide spell school column of actor sheets. */
+.dnd5e.sheet.actor .spell-school {
+    display: none;
 }
