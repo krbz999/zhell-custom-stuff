@@ -3,13 +3,13 @@ body :root {
     --full_color: #b33737;
     --attuned_color: #7a7971;
     --not_attuned_color: #44191A;
-	--prepared_color: #7a7971;
-	--not_prepared_color: #44191A;
-	--always_prepared_color: #7F7F7F;
-	--equipped_color: #7a7971;
-	--not_equipped_color: #44191A;
+    --prepared_color: #7a7971;
+    --not_prepared_color: #44191A;
+    --always_prepared_color: #7F7F7F;
+    --equipped_color: #7a7971;
+    --not_equipped_color: #44191A;
     --color_proficient: "#228b22";
-	--color_half_proficient: "#696969";
+    --color_half_proficient: "#696969";
     --color_twice_proficient: "#ff6347";
     color:rgb(0, 0, 0)
 }
@@ -53,8 +53,8 @@ body :root {
 }
 .dnd5e.sheet.actor .inventory-list .item .item-name i:hover:not(.original-class) {
     text-shadow: 0 0 8px var(--color-shadow-primary)!important;
-	padding-top: 8px;
-	padding-bottom: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 /* Equipment State icon. */
@@ -70,11 +70,11 @@ body :root {
 /* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
     color: var(--prepared_color) !important;
-    filter: drop-shadow(0px 0px 1px black);	
+    filter: drop-shadow(0px 0px 1px black);    
 }
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
     color: var(--always_prepared_color) !important;
-    filter: drop-shadow(0px 0px 1px black);	
+    filter: drop-shadow(0px 0px 1px black);    
 }
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
     color: var(--not_prepared_color)!important;
@@ -83,7 +83,7 @@ body :root {
 
 /* Delete icon for items and effects. */
 .dnd5e.sheet.actor .item-controls .item-delete, .dnd5e.sheet.actor .item-controls .effect-control[data-action=delete] {
-	color: darkred;
+    color: darkred;
 }
 
 /* additional coloring: */

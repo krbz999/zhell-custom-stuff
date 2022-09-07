@@ -1,9 +1,9 @@
 /* Default color of magic items. */
 body :root {
     --rarity-color-uncommon: #008000;
-	--rarity-color-rare: #0000ff;
-	--rarity-color-very-rare: #800080;
-	--rarity-color-legendary: #ffa500;
+    --rarity-color-rare: #0000ff;
+    --rarity-color-very-rare: #800080;
+    --rarity-color-legendary: #ffa500;
     --rarity-color-artifact: #d2691e;
 }
 

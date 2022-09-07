@@ -1,9 +1,9 @@
 /* The materia medica counter on the character sheets. */
 .dnd5e.sheet.actor .counters .counter input[type="number"].material {
     max-width: 40px;
-	width: fit-content;
-	text-align: right;
-	padding-right: 5px;
+    width: fit-content;
+    text-align: right;
+    padding-right: 5px;
 }
 
 /* Token HUD status effects. */
@@ -70,9 +70,9 @@ label.zhell-custom-stuff.zhell-label-name { font-weight: bold; }
 .whisper-dialog-textarea { resize: none; }
 .whisper-dialog-player-name {
     padding: 5px 0 5px 0;
-	border: 1px solid black;
-	border-radius: 5px;
-	text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
     transition: 0.3s;
     transform: scale(0.9);
 }
