@@ -1,6 +1,6 @@
 import { registerSettings } from "./scripts/settings.mjs";
 import { api } from "./scripts/api.mjs";
-import { HandlebarHelpers, ZHELL_EFFECTS_PANEL } from "./scripts/modules/effect-panel-classes.mjs";
+import { createEffectTextField, HandlebarHelpers, ZHELL_EFFECTS_PANEL } from "./scripts/modules/effect-panel-classes.mjs";
 import { ZHELL_SOCKETS } from "./scripts/modules/sockets.mjs";
 import { ZHELL_ADDITIONS } from "./scripts/modules/game_additions.mjs";
 import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
@@ -60,7 +60,10 @@ Hooks.once("ready", () => {
 	ZHELL_SHEET.refreshColors();
 
 	// mark 0 hp combatants as defeated.
-	if ( game.user.isGM ) Hooks.on("updateToken", ZHELL_COMBAT.mark_defeated_combatant);
+	if ( game.user.isGM ){
+        Hooks.on("updateToken", ZHELL_COMBAT.mark_defeated_combatant);
+        Hooks.on("renderActiveEffectConfig", createEffectTextField);
+    }
 
 	// display ammo when you make an attack, if the ammo has a save.
 	Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.show_ammo_if_it_has_save);

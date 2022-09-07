@@ -189,3 +189,13 @@ export class ZHELL_EFFECTS_PANEL {
 		this.effectsPanel = new EffectsPanelApp();
 	}
 }
+
+// function to create input field on active effect configs.
+export function createEffectTextField(sheet, html){
+    const table = html[0].querySelector(".effect-change.effects-header.flexrow");
+    const div = document.createElement("DIV");
+    div.classList.add("zhell-effect-description");
+    const desc = sheet.object.flags.convenientDescription ?? "";
+    div.innerHTML = `<input type="text" name="flags.convenientDescription" value="${desc}" placeholder="Description...">`;
+    table.before(div);
+}

@@ -1,20 +1,20 @@
-import { MODULE_NAME } from "../const.mjs";
+import { MODULE } from "../const.mjs";
 import { EXHAUSTION_EFFECTS } from "../../sources/conditions.js";
 
 export class ZHELL_REST {
 
 	static toggleSR = async (value = null) => {
 		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-		const current = !!game.settings.get(MODULE_NAME, "toggleSR");
-		if ( value !== null ) return game.settings.set(MODULE_NAME, "toggleSR", value);
-		return game.settings.set(MODULE_NAME, "toggleSR", !current);
+		const current = !!game.settings.get(MODULE, "toggleSR");
+		if ( value !== null ) return game.settings.set(MODULE, "toggleSR", value);
+		return game.settings.set(MODULE, "toggleSR", !current);
 	}
 
 	static toggleLR = async (value = null) => {
 		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-		const current = !!game.settings.get(MODULE_NAME, "toggleLR");
-		if ( value !== null ) return game.settings.set(MODULE_NAME, "toggleLR", value);
-		return game.settings.set(MODULE_NAME, "toggleLR", !current);
+		const current = !!game.settings.get(MODULE, "toggleLR");
+		if ( value !== null ) return game.settings.set(MODULE, "toggleLR", value);
+		return game.settings.set(MODULE, "toggleLR", !current);
 	}
 }
 
@@ -258,7 +258,7 @@ export class ZHELL_UTILS {
 
 	static setForageDC = async (number) => {
 		if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-		return game.settings.set(MODULE_NAME, "foragingDC", number);
+		return game.settings.set(MODULE, "foragingDC", number);
 	}
 	
 	static teleportTokens = async (crosshairsConfig = {}, clearTargets = true, fade = true, fadeDuration = 500) => {
@@ -531,7 +531,7 @@ export class ZHELL_UTILS {
 
 		// if exhausted, increase the level.
 		if ( !!exhaustion ) {
-			const currentLevel = exhaustion.getFlag("zhell-custom-stuff", "exhaustion");
+			const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
 			return this.update_exhaustion(currentLevel + 1, actor);
 		}
 
@@ -552,7 +552,7 @@ export class ZHELL_UTILS {
 
 		// if exhausted, decrease the level.
 		if ( !!exhaustion ) {
-			const currentLevel = exhaustion.getFlag("zhell-custom-stuff", "exhaustion");
+			const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
 			return this.update_exhaustion(currentLevel - 1, actor);
 		}
 

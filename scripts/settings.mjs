@@ -1,4 +1,4 @@
-import { MODULE_NAME } from "./const.mjs";
+import { MODULE } from "./const.mjs";
 import { ZHELL_SHEET } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
@@ -7,7 +7,7 @@ export function registerSettings() {
 }
 
 function _registerSettings(){
-	game.settings.register(MODULE_NAME, "toggleLR", {
+	game.settings.register(MODULE, "toggleLR", {
 		name: "Disable Long Rest",
 		hint: "If checked, players cannot take a long rest.",
 		scope: "world",
@@ -15,7 +15,7 @@ function _registerSettings(){
 		type: Boolean,
 		default: false
 	});
-	game.settings.register(MODULE_NAME, "toggleSR", {
+	game.settings.register(MODULE, "toggleSR", {
 		name: "Disable Short Rest",
 		hint: "If checked, players cannot take a short rest.",
 		scope: "world",
@@ -23,7 +23,7 @@ function _registerSettings(){
 		type: Boolean,
 		default: false
 	});
-	game.settings.register(MODULE_NAME, "foragingDC", {
+	game.settings.register(MODULE, "foragingDC", {
 		name: "Foraging DC",
 		hint: "The current DC for foraging.",
 		scope: "world",
@@ -31,7 +31,7 @@ function _registerSettings(){
 		type: Number,
 		default: 15
 	});
-	game.settings.register(MODULE_NAME, "markDefeatedCombatants", {
+	game.settings.register(MODULE, "markDefeatedCombatants", {
 		name: "Mark Combatants Defeated",
 		hint: "When combatants that are not owned by a player is reduced to 0 or less hp, mark them as defeated.",
 		scope: "world",
@@ -39,7 +39,7 @@ function _registerSettings(){
 		type: Boolean,
 		default: true
 	});
-	game.settings.register(MODULE_NAME, "displaySavingThrowAmmo", {
+	game.settings.register(MODULE, "displaySavingThrowAmmo", {
 		name: "Show Saving Throw Ammo",
 		hint: "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
 		scope: "world",
@@ -70,7 +70,7 @@ class ReplacementsSubmenu extends FormApplication {
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		const dialog = this;
 		saveButton.addEventListener("click", async function(){
-			await game.settings.set(MODULE_NAME, "replacementSettings", {
+			await game.settings.set(MODULE, "replacementSettings", {
 				replace_status_effects: html[0].querySelector(".zhell-replace-status-effects").checked,
 				replace_languages: html[0].querySelector(".zhell-replace-languages").checked,
 				rename_currency_labels: html[0].querySelector(".zhell-rename-currency-labels").checked,
@@ -82,7 +82,7 @@ class ReplacementsSubmenu extends FormApplication {
 		});
 	}
 	async getData() {
-		const source = game.settings.get(MODULE_NAME, "replacementSettings");
+		const source = game.settings.get(MODULE, "replacementSettings");
 		const defaults = {
 			replace_status_effects: true,
 			replace_languages: true,
@@ -116,7 +116,7 @@ class AdditionsSubmenu extends FormApplication {
 		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
-			await game.settings.set(MODULE_NAME, "additionSettings", {
+			await game.settings.set(MODULE, "additionSettings", {
 				add_conditions: html[0].querySelector(".zhell-add-conditions").checked,
 				add_equipment_types: html[0].querySelector(".zhell-add-equipment-types").checked,
 				add_piety: html[0].querySelector(".zhell-add-piety").checked,
@@ -126,7 +126,7 @@ class AdditionsSubmenu extends FormApplication {
 		});
 	}
 	async getData() {
-		const source = game.settings.get(MODULE_NAME, "additionSettings");
+		const source = game.settings.get(MODULE, "additionSettings");
 		const defaults = {
 			add_conditions: true,
 			add_equipment_types: true,
@@ -159,7 +159,7 @@ class SheetSubmenu extends FormApplication {
 		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
-			await game.settings.set(MODULE_NAME, "sheetSettings", {
+			await game.settings.set(MODULE, "sheetSettings", {
 				remove_resources: html[0].querySelector(".zhell-remove-resources").checked,
 				remove_alignment: html[0].querySelector(".zhell-remove-alignment").checked,
 				disable_initiative_button: html[0].querySelector(".zhell-disable-initiative-button").checked,
@@ -171,7 +171,7 @@ class SheetSubmenu extends FormApplication {
 		});
 	}
 	async getData() {
-		const source = game.settings.get(MODULE_NAME, "sheetSettings");
+		const source = game.settings.get(MODULE, "sheetSettings");
 		const defaults = {
 			remove_resources: true,
 			remove_alignment: true,
@@ -206,7 +206,7 @@ class ColorPickerSubmenu extends FormApplication {
 		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
-			await game.settings.set(MODULE_NAME, "colorSettings", {
+			await game.settings.set(MODULE, "colorSettings", {
 				limited_use_dots: html[0].querySelector(".zhell-limited-use-dots").checked,
 				spell_slot_dots: html[0].querySelector(".zhell-spell-slot-dots").checked,
 				color_full: html[0].querySelector(".zhell-color-full").value,
@@ -226,7 +226,7 @@ class ColorPickerSubmenu extends FormApplication {
 		});
 	}
 	async getData() {
-		const source = game.settings.get(MODULE_NAME, "colorSettings");
+		const source = game.settings.get(MODULE, "colorSettings");
 		const defaults = {
 			limited_use_dots: false,
 			spell_slot_dots: false,
@@ -267,7 +267,7 @@ class RarityColorsSubmenu extends FormApplication {
 		const dialog = this;
 		const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
 		saveButton.addEventListener("click", async function(){
-			await game.settings.set(MODULE_NAME, "rarityColorSettings", {
+			await game.settings.set(MODULE, "rarityColorSettings", {
 				uncommon: html[0].querySelector(".zhell-color-uncommon").value,
 				rare: html[0].querySelector(".zhell-color-rare").value,
 				very_rare: html[0].querySelector(".zhell-color-very-rare").value,
@@ -279,7 +279,7 @@ class RarityColorsSubmenu extends FormApplication {
 		});
 	}
 	async getData() {
-		const source = game.settings.get(MODULE_NAME, "rarityColorSettings");
+		const source = game.settings.get(MODULE, "rarityColorSettings");
 		const defaults = {
 			uncommon: "#008000",
 			rare: "#0000ff",
@@ -293,7 +293,7 @@ class RarityColorsSubmenu extends FormApplication {
 
 const registerSettingsMenus = function () {
 	// replacements.
-	game.settings.register(MODULE_NAME, "replacementSettings", {
+	game.settings.register(MODULE, "replacementSettings", {
 		scope: "world",
 		config: false,
 		type: Object,
@@ -307,7 +307,7 @@ const registerSettingsMenus = function () {
 		},
 		onChange: () => window.location.reload()
 	});
-	game.settings.registerMenu(MODULE_NAME, "replacementSettings", {
+	game.settings.registerMenu(MODULE, "replacementSettings", {
 		name: "Replacements",
 		hint: "A collection of replacements for core and system content.",
 		label: "Replacement Settings",
@@ -317,7 +317,7 @@ const registerSettingsMenus = function () {
 	});
 	
 	// additions.
-	game.settings.register(MODULE_NAME, "additionSettings", {
+	game.settings.register(MODULE, "additionSettings", {
 		scope: "world",
 		config: false,
 		type: Object,
@@ -329,7 +329,7 @@ const registerSettingsMenus = function () {
 		},
 		onChange: () => window.location.reload()
 	});
-	game.settings.registerMenu(MODULE_NAME, "additionSettings", {
+	game.settings.registerMenu(MODULE, "additionSettings", {
 		name: "Additions",
 		hint: "A collection of additions to dnd5e system content.",
 		label: "Addition Settings",
@@ -339,7 +339,7 @@ const registerSettingsMenus = function () {
 	});
 	
 	// sheet edits.
-	game.settings.register(MODULE_NAME, "sheetSettings", {
+	game.settings.register(MODULE, "sheetSettings", {
 		scope: "world",
 		config: false,
 		type: Object,
@@ -352,7 +352,7 @@ const registerSettingsMenus = function () {
 			collapsible_headers: true
 		}
 	});
-	game.settings.registerMenu(MODULE_NAME, "sheetSettings", {
+	game.settings.registerMenu(MODULE, "sheetSettings", {
 		name: "Sheet Edits",
 		hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
 		label: "Sheet Settings",
@@ -362,7 +362,7 @@ const registerSettingsMenus = function () {
 	});
 	
 	// sheet color settings.
-	game.settings.register(MODULE_NAME, "colorSettings", {
+	game.settings.register(MODULE, "colorSettings", {
 		scope: "client",
 		config: false,
 		type: Object,
@@ -382,7 +382,7 @@ const registerSettingsMenus = function () {
 			color_twice_proficient: "#ff6347"
 		}
 	});
-	game.settings.registerMenu(MODULE_NAME, "colorSettings", {
+	game.settings.registerMenu(MODULE, "colorSettings", {
 		name: "Sheet Colors",
 		hint: "Settings for the colors that are applied to the actor sheets.",
 		label: "Sheet Color Settings",
@@ -392,7 +392,7 @@ const registerSettingsMenus = function () {
 	});
 	
 	// item rarity color settings.
-	game.settings.register(MODULE_NAME, "rarityColorSettings", {
+	game.settings.register(MODULE, "rarityColorSettings", {
 		scope: "client",
 		config: false,
 		type: Object,
@@ -404,7 +404,7 @@ const registerSettingsMenus = function () {
 			artifact: "#d2691e"
 		}
 	});
-	game.settings.registerMenu(MODULE_NAME, "rarityColorSettings", {
+	game.settings.registerMenu(MODULE, "rarityColorSettings", {
 		name: "Rarity Colors",
 		hint: "Settings for the colors that are applied to items on an actor sheet depending on rarity.",
 		label: "Item Rarity Color Settings",

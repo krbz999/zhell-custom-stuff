@@ -1,6 +1,7 @@
 import { ZHELL_CATALOG, ZHELL_REST, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
 import { EXHAUSTION_EFFECTS } from "../sources/conditions.js";
 import { ZhellDialog } from "./modules/zhell-dialog.mjs";
+import { crafting, foraging } from "./modules/crafting.mjs";
 
 export class api {
 	
@@ -40,7 +41,11 @@ export class api {
 				decrease: ZHELL_UTILS.decrease_exhaustion,
 				update: ZHELL_UTILS.update_exhaustion,
 				effects: EXHAUSTION_EFFECTS
-			}
+			},
+            players: {
+                goForaging: foraging,
+                goCrafting: crafting
+            }
 		}
 	}
 }

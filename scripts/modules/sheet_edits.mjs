@@ -1,37 +1,37 @@
-import { MODULE_NAME } from "../const.mjs";
+import { MODULE } from "../const.mjs";
 
 export class ZHELL_SHEET {
 	
 	static disable_long_rest = () => {
-		return !game.settings.get(MODULE_NAME, "toggleLR");
+		return !game.settings.get(MODULE, "toggleLR");
 	}
 	
 	static disable_short_rest = () => {
-		return !game.settings.get(MODULE_NAME, "toggleSR");
+		return !game.settings.get(MODULE, "toggleSR");
 	}
 
 	// rename copper, etc etc, to CP, SP, EP, GP, PP.
 	static rename_currency_labels = () => {
-		if ( !game.settings.get(MODULE_NAME, "replacementSettings").rename_currency_labels ) return;
+		if ( !game.settings.get(MODULE, "replacementSettings").rename_currency_labels ) return;
 		for ( let d of ["cp", "ep", "gp", "pp", "sp"] ) {
 			CONFIG.DND5E.currencies[d].label = d.toUpperCase();
 		}
 	}
 	
 	static remove_resources = (sheet, html, sheetData) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").remove_resources ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").remove_resources ) return;
 		const resources = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul");
 		if ( resources ) resources.remove();
 	}
 	
 	static remove_alignment = (sheet, html, sheetData) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").remove_alignment ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").remove_alignment ) return;
 		const AL = html[0].querySelector("input[name='system.details.alignment']");
 		if ( AL ) AL.parentElement?.remove();
 	}
 	
 	static disable_initiative_button = (sheet, html, sheetData) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").disable_initiative_button ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").disable_initiative_button ) return;
 		const initButton = html[0].querySelector(".dnd5e.sheet.actor .sheet-header .attributes .attribute.initiative > h4");
 		if ( initButton ) {
 			initButton.classList.remove("rollable");
@@ -40,15 +40,15 @@ export class ZHELL_SHEET {
 	}
 	
 	static create_forage_counter = (sheet, html, sheetData) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").create_forage_counter ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").create_forage_counter ) return;
 		const actor = sheet.actor;
 		if ( !sheetData.isCharacter ) return;
 		
-		const value = actor.getFlag(MODULE_NAME, "materia-medica.value") ?? 0;
+		const value = actor.getFlag(MODULE, "materia-medica.value") ?? 0;
 		const materia = document.createElement("div");
 		materia.classList.add("counter", "flexrow", "materia");
 		materia.innerHTML = `
-			<h4>Foraged Materials</h4>
+			<h4 class="rollable" data-action="foraging">Foraged Materials</h4>
 			<div class="counter-value">
 				<input
 					class="material"
@@ -66,10 +66,55 @@ export class ZHELL_SHEET {
 		// insert before inspiration tracker.
 		const beforeThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.inspiration");
 		beforeThis.parentNode.insertBefore(materia, beforeThis);
+
+        // create listeners (black magic).
+		if ( sheet.foraging === undefined ) {
+            sheet.foraging = this.mainForaging.bind(sheet.object);
+            sheet.element[0].addEventListener("click", sheet.foraging);
+        } else {
+            sheet.element[0].removeEventListener("click", sheet.foraging);
+            sheet.element[0].addEventListener("click", sheet.foraging);
+        }
 	}
+
+    static mainForaging(event){
+        const action = event.target.closest("[data-action=foraging]");
+        if ( !action ) return;
+
+        const actor = this;
+
+        // dialog that asks to forage or craft.
+        // call ZHELL.players.goForaging or .goCrafting.
+        class ForageDialog extends Dialog {
+            constructor(obj, options){
+                super(obj, options);
+                this.object = obj.object;
+            }
+            get id(){
+                return `zhell-custom-stuff-forage-dialog-${this.object.id}`;
+            }
+        }
+        new ForageDialog({
+            object: actor,
+            title: `Materia Medica: ${actor.name}`,
+            content: '<p>Are you foraging or crafting?</p>',
+            buttons: {
+                forage: {
+                    icon: '<i class="fas fa-leaf"></i>',
+                    label: "Foraging",
+                    callback: () => ZHELL.players.goForaging(actor)
+                },
+                craft: {
+                    icon: '<i class="fas fa-volcano"></i>',
+                    label: "Crafting",
+                    callback: () => ZHELL.players.goCrafting(actor)
+                }
+            }
+        }).render(true);
+    }
 	
 	static create_dots = (sheet, html) => {
-		const colorSettings = game.settings.get(MODULE_NAME, "colorSettings");
+		const colorSettings = game.settings.get(MODULE, "colorSettings");
 		const {limited_use_dots, spell_slot_dots} = colorSettings;
 		
 		// create spell slot dots.
@@ -98,6 +143,8 @@ export class ZHELL_SHEET {
 				const {value, max} = o.system.uses;
 				if ( max === 0 ) continue;
 				const itemHTML = html[0].querySelector(`.item[data-item-id='${o.id}']`);
+                // skip if item is hidden via filter.
+                if ( !itemHTML ) continue;
 				const position = o.type === "spell" ? "beforeBegin" : "afterEnd";
 				const adjacent = o.type === "spell" ? itemHTML.querySelector(".item-detail.spell-uses") : itemHTML.querySelector(".item-name");
 
@@ -124,13 +171,12 @@ export class ZHELL_SHEET {
 		
 		// create listeners (black magic).
 		if ( spell_slot_dots || limited_use_dots ) {
-			if ( sheet.listening === undefined ) {
-				sheet.listening = this.dotToggle.bind(sheet.object);
-				sheet.element[0].addEventListener("click", sheet.listening);
-			}
-			else {
-				sheet.element[0].removeEventListener("click", sheet.listening);
-				sheet.element[0].addEventListener("click", sheet.listening);
+			if ( sheet.dottoggler === undefined ) {
+				sheet.dottoggler = this.dotToggle.bind(sheet.object);
+				sheet.element[0].addEventListener("click", sheet.dottoggler);
+			} else {
+				sheet.element[0].removeEventListener("click", sheet.dottoggler);
+				sheet.element[0].addEventListener("click", sheet.dottoggler);
 			}
 		}
 	}
@@ -159,32 +205,40 @@ export class ZHELL_SHEET {
 		}
 	}
 	
-	static create_toggle_on_attunement_button = (sheet, html) => {
-		html[0].addEventListener("click", (event) => {
-			const attunement_icon = event.target?.closest(".item-detail.attunement");
-			if ( !attunement_icon ) return;
-			
-			// item attuned or nah.
-			const attuned = attunement_icon.querySelector(".attuned");
-			const not_attuned = attunement_icon.querySelector(".not-attuned");
-			if ( !attuned && !not_attuned ) return;
-			
-			// get item id.
-			const itemId = attunement_icon.closest(".item").dataset.itemId;
-			if ( !itemId ) return;
-			
-			// get the item.
-			const item = sheet.actor.items.get(itemId);
-			if ( !item ) return;
-			
-			if ( !!attuned ) {
-				return item.update({"system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED});
-			}
-			else if ( !!not_attuned ) {
-				return item.update({"system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED});
-			}
-		});
+	static create_toggle_on_attunement_button = (sheet) => {
+        if ( sheet.attunementToggler === undefined ) {
+            sheet.attunementToggler = this.toggleAttunement.bind(sheet.object);
+            sheet.element[0].addEventListener("click", sheet.attunementToggler);
+        } else {
+            sheet.element[0].removeEventListener("click", sheet.attunementToggler);
+            sheet.element[0].addEventListener("click", sheet.attunementToggler);
+        }
 	}
+
+    static toggleAttunement(event){
+        const attunement_icon = event.target?.closest(".item-detail.attunement");
+        if ( !attunement_icon ) return;
+        
+        // item attuned or nah.
+        const attuned = attunement_icon.querySelector(".attuned");
+        const not_attuned = attunement_icon.querySelector(".not-attuned");
+        if ( !attuned && !not_attuned ) return;
+        
+        // get item id.
+        const itemId = attunement_icon.closest(".item").dataset.itemId;
+        if ( !itemId ) return;
+        
+        // get the item.
+        const item = this.items.get(itemId);
+        if ( !item ) return;
+        
+        if ( !!attuned ) {
+            return item.update({"system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED});
+        }
+        else if ( !!not_attuned ) {
+            return item.update({"system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED});
+        }
+    }
 	
 	static color_magic_items = (sheet, html) => {
 		const items = html[0].querySelectorAll(".items-list .item");
@@ -200,7 +254,7 @@ export class ZHELL_SHEET {
 		// set icon colors on sheet.
 		const [
 			a, b, cf, ca, cna, ce, cne, cp, cnp, cap, prof, half_prof, twice_prof
-		] = Object.values(game.settings.get(MODULE_NAME, "colorSettings"));
+		] = Object.values(game.settings.get(MODULE, "colorSettings"));
 		document.documentElement.style.setProperty("--full_color", cf);
 		document.documentElement.style.setProperty("--attuned_color", ca);
 		document.documentElement.style.setProperty("--not_attuned_color", cna);
@@ -216,7 +270,7 @@ export class ZHELL_SHEET {
 		// set item rarity colors on sheet.
 		const {
 			uncommon, rare, very_rare, legendary, artifact
-		} = game.settings.get(MODULE_NAME, "rarityColorSettings");
+		} = game.settings.get(MODULE, "rarityColorSettings");
 		document.documentElement.style.setProperty("--rarity-color-uncommon", uncommon);
 		document.documentElement.style.setProperty("--rarity-color-rare", rare);
 		document.documentElement.style.setProperty("--rarity-color-very-rare", very_rare);
@@ -247,12 +301,66 @@ export class ZHELL_SHEET {
 
 	// disable exhaustion, since that's overridden in effects.
 	static disable_exhaustion = (sheet, html) => {
-		html[0].querySelector(".counter.flexrow.exhaustion .counter-value input")?.setAttribute("disabled", "");
+		const exh = html[0].querySelector(".counter.flexrow.exhaustion");
+        if ( !exh ) return;
+        
+        // disable input.
+        exh.querySelector(".counter-value input").disabled = true;
+
+        // add class and action to h4.
+        const header = exh.querySelector("h4");
+        header.classList.add("rollable");
+        header.setAttribute("data-action", "updateExhaustion");
+
+        // create listeners (black magic).
+		if ( sheet.exhaustion === undefined ) {
+            sheet.exhaustion = this.exhaustionUpdate.bind(sheet.object);
+            sheet.element[0].addEventListener("click", sheet.exhaustion);
+        } else {
+            sheet.element[0].removeEventListener("click", sheet.exhaustion);
+            sheet.element[0].addEventListener("click", sheet.exhaustion);
+        }
 	}
+
+    static exhaustionUpdate(event){
+        const action = event.target.closest("[data-action=updateExhaustion]");
+        if ( !action ) return;
+
+        const actor = this;
+
+        // dialog that asks to up or down exhaustion.
+        // call increase_ or decrease_exhaustion
+        class ExhaustDialog extends Dialog {
+            constructor(obj, options){
+                super(obj, options);
+                this.object = obj.object;
+            }
+            get id(){
+                return `zhell-custom-stuff-exhaust-dialog-${this.object.id}`;
+            }
+        }
+        new ExhaustDialog({
+            object: actor,
+            title: `Exhaustion: ${actor.name}`,
+            content: '<p>Increase or decrease your level of exhaustion.</p>',
+            buttons: {
+                up: {
+                    icon: '<i class="fas fa-arrow-up"></i>',
+                    label: "Gain a Level",
+                    callback: () => ZHELL.exhaustion.increase(actor)
+                },
+                down: {
+                    icon: '<i class="fas fa-arrow-down"></i>',
+                    label: "Down a Level",
+                    callback: () => ZHELL.exhaustion.decrease(actor)
+                }
+            }
+        }).render(true);
+    }
 
 	// pretty up the trait selectors.
 	static pretty_trait_selector = (selector, html, context) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").pretty_trait_selector ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").pretty_trait_selector ) return;
 		if ( [
 			"system.traits.languages",
 			"system.traits.di",
@@ -260,22 +368,20 @@ export class ZHELL_SHEET {
 			"system.traits.dv",
 			"system.traits.ci"
 		].includes(selector.attribute) ) {
-			html[0].querySelector(".trait-list").classList.add("flexrow", "zhell-traits");
-			html.css("height", "auto");
+			html[0].querySelector(".trait-list").classList.add("zhell-traits");
+			html.css("width", "auto");
 		}
 		else if ( [
 			"system.traits.toolProf",
 			"system.traits.armorProf"
 		].includes(selector.attribute) ) {
-			html[0].querySelector(".trait-list").classList.add("flexcol", "zhell-profs");
-			html.css("height", "auto");
+			html[0].querySelector(".trait-list").classList.add("zhell-profs");
 			html.css("width", "auto");
 		}
 		else if ( [
 			"system.traits.weaponProf"
 		].includes(selector.attribute) ) {
-			html[0].querySelector(".trait-list").classList.add("flexrow", "zhell-weapons");
-			html.css("height", "auto");
+			html[0].querySelector(".trait-list").classList.add("zhell-weapons");
 			html.css("width", "auto");
 		}
 
@@ -284,7 +390,7 @@ export class ZHELL_SHEET {
 
 	// makes headers collapsible.
 	static collapsible_headers = (sheet, html) => {
-		if ( !game.settings.get(MODULE_NAME, "sheetSettings").collapsible_headers ) return;
+		if ( !game.settings.get(MODULE, "sheetSettings").collapsible_headers ) return;
 
 		// get the headers.
 		const headers = html[0].querySelectorAll(".dnd5e .items-list .items-header h3");

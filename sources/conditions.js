@@ -1,3 +1,5 @@
+import { MODULE } from "../scripts/const.mjs";
+
 /*
     1000: Bless
     1100: Bane
@@ -252,7 +254,7 @@ export const EXHAUSTION_EFFECTS = [
         label: "Exhaustion (1)",
         icon: "icons/skills/wounds/injury-body-pain-gray.webp",
         flags: {
-            "zhell-custom-stuff": {exhaustion: 1},
+            [MODULE]: {exhaustion: 1},
             convenientDescription: `
                 <p>You have disadvantage on all ability checks.</p>`
         },
@@ -265,9 +267,9 @@ export const EXHAUSTION_EFFECTS = [
         label: "Exhaustion (2)",
         icon: "icons/skills/wounds/injury-body-pain-gray.webp",
         flags: {
-            "zhell-custom-stuff": {exhaustion: 2},
+            [MODULE]: {exhaustion: 2},
             convenientDescription: `
-                <p>You have disadvantage on all ability checks.<p>
+                <p>You have disadvantage on all ability checks.</p>
                 <p>Your movement speed is halved.</p>`
         },
         changes: [
@@ -283,9 +285,9 @@ export const EXHAUSTION_EFFECTS = [
         label: "Exhaustion (3)",
         icon: "icons/skills/wounds/injury-body-pain-gray.webp",
         flags: {
-            "zhell-custom-stuff": {exhaustion: 3},
+            [MODULE]: {exhaustion: 3},
             convenientDescription: `
-                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.<p>
+                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
                 <p>Your movement speed is halved.</p>`
         },
         changes: [
@@ -301,9 +303,9 @@ export const EXHAUSTION_EFFECTS = [
         label: "Exhaustion (4)",
         icon: "icons/skills/wounds/injury-body-pain-gray.webp",
         flags: {
-            "zhell-custom-stuff": {exhaustion: 4},
+            [MODULE]: {exhaustion: 4},
             convenientDescription: `
-                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.<p>
+                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
                 <p>Your movement speed and your maximum hit points are halved.</p>`
         },
         changes: [
@@ -320,9 +322,9 @@ export const EXHAUSTION_EFFECTS = [
         label: "Exhaustion (5)",
         icon: "icons/skills/wounds/injury-body-pain-gray.webp",
         flags: {
-            "zhell-custom-stuff": {exhaustion: 5},
+            [MODULE]: {exhaustion: 5},
             convenientDescription: `
-                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.<p>
+                <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
                 <p>You cannot move, and your hit point maximum is halved.</p>`
         },
         changes: [

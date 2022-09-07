@@ -1,1 +1,1 @@
-export const MODULE_NAME = "zhell-custom-stuff";
+export const MODULE = "zhell-custom-stuff";
