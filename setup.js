@@ -6,6 +6,7 @@ import { ZHELL_ADDITIONS } from "./scripts/modules/game_additions.mjs";
 import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
 import { ZHELL_SHEET } from "./scripts/modules/sheet_edits.mjs";
 import { ZHELL_COMBAT } from "./scripts/modules/combat_helpers.mjs";
+import { MODULE } from "./scripts/const.mjs";
 
 Hooks.once("init", () => {
     console.log("ZHELL | Initializing Zhell's Custom Stuff");
@@ -25,9 +26,6 @@ Hooks.once("setup", () => {
     ZHELL_REPLACEMENTS.replace_tools();
     ZHELL_REPLACEMENTS.replace_weapons();
     ZHELL_REPLACEMENTS.replace_status_effects();
-
-    // rename currency labels; this shows up on the sheet.
-    ZHELL_SHEET.rename_currency_labels();
 
 });
 Hooks.once("ready", () => {
@@ -87,7 +85,7 @@ Hooks.once("ready", () => {
     if ( game.user.isGM ) {
         Hooks.on("getSceneConfigHeaderButtons", (app, array) => {
             const viewBtn = {
-                class: "zhell-custom-stuff-view-scene",
+                class: `${MODULE}-view-scene`,
                 icon: "fas fa-eye",
                 label: "View Scene",
                 onclick: async () => await app.object.view()

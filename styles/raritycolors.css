@@ -6,28 +6,8 @@ body :root {
     --rarity-color-legendary: #ffa500;
     --rarity-color-artifact: #d2691e;
 }
-
-/* Uncommon items. */
-.item.uncommon .item-name h4 {
-    color: var(--rarity-color-uncommon) !important;
-} 
-
-/* Rare items. */
-.item.rare .item-name h4 {
-    color: var(--rarity-color-rare) !important;
-} 
-
-/* Very rare items. */
-.item.veryrare .item-name h4 {
-    color: var(--rarity-color-very-rare) !important;
-} 
-
-/* Legendary items. */
-.item.legendary .item-name h4 {
-    color: var(--rarity-color-legendary) !important;
-} 
-
-/* Artifacts. */
-.item.artifact .item-name h4{
-    color: var(--rarity-color-artifact) !important;
-}
+.item.uncommon .item-name h4 { color: var(--rarity-color-uncommon) !important; } 
+.item.rare .item-name h4 { color: var(--rarity-color-rare) !important; } 
+.item.veryrare .item-name h4 { color: var(--rarity-color-very-rare) !important; } 
+.item.legendary .item-name h4 { color: var(--rarity-color-legendary) !important; } 
+.item.artifact .item-name h4 { color: var(--rarity-color-artifact) !important; }

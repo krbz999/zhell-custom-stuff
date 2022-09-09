@@ -9,14 +9,6 @@ export class ZHELL_SHEET {
     static disable_short_rest = () => {
         return !game.settings.get(MODULE, "toggleSR");
     }
-
-    // rename copper, etc etc, to CP, SP, EP, GP, PP.
-    static rename_currency_labels = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").rename_currency_labels ) return;
-        for ( let d of ["cp", "ep", "gp", "pp", "sp"] ) {
-            CONFIG.DND5E.currencies[d].label = d.toUpperCase();
-        }
-    }
     
     static remove_resources = (sheet, html, sheetData) => {
         if ( !game.settings.get(MODULE, "sheetSettings").remove_resources ) return;
@@ -52,7 +44,7 @@ export class ZHELL_SHEET {
             <div class="counter-value">
                 <input
                     class="material"
-                    name="flags.zhell-custom-stuff.materia-medica.value"
+                    name="flags.${MODULE}.materia-medica.value"
                     type="number"
                     value="${value}"
                     data-dtype="Number"
@@ -91,7 +83,7 @@ export class ZHELL_SHEET {
                 this.object = obj.object;
             }
             get id(){
-                return `zhell-custom-stuff-forage-dialog-${this.object.id}`;
+                return `${MODULE}-forage-dialog-${this.object.id}`;
             }
         }
         new ForageDialog({
@@ -336,7 +328,7 @@ export class ZHELL_SHEET {
                 this.object = obj.object;
             }
             get id(){
-                return `zhell-custom-stuff-exhaust-dialog-${this.object.id}`;
+                return `${MODULE}-exhaust-dialog-${this.object.id}`;
             }
         }
         new ExhaustDialog({

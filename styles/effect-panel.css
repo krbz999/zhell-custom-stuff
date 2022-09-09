@@ -11,21 +11,11 @@
     padding: 5px 10px 5px 10px;
     text-transform: uppercase;
 }
-.effect-panel .tags .tag_primary.tag {
-    background-color: hsl(235, 28.5%, 37.8%);
-}
-.effect-panel .tags .tag_secondary.tag {
-    background-color: hsl(13, 39%, 53.7%);
-}
-.effect-panel .tags .tag_tertiary.tag {
-    background-color: hsl(0, 70%, 28%);
-}
-.effect-panel .tags .tag_alt.tag {
-    background-color: #786452;
-}
-.effect-panel .tags .tag_material.tag {
-    background-color: #666;
-}
+.effect-panel .tags .tag_primary.tag { background-color: hsl(235, 28.5%, 37.8%); }
+.effect-panel .tags .tag_secondary.tag { background-color: hsl(13, 39%, 53.7%); }
+.effect-panel .tags .tag_tertiary.tag { background-color: hsl(0, 70%, 28%); }
+.effect-panel .tags .tag_alt.tag { background-color: #786452; }
+.effect-panel .tags .tag_material.tag { background-color: #666; }
 
 .effect-panel {
     position: fixed;
@@ -35,15 +25,10 @@
 }
 
 /* The separator between enabled and disabled effects */
-.effect-panel hr {
-    margin-right: 0;
-    width: 42px;
-}
+.effect-panel hr { margin-right: 0; width: 42px; }
 
 /* The separator between effect description and tags */
-.effect-panel .effect-info hr {
-    width: 100%;
-}
+.effect-panel .effect-info hr { width: 100%; }
 .effect-panel .effect-item {
     display: flex;
     justify-content: flex-end;
@@ -83,16 +68,12 @@
     color: #ddd;
     font-size: 16px;
 }
-.effect-panel .effect-item .effect-info .tags {
-    justify-content: flex-end;
-}
+.effect-panel .effect-item .effect-info .tags { justify-content: flex-end; }
 .effect-panel .effect-item .effect-info .tags > .tag {
     text-align: center;
     margin-left: 0;
 }
-.effect-panel .effect-item .effect-info .tags > .tag:first-child {
-    margin-left: 0px;
-}
+.effect-panel .effect-item .effect-info .tags > .tag:first-child { margin-left: 0px; }
 .effect-panel .effect-item .icon {
     align-items: center;
     background-repeat: no-repeat;
@@ -120,15 +101,9 @@
     position: absolute;
     text-shadow: 0px 0px 2px black;
 }
-.effect-panel .effect-item .icon .badge.unlimited {
-    color: lightblue;
-}
-.effect-panel .effect-item .icon .badge.expired {
-    color: orange;
-}
+.effect-panel .effect-item .icon .badge.unlimited { color: lightblue; }
+.effect-panel .effect-item .icon .badge.expired { color: orange; }
 
 /* set color of inline roll text */
 .effect-panel .effect-item .effect-info .effect-info-details .inline-roll.roll,
-.effect-panel .effect-item .effect-info .effect-info-details .content-link {
-    color: black !important;
-}
+.effect-panel .effect-item .effect-info .effect-info-details .content-link { color: black; }

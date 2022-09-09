@@ -59,7 +59,7 @@ class ReplacementsSubmenu extends FormApplication {
             popOut: true,
             width: "550",
             height: "auto",
-            template: "/modules/zhell-custom-stuff/templates/settings_replacements.html",
+            template: `/modules/${MODULE}/templates/settings_replacements.hbs`,
             id: "zhell-settings-submenu-replacers",
             title: "Replacements",
             resizable: false
@@ -73,7 +73,6 @@ class ReplacementsSubmenu extends FormApplication {
             await game.settings.set(MODULE, "replacementSettings", {
                 replace_status_effects: html[0].querySelector(".zhell-replace-status-effects").checked,
                 replace_languages: html[0].querySelector(".zhell-replace-languages").checked,
-                rename_currency_labels: html[0].querySelector(".zhell-rename-currency-labels").checked,
                 replace_tools: html[0].querySelector(".zhell-replace-tools").checked,
                 replace_weapons: html[0].querySelector(".zhell-replace-weapons").checked,
                 replace_consumable_types: html[0].querySelector(".zhell-replace-consumable-types").checked
@@ -86,7 +85,6 @@ class ReplacementsSubmenu extends FormApplication {
         const defaults = {
             replace_status_effects: true,
             replace_languages: true,
-            rename_currency_labels: true,
             replace_tools: true,
             replace_weapons: true,
             replace_consumable_types: true
@@ -105,7 +103,7 @@ class AdditionsSubmenu extends FormApplication {
             popOut: true,
             width: "550",
             height: "auto",
-            template: "/modules/zhell-custom-stuff/templates/settings_additions.html",
+            template: `/modules/${MODULE}/templates/settings_additions.hbs`,
             id: "zhell-settings-submenu-additions",
             title: "Additions",
             resizable: false
@@ -148,7 +146,7 @@ class SheetSubmenu extends FormApplication {
             popOut: true,
             width: "550",
             height: "auto",
-            template: "/modules/zhell-custom-stuff/templates/settings_sheet.html",
+            template: `/modules/${MODULE}/templates/settings_sheet.hbs`,
             id: "zhell-settings-submenu-sheet",
             title: "Sheet Adjustments",
             resizable: false
@@ -195,7 +193,7 @@ class ColorPickerSubmenu extends FormApplication {
             popOut: true,
             width: "550",
             height: "auto",
-            template: "/modules/zhell-custom-stuff/templates/settings_colorpickers.html",
+            template: `/modules/${MODULE}/templates/settings_colorpickers.hbs`,
             id: "zhell-settings-submenu-colorpickers",
             title: "Character Sheet Color Adjustments",
             resizable: false
@@ -256,7 +254,7 @@ class RarityColorsSubmenu extends FormApplication {
             popOut: true,
             width: "550",
             height: "auto",
-            template: "/modules/zhell-custom-stuff/templates/settings_raritycolors.html",
+            template: `/modules/${MODULE}/templates/settings_raritycolors.hbs`,
             id: "zhell-settings-submenu-raritycolors",
             title: "Item Rarity Color Adjustments",
             resizable: false
@@ -300,7 +298,6 @@ const registerSettingsMenus = function () {
         default: {
             replace_status_effects: true,
             replace_languages: true,
-            rename_currency_labels: true,
             replace_tools: true,
             replace_weapons: true,
             replace_consumable_types: true

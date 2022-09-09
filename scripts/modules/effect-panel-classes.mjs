@@ -1,3 +1,5 @@
+import { MODULE } from "../const.mjs";
+
 // Handles setting up all handlebar helpers
 export class HandlebarHelpers {
     // Registers the handlebar helpers
@@ -25,20 +27,20 @@ export class HandlebarHelpers {
             
             const remainingSeconds = effect.remainingSeconds;
             
-            if(remainingSeconds == Infinity && effect.turns){
-                if(effect.turns == 1) return "1 turn";
+            if ( remainingSeconds == Infinity && effect.turns ) {
+                if ( effect.turns == 1 ) return "1 turn";
                 else return `${effect.turns} turns`;
             }
-            else if(remainingSeconds == Infinity) return "Unlimited";
-            else if(remainingSeconds >= SECONDS.IN_TWO_YEARS) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_YEAR)} years`;
-            else if(remainingSeconds >= SECONDS.IN_ONE_YEAR) return "1 year";
-            else if(remainingSeconds >= SECONDS.IN_TWO_WEEKS) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_WEEK)} weeks`;
-            else if(remainingSeconds >= SECONDS.IN_ONE_WEEK) return "1 week";
-            else if(remainingSeconds >= SECONDS.IN_TWO_DAYS) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_DAY)} days`;
-            else if(remainingSeconds >= SECONDS.IN_TWO_HOURS) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_HOUR)} hours`;
-            else if(remainingSeconds >= SECONDS.IN_TWO_MINUTES) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_MINUTE)} minutes`;
-            else if(remainingSeconds >= 2) return `${remainingSeconds} seconds`;
-            else if(remainingSeconds === 1) return "1 second";
+            else if ( remainingSeconds == Infinity ) return "Unlimited";
+            else if ( remainingSeconds >= SECONDS.IN_TWO_YEARS ) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_YEAR)} years`;
+            else if ( remainingSeconds >= SECONDS.IN_ONE_YEAR ) return "1 year";
+            else if ( remainingSeconds >= SECONDS.IN_TWO_WEEKS ) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_WEEK)} weeks`;
+            else if ( remainingSeconds >= SECONDS.IN_ONE_WEEK ) return "1 week";
+            else if ( remainingSeconds >= SECONDS.IN_TWO_DAYS ) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_DAY)} days`;
+            else if ( remainingSeconds >= SECONDS.IN_TWO_HOURS ) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_HOUR)} hours`;
+            else if ( remainingSeconds >= SECONDS.IN_TWO_MINUTES ) return `${Math.floor(remainingSeconds / SECONDS.IN_ONE_MINUTE)} minutes`;
+            else if ( remainingSeconds >= 2 ) return `${remainingSeconds} seconds`;
+            else if ( remainingSeconds === 1 ) return "1 second";
             else return "Expired";
         });
     }
@@ -88,9 +90,11 @@ export class EffectsPanelController {
     
     // delete on right-click.
     async onIconRightClick(event){
-        const effectId = event.target.dataset.effectId;
+        const div = event.target.closest("div[data-effect-id]");
+        if ( !div ) return;
+        const effectId = div.dataset.effectId;
         const effect = this._actor.effects.get(effectId);
-        if (!effect) return;
+        if ( !effect ) return;
         
         await Dialog.confirm({
             title: "Delete Effect",
@@ -104,10 +108,12 @@ export class EffectsPanelController {
     
     // disable effect on double-click.
     onIconDoubleClick(event){
-        const effectId = event.target.dataset.effectId;
+        const div = event.target.closest("div[data-effect-id]");
+        if ( !div ) return;
+        const effectId = div.dataset.effectId;
         const effect = this._actor.effects.get(effectId);
-        if (!effect) return;
-        return effect.update({disabled: !effect.disabled});
+        if ( !effect ) return;
+        return effect.update({ disabled: !effect.disabled });
     }
     
     get _actor(){
@@ -129,7 +135,7 @@ export class EffectsPanelApp extends Application {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "effects-panel",
             popOut: false,
-            template: "modules/zhell-custom-stuff/templates/effects-panel.html"
+            template: `modules/${MODULE}/templates/effects-panel.hbs`
         });
     }
     
@@ -146,33 +152,41 @@ export class EffectsPanelApp extends Application {
     
     /** @override */
     async getData(options){
-        for ( let eff of this._controller.data.enabledEffects ) {
-            const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-            if ( !!desc ) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
+        const enabledEffects = [];
+        const disabledEffects = [];
+
+        // set up enable effects.
+        for ( const eff of this._controller.data.enabledEffects ) {
+            let desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
+            const {_id, icon, label, isTemporary, isExpired, remainingSeconds, turns} = eff;
+            const effect = {_id, icon, label, isTemporary, isExpired, remainingSeconds, turns};
+            if ( !!desc ) effect.desc = await TextEditor.enrichHTML(desc, {async: true});
+            enabledEffects.push(effect);
         }
-        for ( let eff of this._controller.data.disabledEffects ) {
-            const desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
-            if ( !!desc ) await eff.update({"flags.convenientDescription": await TextEditor.enrichHTML(desc, {async: true})});
+        
+        for ( const eff of this._controller.data.disabledEffects ) {
+            let desc = foundry.utils.getProperty(eff, "flags.convenientDescription");
+            const {_id, icon, label, isTemporary, isExpired, remainingSeconds, turns} = eff;
+            const effect = {_id, icon, label, isTemporary, isExpired, remainingSeconds, turns};
+            if ( !!desc ) effect.desc = await TextEditor.enrichHTML(desc, {async: true});
+            disabledEffects.push(effect);
         }
-        return this._controller.data;
+        const data = {enabledEffects, disabledEffects};
+        return data;
     }
     
     /** @override */
     activateListeners(html){
-        this._rootView = html;
-        const icons = this._rootView[0].querySelectorAll("div[data-effect-id]");
-        for ( let icon of icons ) {
-            icon.addEventListener("contextmenu", this._controller.onIconRightClick.bind(this._controller));
-            icon.addEventListener("dblclick", this._controller.onIconDoubleClick.bind(this._controller));
-        }
+        html[0].addEventListener("contextmenu", this._controller.onIconRightClick.bind(this._controller));
+        html[0].addEventListener("dblclick", this._controller.onIconDoubleClick.bind(this._controller));
     }
     
     // Handles when the sidebar expands or collapses. true: collapse, false: expand.
     handleExpand(bool){
         if ( !bool ) {
-            const right = this._initialSidebarWidth + 18 + "px";
-            this.element.animate({right}, 150);
-        } else this.element.delay(250).animate({right: "50px"}, 150);
+            const right = `${this._initialSidebarWidth + 18}px`;
+            this.element.animate({ right }, 150);
+        } else this.element.delay(250).animate({ right: "50px" }, 150);
     }
     
     /** @inheritdoc */

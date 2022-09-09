@@ -5,7 +5,7 @@ export async function foraging(actor){
     if ( !actor ) return;
 
     const herbalismKit = actor.itemTypes.tool.find(i => {
-        if ( i.system.baseItem === "herb" ) return false;
+        if ( i.system.baseItem !== "herb" ) return false;
         return i.system.proficient > 0;
     });
     let options = "";
@@ -53,14 +53,14 @@ export async function foraging(actor){
                     if ( isNaN(num) || num < 1 ) return;
                     const ev = event;
                     let rolls;
-                    const config = { event: ev, targetValue, fumble: -1, critical: 21 };
+                    const config = { event: ev, targetValue, fumble: null, critical: null };
                     if ( selection.length > 3 ) {
                         // roll tool.
                         const tool = actor.items.get(selection);
-                        rolls = await Promise.all(Array.fromRange(num).map(n => tool.rollToolCheck(config)));
+                        rolls = await Promise.all(Array(num).fill(0).map(() => tool.rollToolCheck(config)));
                     } else {
                         // roll skill.
-                        rolls = await Promise.all(Array.fromRange(num).map(n => actor.rollSkill(selection, config)));
+                        rolls = await Promise.all(Array(num).fill(0).map(() => actor.rollSkill(selection, config)));
                     }
                     const counter = rolls.filter(i => i.total >= targetValue).length;
                     const materialValueCurrent = actor.getFlag(MODULE, "materia-medica.value") ?? 0;
@@ -91,13 +91,13 @@ export async function crafting(actor){
     let methodType = "";
 
     // item descriptions.
-    const itemIndex = await game.packs.get(pack).getIndex({fields: ["system.description.value"]});
+    const itemIndex = await game.packs.get(pack).getIndex({ fields: ["system.description.value"] });
     async function subtractMaterials(cost){
         return actor.setFlag(MODULE, "materia-medica.value", materials - Number(cost));
     }
     
     // MAIN dialog.
-    let content = await renderTemplate("/modules/zhell-custom-stuff/templates/materia_crafting_main.html");
+    let content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_main.hbs`);
     const typeDialog = new Dialog({
         title: "Crafting",
         content,
@@ -145,7 +145,7 @@ export async function crafting(actor){
             ${!disabled ? description + (i < 3 ? "<hr>" : "") : ""}
         `;
     }, "");
-    content = await renderTemplate("/modules/zhell-custom-stuff/templates/materia_crafting_potion.html", {
+    content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_potion.hbs`, {
         potionOfHealingId: itemIndex.getName("Potion of Healing")._id,
         scaleHealing: getScalingHealing(),
         potionOfHealingDescription: itemIndex.getName("Potion of Healing").system.description.value,
@@ -222,7 +222,7 @@ export async function crafting(actor){
         if ( cost + 2 > materials ) return acc;
         return acc + `<option value="${key}" data-cost="${cost}">[${cost}] ${label}</option>`;
     }, "");
-    content = await renderTemplate("/modules/zhell-custom-stuff/templates/materia_crafting_poison_type.html", {
+    content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_poison_type.hbs`, {
         options: methodOptions
     });
     const methodDialog = new Dialog({
@@ -267,7 +267,7 @@ export async function crafting(actor){
             `;
         }, "");
         
-        content = await renderTemplate("/modules/zhell-custom-stuff/templates/materia_crafting_poison.html", {
+        content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_poison.hbs`, {
             poisonButtons,
             paintDescription: itemIndex.getName("Goblin Paint").system.description.value,
             paintId: itemIndex.getName("Goblin Paint")._id,
@@ -375,7 +375,7 @@ export async function crafting(actor){
         `;
     }, "");
 
-    content = await renderTemplate("/modules/zhell-custom-stuff/templates/materia_crafting_misc.html", {
+    content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_misc.hbs`, {
         bombButtons
     });
     
