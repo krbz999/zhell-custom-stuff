@@ -25,7 +25,6 @@
         "./styles/sheet_coloring.css",
         "./styles/raritycolors.css",
         "./styles/effect-panel.css",
-        "./styles/template-styles.css",
         "./styles/journal-styles.css",
         "./styles/crafting_dialogs.css"
     ],

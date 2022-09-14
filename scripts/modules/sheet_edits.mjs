@@ -1,29 +1,31 @@
 import { MODULE } from "../const.mjs";
+import { crafting, foraging } from "./crafting.mjs";
+import { ZHELL_UTILS } from "./zhell_functions.mjs";
 
 export class ZHELL_SHEET {
     
-    static disable_long_rest = () => {
+    static disableLongRest = () => {
         return !game.settings.get(MODULE, "toggleLR");
     }
     
-    static disable_short_rest = () => {
+    static disableShortRest = () => {
         return !game.settings.get(MODULE, "toggleSR");
     }
     
-    static remove_resources = (sheet, html, sheetData) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").remove_resources ) return;
+    static removeResources = (sheet, html, sheetData) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").removeResources ) return;
         const resources = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul");
         if ( resources ) resources.remove();
     }
     
-    static remove_alignment = (sheet, html, sheetData) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").remove_alignment ) return;
+    static removeAlignment = (sheet, html, sheetData) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").removeAlignment ) return;
         const AL = html[0].querySelector("input[name='system.details.alignment']");
         if ( AL ) AL.parentElement?.remove();
     }
     
-    static disable_initiative_button = (sheet, html, sheetData) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").disable_initiative_button ) return;
+    static disableInitiativeButton = (sheet, html, sheetData) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").disableInitiativeButton ) return;
         const initButton = html[0].querySelector(".dnd5e.sheet.actor .sheet-header .attributes .attribute.initiative > h4");
         if ( initButton ) {
             initButton.classList.remove("rollable");
@@ -31,8 +33,8 @@ export class ZHELL_SHEET {
         }
     }
     
-    static create_forage_counter = (sheet, html, sheetData) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").create_forage_counter ) return;
+    static createForaging = (sheet, html, sheetData) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").createForaging ) return;
         const actor = sheet.actor;
         if ( !sheetData.isCharacter ) return;
         
@@ -94,23 +96,23 @@ export class ZHELL_SHEET {
                 forage: {
                     icon: '<i class="fas fa-leaf"></i>',
                     label: "Foraging",
-                    callback: () => ZHELL.players.goForaging(actor)
+                    callback: () => foraging(actor)
                 },
                 craft: {
                     icon: '<i class="fas fa-volcano"></i>',
                     label: "Crafting",
-                    callback: () => ZHELL.players.goCrafting(actor)
+                    callback: () => crafting(actor)
                 }
             }
         }).render(true);
     }
     
-    static create_dots = (sheet, html) => {
+    static createDots = (sheet, html) => {
         const colorSettings = game.settings.get(MODULE, "colorSettings");
-        const {limited_use_dots, spell_slot_dots} = colorSettings;
+        const {showLimitedUses, showSpellSlots} = colorSettings;
         
         // create spell slot dots.
-        if ( spell_slot_dots ){
+        if ( showSpellSlots ){
             const options = ["pact", "spell1", "spell2", "spell3", "spell4",
                 "spell5", "spell6", "spell7", "spell8", "spell9"];
             const data = sheet.object.system.spells;
@@ -129,7 +131,7 @@ export class ZHELL_SHEET {
         }
         
         // create limited use dots.
-        if ( limited_use_dots ) {
+        if ( showLimitedUses ) {
             const itemUses = sheet.object.items.filter(i => !!i.hasLimitedUses);
             for ( let o of itemUses ) {
                 const {value, max} = o.system.uses;
@@ -162,7 +164,7 @@ export class ZHELL_SHEET {
         }
         
         // create listeners (black magic).
-        if ( spell_slot_dots || limited_use_dots ) {
+        if ( showSpellSlots || showLimitedUses ) {
             if ( sheet.dottoggler === undefined ) {
                 sheet.dottoggler = this.dotToggle.bind(sheet.object);
                 sheet.element[0].addEventListener("click", sheet.dottoggler);
@@ -197,7 +199,7 @@ export class ZHELL_SHEET {
         }
     }
     
-    static create_toggle_on_attunement_button = (sheet) => {
+    static attunementButtonToggle = (sheet) => {
         if ( sheet.attunementToggler === undefined ) {
             sheet.attunementToggler = this.toggleAttunement.bind(sheet.object);
             sheet.element[0].addEventListener("click", sheet.attunementToggler);
@@ -232,47 +234,51 @@ export class ZHELL_SHEET {
         }
     }
     
-    static color_magic_items = (sheet, html) => {
+    static colorMagicItems = (sheet, html) => {
         const items = html[0].querySelectorAll(".items-list .item");
-        for ( let i of items ) {
-            const id = i.outerHTML.match(/data-item-id="(.*?)"/);
+        for ( let item of items ) {
+            const id = item.dataset.itemId;
             if ( !id ) continue;
-            const rarity = sheet.object.items.get(id[1]).system.rarity;
-            if ( !!rarity ) i.classList.add(rarity.slugify().toLowerCase());
+            const rarity = sheet.object.items.get(id).system.rarity;
+            if ( rarity ) item.classList.add(rarity.slugify().toLowerCase());
         }
     }
     
     static refreshColors = () => {
+        const style = document.documentElement.style;
         // set icon colors on sheet.
-        const [
-            a, b, cf, ca, cna, ce, cne, cp, cnp, cap, prof, half_prof, twice_prof
-        ] = Object.values(game.settings.get(MODULE, "colorSettings"));
-        document.documentElement.style.setProperty("--full_color", cf);
-        document.documentElement.style.setProperty("--attuned_color", ca);
-        document.documentElement.style.setProperty("--not_attuned_color", cna);
-        document.documentElement.style.setProperty("--equipped_color", ce);
-        document.documentElement.style.setProperty("--not_equipped_color", cne);
-        document.documentElement.style.setProperty("--prepared_color", cp);
-        document.documentElement.style.setProperty("--not_prepared_color", cnp);
-        document.documentElement.style.setProperty("--always_prepared_color", cap);
-        document.documentElement.style.setProperty("--color_proficient", prof);
-        document.documentElement.style.setProperty("--color_half_proficient", half_prof);
-        document.documentElement.style.setProperty("--color_twice_proficient", twice_prof);
+        const {
+            usesUnexpended,
+            itemAttuned, itemNotAttuned,
+            itemEquipped, itemNotEquipped,
+            spellPrepared, spellNotPrepared, spellAlwaysPrepared,
+            proficientNormal, proficientHalf, proficientTwice
+        } = game.settings.get(MODULE, "colorSettings");
+        style.setProperty("--usesUnexpended", usesUnexpended);
+        style.setProperty("--itemAttuned", itemAttuned);
+        style.setProperty("--itemNotAttuned", itemNotAttuned);
+        style.setProperty("--itemEquipped", itemEquipped);
+        style.setProperty("--itemNotEquipped", itemNotEquipped);
+        style.setProperty("--spellPrepared", spellPrepared);
+        style.setProperty("--spellNotPrepared", spellNotPrepared);
+        style.setProperty("--spellAlwaysPrepared", spellAlwaysPrepared);
+        style.setProperty("--proficientNormal", proficientNormal);
+        style.setProperty("--proficientHalf", proficientHalf);
+        style.setProperty("--proficientTwice", proficientTwice);
         
         // set item rarity colors on sheet.
         const {
-            uncommon, rare, very_rare, legendary, artifact
+            uncommon, rare, veryRare, legendary, artifact
         } = game.settings.get(MODULE, "rarityColorSettings");
-        document.documentElement.style.setProperty("--rarity-color-uncommon", uncommon);
-        document.documentElement.style.setProperty("--rarity-color-rare", rare);
-        document.documentElement.style.setProperty("--rarity-color-very-rare", very_rare);
-        document.documentElement.style.setProperty("--rarity-color-legendary", legendary);
-        document.documentElement.style.setProperty("--rarity-color-artifact", artifact);
+        style.setProperty("--rarityUncommon", uncommon);
+        style.setProperty("--rarityRare", rare);
+        style.setProperty("--rarityVeryRare", veryRare);
+        style.setProperty("--rarityLegendary", legendary);
+        style.setProperty("--rarityArtifact", artifact);
     }
 
-    static set_hp_color = (sheet, html) => {
-        const actor = sheet.object;
-        const {value, max} = actor.system.attributes.hp;
+    static setHealthColor = (sheet, html) => {
+        const { value, max } = sheet.object.system.attributes.hp;
         const nearDeath = (Math.abs(value) ?? 0)/(max ?? 1) < 0.33;
         const bloodied = (Math.abs(value) ?? 0)/(max ?? 1) < 0.66;
         
@@ -339,20 +345,21 @@ export class ZHELL_SHEET {
                 up: {
                     icon: '<i class="fas fa-arrow-up"></i>',
                     label: "Gain a Level",
-                    callback: () => ZHELL.exhaustion.increase(actor)
+                    callback: () => ZHELL_UTILS.increase_exhaustion(actor)
                 },
                 down: {
                     icon: '<i class="fas fa-arrow-down"></i>',
                     label: "Down a Level",
-                    callback: () => ZHELL.exhaustion.decrease(actor)
+                    callback: () => ZHELL_UTILS.decrease_exhaustion(actor)
                 }
             }
         }).render(true);
     }
 
     // pretty up the trait selectors.
-    static pretty_trait_selector = (selector, html, context) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").pretty_trait_selector ) return;
+    static reformatTraitSelectors = (selector, html, context) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").reformatTraitSelectors ) return;
+        const classList = html[0].querySelector(".trait-list").classList;
         if ( [
             "system.traits.languages",
             "system.traits.di",
@@ -360,36 +367,33 @@ export class ZHELL_SHEET {
             "system.traits.dv",
             "system.traits.ci"
         ].includes(selector.attribute) ) {
-            html[0].querySelector(".trait-list").classList.add("zhell-traits");
-            html.css("width", "auto");
+            classList.add("zhell-traits");
         }
         else if ( [
             "system.traits.toolProf",
             "system.traits.armorProf"
         ].includes(selector.attribute) ) {
-            html[0].querySelector(".trait-list").classList.add("zhell-profs");
-            html.css("width", "auto");
+            classList.add("zhell-profs");
         }
         else if ( [
             "system.traits.weaponProf"
         ].includes(selector.attribute) ) {
-            html[0].querySelector(".trait-list").classList.add("zhell-weapons");
-            html.css("width", "auto");
+            classList.add("zhell-weapons");
         }
-
+        html.css("width", "auto");
         selector.setPosition();
     }
 
     // makes headers collapsible.
-    static collapsible_headers = (sheet, html) => {
-        if ( !game.settings.get(MODULE, "sheetSettings").collapsible_headers ) return;
+    static collapsibleHeaders = (sheet, html) => {
+        if ( !game.settings.get(MODULE, "sheetSettings").collapsibleHeaders ) return;
 
         // get the headers.
         const headers = html[0].querySelectorAll(".dnd5e .items-list .items-header h3");
         const bioHeaders = html[0].querySelectorAll(".dnd5e.sheet.actor .characteristics label");
     
         // for each header: add listener, and set initial display type.
-        for ( let header of headers ) {
+        for ( const header of headers ) {
             const itemHeader = header.closest(".items-header.flexrow");
             if ( !itemHeader ) continue;
 
@@ -409,7 +413,7 @@ export class ZHELL_SHEET {
                 itemHeader.classList.toggle("no-create");
             });
         }
-        for ( let header of bioHeaders ) {
+        for ( const header of bioHeaders ) {
             // read from sheet, should be collapsed?
             const collapsed = foundry.utils.getProperty(sheet, `section-visibility.${header.innerText}`);
             // add initial 'no-edit' class if true.

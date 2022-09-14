@@ -67,27 +67,28 @@ class ReplacementsSubmenu extends FormApplication {
     }
     activateListeners(html) {
         super.activateListeners(html);
-        const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+        const saveButton = html[0].querySelector("[name='submit']");
         const dialog = this;
         saveButton.addEventListener("click", async function(){
             await game.settings.set(MODULE, "replacementSettings", {
-                replace_status_effects: html[0].querySelector(".zhell-replace-status-effects").checked,
-                replace_languages: html[0].querySelector(".zhell-replace-languages").checked,
-                replace_tools: html[0].querySelector(".zhell-replace-tools").checked,
-                replace_weapons: html[0].querySelector(".zhell-replace-weapons").checked,
-                replace_consumable_types: html[0].querySelector(".zhell-replace-consumable-types").checked
+                replaceStatusEffects: html[0].querySelector("#replaceStatusEffects").checked,
+                replaceLanguages: html[0].querySelector("#replaceLanguages").checked,
+                replaceTools: html[0].querySelector("#replaceTools").checked,
+                replaceWeapons: html[0].querySelector("#replaceWeapons").checked,
+                replaceConsumableTypes: html[0].querySelector("#replaceConsumableTypes").checked
             });
             dialog.close();
         });
     }
+    async _updateObject(...T){}
     async getData() {
         const source = game.settings.get(MODULE, "replacementSettings");
         const defaults = {
-            replace_status_effects: true,
-            replace_languages: true,
-            replace_tools: true,
-            replace_weapons: true,
-            replace_consumable_types: true
+            replaceStatusEffects: true,
+            replaceLanguages: true,
+            replaceTools: true,
+            replaceWeapons: true,
+            replaceConsumableTypes: true
         }
         return foundry.utils.mergeObject(defaults, source);
     }
@@ -112,24 +113,25 @@ class AdditionsSubmenu extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         const dialog = this;
-        const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+        const saveButton = html[0].querySelector("[name='submit']");
         saveButton.addEventListener("click", async function(){
             await game.settings.set(MODULE, "additionSettings", {
-                add_conditions: html[0].querySelector(".zhell-add-conditions").checked,
-                add_equipment_types: html[0].querySelector(".zhell-add-equipment-types").checked,
-                add_piety: html[0].querySelector(".zhell-add-piety").checked,
-                add_divine: html[0].querySelector(".zhell-add-divine").checked
+                addConditions: html[0].querySelector("#addConditions").checked,
+                addEquipmentTypes: html[0].querySelector("#addEquipmentTypes").checked,
+                addPiety: html[0].querySelector("#addPiety").checked,
+                addDivine: html[0].querySelector("#addDivine").checked
             });
             dialog.close();
         });
     }
+    async _updateObject(...T){}
     async getData() {
         const source = game.settings.get(MODULE, "additionSettings");
         const defaults = {
-            add_conditions: true,
-            add_equipment_types: true,
-            add_piety: true,
-            add_divine: true
+            addConditions: true,
+            addEquipmentTypes: true,
+            addPiety: true,
+            addDivine: true
         }
         
         return foundry.utils.mergeObject(defaults, source);
@@ -155,28 +157,29 @@ class SheetSubmenu extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         const dialog = this;
-        const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+        const saveButton = html[0].querySelector("[name='submit']");
         saveButton.addEventListener("click", async function(){
             await game.settings.set(MODULE, "sheetSettings", {
-                remove_resources: html[0].querySelector(".zhell-remove-resources").checked,
-                remove_alignment: html[0].querySelector(".zhell-remove-alignment").checked,
-                disable_initiative_button: html[0].querySelector(".zhell-disable-initiative-button").checked,
-                create_forage_counter: html[0].querySelector(".zhell-create-forage-counter").checked,
-                pretty_trait_selector: html[0].querySelector(".zhell-pretty-trait-selector").checked,
-                collapsible_headers: html[0].querySelector(".zhell-collapsible-headers").checked
+                removeResources: html[0].querySelector("#removeResources").checked,
+                removeAlignment: html[0].querySelector("#removeAlignment").checked,
+                disableInitiativeButton: html[0].querySelector("#disableInitiativeButton").checked,
+                createForaging: html[0].querySelector("#createForaging").checked,
+                reformatTraitSelectors: html[0].querySelector("#reformatTraitSelectors").checked,
+                collapsibleHeaders: html[0].querySelector("#collapsibleHeaders").checked
             });
             dialog.close();
         });
     }
+    async _updateObject(...T){}
     async getData() {
         const source = game.settings.get(MODULE, "sheetSettings");
         const defaults = {
-            remove_resources: true,
-            remove_alignment: true,
-            disable_initiative_button: true,
-            create_forage_counter: true,
-            pretty_trait_selector: true,
-            collapsible_headers: true
+            removeResources: true,
+            removeAlignment: true,
+            disableInitiativeButton: true,
+            createForaging: true,
+            reformatTraitSelectors: true,
+            collapsibleHeaders: true
         }
         
         return foundry.utils.mergeObject(defaults, source);
@@ -202,43 +205,44 @@ class ColorPickerSubmenu extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         const dialog = this;
-        const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+        const saveButton = html[0].querySelector("[name='submit']");
         saveButton.addEventListener("click", async function(){
             await game.settings.set(MODULE, "colorSettings", {
-                limited_use_dots: html[0].querySelector(".zhell-limited-use-dots").checked,
-                spell_slot_dots: html[0].querySelector(".zhell-spell-slot-dots").checked,
-                color_full: html[0].querySelector(".zhell-color-full").value,
-                color_attuned: html[0].querySelector(".zhell-color-attuned").value,
-                color_not_attuned: html[0].querySelector(".zhell-color-not-attuned").value,
-                color_equipped: html[0].querySelector(".zhell-color-equipped").value,
-                color_not_equipped: html[0].querySelector(".zhell-color-not-equipped").value,
-                color_prepared: html[0].querySelector(".zhell-color-prepared").value,
-                color_not_prepared: html[0].querySelector(".zhell-color-not-prepared").value,
-                color_always_prepared: html[0].querySelector(".zhell-color-always-prepared").value,
-                color_proficient: html[0].querySelector(".zhell-color-proficient").value,
-                color_half_proficient: html[0].querySelector(".zhell-color-half-proficient").value,
-                color_twice_proficient: html[0].querySelector(".zhell-color-twice-proficient").value
+                showLimitedUses: html[0].querySelector("#showLimitedUses").checked,
+                showSpellSlots: html[0].querySelector("#showSpellSlots").checked,
+                usesUnexpended: html[0].querySelector("#usesUnexpended").value,
+                itemAttuned: html[0].querySelector("#itemAttuned").value,
+                itemNotAttuned: html[0].querySelector("#itemNotAttuned").value,
+                itemEquipped: html[0].querySelector("#itemEquipped").value,
+                itemNotEquipped: html[0].querySelector("#itemNotEquipped").value,
+                spellPrepared: html[0].querySelector("#spellPrepared").value,
+                spellNotPrepared: html[0].querySelector("#spellNotPrepared").value,
+                spellAlwaysPrepared: html[0].querySelector("#spellAlwaysPrepared").value,
+                proficientNormal: html[0].querySelector("#proficientNormal").value,
+                proficientHalf: html[0].querySelector("#proficientHalf").value,
+                proficientTwice: html[0].querySelector("#proficientTwice").value
             });
             ZHELL_SHEET.refreshColors();
             dialog.close();
         });
     }
+    async _updateObject(...T){}
     async getData() {
         const source = game.settings.get(MODULE, "colorSettings");
         const defaults = {
-            limited_use_dots: false,
-            spell_slot_dots: false,
-            color_full: "#ff2e2e",
-            color_attuned: "#21c050",
-            color_not_attuned: "#c2c2c2",
-            color_equipped: "#6dff38",
-            color_not_equipped: "#c2c2c2",
-            color_prepared: "#0000ff",
-            color_not_prepared: "#c2c2c2",
-            color_always_prepared: "#ff0004",
-            color_proficient: "#228b22",
-            color_half_proficient: "#696969",
-            color_twice_proficient: "#ff6347"
+            showLimitedUses: false,
+            showSpellSlots: false,
+            usesUnexpended: "#ff2e2e",
+            itemAttuned: "#21c050",
+            itemNotAttuned: "#c2c2c2",
+            itemEquipped: "#6dff38",
+            itemNotEquipped: "#c2c2c2",
+            spellPrepared: "#0000ff",
+            spellNotPrepared: "#c2c2c2",
+            spellAlwaysPrepared: "#ff0004",
+            proficientNormal: "#228b22",
+            proficientHalf: "#696969",
+            proficientTwice: "#ff6347"
         }
         return foundry.utils.mergeObject(defaults, source);
     }
@@ -263,25 +267,26 @@ class RarityColorsSubmenu extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         const dialog = this;
-        const saveButton = html[0].offsetParent.querySelector(".zhell-settings-save");
+        const saveButton = html[0].querySelector("[name='submit']");
         saveButton.addEventListener("click", async function(){
             await game.settings.set(MODULE, "rarityColorSettings", {
-                uncommon: html[0].querySelector(".zhell-color-uncommon").value,
-                rare: html[0].querySelector(".zhell-color-rare").value,
-                very_rare: html[0].querySelector(".zhell-color-very-rare").value,
-                legendary: html[0].querySelector(".zhell-color-legendary").value,
-                artifact: html[0].querySelector(".zhell-color-artifact").value
+                uncommon: html[0].querySelector("#uncommon").value,
+                rare: html[0].querySelector("#rare").value,
+                veryRare: html[0].querySelector("#veryRare").value,
+                legendary: html[0].querySelector("#legendary").value,
+                artifact: html[0].querySelector("#artifact").value
             });
             ZHELL_SHEET.refreshColors();
             dialog.close();
         });
     }
+    async _updateObject(...T){}
     async getData() {
         const source = game.settings.get(MODULE, "rarityColorSettings");
         const defaults = {
             uncommon: "#008000",
             rare: "#0000ff",
-            very_rare: "#800080",
+            veryRare: "#800080",
             legendary: "#ffa500",
             artifact: "#d2691e"
         }
@@ -296,13 +301,13 @@ const registerSettingsMenus = function () {
         config: false,
         type: Object,
         default: {
-            replace_status_effects: true,
-            replace_languages: true,
-            replace_tools: true,
-            replace_weapons: true,
-            replace_consumable_types: true
+            replaceStatusEffects: true,
+            replaceLanguages: true,
+            replaceTools: true,
+            replaceWeapons: true,
+            replaceConsumableTypes: true
         },
-        onChange: () => window.location.reload()
+        onChange: foundry.utils.debouncedReload
     });
     game.settings.registerMenu(MODULE, "replacementSettings", {
         name: "Replacements",
@@ -319,12 +324,12 @@ const registerSettingsMenus = function () {
         config: false,
         type: Object,
         default: {
-            add_conditions: true,
-            add_equipment_types: true,
-            add_piety: true,
-            add_divine: true
+            addConditions: true,
+            addEquipmentTypes: true,
+            addPiety: true,
+            addDivine: true
         },
-        onChange: () => window.location.reload()
+        onChange: foundry.utils.debouncedReload
     });
     game.settings.registerMenu(MODULE, "additionSettings", {
         name: "Additions",
@@ -341,13 +346,14 @@ const registerSettingsMenus = function () {
         config: false,
         type: Object,
         default: {
-            remove_resources: true,
-            remove_alignment: true,
-            disable_initiative_button: true,
-            create_forage_counter: true,
-            pretty_trait_selector: true,
-            collapsible_headers: true
-        }
+            removeResources: true,
+            removeAlignment: true,
+            disableInitiativeButton: true,
+            createForaging: true,
+            reformatTraitSelectors: true,
+            collapsibleHeaders: true
+        },
+        onChange: foundry.utils.debouncedReload
     });
     game.settings.registerMenu(MODULE, "sheetSettings", {
         name: "Sheet Edits",
@@ -364,20 +370,21 @@ const registerSettingsMenus = function () {
         config: false,
         type: Object,
         default: {
-            limited_use_dots: false,
-            spell_slot_dots: false,
-            color_full: "#ff2e2e",
-            color_attuned: "#21c050",
-            color_not_attuned: "#c2c2c2",
-            color_equipped: "#6dff38",
-            color_not_equipped: "#c2c2c2",
-            color_prepared: "#0000ff",
-            color_not_prepared: "#c2c2c2",
-            color_always_prepared: "#ff0004",
-            color_proficient: "#228b22",
-            color_half_proficient: "#696969",
-            color_twice_proficient: "#ff6347"
-        }
+            showLimitedUses: false,
+            showSpellSlots: false,
+            usesUnexpended: "#ff2e2e",
+            itemAttuned: "#21c050",
+            itemNotAttuned: "#c2c2c2",
+            itemEquipped: "#6dff38",
+            itemNotEquipped: "#c2c2c2",
+            spellPrepared: "#0000ff",
+            spellNotPrepared: "#c2c2c2",
+            spellAlwaysPrepared: "#ff0004",
+            proficientNormal: "#228b22",
+            proficientHalf: "#696969",
+            proficientTwice: "#ff6347"
+        },
+        onChange: () => ZHELL_SHEET.refreshColors()
     });
     game.settings.registerMenu(MODULE, "colorSettings", {
         name: "Sheet Colors",
@@ -396,10 +403,11 @@ const registerSettingsMenus = function () {
         default: {
             uncommon: "#008000",
             rare: "#0000ff",
-            very_rare: "#800080",
+            veryRare: "#800080",
             legendary: "#ffa500",
             artifact: "#d2691e"
-        }
+        },
+        onChange: () => ZHELL_SHEET.refreshColors()
     });
     game.settings.registerMenu(MODULE, "rarityColorSettings", {
         name: "Rarity Colors",

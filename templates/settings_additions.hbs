@@ -1,55 +1,48 @@
 <form class="flexcol">
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-add-conditions">Add New Conditions</label>
+        <label for="addConditions">Add New Conditions</label>
         <div class="form-fields">
-            {{#if add_conditions}}
-            <input class="zhell-custom-stuff zhell-add-conditions" id="zhell-add-conditions" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-add-conditions" id="zhell-add-conditions" type="checkbox">
-            {{/if}}
+            <input id="addConditions" type="checkbox" {{#if addConditions}} checked {{/if}}>
         </div>
         <p class="notes">An addition to current available conditions.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-add-equipment-types">Add New Equipment Types</label>
+        <label for="addEquipmentTypes">Add New Equipment Types</label>
         <div class="form-fields">
-            {{#if add_equipment_types}}
-            <input class="zhell-custom-stuff zhell-add-equipment-types" id="zhell-add-equipment-types" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-add-equipment-types" id="zhell-add-equipment-types" type="checkbox">
-            {{/if}}
+            <input id="addEquipmentTypes" type="checkbox" {{#if addEquipmentTypes}} checked {{/if}}>
         </div>
         <p class="notes">An addition to current available equipment types. Not armor.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-add-piety">Add Piety Ability Score</label>
+        <label for="addPiety">Add Piety Ability Score</label>
         <div class="form-fields">
-            {{#if add_piety}}
-            <input class="zhell-custom-stuff zhell-add-piety" id="zhell-add-piety" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-add-piety" id="zhell-add-piety" type="checkbox">
-            {{/if}}
+            <input id="addPiety" type="checkbox" {{#if addPiety}} checked {{/if}}>
         </div>
         <p class="notes">Adds 'Piety' as a new ability score.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-add-divine">Add Divine Spell School</label>
+        <label for="addDivine">Add Divine Spell School</label>
         <div class="form-fields">
-            {{#if add_divine}}
-            <input class="zhell-custom-stuff zhell-add-divine" id="zhell-add-divine" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-add-divine" id="zhell-add-divine" type="checkbox">
-            {{/if}}
+            <input id="addDivine" type="checkbox" {{#if addDivine}} checked {{/if}}>
         </div>
         <p class="notes">Add 'Divine' as a spell school.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
+
+    <header>
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> Save Settings
+        </button>
+    </header>
 </form>
-<header class="zhell-custom-stuff zhell-submenu-header">
-    <button type="submit" name="submit" class="zhell-custom-stuff zhell-settings-save">
-        <i class="fas fa-save"></i> Save Settings
-    </button>
-</header>

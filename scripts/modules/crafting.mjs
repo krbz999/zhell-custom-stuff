@@ -2,8 +2,6 @@ import { MODULE } from "../const.mjs";
 
 // dialog: select hours and skill/tool, then roll a bunch of times.
 export async function foraging(actor){
-    if ( !actor ) return;
-
     const herbalismKit = actor.itemTypes.tool.find(i => {
         if ( i.system.baseItem !== "herb" ) return false;
         return i.system.proficient > 0;
@@ -57,10 +55,14 @@ export async function foraging(actor){
                     if ( selection.length > 3 ) {
                         // roll tool.
                         const tool = actor.items.get(selection);
-                        rolls = await Promise.all(Array(num).fill(0).map(() => tool.rollToolCheck(config)));
+                        rolls = await Promise.all(Array(num).fill(0).map(() => {
+                            return tool.rollToolCheck(config);
+                        }));
                     } else {
                         // roll skill.
-                        rolls = await Promise.all(Array(num).fill(0).map(() => actor.rollSkill(selection, config)));
+                        rolls = await Promise.all(Array(num).fill(0).map(() => {
+                            return actor.rollSkill(selection, config);
+                        }));
                     }
                     const counter = rolls.filter(i => i.total >= targetValue).length;
                     const materialValueCurrent = actor.getFlag(MODULE, "materia-medica.value") ?? 0;
@@ -69,7 +71,9 @@ export async function foraging(actor){
                     const speaker = ChatMessage.getSpeaker({actor});
                     const actorName = actor.name.split(" ")[0];
                     const result = `${counter} ${counter === 1 ? "unit" : "units"}`;
-                    const content = `${actorName} went foraging for ${num} hours and gathered <strong>${result}</strong> of foraged materials (added to character sheet).`;
+                    const content = `
+                    ${actorName} went foraging for ${num} hours and gathered
+                    <strong>${result}</strong> of foraged materials (added to character sheet).`;
                     return ChatMessage.create({ speaker, content });
                 }
             }
@@ -78,8 +82,6 @@ export async function foraging(actor){
 }
 
 export async function crafting(actor){
-    if ( !actor ) return;
-    
     const materials = Number(actor.getFlag(MODULE, "materia-medica.value") ?? 0);
     if ( materials < 2 ) {
         return ui.notifications.warn("You do not have enough foraged materials to craft anything.");

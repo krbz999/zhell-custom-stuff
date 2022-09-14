@@ -3,8 +3,8 @@ import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.js";
 
 export class ZHELL_REPLACEMENTS {
     
-    static replace_consumable_types = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replace_consumable_types ) return;
+    static replaceConsumableTypes = () => {
+        if ( !game.settings.get(MODULE, "replacementSettings").replaceConsumableTypes ) return;
 
         // the new consumable types.
         const addedConsumableTypes = {
@@ -31,8 +31,8 @@ export class ZHELL_REPLACEMENTS {
         CONFIG.DND5E.consumableTypes = Object.fromEntries(newArray);
     }
     
-    static replace_languages = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replace_languages ) return;
+    static replaceLanguages = () => {
+        if ( !game.settings.get(MODULE, "replacementSettings").replaceLanguages ) return;
         CONFIG.DND5E.languages = {
             common: "Common",
             aarakocra: "Aarakocra",
@@ -56,8 +56,8 @@ export class ZHELL_REPLACEMENTS {
         }
     }
     
-    static replace_tools = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replace_tools ) return;
+    static replaceTools = () => {
+        if ( !game.settings.get(MODULE, "replacementSettings").replaceTools ) return;
         
         // pluralising gaming set and instrument:
         CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
@@ -121,8 +121,8 @@ export class ZHELL_REPLACEMENTS {
         }
     }
     
-    static replace_weapons = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replace_weapons ) return;
+    static replaceWeapons = () => {
+        if ( !game.settings.get(MODULE, "replacementSettings").replaceWeapons ) return;
 
         const key = "zhell-catalogs.items";
         
@@ -174,8 +174,8 @@ export class ZHELL_REPLACEMENTS {
         
     }
     
-    static replace_status_effects = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replace_status_effects ) return;
+    static replaceStatusEffects = () => {
+        if ( !game.settings.get(MODULE, "replacementSettings").replaceStatusEffects ) return;
         
         // these are gotten from a different file, combined, and then sorted.
         const statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a,b) => {

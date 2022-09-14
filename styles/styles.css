@@ -33,20 +33,6 @@
 }
 
 
-/* SETTING SUBMENUS */
-label.zhell-custom-stuff.zhell-label-name { font-weight: bold; }
-.zhell-custom-stuff.zhell-settings-save {
-    width: 200px;
-    background-color: rgb(190, 189, 178);
-    border: 2px groove var(--color-border-light-highlight);
-}
-.zhell-custom-stuff.zhell-submenu-header {
-    display: flex;
-    align-content: flex-start;
-    justify-content: space-around;
-}
-
-
 /* collapsible items and effect headers */
 .dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover,
 .dnd5e.sheet.actor .characteristics label:hover {
@@ -54,10 +40,7 @@ label.zhell-custom-stuff.zhell-label-name { font-weight: bold; }
     cursor: pointer;
 }
 /* Make collapsed header gray text color and slighly slimmer. */
-.dnd5e.sheet.actor .items-header.flexrow.no-create {
-    height: auto;
-    color: darkgray;
-}
+.dnd5e.sheet.actor .items-header.flexrow.no-create { height: auto; color: darkgray; }
 /* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
@@ -76,11 +59,7 @@ label.zhell-custom-stuff.zhell-label-name { font-weight: bold; }
     transition: 0.3s;
     transform: scale(0.9);
 }
-.whisper-dialog-player-name.selected {
-    background-color: darkgray;
-    transition: 0.3s;
-    transform: scale(1.0);
-}
+.whisper-dialog-player-name.selected { background-color: darkgray; transition: 0.3s; transform: scale(1.0); }
 .whisper-dialog-player-name:not(.selected):hover { box-shadow: 0 0 8px red; }
 
 /* TRAITS LISTS */
@@ -88,4 +67,4 @@ ol.trait-list.zhell-profs, ol.trait-list.zhell-weapons, ol.trait-list.zhell-trai
 ol.trait-list.zhell-profs { grid-template-columns: auto auto auto auto; gap: 20px; }
 ol.trait-list.zhell-traits { grid-template-columns: auto auto auto; }
 ol.trait-list.zhell-weapons { grid-template-columns: auto auto; gap: 20px; }
-ol.trait-list.zhell-profs ol.trait-list { max-height: 200px; overflow: auto; }
+ol.trait-list.zhell-profs ol.trait-list { max-height: 200px; overflow: auto; border-bottom: 2px groove gray; }

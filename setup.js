@@ -15,56 +15,56 @@ Hooks.once("init", () => {
 });
 Hooks.once("setup", () => {
     // additions.
-    ZHELL_ADDITIONS.add_equipment_types();
-    ZHELL_ADDITIONS.add_divine();
-    ZHELL_ADDITIONS.add_conditions();
-    ZHELL_ADDITIONS.add_piety();
+    ZHELL_ADDITIONS.addEquipmentTypes();
+    ZHELL_ADDITIONS.addDivine();
+    ZHELL_ADDITIONS.addConditions();
+    ZHELL_ADDITIONS.addPiety();
 
     // replacements.
-    ZHELL_REPLACEMENTS.replace_consumable_types();
-    ZHELL_REPLACEMENTS.replace_languages();
-    ZHELL_REPLACEMENTS.replace_tools();
-    ZHELL_REPLACEMENTS.replace_weapons();
-    ZHELL_REPLACEMENTS.replace_status_effects();
+    ZHELL_REPLACEMENTS.replaceConsumableTypes();
+    ZHELL_REPLACEMENTS.replaceLanguages();
+    ZHELL_REPLACEMENTS.replaceTools();
+    ZHELL_REPLACEMENTS.replaceWeapons();
+    ZHELL_REPLACEMENTS.replaceStatusEffects();
 
 });
 Hooks.once("ready", () => {
     // disable short and long rest.
-    Hooks.on("dnd5e.preLongRest", ZHELL_SHEET.disable_long_rest);
-    Hooks.on("dnd5e.preShortRest", ZHELL_SHEET.disable_short_rest);
+    Hooks.on("dnd5e.preLongRest", ZHELL_SHEET.disableLongRest);
+    Hooks.on("dnd5e.preShortRest", ZHELL_SHEET.disableShortRest);
     
     // sheet edits.
-    Hooks.on("renderActorSheet", ZHELL_SHEET.remove_resources);
-    Hooks.on("renderActorSheet", ZHELL_SHEET.remove_alignment);
-    Hooks.on("renderActorSheet", ZHELL_SHEET.disable_initiative_button);
-    Hooks.on("renderActorSheet", ZHELL_SHEET.create_forage_counter);
-    Hooks.on("renderActorSheet", ZHELL_SHEET.set_hp_color);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.removeResources);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.removeAlignment);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.disableInitiativeButton);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.createForaging);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.setHealthColor);
     Hooks.on("renderActorSheet", ZHELL_SHEET.disable_exhaustion);
-    Hooks.on("renderActorSheet", ZHELL_SHEET.collapsible_headers);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.collapsibleHeaders);
     
     // create dots for limited uses and spell slots.
-    Hooks.on("renderActorSheet", ZHELL_SHEET.create_dots);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.createDots);
 
     // color magic items of uncommon or higher quality.
-    Hooks.on("renderActorSheet", ZHELL_SHEET.color_magic_items);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.colorMagicItems);
 
     // make the attunement button an actual toggle.
-    Hooks.on("renderActorSheet", ZHELL_SHEET.create_toggle_on_attunement_button);
+    Hooks.on("renderActorSheet", ZHELL_SHEET.attunementButtonToggle);
 
     // make the trait and proficiency selectors less ugly.
-    Hooks.on("renderTraitSelector", ZHELL_SHEET.pretty_trait_selector);
+    Hooks.on("renderTraitSelector", ZHELL_SHEET.reformatTraitSelectors);
 
     // refresh colors.
     ZHELL_SHEET.refreshColors();
 
     // mark 0 hp combatants as defeated.
     if ( game.user.isGM ){
-        Hooks.on("updateToken", ZHELL_COMBAT.mark_defeated_combatant);
+        Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
         Hooks.on("renderActiveEffectConfig", createEffectTextField);
     }
 
     // display ammo when you make an attack, if the ammo has a save.
-    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.show_ammo_if_it_has_save);
+    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
 
     // setup effectsPanel handlebar helpers, hooks, and other rendering.
     new HandlebarHelpers().registerHelpers(); // init helper setup.

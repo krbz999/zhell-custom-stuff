@@ -20,21 +20,21 @@ export class ZHELL_REST {
 
 export class ZHELL_CATALOG {
     
-    static getDocument = async (entryName, catalog, object = false) => {
+    static getDocument = async (name, catalog, object=false) => {
         const key = `zhell-catalogs.${catalog}`;
         const pack = game.packs.get(key) ?? game.packs.get(catalog);
         if ( !pack ) return ui.notifications.warn("Pack not found.");
-        const entry = pack.index.getName(entryName);
+        const entry = pack.index.getName(name);
         if ( !entry ) return ui.notifications.warn("Entry not found.");
         const entryDoc = await pack.getDocument(entry._id);
         if ( object ) return entryDoc.toObject();
         else return entryDoc;
     }
     
-    static spawn = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}, at) => {
+    static spawn = async (name, catalog="monsters", dummyNPC="dummy", warpgateObjects={}, at) => {
         warpgateObjects = foundry.utils.expandObject(warpgateObjects);
 
-        const spawnDoc = await this.getDocument(actorName, catalog, false);
+        const spawnDoc = await this.getDocument(name, catalog, false);
         if ( !spawnDoc ) return ui.notifications.warn("Monster not found.");
         
         // save whether the actor is wildcard img and if the token img is webm.
@@ -102,16 +102,16 @@ export class ZHELL_CATALOG {
         else return warpgate.spawn(dummyNPC, updates, callbacks, options);
     }
     
-    static mutate = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
+    static mutate = async (name, catalog="monsters", warpgateObjects={}) => {
         warpgateObjects = foundry.utils.expandObject(warpgateObjects);
         const token = canvas.tokens.controlled[0];
         if ( !token ) return ui.notifications.warn("You have no token selected.");
         const tokenDoc = token.document;
         
-        const mutateDoc = await this.getDocument(actorName, catalog, false);
+        const mutateDoc = await this.getDocument(name, catalog, false);
         if ( !mutateDoc ) return ui.notifications.warn("Monster not found.");
         const updatesActor = mutateDoc.toObject();
-        const updatesToken = mutateDoc.token;
+        const updatesToken = mutateDoc.prototypeToken;
         
         // handle items:
         const updatesItems = {};
@@ -182,9 +182,9 @@ export class ZHELL_CATALOG {
         
         const mergeOptions = foundry.utils.mergeObject({
             comparisonKeys: {ActiveEffect: "label"},
-            name: `Polymorph: ${actorName}`
+            name: `Polymorph: ${name}`
         }, (warpgateObjects.options ?? {}));
-        
+
         return warpgate.mutate(tokenDoc, {
             actor: mergeActor,
             token: mergeToken,
@@ -193,11 +193,11 @@ export class ZHELL_CATALOG {
     }
     
     // cast a spell directly from a compendium.
-    static cast = async (spellName, catalog = "spells", caster, updates = {}, config = {}, options = {}) => {
+    static cast = async ({ name, catalog="spells", caster }={}, updates={}, config={}, options={}) => {
         const parent = caster?.actor ?? caster ?? canvas.tokens.controlled[0]?.actor ?? game.user.character;
         if ( !parent ) return ui.notifications.warn("No valid actor.");
         
-        const object = await this.getDocument(spellName, catalog, true);
+        const object = await this.getDocument(name, catalog, true);
         if ( !object ) return ui.notifications.warn("Spell not found.");
         
         // fix for Roll Groups:
@@ -217,12 +217,13 @@ export class ZHELL_CATALOG {
         }
         
         const original = foundry.utils.duplicate(object);
+        let [spell] = await parent.createEmbeddedDocuments("Item", [object], { temporary: true });
+
         foundry.utils.mergeObject(object, updates);
-        
-        const [spell] = await parent.createEmbeddedDocuments("Item", [object], { temporary: true });
+        spell = spell.clone(object, { keepId: true });
         spell.prepareFinalAttributes(); // this fixes saving throw buttons.
 
-        const rollConfig = foundry.utils.mergeObject(config, {
+        options = foundry.utils.mergeObject(options, {
             flags: { "dnd5e.itemData": original }
         });
         
@@ -230,29 +231,24 @@ export class ZHELL_CATALOG {
         if ( game.modules.get("itemacro")?.active && spell.hasMacro() ) {
             return spell.executeMacro();
         }
-        return spell.use(rollConfig, options);
+        return spell.use(config, options);
     }
     
-    static castCharges = async (spellName, level, caster, config = {}, options = {}) => {
-        const rollConfig = foundry.utils.mergeObject({
+    static castCharges = async ({ name, level, caster }, updates={}, config={}, options={}) => {
+        updates = foundry.utils.mergeObject({
             "system.preparation.mode": "atwill",
             "system.level": level,
             "system.components.material": false,
-            "system.materials": {
-                consumed: false,
-                cost: 0,
-                supply: 0,
-                value: ""
-            }
-        }, config);
-        return this.cast(spellName, "spells", caster, rollConfig, options);
+            "system.materials": { consumed: false, cost: 0, supply: 0, value: "" }
+        }, updates);
+        return this.cast({ name, catalog: "spells", caster }, updates, config, options);
     }
 }
 
 export class ZHELL_UTILS {
     
     // execute an item's Item Macro if it has one, otherwise roll normally.
-    static rollItemMacro = async (item, config = {}, options = {}) => {
+    static rollItemMacro = async (item, config={}, options={}) => {
         const itemMacro = game.modules.get("itemacro")?.active;
         if ( itemMacro && item.hasMacro() ) return item.executeMacro(options);
         else return item.use(config, options);
@@ -338,60 +334,6 @@ export class ZHELL_UTILS {
         return tokenIds;
     }
     
-    // pass the target and an array of arrays (numeric value + damage type).
-    static apply_damage = async (actor, damages, {showrolls = false, globalModifier = 1} = {}) => {
-        
-        // make sure it's an actor, not token.
-        const target = actor.actor ?? actor;
-        
-        // if damages is a string, that's fine, but convert to array.
-        const damageArray = typeof damages === "string" ? [[damages, ""]] : damages;
-        
-        // get the actor's immunities, resistances, and vulnerabilities.
-        const {di, dr, dv} = target.system.traits;
-        
-        // convert each die expression to a numeric value and apply resistances.
-        let sum = 0;
-        for ( let i = 0; i < damageArray.length; i++ ) {
-            const [dmg, type] = damageArray[i];
-            if ( !dmg ) continue;
-            
-            const label = CONFIG.DND5E.damageResistanceTypes[type] ?? "Other";
-            
-            // get the multiplier from resistances etc.
-            const [multiplier, flavor] = arrInclude(di, type) ? [0, `${label} damage (immune)`]
-                : arrInclude(dr, type) ? [0.5, `${label} damage (resistant)`]
-                : arrInclude(dv, type) ? [2, `${label} damage (vulnerable)`]
-                : [1, `${label} damage`];
-            
-            // get the damage total before resistances.
-            const formula = Roll.replaceFormulaData(dmg, target.getRollData());
-            if ( !Roll.validate(formula) ) continue;
-            const roll = await new Roll(formula).evaluate({async: true});
-            
-            // throw rolls into chat.
-            const speaker = ChatMessage.getSpeaker({ actor: target });
-            if (showrolls ) roll.toMessage({ flavor, speaker });
-            
-            // a global modifier in cases of half damage on saves for example
-            const total = Math.floor(roll.total * globalModifier);
-            
-            // add to sum after adjusting for resistances.
-            sum += Math.floor(total * multiplier);
-        }
-        
-        // apply damage.
-        return target.applyDamage(sum);
-        
-        // function to return true or false if a combined array contains another thing.
-        function arrInclude(obj, val){
-            const values = obj.value;
-            const customs = obj.custom ?? "";
-            
-            return [...values, ...customs.split(";")].includes(val);
-        }
-    }
-    
     // takes an array of tokens or tokenDocuments and returns an array of player owner ids.
     static get_token_owner_ids = (tokens = [], excludeGM = false) => {
         const permissions = tokens.map(t => t.actor.ownership);
@@ -468,7 +410,7 @@ export class ZHELL_UTILS {
     
     // function to wait for a specified amount of time.
     static wait = async (ms) => {
-        return new Promise(resolve => setTimeOut(resolve, Number(ms)));
+        return new Promise(resolve => setTimeout(resolve, Number(ms)));
     }
     
     // function to turn integer into cardinal number.
@@ -611,7 +553,7 @@ export class ZHELL_UTILS {
     }
 
     // pop a title on each player's screen.
-    static title_card = async (text, fontSize = 80) => {
+    static title_card = async (text, fontSize=80) => {
         if ( !text ) return ui.notifications.warn("No text given.");
 
         const textStyle = {

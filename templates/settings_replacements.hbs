@@ -1,67 +1,59 @@
 <form class="flexcol">
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-status-effects">Replace Status Effects</label>
+        <label for="replaceStatusEffects">Replace Status Effects</label>
         <div class="form-fields">
-            {{#if replace_status_effects}}
-            <input class="zhell-custom-stuff zhell-replace-status-effects" id="zhell-replace-status-effects" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-replace-status-effects" id="zhell-replace-status-effects" type="checkbox">
-            {{/if}}
+            <input id="replaceStatusEffects" type="checkbox" {{#if replaceStatusEffects}} checked {{/if}}>
         </div>
         <p class="notes">Replace the status effects on the token hud.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-languages">Replace Languages</label>
+        <label for="replaceLanguages">Replace Languages</label>
         <div class="form-fields">
-            {{#if replace_languages}}
-            <input class="zhell-custom-stuff zhell-replace-languages" id="zhell-replace-languages" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-replace-languages" id="zhell-replace-languages" type="checkbox">
-            {{/if}}
+            <input id="replaceLanguages" type="checkbox" {{#if replaceLanguages}} checked {{/if}}>
         </div>
         <p class="notes">A total replace of all default languages, but using same keys if available.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-tools">Replace Tools</label>
+        <label for="replaceTools">Replace Tools</label>
         <div class="form-fields">
-            {{#if replace_tools}}
-            <input class="zhell-custom-stuff zhell-replace-tools" id="zhell-replace-tools" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-replace-tools" id="zhell-replace-tools" type="checkbox">
-            {{/if}}
+            <input id="replaceTools" type="checkbox" {{#if replaceTools}} checked {{/if}}>
         </div>
         <p class="notes">A total replace of all default tools, but using same keys if available.</p>
     </div>
-    <div><hr></div>
-    <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-weapons">Replace Weapons</label>
-        <div class="form-fields">
-            {{#if replace_weapons}}
-            <input class="zhell-custom-stuff zhell-replace-weapons" id="zhell-replace-weapons" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-replace-weapons" id="zhell-replace-weapons" type="checkbox">
-            {{/if}}
-        </div>
-        <p class="notes">A total replace of all default weapons, but using same keys if available. Also gets rid of firearm-specific weapon attributes.</p>
+    <div>
+        <hr>
     </div>
-    <div><hr></div>
     <div class="form-group">
-        <label class="zhell-custom-stuff zhell-label-name" for="zhell-replace-consumable-types">Replace Consumable Types</label>
+        <label for="replaceWeapons">Replace Weapons</label>
         <div class="form-fields">
-            {{#if replace_consumable_types}}
-            <input class="zhell-custom-stuff zhell-replace-consumable-types" id="zhell-replace-consumable-types" type="checkbox" checked>
-            {{else}}
-            <input class="zhell-custom-stuff zhell-replace-consumable-types" id="zhell-replace-consumable-types" type="checkbox">
-            {{/if}}
+            <input id="replaceWeapons" type="checkbox" {{#if replaceWeapons}} checked {{/if}}>
+        </div>
+        <p class="notes">A total replace of all default weapons, but using same keys if available. Also gets rid of
+            firearm-specific weapon attributes.</p>
+    </div>
+    <div>
+        <hr>
+    </div>
+    <div class="form-group">
+        <label for="replaceConsumableTypes">Replace Consumable Types</label>
+        <div class="form-fields">
+            <input id="replaceConsumableTypes" type="checkbox" {{#if replaceConsumableTypes}} checked {{/if}}>
         </div>
         <p class="notes">A replacement of the current consumable types, using original keys if available.</p>
     </div>
-    <div><hr></div>
+    <div>
+        <hr>
+    </div>
+
+    <header>
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> Save Settings
+        </button>
+    </header>
 </form>
-<header class="zhell-custom-stuff zhell-submenu-header">
-    <button type="submit" name="submit" class="zhell-custom-stuff zhell-settings-save">
-        <i class="fas fa-save"></i> Save Settings
-    </button>
-</header>

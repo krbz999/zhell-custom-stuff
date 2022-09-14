@@ -1,16 +1,16 @@
 /* Default colors. */
 body :root {
-    --full_color: #b33737;
-    --attuned_color: #7a7971;
-    --not_attuned_color: #44191A;
-    --prepared_color: #7a7971;
-    --not_prepared_color: #44191A;
-    --always_prepared_color: #7F7F7F;
-    --equipped_color: #7a7971;
-    --not_equipped_color: #44191A;
-    --color_proficient: "#228b22";
-    --color_half_proficient: "#696969";
-    --color_twice_proficient: "#ff6347";
+    --usesUnexpended: #b33737;
+    --itemAttuned: #7a7971;
+    --itemNotAttuned: #44191A;
+    --spellPrepared: #7a7971;
+    --spellNotPrepared: #44191A;
+    --spellAlwaysPrepared: #7F7F7F;
+    --itemEquipped: #7a7971;
+    --itemNotEquipped: #44191A;
+    --proficientNormal: "#228b22";
+    --proficientHalf: "#696969";
+    --proficientTwice: "#ff6347";
 }
 
 /* Style of the dots. */
@@ -19,10 +19,10 @@ body :root {
     width: 15px;
     max-height: 15px;
     max-width: 15px;
-    background-color: var(--full_color);
+    background-color: var(--usesUnexpended);
     border-radius: 25%;
     cursor: pointer;
-    box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--full_color);
+    box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
     margin: 0 1px 0 1px;
 }
 .dnd5e .items-list .dot:hover {
@@ -51,11 +51,11 @@ body :root {
 
 /* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name i.attuned {
-    color: var(--attuned_color) !important;
+    color: var(--itemAttuned) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 .dnd5e.sheet.actor .inventory-list .item .item-name i.not-attuned {
-    color: var(--not_attuned_color) !important;
+    color: var(--itemNotAttuned) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 .dnd5e.sheet.actor .inventory-list .item .item-name i:hover:not(.original-class) {
@@ -66,25 +66,25 @@ body :root {
 
 /* Equipment State icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
-    color: var(--equipped_color) !important;
+    color: var(--itemEquipped) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle:not(.active) i {
-    color: var(--not_equipped_color) !important;
+    color: var(--itemNotEquipped) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
 /* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
-    color: var(--prepared_color) !important;
+    color: var(--spellPrepared) !important;
     filter: drop-shadow(0px 0px 1px black);    
 }
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
-    color: var(--always_prepared_color) !important;
+    color: var(--spellAlwaysPrepared) !important;
     filter: drop-shadow(0px 0px 1px black);    
 }
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
-    color: var(--not_prepared_color) !important;
+    color: var(--spellNotPrepared) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
@@ -115,11 +115,11 @@ body :root {
 
 /* proficiencies */
 /* half proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust { color: var(--color_half_proficient) !important; }
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust { color: var(--proficientHalf) !important; }
 /* proficient */
-.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check { color: var(--color_proficient) !important; }
+.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check { color: var(--proficientNormal) !important; }
 /* twice proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double { color: var(--color_twice_proficient) !important; }
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double { color: var(--proficientTwice) !important; }
 
 /* bold ability keys for skills */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-ability { font-weight: bold; }
