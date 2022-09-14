@@ -1,0 +1,123 @@
+<form class="flexcol">
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name" for="zhell-limited-use-dots">Enable Limited Use Dots</label>
+        <div class="form-fields">
+            {{#if limited_use_dots}}
+            <input class="zhell-custom-stuff zhell-limited-use-dots" id="zhell-limited-use-dots" type="checkbox" checked>
+            {{else}}
+            <input class="zhell-custom-stuff zhell-limited-use-dots" id="zhell-limited-use-dots" type="checkbox">
+            {{/if}}
+        </div>
+        <p class="notes">Create colored dots on the sheet for items with limited uses.</p>
+    </div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name" for="zhell-spell-slot-dots">Enable Spell Slot Dots</label>
+        <div class="form-fields">
+            {{#if spell_slot_dots}}
+            <input class="zhell-custom-stuff zhell-spell-slot-dots" id="zhell-spell-slot-dots" type="checkbox" checked>
+            {{else}}
+            <input class="zhell-custom-stuff zhell-spell-slot-dots" id="zhell-spell-slot-dots" type="checkbox">
+            {{/if}}
+        </div>
+        <p class="notes">Create colored dots on the sheet for spell slots.</p>
+    </div>
+    <div><hr></div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Full Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_full}}" data-edit="color-input-full">
+            <input name="color-input-full" class="zhell-custom-stuff zhell-color-full" type="text" value="{{color_full}}"> 
+        </div>
+        <p class="notes">The color of available limited uses and spell slots.</p>
+    </div>
+    <div><hr></div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Attuned Item Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_attuned}}" data-edit="color-input-attuned">
+            <input name="color-input-attuned" class="zhell-custom-stuff zhell-color-attuned" type="text" value="{{color_attuned}}"> 
+        </div>
+        <p class="notes">The color of the attunement icon when attuned to an item.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Not Attuned Item Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_not_attuned}}" data-edit="color-input-not-attuned">
+            <input name="color-input-not-attuned" class="zhell-custom-stuff zhell-color-not-attuned" type="text" value="{{color_not_attuned}}"> 
+        </div>
+        <p class="notes">The color of the attunement icon when not attuned to an item.</p>
+    </div>
+    <div><hr></div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Equipped Item Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_equipped}}" data-edit="color-input-equipped">
+            <input name="color-input-equipped" class="zhell-custom-stuff zhell-color-equipped" type="text" value="{{color_equipped}}"> 
+        </div>
+        <p class="notes">The color of the equipped icon when an item is equipped.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Unequipped Item Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_not_equipped}}" data-edit="color-input-not-equipped">
+            <input name="color-input-not-equipped" class="zhell-custom-stuff zhell-color-not-equipped" type="text" value="{{color_not_equipped}}"> 
+        </div>
+        <p class="notes">The color of the equipped icon when an item is unequipped.</p>
+    </div>
+    <div><hr></div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Prepared Spell Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_prepared}}" data-edit="color-input-prepared">
+            <input name="color-input-prepared" class="zhell-custom-stuff zhell-color-prepared" type="text" value="{{color_prepared}}"> 
+        </div>
+        <p class="notes">The color of the prepared icon when a spell is prepared.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Unprepared Spell Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_not_prepared}}" data-edit="color-input-not-prepared">
+            <input name="color-input-not-prepared" class="zhell-custom-stuff zhell-color-not-prepared" type="text" value="{{color_not_prepared}}"> 
+        </div>
+        <p class="notes">The color of the prepared icon when a spell is not prepared.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Always Prepared Spell Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_always_prepared}}" data-edit="color-input-always-prepared">
+            <input name="color-input-always-prepared" class="zhell-custom-stuff zhell-color-always-prepared" type="text" value="{{color_always_prepared}}"> 
+        </div>
+        <p class="notes">The color of the prepared icon when a spell is permanently prepared.</p>
+    </div>
+    <div><hr></div>
+    <div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Proficient Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_proficient}}" data-edit="color-input-proficient">
+            <input name="color-input-proficient" class="zhell-custom-stuff zhell-color-proficient" type="text" value="{{color_proficient}}"> 
+        </div>
+        <p class="notes">The color of the Proficient icons.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Half Proficient Color</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_half_proficient}}" data-edit="color-input-half-proficient">
+            <input name="color-input-half-proficient" class="zhell-custom-stuff zhell-color-half-proficient" type="text" value="{{color_half_proficient}}"> 
+        </div>
+        <p class="notes">The color of the Half Proficient icons.</p>
+    </div>
+	<div class="form-group">
+        <label class="zhell-custom-stuff zhell-label-name">Twice Proficient</label>
+        <div class="form-fields">
+            <input type="color" value="{{color_twice_proficient}}" data-edit="color-input-twice-proficient">
+            <input name="color-input-twice-proficient" class="zhell-custom-stuff zhell-color-twice-proficient" type="text" value="{{color_twice_proficient}}"> 
+        </div>
+        <p class="notes">The color of the Twice Proficient icons.</p>
+    </div>
+    <div><hr></div>
+</form>
+<header class="zhell-custom-stuff zhell-submenu-header">
+    <button type="submit" name="submit" class="zhell-custom-stuff zhell-settings-save">
+        <i class="fas fa-save"></i> Save Settings
+    </button>
+</header>

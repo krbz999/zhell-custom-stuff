@@ -32,6 +32,8 @@ export class ZHELL_CATALOG {
     }
     
     static spawn = async (actorName, catalog = "monsters", dummyNPC = "dummy", warpgateObjects = {}, at) => {
+        warpgateObjects = foundry.utils.expandObject(warpgateObjects);
+
         const spawnDoc = await this.getDocument(actorName, catalog, false);
         if ( !spawnDoc ) return ui.notifications.warn("Monster not found.");
         
@@ -101,6 +103,7 @@ export class ZHELL_CATALOG {
     }
     
     static mutate = async (actorName, catalog = "monsters", warpgateObjects = {}) => {
+        warpgateObjects = foundry.utils.expandObject(warpgateObjects);
         const token = canvas.tokens.controlled[0];
         if ( !token ) return ui.notifications.warn("You have no token selected.");
         const tokenDoc = token.document;
@@ -197,19 +200,18 @@ export class ZHELL_CATALOG {
         const object = await this.getDocument(spellName, catalog, true);
         if ( !object ) return ui.notifications.warn("Spell not found.");
         
-        // fix for MRE:
-        if ( game.modules.get("mre-dnd5e")?.active ) {
-            if ( !object.flags["mre-dnd5e"]?.formulaGroups ) {
+        // fix for Roll Groups:
+        if ( game.modules.get("rollgroups")?.active ) {
+            if ( !object.flags["rollgroups"]?.config?.groups ) {
                 const number_of_groups = object.system.damage?.parts?.length ?? 0;
                 if ( number_of_groups > 0 ) {
-                    object.flags["mre-dnd5e"] = { formulaGroups: [] };
-                    
-                    for ( let i = 0; i < number_of_groups; i++ ) {
-                        let label = i === 0 ? "Primary" : i === 1 ? "Secondary" : i === 2 ? "Tertiary" : "New Formula";
-                        object.flags["mre-dnd5e"].formulaGroups.push({ formulaSet: [i], label });
-                    }
-                } else {
-                    object.flags["mre-dnd5e"] = { formulaGroups: [{ formulaSet: [], label: "Primary" }] };
+                    object.flags["rollgroups"] = {
+                        config: {
+                            groups: Array.fromRange(number_of_groups).map(n => ({
+                                label: "Damage", parts: [n]
+                            }))
+                        }
+                    };
                 }
             }
         }

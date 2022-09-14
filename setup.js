@@ -70,7 +70,7 @@ Hooks.once("ready", () => {
     new HandlebarHelpers().registerHelpers(); // init helper setup.
     ZHELL_EFFECTS_PANEL.effectsPanel.render(true); // init render.
     Hooks.on("collapseSidebar", (_, bool) => ZHELL_EFFECTS_PANEL.effectsPanel.handleExpand(bool));
-    for( let hook of [
+    for( const hook of [
         "updateWorldTime", "createActiveEffect", "updateActiveEffect",
         "deleteActiveEffect", "controlToken", "preUpdateToken"
     ] ) {

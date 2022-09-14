@@ -113,6 +113,8 @@ img.zhell-holy-symbol.thrizur:hover { filter: drop-shadow(0 0 10px darkgreen) !i
     min-width: fit-content;
     transition: 0.3s;
 }
+.zhell-class-list .subclass-links p:nth-child(3n-2) a.content-link:hover { transform-origin: left; margin-left: 5px; }
+.zhell-class-list .subclass-links p:nth-child(3n) a.content-link:hover { transform-origin: right; }
 .zhell-class-list .subclass-links a.content-link:hover {
     transition: 0.3s;
     transform: scale(1.1);
