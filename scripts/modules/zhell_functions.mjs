@@ -1,23 +1,6 @@
 import { MODULE } from "../const.mjs";
 import { EXHAUSTION_EFFECTS } from "../../sources/conditions.js";
 
-export class ZHELL_REST {
-
-    static toggleSR = async (value = null) => {
-        if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-        const current = !!game.settings.get(MODULE, "toggleSR");
-        if ( value !== null ) return game.settings.set(MODULE, "toggleSR", value);
-        return game.settings.set(MODULE, "toggleSR", !current);
-    }
-
-    static toggleLR = async (value = null) => {
-        if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-        const current = !!game.settings.get(MODULE, "toggleLR");
-        if ( value !== null ) return game.settings.set(MODULE, "toggleLR", value);
-        return game.settings.set(MODULE, "toggleLR", !current);
-    }
-}
-
 export class ZHELL_CATALOG {
     
     static getDocument = async (name, catalog, object=false) => {
@@ -115,13 +98,13 @@ export class ZHELL_CATALOG {
         
         // handle items:
         const updatesItems = {};
-        for ( let item of updatesActor.items ) updatesItems[item.name] = item;
-        for ( let item of tokenDoc.actor.toObject().items ) updatesItems[item.name] = warpgate.CONST.DELETE;
+        for ( const item of updatesActor.items ) updatesItems[item.name] = item;
+        for ( const item of tokenDoc.actor.toObject().items ) updatesItems[item.name] = warpgate.CONST.DELETE;
         
         // handle effects:
         const updatesEffects = {};
-        for ( let effect of updatesActor.effects ) updatesEffects[effect.label] = effect;
-        for ( let effect of tokenDoc.actor.effects ) {
+        for ( const effect of updatesActor.effects ) updatesEffects[effect.label] = effect;
+        for ( const effect of tokenDoc.actor.effects ) {
             if ( !effect.isTemporary ) updatesEffects[effect.label] = warpgate.CONST.DELETE;
         }
         delete updatesActor.effects;
@@ -291,7 +274,7 @@ export class ZHELL_UTILS {
         
         if ( fade ) {
             const sequence = new Sequence();
-            for ( let tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeOut(fadeDuration);
+            for ( const tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeOut(fadeDuration);
             await sequence.play();
             await warpgate.wait(fadeDuration);
         }
@@ -306,7 +289,7 @@ export class ZHELL_UTILS {
         if ( fade ) {
             await warpgate.wait(fadeDuration);
             const sequence = new Sequence();
-            for ( let tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeIn(fadeDuration);
+            for ( const tokenDoc of tokenDocs ) sequence.animation().on(tokenDoc).fadeIn(fadeDuration);
             await sequence.play();
         }
         
@@ -387,7 +370,7 @@ export class ZHELL_UTILS {
                             return acc + `<p>${e}</p>`;
                         }, ``);
                         const whisperIds = new Set();
-                        for ( let {id} of users ) {
+                        for ( const {id} of users ) {
                             if ( !!html[0].querySelector(`span[id="${id}"].selected`) ) {
                                 whisperIds.add(id);
                             }
@@ -432,7 +415,7 @@ export class ZHELL_UTILS {
         }
         let str = '';
         
-        for ( let i of Object.keys(roman) ) {
+        for ( const i of Object.keys(roman) ) {
             let q = Math.floor(num / roman[i]);
             num -= q * roman[i];
             str += i.repeat(q);
@@ -465,7 +448,8 @@ export class ZHELL_UTILS {
     // increase exhaustion.
     static increase_exhaustion = async (actor) => {
         if ( !(actor instanceof Actor) ) {
-            return ui.notifications.warn("Invalid actor provided.");
+            ui.notifications.warn("Invalid actor provided.");
+            return null;
         }
         
         // get current exhaustion effect, if any.
@@ -474,7 +458,7 @@ export class ZHELL_UTILS {
         });
 
         // if exhausted, increase the level.
-        if ( !!exhaustion ) {
+        if ( exhaustion ) {
             const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
             return this.update_exhaustion(currentLevel + 1, actor);
         }
@@ -486,7 +470,8 @@ export class ZHELL_UTILS {
     // decrease exhaustion.
     static decrease_exhaustion = async (actor) => {
         if ( !(actor instanceof Actor) ) {
-            return ui.notifications.warn("Invalid actor provided.");
+            ui.notifications.warn("Invalid actor provided.");
+            return null;
         }
         
         // get current exhaustion effect, if any.
@@ -495,22 +480,25 @@ export class ZHELL_UTILS {
         });
 
         // if exhausted, decrease the level.
-        if ( !!exhaustion ) {
+        if ( exhaustion ) {
             const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
             return this.update_exhaustion(currentLevel - 1, actor);
         }
 
         // if not exhausted, error.
-        return ui.notifications.warn(`${actor.name} was not exhausted.`);
+        ui.notifications.warn(`${actor.name} was not exhausted.`);
+        return null;
     }
 
     // update or set exhaustion to specific level
     static update_exhaustion = async (num, actor) => {
-        if ( ![0,1,2,3,4,5,6].includes(num) ) {
-            return ui.notifications.warn("The provided level was not valid.");
+        if ( !Array.fromRange(7).includes(num) ) {
+            ui.notifications.warn("The provided level was not valid.");
+            return null;
         }
         if ( !(actor instanceof Actor) ) {
-            return ui.notifications.warn("Invalid actor provided.");
+            ui.notifications.warn("Invalid actor provided.");
+            return null;
         }
 
         // attempt to find any current exhaustion effect.
@@ -533,9 +521,9 @@ export class ZHELL_UTILS {
         }
 
         // if actor has exhaustion, update.
-        if ( !!exhaustion ) {
-            const {label, changes, flags} = EXHAUSTION_EFFECTS[num-1];
-            await exhaustion.update({label, changes, flags});
+        if ( exhaustion ) {
+            const { label, changes, flags } = EXHAUSTION_EFFECTS[num-1];
+            await exhaustion.update({ label, changes, flags });
         }
 
         // if actor not already exhausted, find and apply.
@@ -547,14 +535,17 @@ export class ZHELL_UTILS {
         }
 
         // lastly, update actor hp.
-        const {value, max} = actor.system.attributes.hp;
+        const { value, max } = actor.system.attributes.hp;
         const newValue = Math.floor(Math.min(value, max));
-        return actor.update({"system.attributes.hp.value": newValue});
+        return actor.update({ "system.attributes.hp.value": newValue });
     }
 
     // pop a title on each player's screen.
     static title_card = async (text, fontSize=80) => {
-        if ( !text ) return ui.notifications.warn("No text given.");
+        if ( !text ) {
+            ui.notifications.warn("No text given.");
+            return null;
+        }
 
         const textStyle = {
             align: "center",
@@ -573,7 +564,7 @@ export class ZHELL_UTILS {
         const sequence = new Sequence().effect()
             .text(text, textStyle)
             .screenSpace()
-            .screenSpaceAnchor({x: 0.5, y: 0.34})
+            .screenSpaceAnchor({ x: 0.5, y: 0.34 })
             .duration(12000)
             .fadeIn(2000)
             .fadeOut(2000);

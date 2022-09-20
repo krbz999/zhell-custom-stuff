@@ -162,7 +162,7 @@ export async function crafting(actor){
             html[0].addEventListener("click", (event) => {
                 const button = event.target.closest(".option-button");
                 if ( !button || button.disabled ) return;
-                const {id, cost, scale} = button.dataset;
+                const { id, cost, scale } = button.dataset;
                 potionDialog.close();
                 createPotion(id, cost, scale);
                 subtractMaterials(cost);

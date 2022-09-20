@@ -2,14 +2,14 @@
     <div class="form-group">
         <label for="showLimitedUses">Enable Limited Use Dots</label>
         <div class="form-fields">
-            <input id="showLimitedUses" type="checkbox" {{#if showLimitedUses}} checked {{/if}}>
+            <input name="showLimitedUses" type="checkbox" {{#if showLimitedUses}} checked {{/if}}>
         </div>
         <p class="notes">Create colored dots on the sheet for items with limited uses.</p>
     </div>
     <div class="form-group">
         <label for="showSpellSlots">Enable Spell Slot Dots</label>
         <div class="form-fields">
-            <input id="showSpellSlots" type="checkbox" {{#if showSpellSlots}} checked {{/if}}>
+            <input name="showSpellSlots" type="checkbox" {{#if showSpellSlots}} checked {{/if}}>
         </div>
         <p class="notes">Create colored dots on the sheet for spell slots.</p>
     </div>
@@ -20,7 +20,7 @@
         <label>Full Color</label>
         <div class="form-fields">
             <input type="color" value="{{usesUnexpended}}" data-edit="usesUnexpended">
-            <input name="usesUnexpended" id="usesUnexpended" type="text" value="{{usesUnexpended}}">
+            <input name="usesUnexpended" type="text" value="{{usesUnexpended}}">
         </div>
         <p class="notes">The color of available limited uses and spell slots.</p>
     </div>
@@ -31,7 +31,7 @@
         <label>Attuned Item Color</label>
         <div class="form-fields">
             <input type="color" value="{{itemAttuned}}" data-edit="itemAttuned">
-            <input name="itemAttuned" id="itemAttuned" type="text" value="{{itemAttuned}}">
+            <input name="itemAttuned" type="text" value="{{itemAttuned}}">
         </div>
         <p class="notes">The color of the attunement icon when attuned to an item.</p>
     </div>
@@ -39,7 +39,7 @@
         <label>Not Attuned Item Color</label>
         <div class="form-fields">
             <input type="color" value="{{itemNotAttuned}}" data-edit="itemNotAttuned">
-            <input name="itemNotAttuned" id="itemNotAttuned" type="text" value="{{itemNotAttuned}}">
+            <input name="itemNotAttuned" type="text" value="{{itemNotAttuned}}">
         </div>
         <p class="notes">The color of the attunement icon when not attuned to an item.</p>
     </div>
@@ -50,7 +50,7 @@
         <label>Equipped Item Color</label>
         <div class="form-fields">
             <input type="color" value="{{itemEquipped}}" data-edit="itemEquipped">
-            <input name="itemEquipped" id="itemEquipped" type="text" value="{{itemEquipped}}">
+            <input name="itemEquipped" type="text" value="{{itemEquipped}}">
         </div>
         <p class="notes">The color of the equipped icon when an item is equipped.</p>
     </div>
@@ -58,7 +58,7 @@
         <label>Unequipped Item Color</label>
         <div class="form-fields">
             <input type="color" value="{{itemNotEquipped}}" data-edit="itemNotEquipped">
-            <input name="itemNotEquipped" id="itemNotEquipped" type="text" value="{{itemNotEquipped}}">
+            <input name="itemNotEquipped" type="text" value="{{itemNotEquipped}}">
         </div>
         <p class="notes">The color of the equipped icon when an item is unequipped.</p>
     </div>
@@ -69,7 +69,7 @@
         <label>Prepared Spell Color</label>
         <div class="form-fields">
             <input type="color" value="{{spellPrepared}}" data-edit="spellPrepared">
-            <input name="spellPrepared" id="spellPrepared" type="text" value="{{spellPrepared}}">
+            <input name="spellPrepared" type="text" value="{{spellPrepared}}">
         </div>
         <p class="notes">The color of the prepared icon when a spell is prepared.</p>
     </div>
@@ -77,7 +77,7 @@
         <label>Unprepared Spell Color</label>
         <div class="form-fields">
             <input type="color" value="{{spellNotPrepared}}" data-edit="spellNotPrepared">
-            <input name="spellNotPrepared" id="spellNotPrepared" type="text" value="{{spellNotPrepared}}">
+            <input name="spellNotPrepared" type="text" value="{{spellNotPrepared}}">
         </div>
         <p class="notes">The color of the prepared icon when a spell is not prepared.</p>
     </div>
@@ -85,7 +85,7 @@
         <label>Always Prepared Spell Color</label>
         <div class="form-fields">
             <input type="color" value="{{spellAlwaysPrepared}}" data-edit="spellAlwaysPrepared">
-            <input name="spellAlwaysPrepared" id="spellAlwaysPrepared" type="text" value="{{spellAlwaysPrepared}}">
+            <input name="spellAlwaysPrepared" type="text" value="{{spellAlwaysPrepared}}">
         </div>
         <p class="notes">The color of the prepared icon when a spell is permanently prepared.</p>
     </div>
@@ -96,7 +96,7 @@
         <label>Proficient Color</label>
         <div class="form-fields">
             <input type="color" value="{{proficientNormal}}" data-edit="proficientNormal">
-            <input name="proficientNormal" id="proficientNormal" type="text" value="{{proficientNormal}}">
+            <input name="proficientNormal" type="text" value="{{proficientNormal}}">
         </div>
         <p class="notes">The color of the Proficient icons.</p>
     </div>
@@ -104,7 +104,7 @@
         <label>Half Proficient Color</label>
         <div class="form-fields">
             <input type="color" value="{{proficientHalf}}" data-edit="proficientHalf">
-            <input name="proficientHalf" id="proficientHalf" type="text" value="{{proficientHalf}}">
+            <input name="proficientHalf" type="text" value="{{proficientHalf}}">
         </div>
         <p class="notes">The color of the Half Proficient icons.</p>
     </div>
@@ -112,7 +112,7 @@
         <label>Twice Proficient</label>
         <div class="form-fields">
             <input type="color" value="{{proficientTwice}}" data-edit="proficientTwice">
-            <input name="proficientTwice" id="proficientTwice" type="text" value="{{proficientTwice}}">
+            <input name="proficientTwice" type="text" value="{{proficientTwice}}">
         </div>
         <p class="notes">The color of the Twice Proficient icons.</p>
     </div>

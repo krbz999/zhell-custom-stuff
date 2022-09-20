@@ -270,11 +270,6 @@ export class DM_TOOL {
     static RENDER(){
         const tokens = canvas.tokens.controlled.filter(i => !i.actor.hasPlayerOwner);
 
-        /**
-         * ui needs:
-         * a way to remove all conditions.
-         */
-
         const style = `
         <style>
         form[name="gm-tool-header"] {
@@ -354,8 +349,8 @@ export class DM_TOOL {
                     <div class="form-fields">
                         <button name="status-create"><i class="fas fa-skull"></i> Add Status Effect</button>
                         <div class="checks">
-                            <span class="sep">Resist Effects:</span>
-                            <input type="checkbox" name="status-resist">
+                            <label for="status-resist">Resist Effects:</label>
+                            <input type="checkbox" id="status-resist">
                         </div>
                     </div>
                 </div>
@@ -364,10 +359,10 @@ export class DM_TOOL {
                     <div class="form-fields">
                         <button name="damage-create"><i class="fas fa-bolt"></i> Add Damage Part</button>
                         <div class="checks">
-                            <span class="sep">Resist Damage:</span>
-                            <input type="checkbox" name="damage-resist">
-                            <span class="sep">No Damage on Success:</span>
-                            <input type="checkbox" name="damage-noDamage">
+                            <label for="damage-resist">Resist Damage:</label>
+                            <input type="checkbox" id="damage-resist">
+                            <label for="damage-noDamage">No Damage on Success:</label>
+                            <input type="checkbox" id="damage-noDamage">
                         </div>
                     </div>
                 </div>
@@ -395,7 +390,6 @@ export class DM_TOOL {
                         const statusCondition = DM_TOOL.gatherEffectInputs(html);
                         const savingThrow = DM_TOOL.gatherSavingThrowInputs(html);
                         savingThrow.event = event;
-                        console.log(savingThrow.event);
                         
                         DM_TOOL.MAIN_FUNCTION({ statusCondition, damage, savingThrow });
                     }
@@ -433,8 +427,8 @@ export class DM_TOOL {
     }
 
     static gatherDamageInputs(html){
-        const resistDamage = html[0].querySelector("[name='damage-resist']").checked;
-        const noDamage = html[0].querySelector("[name='damage-noDamage']").checked;
+        const resistDamage = html[0].querySelector("#damage-resist").checked;
+        const noDamage = html[0].querySelector("#damage-noDamage").checked;
 
         // construct damage parts.
         const damageInputs = html[0].querySelectorAll("div.damage-container div.form-group");
@@ -448,7 +442,7 @@ export class DM_TOOL {
     }
 
     static gatherEffectInputs(html){
-        const resistEffect = html[0].querySelector("[name='status-resist']").checked;
+        const resistEffect = html[0].querySelector("#status-resist").checked;
 
         // construct conditions.
         const effectInputs = html[0].querySelectorAll("div.status-container div.form-group");

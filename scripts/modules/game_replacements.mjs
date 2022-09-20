@@ -1,11 +1,18 @@
-import { MODULE } from "../const.mjs";
+import { MODULE, REPLACEMENT } from "../const.mjs";
 import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.js";
 
-export class ZHELL_REPLACEMENTS {
-    
-    static replaceConsumableTypes = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replaceConsumableTypes ) return;
+// hooks on setup.
+export function ZHELL_REPLACEMENTS(){
 
+    const {
+        replaceConsumableTypes,
+        replaceLanguages,
+        replaceTools,
+        replaceWeapons,
+        replaceStatusEffects
+    } = game.settings.get(MODULE, REPLACEMENT);
+    
+    if ( replaceConsumableTypes ) {
         // the new consumable types.
         const addedConsumableTypes = {
             drink: "Drink",
@@ -21,7 +28,7 @@ export class ZHELL_REPLACEMENTS {
         // delete unwanted consumable types.
         const deletedConsumableTypes = ["rod", "wand"];
         const oldObject = foundry.utils.duplicate(CONFIG.DND5E.consumableTypes);
-        for ( let del of deletedConsumableTypes ) delete oldObject[del];
+        for ( const del of deletedConsumableTypes ) delete oldObject[del];
 
         // merge remaining with new types to add.
         const newArray = Object.entries(addedConsumableTypes)
@@ -31,8 +38,7 @@ export class ZHELL_REPLACEMENTS {
         CONFIG.DND5E.consumableTypes = Object.fromEntries(newArray);
     }
     
-    static replaceLanguages = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replaceLanguages ) return;
+    if ( replaceLanguages ) {
         CONFIG.DND5E.languages = {
             common: "Common",
             aarakocra: "Aarakocra",
@@ -56,9 +62,7 @@ export class ZHELL_REPLACEMENTS {
         }
     }
     
-    static replaceTools = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replaceTools ) return;
-        
+    if ( replaceTools ) {
         // pluralising gaming set and instrument:
         CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
         CONFIG.DND5E.toolTypes["music"] = "Musical Instruments";
@@ -121,9 +125,7 @@ export class ZHELL_REPLACEMENTS {
         }
     }
     
-    static replaceWeapons = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replaceWeapons ) return;
-
+    if ( replaceWeapons ) {
         const key = "zhell-catalogs.items";
         
         CONFIG.DND5E.weaponIds = {
@@ -170,13 +172,12 @@ export class ZHELL_REPLACEMENTS {
         // delete some weapon properties.
         const propertiesToDelete = ["fir", "rel"]; // firearm, reload.
 
-        for ( let del of propertiesToDelete ) delete CONFIG.DND5E.weaponProperties[del];
-        
+        for ( const del of propertiesToDelete ) {
+            delete CONFIG.DND5E.weaponProperties[del];
+        }
     }
     
-    static replaceStatusEffects = () => {
-        if ( !game.settings.get(MODULE, "replacementSettings").replaceStatusEffects ) return;
-        
+    if ( replaceStatusEffects ) {
         // these are gotten from a different file, combined, and then sorted.
         const statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a,b) => {
             return a.sort - b.sort;

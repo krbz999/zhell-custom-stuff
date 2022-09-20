@@ -15,6 +15,7 @@
     border: none;
     opacity: 0.15;
 }
+
 #token-hud .status-effects {
     visibility: hidden;
     position: absolute;
@@ -36,21 +37,36 @@
 /* collapsible items and effect headers */
 .dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover,
 .dnd5e.sheet.actor .characteristics label:hover {
-    text-shadow: 0 0 8px var(--color-shadow-primary)!important;
+    text-shadow: 0 0 8px var(--color-shadow-primary) !important;
     cursor: pointer;
 }
+
 /* Make collapsed header gray text color and slighly slimmer. */
-.dnd5e.sheet.actor .items-header.flexrow.no-create { height: auto; color: darkgray; }
+.dnd5e.sheet.actor .items-header.flexrow.no-create {
+    height: auto;
+    color: darkgray;
+}
+
 /* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
-.dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
-.dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create+ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create+ol+ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
-.dnd5e.sheet.actor .characteristics label.no-edit + textarea { display: none; }
+.dnd5e.sheet.actor .characteristics label.no-edit+textarea {
+    display: none;
+}
 
 /* WHISPER DIALOG */
-.form-fields.whisper-dialog { display: grid; grid-template-columns: auto auto auto; gap: 3px; }
-.whisper-dialog-textarea { resize: none; }
+.form-fields.whisper-dialog {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 3px;
+}
+
+.whisper-dialog-textarea {
+    resize: none;
+}
+
 .whisper-dialog-player-name {
     padding: 5px 0 5px 0;
     border: 1px solid black;
@@ -59,12 +75,88 @@
     transition: 0.3s;
     transform: scale(0.9);
 }
-.whisper-dialog-player-name.selected { background-color: darkgray; transition: 0.3s; transform: scale(1.0); }
-.whisper-dialog-player-name:not(.selected):hover { box-shadow: 0 0 8px red; }
+
+.whisper-dialog-player-name.selected {
+    background-color: darkgray;
+    transition: 0.3s;
+    transform: scale(1.0);
+}
+
+.whisper-dialog-player-name:not(.selected):hover {
+    box-shadow: 0 0 8px red;
+}
 
 /* TRAITS LISTS */
-ol.trait-list.zhell-profs, ol.trait-list.zhell-weapons, ol.trait-list.zhell-traits { display: grid; margin: 0 10px 0 10px; }
-ol.trait-list.zhell-profs { grid-template-columns: auto auto auto auto; gap: 20px; }
-ol.trait-list.zhell-traits { grid-template-columns: auto auto auto; }
-ol.trait-list.zhell-weapons { grid-template-columns: auto auto; gap: 20px; }
-ol.trait-list.zhell-profs ol.trait-list { max-height: 200px; overflow: auto; border-bottom: 2px groove gray; }
+ol.trait-list.zhell-profs,
+ol.trait-list.zhell-weapons,
+ol.trait-list.zhell-traits {
+    display: grid;
+    margin: 0 10px 0 10px;
+}
+
+ol.trait-list.zhell-profs {
+    grid-template-columns: auto auto auto auto;
+    gap: 20px;
+}
+
+ol.trait-list.zhell-traits {
+    grid-template-columns: auto auto auto;
+}
+
+ol.trait-list.zhell-weapons {
+    grid-template-columns: auto auto;
+    gap: 20px;
+}
+
+ol.trait-list.zhell-profs ol.trait-list {
+    max-height: 200px;
+    overflow: auto;
+    border-bottom: 2px groove gray;
+}
+
+/* COLLAPSIBLES */
+section.collapsible {
+    width: 100%;
+    margin: 0.5rem 0;
+    cursor: pointer;
+}
+
+section.collapsible .collapsible-header {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    background-color: #411a13;
+    border: 1px solid #000;
+    border-radius: 4px 4px 0 0;
+    color: #efe6d8;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+section.collapsible .collapsible-header::after {
+    content: "\02795";
+    font-size: 13px;
+    float: right;
+    margin-left: 0.5rem;
+    color: #f7f3e8;
+}
+
+section.collapsible.active .collapsible-header::after {
+    content: "\2796";
+}
+
+section.collapsible div.collapsible-content {
+    max-height: 0;
+    padding: 0.5rem 1rem;
+    overflow: hidden;
+    opacity: 0;
+    border: 1px solid #000;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+section.collapsible.active div.collapsible-content {
+    opacity: 1;
+    max-height: 600px;
+    overflow-y: scroll;
+}

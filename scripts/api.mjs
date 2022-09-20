@@ -1,13 +1,11 @@
 import { DM_TOOL } from "./modules/dm_tool.mjs";
-import { ZHELL_CATALOG, ZHELL_REST, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
+import { ZHELL_CATALOG, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
 
 export class api {
     
     static register(){
         globalThis.ZHELL = {
             setting: {
-                toggleLR: ZHELL_REST.toggleLR,
-                toggleSR: ZHELL_REST.toggleSR,
                 setForageDC: ZHELL_UTILS.setForageDC
             },
             catalog: {

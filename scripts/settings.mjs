@@ -1,5 +1,5 @@
-import { MODULE } from "./const.mjs";
-import { ZHELL_SHEET } from "./modules/sheet_edits.mjs";
+import { ADDITION, COLOR, MODULE, RARITY, REPLACEMENT, SHEET } from "./const.mjs";
+import { refreshColors } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
     _registerSettings();
@@ -7,22 +7,6 @@ export function registerSettings() {
 }
 
 function _registerSettings(){
-    game.settings.register(MODULE, "toggleLR", {
-        name: "Disable Long Rest",
-        hint: "If checked, players cannot take a long rest.",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: false
-    });
-    game.settings.register(MODULE, "toggleSR", {
-        name: "Disable Short Rest",
-        hint: "If checked, players cannot take a short rest.",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: false
-    });
     game.settings.register(MODULE, "foragingDC", {
         name: "Foraging DC",
         hint: "The current DC for foraging.",
@@ -65,24 +49,11 @@ class ReplacementsSubmenu extends FormApplication {
             resizable: false
         });
     }
-    activateListeners(html) {
-        super.activateListeners(html);
-        const saveButton = html[0].querySelector("[name='submit']");
-        const dialog = this;
-        saveButton.addEventListener("click", async function(){
-            await game.settings.set(MODULE, "replacementSettings", {
-                replaceStatusEffects: html[0].querySelector("#replaceStatusEffects").checked,
-                replaceLanguages: html[0].querySelector("#replaceLanguages").checked,
-                replaceTools: html[0].querySelector("#replaceTools").checked,
-                replaceWeapons: html[0].querySelector("#replaceWeapons").checked,
-                replaceConsumableTypes: html[0].querySelector("#replaceConsumableTypes").checked
-            });
-            dialog.close();
-        });
+    async _updateObject(event, formData){
+        return game.settings.set(MODULE, REPLACEMENT, formData);
     }
-    async _updateObject(...T){}
     async getData() {
-        const source = game.settings.get(MODULE, "replacementSettings");
+        const source = game.settings.get(MODULE, REPLACEMENT);
         const defaults = {
             replaceStatusEffects: true,
             replaceLanguages: true,
@@ -110,30 +81,17 @@ class AdditionsSubmenu extends FormApplication {
             resizable: false
         });
     }
-    activateListeners(html) {
-        super.activateListeners(html);
-        const dialog = this;
-        const saveButton = html[0].querySelector("[name='submit']");
-        saveButton.addEventListener("click", async function(){
-            await game.settings.set(MODULE, "additionSettings", {
-                addConditions: html[0].querySelector("#addConditions").checked,
-                addEquipmentTypes: html[0].querySelector("#addEquipmentTypes").checked,
-                addPiety: html[0].querySelector("#addPiety").checked,
-                addDivine: html[0].querySelector("#addDivine").checked
-            });
-            dialog.close();
-        });
+    async _updateObject(event, formData){
+        return game.settings.set(MODULE, ADDITION, formData);
     }
-    async _updateObject(...T){}
     async getData() {
-        const source = game.settings.get(MODULE, "additionSettings");
+        const source = game.settings.get(MODULE, ADDITION);
         const defaults = {
             addConditions: true,
             addEquipmentTypes: true,
             addPiety: true,
             addDivine: true
         }
-        
         return foundry.utils.mergeObject(defaults, source);
     }
 }
@@ -154,25 +112,11 @@ class SheetSubmenu extends FormApplication {
             resizable: false
         });
     }
-    activateListeners(html) {
-        super.activateListeners(html);
-        const dialog = this;
-        const saveButton = html[0].querySelector("[name='submit']");
-        saveButton.addEventListener("click", async function(){
-            await game.settings.set(MODULE, "sheetSettings", {
-                removeResources: html[0].querySelector("#removeResources").checked,
-                removeAlignment: html[0].querySelector("#removeAlignment").checked,
-                disableInitiativeButton: html[0].querySelector("#disableInitiativeButton").checked,
-                createForaging: html[0].querySelector("#createForaging").checked,
-                reformatTraitSelectors: html[0].querySelector("#reformatTraitSelectors").checked,
-                collapsibleHeaders: html[0].querySelector("#collapsibleHeaders").checked
-            });
-            dialog.close();
-        });
+    async _updateObject(event, formData){
+        return game.settings.set(MODULE, SHEET, formData);
     }
-    async _updateObject(...T){}
     async getData() {
-        const source = game.settings.get(MODULE, "sheetSettings");
+        const source = game.settings.get(MODULE, SHEET);
         const defaults = {
             removeResources: true,
             removeAlignment: true,
@@ -181,7 +125,6 @@ class SheetSubmenu extends FormApplication {
             reformatTraitSelectors: true,
             collapsibleHeaders: true
         }
-        
         return foundry.utils.mergeObject(defaults, source);
     }
 }
@@ -202,33 +145,13 @@ class ColorPickerSubmenu extends FormApplication {
             resizable: false
         });
     }
-    activateListeners(html) {
-        super.activateListeners(html);
-        const dialog = this;
-        const saveButton = html[0].querySelector("[name='submit']");
-        saveButton.addEventListener("click", async function(){
-            await game.settings.set(MODULE, "colorSettings", {
-                showLimitedUses: html[0].querySelector("#showLimitedUses").checked,
-                showSpellSlots: html[0].querySelector("#showSpellSlots").checked,
-                usesUnexpended: html[0].querySelector("#usesUnexpended").value,
-                itemAttuned: html[0].querySelector("#itemAttuned").value,
-                itemNotAttuned: html[0].querySelector("#itemNotAttuned").value,
-                itemEquipped: html[0].querySelector("#itemEquipped").value,
-                itemNotEquipped: html[0].querySelector("#itemNotEquipped").value,
-                spellPrepared: html[0].querySelector("#spellPrepared").value,
-                spellNotPrepared: html[0].querySelector("#spellNotPrepared").value,
-                spellAlwaysPrepared: html[0].querySelector("#spellAlwaysPrepared").value,
-                proficientNormal: html[0].querySelector("#proficientNormal").value,
-                proficientHalf: html[0].querySelector("#proficientHalf").value,
-                proficientTwice: html[0].querySelector("#proficientTwice").value
-            });
-            ZHELL_SHEET.refreshColors();
-            dialog.close();
-        });
+    async _updateObject(event, formData){
+        const set = await game.settings.set(MODULE, COLOR, formData);
+        refreshColors();
+        return set;
     }
-    async _updateObject(...T){}
     async getData() {
-        const source = game.settings.get(MODULE, "colorSettings");
+        const source = game.settings.get(MODULE, COLOR);
         const defaults = {
             showLimitedUses: false,
             showSpellSlots: false,
@@ -264,25 +187,13 @@ class RarityColorsSubmenu extends FormApplication {
             resizable: false
         });
     }
-    activateListeners(html) {
-        super.activateListeners(html);
-        const dialog = this;
-        const saveButton = html[0].querySelector("[name='submit']");
-        saveButton.addEventListener("click", async function(){
-            await game.settings.set(MODULE, "rarityColorSettings", {
-                uncommon: html[0].querySelector("#uncommon").value,
-                rare: html[0].querySelector("#rare").value,
-                veryRare: html[0].querySelector("#veryRare").value,
-                legendary: html[0].querySelector("#legendary").value,
-                artifact: html[0].querySelector("#artifact").value
-            });
-            ZHELL_SHEET.refreshColors();
-            dialog.close();
-        });
+    async _updateObject(event, formData){
+        const set = await game.settings.set(MODULE, RARITY, formData);
+        refreshColors();
+        return set;
     }
-    async _updateObject(...T){}
     async getData() {
-        const source = game.settings.get(MODULE, "rarityColorSettings");
+        const source = game.settings.get(MODULE, RARITY);
         const defaults = {
             uncommon: "#008000",
             rare: "#0000ff",
@@ -296,7 +207,7 @@ class RarityColorsSubmenu extends FormApplication {
 
 const registerSettingsMenus = function () {
     // replacements.
-    game.settings.register(MODULE, "replacementSettings", {
+    game.settings.register(MODULE, REPLACEMENT, {
         scope: "world",
         config: false,
         type: Object,
@@ -307,9 +218,9 @@ const registerSettingsMenus = function () {
             replaceWeapons: true,
             replaceConsumableTypes: true
         },
-        onChange: foundry.utils.debouncedReload
+        onChange: () => SettingsConfig.reloadConfirm({world: true})
     });
-    game.settings.registerMenu(MODULE, "replacementSettings", {
+    game.settings.registerMenu(MODULE, REPLACEMENT, {
         name: "Replacements",
         hint: "A collection of replacements for core and system content.",
         label: "Replacement Settings",
@@ -319,7 +230,7 @@ const registerSettingsMenus = function () {
     });
     
     // additions.
-    game.settings.register(MODULE, "additionSettings", {
+    game.settings.register(MODULE, ADDITION, {
         scope: "world",
         config: false,
         type: Object,
@@ -329,9 +240,9 @@ const registerSettingsMenus = function () {
             addPiety: true,
             addDivine: true
         },
-        onChange: foundry.utils.debouncedReload
+        onChange: () => SettingsConfig.reloadConfirm({world: true})
     });
-    game.settings.registerMenu(MODULE, "additionSettings", {
+    game.settings.registerMenu(MODULE, ADDITION, {
         name: "Additions",
         hint: "A collection of additions to dnd5e system content.",
         label: "Addition Settings",
@@ -341,7 +252,7 @@ const registerSettingsMenus = function () {
     });
     
     // sheet edits.
-    game.settings.register(MODULE, "sheetSettings", {
+    game.settings.register(MODULE, SHEET, {
         scope: "world",
         config: false,
         type: Object,
@@ -353,9 +264,9 @@ const registerSettingsMenus = function () {
             reformatTraitSelectors: true,
             collapsibleHeaders: true
         },
-        onChange: foundry.utils.debouncedReload
+        onChange: () => SettingsConfig.reloadConfirm({world: true})
     });
-    game.settings.registerMenu(MODULE, "sheetSettings", {
+    game.settings.registerMenu(MODULE, SHEET, {
         name: "Sheet Edits",
         hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
         label: "Sheet Settings",
@@ -365,7 +276,7 @@ const registerSettingsMenus = function () {
     });
     
     // sheet color settings.
-    game.settings.register(MODULE, "colorSettings", {
+    game.settings.register(MODULE, COLOR, {
         scope: "client",
         config: false,
         type: Object,
@@ -384,9 +295,9 @@ const registerSettingsMenus = function () {
             proficientHalf: "#696969",
             proficientTwice: "#ff6347"
         },
-        onChange: () => ZHELL_SHEET.refreshColors()
+        onChange: () => refreshColors()
     });
-    game.settings.registerMenu(MODULE, "colorSettings", {
+    game.settings.registerMenu(MODULE, COLOR, {
         name: "Sheet Colors",
         hint: "Settings for the colors that are applied to the actor sheets.",
         label: "Sheet Color Settings",
@@ -396,7 +307,7 @@ const registerSettingsMenus = function () {
     });
     
     // item rarity color settings.
-    game.settings.register(MODULE, "rarityColorSettings", {
+    game.settings.register(MODULE, RARITY, {
         scope: "client",
         config: false,
         type: Object,
@@ -407,9 +318,9 @@ const registerSettingsMenus = function () {
             legendary: "#ffa500",
             artifact: "#d2691e"
         },
-        onChange: () => ZHELL_SHEET.refreshColors()
+        onChange: () => refreshColors()
     });
-    game.settings.registerMenu(MODULE, "rarityColorSettings", {
+    game.settings.registerMenu(MODULE, RARITY, {
         name: "Rarity Colors",
         hint: "Settings for the colors that are applied to items on an actor sheet depending on rarity.",
         label: "Item Rarity Color Settings",

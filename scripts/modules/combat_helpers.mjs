@@ -2,6 +2,7 @@ import { MODULE } from "../const.mjs";
 
 export class ZHELL_COMBAT {
     
+    // hooks on updateToken
     static markDefeatedCombatant = async (tokenDoc, updates) => {
         if ( !game.settings.get(MODULE, "markDefeatedCombatants") ) return;
         if ( tokenDoc.actor.hasPlayerOwner ) return;
@@ -13,6 +14,7 @@ export class ZHELL_COMBAT {
         await tokenDoc.combatant.update({ defeated: true });
     }
 
+    // hooks on dnd5e.rollAttack
     static displaySavingThrowAmmo = async (weapon, roll, ammoUpdate) => {
         if ( !game.settings.get(MODULE, "displaySavingThrowAmmo") ) return;
         if ( !ammoUpdate.length ) return;

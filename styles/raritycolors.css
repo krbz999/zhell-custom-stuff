@@ -6,8 +6,23 @@ body :root {
     --rarityLegendary: #ffa500;
     --rarityArtifact: #d2691e;
 }
-.item.uncommon .item-name h4 { color: var(--rarityUncommon) !important; } 
-.item.rare .item-name h4 { color: var(--rarityRare) !important; } 
-.item.veryrare .item-name h4 { color: var(--rarityVeryRare) !important; } 
-.item.legendary .item-name h4 { color: var(--rarityLegendary) !important; } 
-.item.artifact .item-name h4 { color: var(--rarityArtifact) !important; }
+
+.item.uncommon .item-name h4 {
+    color: var(--rarityUncommon) !important;
+}
+
+.item.rare .item-name h4 {
+    color: var(--rarityRare) !important;
+}
+
+.item.veryrare .item-name h4 {
+    color: var(--rarityVeryRare) !important;
+}
+
+.item.legendary .item-name h4 {
+    color: var(--rarityLegendary) !important;
+}
+
+.item.artifact .item-name h4 {
+    color: var(--rarityArtifact) !important;
+}

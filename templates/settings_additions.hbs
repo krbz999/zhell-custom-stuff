@@ -2,7 +2,7 @@
     <div class="form-group">
         <label for="addConditions">Add New Conditions</label>
         <div class="form-fields">
-            <input id="addConditions" type="checkbox" {{#if addConditions}} checked {{/if}}>
+            <input name="addConditions" type="checkbox" {{#if addConditions}} checked {{/if}}>
         </div>
         <p class="notes">An addition to current available conditions.</p>
     </div>
@@ -12,7 +12,7 @@
     <div class="form-group">
         <label for="addEquipmentTypes">Add New Equipment Types</label>
         <div class="form-fields">
-            <input id="addEquipmentTypes" type="checkbox" {{#if addEquipmentTypes}} checked {{/if}}>
+            <input name="addEquipmentTypes" type="checkbox" {{#if addEquipmentTypes}} checked {{/if}}>
         </div>
         <p class="notes">An addition to current available equipment types. Not armor.</p>
     </div>
@@ -22,7 +22,7 @@
     <div class="form-group">
         <label for="addPiety">Add Piety Ability Score</label>
         <div class="form-fields">
-            <input id="addPiety" type="checkbox" {{#if addPiety}} checked {{/if}}>
+            <input name="addPiety" type="checkbox" {{#if addPiety}} checked {{/if}}>
         </div>
         <p class="notes">Adds 'Piety' as a new ability score.</p>
     </div>
@@ -32,7 +32,7 @@
     <div class="form-group">
         <label for="addDivine">Add Divine Spell School</label>
         <div class="form-fields">
-            <input id="addDivine" type="checkbox" {{#if addDivine}} checked {{/if}}>
+            <input name="addDivine" type="checkbox" {{#if addDivine}} checked {{/if}}>
         </div>
         <p class="notes">Add 'Divine' as a spell school.</p>
     </div>

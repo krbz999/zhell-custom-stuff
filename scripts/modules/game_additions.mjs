@@ -1,32 +1,31 @@
-import { MODULE } from "../const.mjs";
+import { ADDITION, MODULE } from "../const.mjs";
 
-export class ZHELL_ADDITIONS {
-    
-    static addEquipmentTypes = () => {
-        if ( !game.settings.get(MODULE, "additionSettings").addEquipmentTypes ) return;
-        
+// hooks on setup.
+export function ZHELL_ADDITIONS(){
+    const {
+        addEquipmentTypes,
+        addDivine,
+        addConditions,
+        addPiety
+    } = game.settings.get(MODULE, ADDITION);
+
+    if ( addEquipmentTypes ) {
         const toAdd = { wand: "Wand" };
         foundry.utils.mergeObject(CONFIG.DND5E.equipmentTypes, toAdd);
         foundry.utils.mergeObject(CONFIG.DND5E.miscEquipmentTypes, toAdd);
     }
-    
-    static addDivine = () => {
-        if ( !game.settings.get(MODULE, "additionSettings").addDivine ) return;
 
+    if ( addDivine ) {
         const toAdd = { divine: "Divine" };
         foundry.utils.mergeObject(CONFIG.DND5E.spellSchools, toAdd);
     }
-    
-    static addConditions = () => {
-        if ( !game.settings.get(MODULE, "additionSettings").addConditions ) return;
 
+    if ( addConditions ) {
         const toAdd = { turned: "Turned" };
         foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, toAdd);
     }
-    
-    static addPiety = () => {
-        if ( !game.settings.get(MODULE, "additionSettings").addPiety ) return;
 
+    if ( addPiety ) {
         CONFIG.DND5E.abilities["pty"] = "Piety";
         CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
     }
