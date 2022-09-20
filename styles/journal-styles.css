@@ -1,0 +1,348 @@
+/* PANTHEON */
+/* pantheon half header */
+h1.zhell-pantheon {
+    font-size: 40px;
+    text-align: center;
+    border: 2px solid darkred;
+    border-radius: 20px;
+    text-transform: uppercase;
+    background-color: darkgray;
+}
+
+h1.zhell-pantheon.white-half {
+    background-color: darkgray;
+}
+
+h1.zhell-pantheon.dark-half {
+    background-color: darkolivegreen;
+}
+
+/* deity name header */
+.sheet.journal-entry .journal-entry-page :is(h2, h3).zhell-deity,
+.sheet.journal-entry-page .zhell-deity {
+    text-align: center;
+    font-family: "Modesto Condensed";
+    margin: 0 0 0 0;
+    border: none;
+}
+
+h2.zhell-deity.dom {
+    font-size: 40px;
+}
+
+h3.zhell-deity.sub {
+    font-size: 20px;
+}
+
+/* centered holy symbol img with red hover effect */
+div.zhell-holy-symbol {
+    text-align: center;
+}
+
+img.zhell-holy-symbol {
+    width: 40%;
+    border: none;
+    filter: drop-shadow(0 0 5px black);
+    transition: 0.3s;
+    padding-top: 1em;
+}
+
+img.zhell-holy-symbol:hover {
+    transform: scale(1.3);
+    transition: 0.3s;
+    filter: drop-shadow(0 0 10px red) !important;
+    /* for unchosen gods */
+}
+
+img.zhell-holy-symbol.draconiz:hover {
+    filter: drop-shadow(0 0 10px purple) !important;
+}
+
+img.zhell-holy-symbol.emissary:hover {
+    filter: drop-shadow(0 0 10px blue) !important;
+}
+
+img.zhell-holy-symbol.arepo:hover {
+    filter: drop-shadow(0 0 10px green) !important;
+}
+
+img.zhell-holy-symbol.murk:hover {
+    filter: drop-shadow(0 0 10px green) !important;
+}
+
+img.zhell-holy-symbol.thrizur:hover {
+    filter: drop-shadow(0 0 10px darkgreen) !important;
+}
+
+/* BANNED SPELL LIST */
+.banned-spell-list a.content-link {
+    display: block;
+    background-color: darkseagreen;
+    font-size: 20px;
+    text-align: center;
+    cursor: not-allowed;
+    text-shadow: none !important;
+    border-radius: 50px;
+    border: 0;
+}
+
+.banned-spell-list>h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.banned-spell-list>p:first-child {
+    font-size: 20px;
+    font-style: italic;
+    width: 75%;
+    text-align: justify;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* PLAYABLE CLASSES LIST */
+.sheet.journal-entry .zhell-class-list .class-header {
+    text-align: center;
+    margin: 10px 0 10px 0;
+}
+
+.sheet.journal-entry .zhell-class-list .class-header img {
+    border: none;
+    border-radius: 20px;
+    max-width: 100px;
+    min-width: 100px;
+    max-height: 100px;
+    min-height: 100px;
+    position: absolute;
+    z-index: 0;
+    left: 25px;
+}
+
+/* the class item */
+.sheet.journal-entry .zhell-class-list .class-header .class-item {
+    margin: 0;
+    max-height: 100px;
+    border: none;
+    z-index: 1;
+}
+
+.sheet.journal-entry .zhell-class-list .class-header a.content-link {
+    border: none;
+    background: none;
+    height: 100px;
+    font-size: 100px;
+    font-family: "Modesto Condensed";
+}
+
+.sheet.journal-entry .zhell-class-list a.content-link>i {
+    display: none;
+}
+
+/* the subclass items */
+.zhell-class-list .subclass-links {
+    grid-template-columns: 33.3% 33.3% 33.3%;
+    display: grid;
+    gap: 5px;
+    margin-right: 5px;
+}
+
+.zhell-class-list .subclass-links p {
+    margin: 0;
+}
+
+.zhell-class-list .subclass-links a.content-link {
+    display: block;
+    padding: 5px;
+    text-align: center;
+    min-width: fit-content;
+    transition: 0.3s;
+}
+
+.zhell-class-list .subclass-links p:nth-child(3n-2) a.content-link:hover {
+    transform-origin: left;
+    margin-left: 5px;
+}
+
+.zhell-class-list .subclass-links p:nth-child(3n) a.content-link:hover {
+    transform-origin: right;
+}
+
+.zhell-class-list .subclass-links a.content-link:hover {
+    transition: 0.3s;
+    transform: scale(1.1);
+    background: darkgray;
+    box-shadow: 0 0 10px purple;
+    color: rebeccapurple;
+    text-shadow: none;
+}
+
+/* SPELL LISTS */
+/* main header of entire class spell list */
+.class-spell-lists h2 {
+    text-align: center;
+    font-size: 30px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 30px;
+    border-color: black;
+    margin: 20px auto 20px auto;
+    padding: 5px 0 5px 0;
+}
+
+/* layout of spell list */
+.journal-page-content .spell-list {
+    display: grid;
+    grid-template-columns: 33.3% 33.3% 33.3%;
+    gap: 5px;
+    margin-right: 5px;
+}
+
+/* spell-level headers */
+.journal-page-content .sub-spell-list h3 {
+    text-align: center;
+    border: none;
+    font-weight: bold;
+}
+
+/* individual spells */
+.journal-page-content .sub-spell-list a.content-link {
+    display: block;
+    font-size: 12px;
+    padding: 5px;
+}
+
+
+/* EQUIPMENT TABLES */
+.zhell-equipment-tables table>thead>tr {
+    height: 40px;
+}
+
+.zhell-equipment-tables :is(h1, h2, h3) {
+    text-align: center;
+    border-top: 2px groove darkslategray;
+    border-bottom: 2px groove darkslategray;
+}
+
+.zhell-equipment-tables table>tbody>tr>td {
+    padding: 0 0 0 0;
+    min-height: 30px;
+    align-items: center;
+}
+
+.zhell-equipment-tables table>tbody>tr>td:not(:first-child) {
+    text-align: center;
+}
+
+.zhell-equipment-tables table>tbody>tr>td:first-child {
+    display: flex;
+    white-space: pre;
+}
+
+.zhell-equipment-tables table>tbody>tr>td>a.content-link {
+    width: 100%;
+    padding: 5px;
+}
+
+/* RACES */
+h1.havilon-race-header {
+    text-align: center;
+    font-size: 50px;
+    font-family: "Modesto Condensed";
+    border: none;
+}
+
+.race-item-links {
+    gap: 5px;
+    display: grid;
+    border: solid;
+    border-radius: 20px;
+    border-width: 2px;
+    width: 90%;
+    padding: 5px;
+    margin: 20px auto 20px auto;
+}
+
+.race-item-links p {
+    margin: 0;
+    display: grid;
+}
+
+.race-item-links a.content-link {
+    font-size: 16px;
+    border-radius: 20px;
+    padding: 5px;
+    padding-left: 20px;
+    background-image: linear-gradient(270deg, #89a584, #f9f9f9);
+    font-family: cursive;
+}
+
+.race-item-links a.content-link>i {
+    display: none;
+}
+
+/* PARTY FEATURES */
+.party-features {
+    display: grid;
+    grid-template-columns: 30% 60%;
+    justify-content: space-evenly;
+    row-gap: 20px;
+}
+
+.party-feature-image {
+    text-align: center;
+    align-self: center;
+}
+
+.party-feature-image img {
+    border: none;
+}
+
+.party-feature-details h1 {
+    font-size: 35px;
+    text-align: center;
+    border: none;
+    font-family: "Modesto Condensed";
+}
+
+.party-feature-details p {
+    text-align: justify;
+    font-size: 16px;
+}
+
+/* MATERIA MEDICA */
+.materia-medica :is(h1, h2, h3) {
+    border: none;
+    font-family: "Modesto Condensed";
+    text-align: center;
+}
+
+.materia-medica p {
+    text-align: justify;
+}
+
+.materia-medica h1 {
+    font-size: 40px;
+}
+
+.materia-medica h2 {
+    font-size: 30px;
+}
+
+.materia-medica h3 {
+    font-size: 25px;
+}
+
+.materia-medica table th {
+    text-align: center;
+    padding: 15px;
+}
+
+.materia-medica a.content-link {
+    display: block;
+    padding: 5px;
+}
+
+.materia-medica table td:nth-child(2) {
+    text-align: center;
+}

@@ -1,17 +1,16 @@
 /* Default colors. */
 body :root {
-    --full_color: #b33737;
-    --attuned_color: #7a7971;
-    --not_attuned_color: #44191A;
-	--prepared_color: #7a7971;
-	--not_prepared_color: #44191A;
-	--always_prepared_color: #7F7F7F;
-	--equipped_color: #7a7971;
-	--not_equipped_color: #44191A;
-    --color_proficient: "#228b22";
-	--color_half_proficient: "#696969";
-	--color_twice_proficient: "#ff6347";
-    color:rgb(0, 0, 0)
+    --usesUnexpended: #b33737;
+    --itemAttuned: #7a7971;
+    --itemNotAttuned: #44191A;
+    --spellPrepared: #7a7971;
+    --spellNotPrepared: #44191A;
+    --spellAlwaysPrepared: #7F7F7F;
+    --itemEquipped: #7a7971;
+    --itemNotEquipped: #44191A;
+    --proficientNormal: "#228b22";
+    --proficientHalf: "#696969";
+    --proficientTwice: "#ff6347";
 }
 
 /* Style of the dots. */
@@ -20,59 +19,95 @@ body :root {
     width: 15px;
     max-height: 15px;
     max-width: 15px;
-    background-color: var(--full_color);
-    border-radius: 50%;
-    display: inline-block;
+    background-color: var(--usesUnexpended);
+    border-radius: 25%;
     cursor: pointer;
+    box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
+    margin: 0 1px 0 1px;
+}
+
+.dnd5e .items-list .dot:hover {
+    box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 black;
+    transition: 0.1s;
+    transform: scale(1.2);
 }
 
 /* Style of the expended dots. */
 .dnd5e .items-list .dot.empty {
-    background-color: rgb(169, 162, 162);
+    background-color: lightgray;
+    transition: 0.25s;
+}
+
+/* style of the 'not all dots shown' dot */
+.dnd5e .items-list .dot.empty.has-more {
+    mix-blend-mode: color-burn;
+}
+
+.dnd5e .items-list .dot.has-more {
+    mix-blend-mode: inherit;
+}
+
+/* dot container */
+.dnd5e .items-list div.zhell-dots {
+    flex: none;
+    max-height: 15px;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+/* show shadow overflow */
+.dnd5e .items-list .items-header.spellbook-header .item-name {
+    overflow: visible;
 }
 
 /* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name i.attuned {
-    color: var(--attuned_color) !important;
+    color: var(--itemAttuned) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
+
 .dnd5e.sheet.actor .inventory-list .item .item-name i.not-attuned {
-    color: var(--not_attuned_color)!important;
+    color: var(--itemNotAttuned) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
+
 .dnd5e.sheet.actor .inventory-list .item .item-name i:hover:not(.original-class) {
-    text-shadow: 0 0 8px var(--color-shadow-primary)!important;
-	padding-top: 8px;
-	padding-bottom: 8px;
+    text-shadow: 0 0 8px var(--color-shadow-primary) !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 /* Equipment State icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
-    color: var(--equipped_color)!important;
+    color: var(--itemEquipped) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
+
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle:not(.active) i {
-    color: var(--not_equipped_color)!important;
+    color: var(--itemNotEquipped) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
 /* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
-    color: var(--prepared_color) !important;
-    filter: drop-shadow(0px 0px 1px black);	
+    color: var(--spellPrepared) !important;
+    filter: drop-shadow(0px 0px 1px black);
 }
+
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
-    color: var(--always_prepared_color) !important;
-    filter: drop-shadow(0px 0px 1px black);	
+    color: var(--spellAlwaysPrepared) !important;
+    filter: drop-shadow(0px 0px 1px black);
 }
+
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
-    color: var(--not_prepared_color)!important;
+    color: var(--spellNotPrepared) !important;
     filter: drop-shadow(0px 0px 1px black);
 }
 
 /* Delete icon for items and effects. */
-.dnd5e.sheet.actor .item-controls .item-delete, .dnd5e.sheet.actor .item-controls .effect-control[data-action=delete] {
-	color: darkred;
+.dnd5e.sheet.actor .item-controls .item-delete,
+.dnd5e.sheet.actor .item-controls .effect-control[data-action=delete] {
+    color: darkred;
 }
 
 /* additional coloring: */
@@ -81,6 +116,7 @@ body :root {
 .dnd5e .traits-list .tag {
     background-color: burlywood;
 }
+
 .dnd5e.sheet.actor .traits :is(.trait-selector i.fas, .proficiency-selector i.fas, .config-button .fa-cog) {
     color: blue;
 }
@@ -93,11 +129,12 @@ body :root {
 
 /* hp colors: */
 /* if below 33% */
-.dnd5e.sheet.actor input[name="data.attributes.hp.value"].near-death {
+.dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
     color: red;
 }
+
 /* if below 66% and above 33% */
-.dnd5e.sheet.actor input[name="data.attributes.hp.value"].bloodied {
+.dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
     color: peru;
 }
 
@@ -105,6 +142,7 @@ body :root {
 .dnd5e.sheet.actor.character .characteristics {
     flex: 0 0 250px;
 }
+
 .dnd5e.sheet.actor.character .biography {
     flex: 0 0 calc(100% - 250px);
 }
@@ -112,18 +150,25 @@ body :root {
 /* proficiencies */
 /* half proficient */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust {
-    color: var(--color_half_proficient) !important;
+    color: var(--proficientHalf) !important;
 }
+
 /* proficient */
 .dnd5e.sheet.actor .proficiency-toggle .fas.fa-check {
-    color: var(--color_proficient) !important;
+    color: var(--proficientNormal) !important;
 }
+
 /* twice proficient */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
-    color: var(--color_twice_proficient) !important;
+    color: var(--proficientTwice) !important;
 }
 
 /* bold ability keys for skills */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-ability {
     font-weight: bold;
+}
+
+/* hide spell school column of actor sheets. */
+.dnd5e.sheet.actor .spell-school {
+    display: none;
 }

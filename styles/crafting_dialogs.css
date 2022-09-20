@@ -1,0 +1,73 @@
+.materia-medica-crafting .description {
+    text-align: center;
+    font-size: 20px;
+}
+
+.materia-medica-crafting .fas {
+    font-size: 50px;
+}
+
+.materia-medica-crafting .main.dialog-buttons {
+    outline-style: groove;
+    padding: 5px 5px 5px 5px;
+    outline-width: 2px;
+}
+
+.materia-medica-crafting .main .option-button {
+    padding-top: 10px;
+    color: dimgray;
+}
+
+.materia-medica-crafting .main .option-button.bomb i {
+    transform: rotate(295deg);
+}
+
+.materia-medica-crafting .main .option-button.poison:hover {
+    color: darkgreen;
+}
+
+.materia-medica-crafting .main .option-button.potion:hover {
+    color: darkred;
+}
+
+.materia-medica-crafting .main .option-button.bomb:hover {
+    color: darkgoldenrod;
+}
+
+.materia-medica-crafting .option-button div {
+    font-size: 17px;
+    color: black !important;
+}
+
+.materia-medica-crafting .button-container {
+    outline-style: groove;
+    padding: 5px 5px 5px 5px;
+    outline-width: 2px;
+    flex-direction: column;
+}
+
+.materia-medica-crafting .button-container div {
+    margin-bottom: 5px;
+    height: 50px;
+    min-height: 50px;
+}
+
+.materia-medica-crafting .button-container div:last-child {
+    margin-bottom: 0;
+}
+
+.materia-medica-crafting .option-button:disabled {
+    color: gray !important;
+    text-decoration: line-through;
+}
+
+.materia-medica-crafting .option-button div {
+    font-size: 17px;
+    color: black !important;
+}
+
+.materia-medica-crafting .button-container .dialog-buttons select {
+    height: auto;
+    width: auto;
+    max-width: 30%;
+}

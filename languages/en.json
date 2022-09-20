@@ -1,10 +1,14 @@
 {
-	"DND5E.ConsumablePoisonIngested": "Ingested Poison",
-	"DND5E.ConsumablePoisonInhaled": "Inhaled Poison",
-	"DND5E.ConsumablePoisonInjury": "Injury Poison",
-	"DND5E.ConsumablePoisonContact": "Contact Poison",
-	"DND5E.ConsumableDrink": "Drink",
-	"DND5E.ConsumableTrap": "Trap",
-	"DND5E.ConsumableBomb": "Bomb",
-	"DND5E.ConsumableElixir": "Elixir"
+    "DND5E.ConsumablePoisonIngested": "Ingested Poison",
+    "DND5E.ConsumablePoisonInhaled": "Inhaled Poison",
+    "DND5E.ConsumablePoisonInjury": "Injury Poison",
+    "DND5E.ConsumablePoisonContact": "Contact Poison",
+    "DND5E.ConsumableDrink": "Drink",
+    "DND5E.ConsumableTrap": "Trap",
+    "DND5E.ConsumableBomb": "Bomb",
+    "DND5E.ConsumableElixir": "Elixir",
+
+    "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
+    "DND5E.RestS": "SR",
+    "DND5E.RestL": "LR"
 }
