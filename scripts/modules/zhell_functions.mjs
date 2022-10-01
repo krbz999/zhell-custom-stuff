@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import { FORAGING, MODULE } from "../const.mjs";
 import { EXHAUSTION_EFFECTS } from "../../sources/conditions.js";
 
 export class ZHELL_CATALOG {
@@ -239,7 +239,7 @@ export class ZHELL_UTILS {
 
     static setForageDC = async (number) => {
         if ( !game.user.isGM ) return ui.notifications.warn("Excuse me?");
-        return game.settings.set(MODULE, "foragingDC", number);
+        return game.settings.set(MODULE, FORAGING, number);
     }
     
     static teleportTokens = async (crosshairsConfig = {}, clearTargets = true, fade = true, fadeDuration = 500) => {

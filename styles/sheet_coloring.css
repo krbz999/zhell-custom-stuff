@@ -8,9 +8,9 @@ body :root {
     --spellAlwaysPrepared: #7F7F7F;
     --itemEquipped: #7a7971;
     --itemNotEquipped: #44191A;
-    --proficientNormal: "#228b22";
-    --proficientHalf: "#696969";
-    --proficientTwice: "#ff6347";
+    --proficientNormal: #228b22;
+    --proficientHalf: #696969;
+    --proficientTwice: #ff6347;
 }
 
 /* Style of the dots. */
