@@ -1,48 +1,48 @@
 <form class="flexcol">
-    <div class="form-group">
-        <label for="addConditions">Add New Conditions</label>
-        <div class="form-fields">
-            <input name="addConditions" type="checkbox" {{#if addConditions}} checked {{/if}}>
-        </div>
-        <p class="notes">An addition to current available conditions.</p>
+  <div class="form-group">
+    <label for="addConditions">Add New Conditions</label>
+    <div class="form-fields">
+      <input name="addConditions" type="checkbox" {{#if addConditions}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">An addition to current available conditions.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="addEquipmentTypes">Add New Equipment Types</label>
+    <div class="form-fields">
+      <input name="addEquipmentTypes" type="checkbox" {{#if addEquipmentTypes}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="addEquipmentTypes">Add New Equipment Types</label>
-        <div class="form-fields">
-            <input name="addEquipmentTypes" type="checkbox" {{#if addEquipmentTypes}} checked {{/if}}>
-        </div>
-        <p class="notes">An addition to current available equipment types. Not armor.</p>
+    <p class="notes">An addition to current available equipment types. Not armor.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="addPiety">Add Piety Ability Score</label>
+    <div class="form-fields">
+      <input name="addPiety" type="checkbox" {{#if addPiety}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">Adds 'Piety' as a new ability score.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="addDivine">Add Divine Spell School</label>
+    <div class="form-fields">
+      <input name="addDivine" type="checkbox" {{#if addDivine}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="addPiety">Add Piety Ability Score</label>
-        <div class="form-fields">
-            <input name="addPiety" type="checkbox" {{#if addPiety}} checked {{/if}}>
-        </div>
-        <p class="notes">Adds 'Piety' as a new ability score.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
-    <div class="form-group">
-        <label for="addDivine">Add Divine Spell School</label>
-        <div class="form-fields">
-            <input name="addDivine" type="checkbox" {{#if addDivine}} checked {{/if}}>
-        </div>
-        <p class="notes">Add 'Divine' as a spell school.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
+    <p class="notes">Add 'Divine' as a spell school.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
 
-    <header>
-        <button type="submit" name="submit">
-            <i class="fas fa-save"></i> Save Settings
-        </button>
-    </header>
+  <header>
+    <button type="submit" name="submit">
+      <i class="fas fa-save"></i> Save Settings
+    </button>
+  </header>
 </form>

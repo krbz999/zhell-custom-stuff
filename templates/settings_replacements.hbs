@@ -1,59 +1,59 @@
 <form class="flexcol">
-    <div class="form-group">
-        <label for="replaceStatusEffects">Replace Status Effects</label>
-        <div class="form-fields">
-            <input name="replaceStatusEffects" type="checkbox" {{#if replaceStatusEffects}} checked {{/if}}>
-        </div>
-        <p class="notes">Replace the status effects on the token hud.</p>
+  <div class="form-group">
+    <label for="replaceStatusEffects">Replace Status Effects</label>
+    <div class="form-fields">
+      <input name="replaceStatusEffects" type="checkbox" {{#if replaceStatusEffects}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">Replace the status effects on the token hud.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="replaceLanguages">Replace Languages</label>
+    <div class="form-fields">
+      <input name="replaceLanguages" type="checkbox" {{#if replaceLanguages}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="replaceLanguages">Replace Languages</label>
-        <div class="form-fields">
-            <input name="replaceLanguages" type="checkbox" {{#if replaceLanguages}} checked {{/if}}>
-        </div>
-        <p class="notes">A total replace of all default languages, but using same keys if available.</p>
+    <p class="notes">A total replace of all default languages, but using same keys if available.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="replaceTools">Replace Tools</label>
+    <div class="form-fields">
+      <input name="replaceTools" type="checkbox" {{#if replaceTools}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">A total replace of all default tools, but using same keys if available.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="replaceWeapons">Replace Weapons</label>
+    <div class="form-fields">
+      <input name="replaceWeapons" type="checkbox" {{#if replaceWeapons}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="replaceTools">Replace Tools</label>
-        <div class="form-fields">
-            <input name="replaceTools" type="checkbox" {{#if replaceTools}} checked {{/if}}>
-        </div>
-        <p class="notes">A total replace of all default tools, but using same keys if available.</p>
+    <p class="notes">A total replace of all default weapons, but using same keys if available. Also gets rid of
+      firearm-specific weapon attributes.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="replaceConsumableTypes">Replace Consumable Types</label>
+    <div class="form-fields">
+      <input name="replaceConsumableTypes" type="checkbox" {{#if replaceConsumableTypes}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
-    </div>
-    <div class="form-group">
-        <label for="replaceWeapons">Replace Weapons</label>
-        <div class="form-fields">
-            <input name="replaceWeapons" type="checkbox" {{#if replaceWeapons}} checked {{/if}}>
-        </div>
-        <p class="notes">A total replace of all default weapons, but using same keys if available. Also gets rid of
-            firearm-specific weapon attributes.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
-    <div class="form-group">
-        <label for="replaceConsumableTypes">Replace Consumable Types</label>
-        <div class="form-fields">
-            <input name="replaceConsumableTypes" type="checkbox" {{#if replaceConsumableTypes}} checked {{/if}}>
-        </div>
-        <p class="notes">A replacement of the current consumable types, using original keys if available.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
+    <p class="notes">A replacement of the current consumable types, using original keys if available.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
 
-    <header>
-        <button type="submit" name="submit">
-            <i class="fas fa-save"></i> Save Settings
-        </button>
-    </header>
+  <header>
+    <button type="submit" name="submit">
+      <i class="fas fa-save"></i> Save Settings
+    </button>
+  </header>
 </form>
