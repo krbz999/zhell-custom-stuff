@@ -64,10 +64,10 @@ export function ZHELL_REPLACEMENTS(){
     
     if ( replaceTools ) {
         // pluralising gaming set and instrument:
-        CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
+        /*CONFIG.DND5E.toolTypes["game"] = "Gaming Sets";
         CONFIG.DND5E.toolTypes["music"] = "Musical Instruments";
         CONFIG.DND5E.toolProficiencies["game"] = "Gaming Sets";
-        CONFIG.DND5E.toolProficiencies["music"] = "Musical Instruments";
+        CONFIG.DND5E.toolProficiencies["music"] = "Musical Instruments";*/
 
         const key = "zhell-catalogs.items";
         
@@ -121,7 +121,8 @@ export function ZHELL_REPLACEMENTS(){
             cobbler: `${key}.wYitL12DbabCoAJe`,
             tantan: `${key}.x0MtEjLGydd5MHcf`,
             card: `${key}.xpcEdLZpuwatrD1g`,
-            carpenter: `${key}.zSyPecV8GvlwRBnb`
+            carpenter: `${key}.zSyPecV8GvlwRBnb`,
+            accordion: `${key}.NtQzLYE9ySGxHLzA`
         }
     }
     

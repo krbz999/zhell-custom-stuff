@@ -1,4 +1,4 @@
-import { ADDITION, COLOR, MODULE, RARITY, REPLACEMENT, SHEET } from "./const.mjs";
+import { ADDITION, COLOR, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY, REPLACEMENT, SHEET } from "./const.mjs";
 import { refreshColors } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
@@ -7,7 +7,7 @@ export function registerSettings() {
 }
 
 function _registerSettings(){
-    game.settings.register(MODULE, "foragingDC", {
+    game.settings.register(MODULE, FORAGING, {
         name: "Foraging DC",
         hint: "The current DC for foraging.",
         scope: "world",
@@ -15,7 +15,7 @@ function _registerSettings(){
         type: Number,
         default: 15
     });
-    game.settings.register(MODULE, "markDefeatedCombatants", {
+    game.settings.register(MODULE, DEFEATED, {
         name: "Mark Combatants Defeated",
         hint: "When combatants that are not owned by a player is reduced to 0 or less hp, mark them as defeated.",
         scope: "world",
@@ -23,7 +23,7 @@ function _registerSettings(){
         type: Boolean,
         default: true
     });
-    game.settings.register(MODULE, "displaySavingThrowAmmo", {
+    game.settings.register(MODULE, DISPLAY_AMMO, {
         name: "Show Saving Throw Ammo",
         hint: "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
         scope: "world",

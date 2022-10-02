@@ -1,41 +1,41 @@
 {
-    "id": "zhell-custom-stuff",
-    "name": "zhell-custom-stuff",
-    "title": "Zhell's Custom Stuff",
-    "version": "10.0.0",
-    "authors": [
-        {
-            "name": "Zhell",
-            "url": "https://github.com/krbz999",
-            "discord": "Zhell#9201",
-            "ko-fi": "https://ko-fi.com/zhell"
-        }
-    ],
-    "minimumCoreVersion": "10",
-    "compatibility": {
-        "minimum": "10",
-        "maximum": "10",
-        "verified": "10.285"
-    },
-    "esmodules": [
-        "./setup.js"
-    ],
-    "styles": [
-        "./styles/styles.css",
-        "./styles/sheet_coloring.css",
-        "./styles/raritycolors.css",
-        "./styles/journal-styles.css",
-        "./styles/crafting_dialogs.css"
-    ],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "languages/en.json",
-            "description": "Personal module for replacing or adding to many things. Modular (see settings)."
-        }
-    ],
-    "url": "https://github.com/krbz999/zhell-custom-stuff",
-    "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
-    "download": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.zip"
+  "id": "zhell-custom-stuff",
+  "name": "zhell-custom-stuff",
+  "title": "Zhell's Custom Stuff",
+  "version": "10.0.1",
+  "authors": [
+    {
+      "name": "Zhell",
+      "url": "https://github.com/krbz999",
+      "discord": "Zhell#9201",
+      "ko-fi": "https://ko-fi.com/zhell"
+    }
+  ],
+  "minimumCoreVersion": "10",
+  "compatibility": {
+    "minimum": "10",
+    "maximum": "10",
+    "verified": "10.286"
+  },
+  "esmodules": [
+    "./setup.js"
+  ],
+  "styles": [
+    "./styles/styles.css",
+    "./styles/sheet_coloring.css",
+    "./styles/raritycolors.css",
+    "./styles/journal-styles.css",
+    "./styles/crafting_dialogs.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json",
+      "description": "Personal module for replacing or adding to many things. Modular (see settings)."
+    }
+  ],
+  "url": "https://github.com/krbz999/zhell-custom-stuff",
+  "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
+  "download": "https://github.com/krbz999/zhell-custom-stuff/releases/download/v10.0.1/module.zip"
 }

@@ -115,13 +115,13 @@ ol.trait-list.zhell-profs ol.trait-list {
 }
 
 /* COLLAPSIBLES */
-section.collapsible {
+section.zhell-collapsible {
     width: 100%;
     margin: 0.5rem 0;
     cursor: pointer;
 }
 
-section.collapsible .collapsible-header {
+section.zhell-collapsible .zhell-collapsible-header {
     cursor: pointer;
     padding: 0.5rem 1rem;
     background-color: #411a13;
@@ -132,7 +132,7 @@ section.collapsible .collapsible-header {
     margin-bottom: 0;
 }
 
-section.collapsible .collapsible-header::after {
+section.zhell-collapsible .zhell-collapsible-header::after {
     content: "\02795";
     font-size: 13px;
     float: right;
@@ -140,11 +140,11 @@ section.collapsible .collapsible-header::after {
     color: #f7f3e8;
 }
 
-section.collapsible.active .collapsible-header::after {
+section.zhell-collapsible.active .zhell-collapsible-header::after {
     content: "\2796";
 }
 
-section.collapsible div.collapsible-content {
+section.zhell-collapsible div.zhell-collapsible-content {
     max-height: 0;
     padding: 0.5rem 1rem;
     overflow: hidden;
@@ -155,7 +155,7 @@ section.collapsible div.collapsible-content {
     transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
 }
 
-section.collapsible.active div.collapsible-content {
+section.zhell-collapsible.active div.zhell-collapsible-content {
     opacity: 1;
     max-height: 600px;
     overflow-y: scroll;

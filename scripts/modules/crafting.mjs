@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import { FORAGING, MODULE } from "../const.mjs";
 
 // dialog: select hours and skill/tool, then roll a bunch of times.
 export async function foraging(actor){
@@ -17,7 +17,7 @@ export async function foraging(actor){
         return acc + `<option value=${e+1}>${e+1} hours</option>`;
     }, "");
     
-    const targetValue = game.settings.get(MODULE, "foragingDC");
+    const targetValue = game.settings.get(MODULE, FORAGING);
     
 
     new Dialog({
