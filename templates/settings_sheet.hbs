@@ -1,65 +1,65 @@
 <form class="flexcol">
-    <div class="form-group">
-        <label for="removeResources">Remove Resources</label>
-        <div class="form-fields">
-            <input name="removeResources" type="checkbox" {{#if removeResources}} checked {{/if}}>
-        </div>
-        <p class="notes">Remove the resources from the core sheet. They still function, but will not show up.</p>
+  <div class="form-group">
+    <label for="removeResources">Remove Resources</label>
+    <div class="form-fields">
+      <input name="removeResources" type="checkbox" {{#if removeResources}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="removeAlignment">Remove Alignment Field</label>
-        <div class="form-fields">
-            <input name="removeAlignment" type="checkbox" {{#if removeAlignment}} checked {{/if}}>
-        </div>
-        <p class="notes">Remove the alignment field from the top of the core sheet.</p>
+    <p class="notes">Remove the resources from the core sheet. They still function, but will not show up.</p>
+  </div>
+  <div class="form-group">
+    <label for="removeAlignment">Remove Alignment Field</label>
+    <div class="form-fields">
+      <input name="removeAlignment" type="checkbox" {{#if removeAlignment}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">Remove the alignment field from the top of the core sheet.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="disableInitiativeButton">Disable Initiative Button</label>
+    <div class="form-fields">
+      <input name="disableInitiativeButton" type="checkbox" {{#if disableInitiativeButton}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="disableInitiativeButton">Disable Initiative Button</label>
-        <div class="form-fields">
-            <input name="disableInitiativeButton" type="checkbox" {{#if disableInitiativeButton}} checked {{/if}}>
-        </div>
-        <p class="notes">Disable use of the Initiative header on the core sheet.</p>
+    <p class="notes">Disable use of the Initiative header on the core sheet.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="createForaging">Create Foraging</label>
+    <div class="form-fields">
+      <input name="createForaging" type="checkbox" {{#if createForaging}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
+    <p class="notes">Create a counter on the core sheet to track the quantity of foraged materials.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="reformatTraitSelectors">Reformat Trait Selectors</label>
+    <div class="form-fields">
+      <input name="reformatTraitSelectors" type="checkbox" {{#if reformatTraitSelectors}} checked {{/if}}>
     </div>
-    <div class="form-group">
-        <label for="createForaging">Create Foraging</label>
-        <div class="form-fields">
-            <input name="createForaging" type="checkbox" {{#if createForaging}} checked {{/if}}>
-        </div>
-        <p class="notes">Create a counter on the core sheet to track the quantity of foraged materials.</p>
+    <p class="notes">Make the language, resistances, and proficiency selectors less of an eye-sore.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
+  <div class="form-group">
+    <label for="collapsibleHeaders">Collapsible Headers</label>
+    <div class="form-fields">
+      <input name="collapsibleHeaders" type="checkbox" {{#if collapsibleHeaders}} checked {{/if}}>
     </div>
-    <div>
-        <hr>
-    </div>
-    <div class="form-group">
-        <label for="reformatTraitSelectors">Reformat Trait Selectors</label>
-        <div class="form-fields">
-            <input name="reformatTraitSelectors" type="checkbox" {{#if reformatTraitSelectors}} checked {{/if}}>
-        </div>
-        <p class="notes">Make the language, resistances, and proficiency selectors less of an eye-sore.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
-    <div class="form-group">
-        <label for="collapsibleHeaders">Collapsible Headers</label>
-        <div class="form-fields">
-            <input name="collapsibleHeaders" type="checkbox" {{#if collapsibleHeaders}} checked {{/if}}>
-        </div>
-        <p class="notes">Makes the headers on the sheet collapsible.</p>
-    </div>
-    <div>
-        <hr>
-    </div>
+    <p class="notes">Makes the headers on the sheet collapsible.</p>
+  </div>
+  <div>
+    <hr>
+  </div>
 
-    <header>
-        <button type="submit" name="submit">
-            <i class="fas fa-save"></i> Save Settings
-        </button>
-    </header>
+  <header>
+    <button type="submit" name="submit">
+      <i class="fas fa-save"></i> Save Settings
+    </button>
+  </header>
 </form>

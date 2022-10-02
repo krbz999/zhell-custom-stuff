@@ -10,50 +10,50 @@ import { ZHELL_ANIMATIONS } from "./scripts/modules/animations.mjs";
 import { createEffectStatusIdField } from "./scripts/modules/effectConfig.mjs";
 
 Hooks.once("init", () => {
-    console.log("ZHELL | Initializing Zhell's Custom Stuff");
-    registerSettings();
-    api.register();
+  console.log("ZHELL | Initializing Zhell's Custom Stuff");
+  registerSettings();
+  api.register();
 });
 Hooks.once("setup", () => {
-    ZHELL_ADDITIONS();
-    ZHELL_REPLACEMENTS();
+  ZHELL_ADDITIONS();
+  ZHELL_REPLACEMENTS();
 });
 Hooks.once("ready", () => {
-    Hooks.on("renderActorSheet", ZHELL_SHEET);
-    Hooks.on("renderTraitSelector", ZHELL_TRAITS);
-    refreshColors();
+  Hooks.on("renderActorSheet", ZHELL_SHEET);
+  Hooks.on("renderTraitSelector", ZHELL_TRAITS);
+  refreshColors();
 
-    // mark 0 hp combatants as defeated.
-    if ( game.user.isGM ){
-        Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
-        Hooks.on("renderActiveEffectConfig", createEffectStatusIdField);
-    }
+  // mark 0 hp combatants as defeated.
+  if (game.user.isGM) {
+    Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
+    Hooks.on("renderActiveEffectConfig", createEffectStatusIdField);
+  }
 
-    // display ammo when you make an attack, if the ammo has a save.
-    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
+  // display ammo when you make an attack, if the ammo has a save.
+  Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
 
-    // set up sockets.
-    ZHELL_SOCKETS.loadTextureSocketOn(); // loadTextureForAll
-    ZHELL_SOCKETS.routeTilesThroughGM(); // let players create tiles.
+  // set up sockets.
+  ZHELL_SOCKETS.loadTextureSocketOn(); // loadTextureForAll
+  ZHELL_SOCKETS.routeTilesThroughGM(); // let players create tiles.
 
-    // hook for when measured templates are created to display animation.
-    const seq = game.modules.get("sequencer");
-    const jb2a = game.modules.get("jb2a_patreon");
-    if ( seq?.active && jb2a?.active ) {
-        Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);
-    }
-    ZHELL_ANIMATIONS.collapsibleSetup();
-    
-    // add 'view scene' to scene config headers.
-    if ( game.user.isGM ) {
-        Hooks.on("getSceneConfigHeaderButtons", (app, array) => {
-            const viewBtn = {
-                class: `${MODULE}-view-scene`,
-                icon: "fas fa-eye",
-                label: "View Scene",
-                onclick: async () => await app.object.view()
-            }
-            array.unshift(viewBtn);
-        });
-    }
+  // hook for when measured templates are created to display animation.
+  const seq = game.modules.get("sequencer");
+  const jb2a = game.modules.get("jb2a_patreon");
+  if (seq?.active && jb2a?.active) {
+    Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);
+  }
+  ZHELL_ANIMATIONS.collapsibleSetup();
+
+  // add 'view scene' to scene config headers.
+  if (game.user.isGM) {
+    Hooks.on("getSceneConfigHeaderButtons", (app, array) => {
+      const viewBtn = {
+        class: `${MODULE}-view-scene`,
+        icon: "fas fa-eye",
+        label: "View Scene",
+        onclick: async () => await app.object.view()
+      }
+      array.unshift(viewBtn);
+    });
+  }
 });
