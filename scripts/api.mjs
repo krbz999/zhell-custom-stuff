@@ -19,7 +19,9 @@ export class api {
         teleport: ZHELL_UTILS.teleportTokens,
         target: ZHELL_UTILS.targetTokens,
         getOwnerIds: ZHELL_UTILS.get_token_owner_ids,
-        multiTool: DM_TOOL.RENDER
+        multiTool: DM_TOOL.RENDER,
+        contained: ZHELL_UTILS.checkTokenInTemplate,
+        selectContained: ZHELL_UTILS.selectContained
       },
       helper: {
         wait: ZHELL_UTILS.wait,
