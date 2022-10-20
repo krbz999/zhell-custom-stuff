@@ -1,0 +1,75 @@
+form[name="gm-tool-header"] {
+  gap: 5px;
+  display: grid;
+}
+
+.gm-tool [name="gm-tool-header"] .form-group.effect {
+  display: block;
+}
+
+.gm-tool .dialog-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+}
+
+.gm-tool [name="gm-tool-header"] .effect .form-fields,
+.gm-tool [name="gm-tool-header"] .damage .form-fields {
+  display: grid;
+  grid-template-columns: 100%;
+}
+
+.gm-tool [name="gm-tool-header"] .save .form-fields {
+  display: grid;
+  grid-template-columns: 20% 50% 20%;
+  justify-content: space-between;
+}
+
+.gm-tool [name="gm-tool-header"] .save .form-fields .save-inputs,
+.gm-tool [name="gm-tool-header"] div.additions {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 5px;
+}
+
+.gm-tool [name="gm-tool-header"] .checks {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gm-tool [name="gm-tool-header"] .checks input[type="checkbox"] {
+  margin-right: 10px;
+  justify-self: self-end;
+}
+
+.gm-tool .weaponProperties {
+  display: flex;
+}
+
+.gm-tool .list-container {
+  display: grid;
+  grid-template-columns: 48% 48%;
+  justify-content: space-between;
+}
+
+.list-container .status-container .form-group .form-fields {
+  display: grid;
+  grid-template-columns: 30% 30% 30% 10%;
+}
+
+.list-container .damage-container .form-group .form-fields {
+  display: grid;
+  grid-template-columns: 45% 45% 10%;
+}
+
+.list-container .form-group .form-fields a {
+  text-align: center;
+}
+
+.list-container .damage-container,
+.list-container .status-container {
+  max-height: 213px;
+  overflow-y: auto;
+}
