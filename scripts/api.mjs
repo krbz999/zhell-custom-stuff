@@ -31,7 +31,7 @@ export class api {
         whisperPlayers: ZHELL_UTILS.whisper_players,
         loadTextureForAll: ZHELL_UTILS.loadTextureForAll,
         createTiles: ZHELL_UTILS.createTiles,
-        //titleCard: ZHELL_UTILS.title_card //bugged
+        titleCard: ZHELL_UTILS.title_card
       }
     }
   }

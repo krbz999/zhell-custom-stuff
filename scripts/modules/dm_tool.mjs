@@ -238,7 +238,7 @@ export class DM_TOOL {
     let container;
     if (target.name === "status-create") {
       container = target.closest("div.dialog-content").querySelector("div.status-container");
-      const effectOptions = CONFIG.statusEffects.sort((a,b) => {
+      const effectOptions = CONFIG.statusEffects.sort((a, b) => {
         return a.label.localeCompare(b.label);
       }).reduce((acc, { id, label }) => {
         return acc + `<option value="${id}">${label}</option>`;
