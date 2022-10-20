@@ -200,7 +200,7 @@ export class ZHELL_CATALOG {
     }
 
     const original = foundry.utils.duplicate(object);
-    let [spell] = await parent.createEmbeddedDocuments("Item", [object], { temporary: true });
+    let spell = new Item.implementation(object, { temporary: true, parent: parent });
 
     foundry.utils.mergeObject(object, updates);
     spell = spell.clone(object, { keepId: true });
