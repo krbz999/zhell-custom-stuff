@@ -153,8 +153,8 @@ class ColorPickerSubmenu extends FormApplication {
   async getData() {
     const source = game.settings.get(MODULE, COLOR);
     const defaults = {
-      showLimitedUses: false,
-      showSpellSlots: false,
+      showLimitedUses: true,
+      showSpellSlots: true,
       usesUnexpended: "#ff2e2e",
       itemAttuned: "#21c050",
       itemNotAttuned: "#c2c2c2",
@@ -281,8 +281,8 @@ const registerSettingsMenus = function () {
     config: false,
     type: Object,
     default: {
-      showLimitedUses: false,
-      showSpellSlots: false,
+      showLimitedUses: true,
+      showSpellSlots: true,
       usesUnexpended: "#ff2e2e",
       itemAttuned: "#21c050",
       itemNotAttuned: "#c2c2c2",

@@ -33,7 +33,6 @@
   pointer-events: all;
 }
 
-
 /* collapsible items and effect headers */
 .dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover,
 .dnd5e.sheet.actor .characteristics label:hover {
