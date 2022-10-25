@@ -99,7 +99,7 @@ export async function crafting(actor) {
   }
 
   // MAIN dialog.
-  let content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_main.hbs`);
+  let content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_main.hbs`);
   const typeDialog = new Dialog({
     title: "Crafting",
     content,
@@ -147,7 +147,7 @@ export async function crafting(actor) {
             ${!disabled ? description + (i < 3 ? "<hr>" : "") : ""}
         `;
   }, "");
-  content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_potion.hbs`, {
+  content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_potion.hbs`, {
     potionOfHealingId: itemIndex.getName("Potion of Healing")._id,
     scaleHealing: getScalingHealing(),
     potionOfHealingDescription: itemIndex.getName("Potion of Healing").system.description.value,
@@ -224,7 +224,7 @@ export async function crafting(actor) {
     if (cost + 2 > materials) return acc;
     return acc + `<option value="${key}" data-cost="${cost}">[${cost}] ${label}</option>`;
   }, "");
-  content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_poison_type.hbs`, {
+  content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_poison_type.hbs`, {
     options: methodOptions
   });
   const methodDialog = new Dialog({
@@ -269,7 +269,7 @@ export async function crafting(actor) {
             `;
     }, "");
 
-    content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_poison.hbs`, {
+    content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_poison.hbs`, {
       poisonButtons,
       paintDescription: itemIndex.getName("Goblin Paint").system.description.value,
       paintId: itemIndex.getName("Goblin Paint")._id,
@@ -385,7 +385,7 @@ export async function crafting(actor) {
         `;
   }, "");
 
-  content = await renderTemplate(`/modules/${MODULE}/templates/materia_crafting_misc.hbs`, {
+  content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_misc.hbs`, {
     bombButtons
   });
 

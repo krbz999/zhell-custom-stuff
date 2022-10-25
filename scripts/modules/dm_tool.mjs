@@ -1,11 +1,11 @@
 /** COMBINED GM TOOL FOR NPC UTILITY
  * A tool for prompting selected (not player owned) tokens for either (or all):
- * 
+ *
  * make a saving throw (and optionally target those who failed).
- * 
+ *
  * apply damage, which respects DR, DV, DI.
  * -- optionally have tokens resist the damage with a saving throw (reducing to half or zero).
- * 
+ *
  * add or remove a status condition.
  * -- optionally have the token resist with a saving throw.
  * -- also allows you to set the duration of each effect.
@@ -105,47 +105,57 @@ export class DM_TOOL {
 
   // get all resistances from a token's actor
   static getResistancesFromToken(token) {
-    const { value, custom } = token.actor.system.traits.dr;
+    const { value, custom, bypasses } = token.actor.system.traits.dr;
     const types = new Set(value);
     if (custom) {
       for (const val of custom.split(";")) {
         if (val) types.add(val);
       }
     }
+    types.bypasses = bypasses ?? [];
     return types;
   }
   // get all immunities from a token's actor
   static getImmunitiesFromToken(token) {
-    const { value, custom } = token.actor.system.traits.di;
+    const { value, custom, bypasses } = token.actor.system.traits.di;
     const types = new Set(value);
     if (custom) {
       for (const val of custom.split(";")) {
         if (val) types.add(val);
       }
     }
+    types.bypasses = bypasses ?? [];
     return types;
   }
-  // get all resistances/immunities/vulnerabilities from a token's actor
+  // get all vulnerabilities from a token's actor
   static getVulnerabilitiesFromToken(token) {
-    const { value, custom } = token.actor.system.traits.dv;
+    const { value, custom, bypasses } = token.actor.system.traits.dv;
     const types = new Set(value);
     if (custom) {
       for (const val of custom.split(";")) {
         if (val) types.add(val);
       }
     }
+    types.bypasses = bypasses ?? [];
     return types;
   }
   // takes an array of parts and returns the damage the token's actor should take
-  static calculateDamageTakenForToken(token, parts, globalModifier = 1) {
+  static calculateDamageTakenForToken(token, parts, { global = 1, properties = [] } = {}) {
     const dr = this.getResistancesFromToken(token);
     const di = this.getImmunitiesFromToken(token);
     const dv = this.getVulnerabilitiesFromToken(token);
 
+    const props = CONFIG.DND5E.physicalWeaponProperties; // ada, sil, mgc
+    const phys = CONFIG.DND5E.physicalDamageTypes; // piercing, bludgeoning, slashing
+
     const partsModified = parts.map(([value, type]) => {
-      const mod = di.has(type) ? 0 : dv.has(type) ? 2 : dr.has(type) ? 0.5 : 1;
+      const imm = di.has(type) && !properties.some(p => di.bypasses.includes(p) && type in phys);
+      const res = dr.has(type) && !properties.some(p => dr.bypasses.includes(p) && type in phys);
+      const vul = dv.has(type) && !properties.some(p => dv.bypasses.includes(p) && type in phys);
+
+      const mod = imm ? 0 : vul ? 2 : res ? 0.5 : 1;
       const val = Roll.safeEval(value);
-      return Math.floor(val * mod * globalModifier);
+      return Math.floor(val * mod * global);
     });
     const damage = partsModified.reduce((acc, dmg) => {
       return acc + dmg;
@@ -153,9 +163,9 @@ export class DM_TOOL {
     return damage;
   }
   // applies damage to tokens' actors, given an array of damage parts
-  static async applyDamageToTokens(tokens, parts) {
+  static async applyDamageToTokens(tokens, parts, options = {}) {
     return tokens.map(token => {
-      const damage = this.calculateDamageTakenForToken(token, parts);
+      const damage = this.calculateDamageTakenForToken(token, parts, options);
       return token.actor.applyDamage(damage);
     });
   }
@@ -177,7 +187,7 @@ export class DM_TOOL {
 
     const { resistEffect, effectData } = statusCondition;
     const { ability, targetValue, targetFailures } = savingThrow;
-    const { resistDamage, noDamage, parts } = damage;
+    const { resistDamage, noDamage, parts, options } = damage;
 
     // is there a valid saving throw set up
     const saveNeeded = ability && targetValue;
@@ -191,7 +201,7 @@ export class DM_TOOL {
     // apply damage if it should not be resisted.
     const saveToResistDamage = resistDamage && saveNeeded;
     if (!saveToResistDamage) {
-      await this.applyDamageToTokens(tokens, parts);
+      await this.applyDamageToTokens(tokens, parts, options);
     }
 
     // get saving throws if something should be resisted.
@@ -204,9 +214,10 @@ export class DM_TOOL {
         await this.applyConditionsToTokens(failedTokens, effectData);
       }
       if (saveToResistDamage) {
-        await this.applyDamageToTokens(failedTokens, parts);
+        await this.applyDamageToTokens(failedTokens, parts, options);
         if (!noDamage) {
-          await this.applyDamageToTokens(succeedTokens, parts, 0.5);
+          options.global = 0.5;
+          await this.applyDamageToTokens(succeedTokens, parts, options);
         }
       }
       if (targetFailures) {
@@ -227,36 +238,40 @@ export class DM_TOOL {
     let container;
     if (target.name === "status-create") {
       container = target.closest("div.dialog-content").querySelector("div.status-container");
-      const effectOptions = CONFIG.statusEffects.reduce((acc, { id, label }) => {
+      const effectOptions = CONFIG.statusEffects.sort((a, b) => {
+        return a.label.localeCompare(b.label);
+      }).reduce((acc, { id, label }) => {
         return acc + `<option value="${id}">${label}</option>`;
       }, "");
       const timeUnitOptions = ["seconds", "minutes", "hours", "days", "weeks", "months", "years"].reduce((acc, e) => {
         return acc + `<option value="${e}">${e}</option>`;
       }, "<option value=''>&mdash;</option>");
       const effectForm = `
-            <div class="form-group">
-                <div class="form-fields">
-                    <select name="status-effects">${effectOptions}</select>
-                    <input type="number" name="status-time" placeholder="Duration">
-                    <select name="status-units">${timeUnitOptions}</select>
-                    <a name="status-delete"><i class="fas fa-trash"></i></a>
-                </div>
-            </div>`;
+      <div class="form-group">
+        <div class="form-fields">
+          <select name="status-effects">${effectOptions}</select>
+          <input type="number" name="status-time" placeholder="Duration">
+          <select name="status-units">${timeUnitOptions}</select>
+          <a name="status-delete"><i class="fas fa-trash"></i></a>
+        </div>
+      </div>`;
       DIV.innerHTML = effectForm;
     }
     else if (target.name === "damage-create") {
       container = target.closest("div.dialog-content").querySelector("div.damage-container");
-      const damageOptions = Object.entries(CONFIG.DND5E.damageResistanceTypes).reduce((acc, [key, label]) => {
+      const damageOptions = Object.entries(CONFIG.DND5E.damageTypes).filter(([type]) => {
+        return !(type in CONFIG.DND5E.physicalDamageTypes);
+      }).concat(Object.entries(CONFIG.DND5E.physicalDamageTypes)).reduce((acc, [key, label]) => {
         return acc + `<option value="${key}">${label}</option>`;
       }, "");
       DIV.innerHTML = `
-            <div class="form-group">
-                <div class="form-fields">
-                    <input type="number" name="damage-value">
-                    <select name="damage-type">${damageOptions}</select>
-                    <a name="damage-delete"><i class="fas fa-trash"></i></a>
-                </div>
-            </div>`;
+      <div class="form-group">
+        <div class="form-fields">
+          <input type="number" name="damage-value">
+          <select name="damage-type">${damageOptions}</select>
+          <a name="damage-delete"><i class="fas fa-trash"></i></a>
+        </div>
+      </div>`;
     }
     container.append(...DIV.children);
   }
@@ -267,121 +282,18 @@ export class DM_TOOL {
     target.closest("div.form-group").remove();
   }
 
-  static RENDER() {
+  static async RENDER() {
     const tokens = canvas.tokens.controlled.filter(i => !i.actor.hasPlayerOwner);
 
-    const style = `
-        <style>
-        form[name="gm-tool-header"] {
-            gap: 5px;
-            display: grid;
-        }
-        .gm-tool [name="gm-tool-header"] .form-group.effect {
-            display: block;
-        }
-        .gm-tool [name="gm-tool-header"] .effect .form-fields,
-        .gm-tool [name="gm-tool-header"] .damage .form-fields {
-            display: grid;
-            grid-template-columns: 100%;
-        }
-        .gm-tool [name="gm-tool-header"] .save .form-fields {
-            display: grid;
-            grid-template-columns: 20% 50% 20%;
-            justify-content: space-between;
-        }
-        .gm-tool [name="gm-tool-header"] .save .form-fields .save-inputs,
-        .gm-tool [name="gm-tool-header"] div.additions {
-            display: grid;
-            grid-template-columns: 50% 50%;
-            gap: 5px;
-        }
-        .gm-tool [name="gm-tool-header"] .checks {
-            display: grid;
-            grid-template-columns: auto auto;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .gm-tool [name="gm-tool-header"] .checks input[type="checkbox"] {
-            margin-right: 10px;
-        }
-        .gm-tool .list-container {
-            display: grid;
-            grid-template-columns: 48% 48%;
-            justify-content: space-between;
-        }
-        .list-container .status-container .form-group .form-fields {
-            display: grid;
-            grid-template-columns: 30% 30% 30% 10%;
-        }
-        .list-container .damage-container .form-group .form-fields {
-            display: grid;
-            grid-template-columns: 45% 45% 10%;
-        }
-        .list-container .form-group .form-fields a {
-            text-align: center;
-        }
-        </style>`;
     const abilityOptions = Object.entries(CONFIG.DND5E.abilities).reduce((acc, [key, label]) => {
       return acc + `<option value="${key}">${label}</option>`;
     }, "<option value=''>&mdash;</option>");
-    const content = `
-        <form name="gm-tool-header">
-
-            <div class="form-group save">
-                <div class="form-fields">
-                    <label>Saving Throw:</label>
-                    <div class="save-inputs">
-                        <select name="save-type">${abilityOptions}</select>
-                        <input type="number" name="save-dc" placeholder="Save DC">
-                    </div>
-                    <div class="checks">
-                        <span class="sep">Target fails:</span>
-                        <input type="checkbox" name="save-target">
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-            
-            <div class="additions">
-            
-                <div class="form-group effect">
-                    <div class="form-fields">
-                        <button name="status-create"><i class="fas fa-skull"></i> Add Status Effect</button>
-                        <div class="checks">
-                            <label for="status-resist">Resist Effects:</label>
-                            <input type="checkbox" id="status-resist">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group damage">
-                    <div class="form-fields">
-                        <button name="damage-create"><i class="fas fa-bolt"></i> Add Damage Part</button>
-                        <div class="checks">
-                            <label for="damage-resist">Resist Damage:</label>
-                            <input type="checkbox" id="damage-resist">
-                            <label for="damage-noDamage">No Damage on Success:</label>
-                            <input type="checkbox" id="damage-noDamage">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </form>
-
-        <hr>
-
-        <form class="list-container">
-            <div class="status-container">
-            </div>
-            <div class="damage-container">
-            </div>
-        </form>`;
+    const template = "modules/zhell-custom-stuff/templates/dm_tool.hbs";
+    const content = await renderTemplate(template, { abilityOptions });
 
     const d = new Dialog({
       title: "Dungeon Master Tool",
-      content: style + content,
+      content,
       buttons: {
         execute: {
           label: "Execute!",
@@ -421,7 +333,7 @@ export class DM_TOOL {
       }
     }, {
       width: 700,
-      height: "auto",
+      height: 500,
       classes: ["dialog", "gm-tool"]
     }).render(true);
   }
@@ -429,6 +341,8 @@ export class DM_TOOL {
   static gatherDamageInputs(html) {
     const resistDamage = html[0].querySelector("#damage-resist").checked;
     const noDamage = html[0].querySelector("#damage-noDamage").checked;
+    const properties = [...html[0].querySelectorAll(".weaponProperties input:checked")].map(b => b.id);
+
 
     // construct damage parts.
     const damageInputs = html[0].querySelectorAll("div.damage-container div.form-group");
@@ -438,7 +352,7 @@ export class DM_TOOL {
       const type = damage.querySelector("[name='damage-type']").value;
       parts.push([Number(value), type]);
     }
-    return { resistDamage, noDamage, parts };
+    return { resistDamage, noDamage, parts, options: { properties } };
   }
 
   static gatherEffectInputs(html) {

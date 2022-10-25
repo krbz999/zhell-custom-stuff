@@ -200,7 +200,7 @@ export class ZHELL_CATALOG {
     }
 
     const original = foundry.utils.duplicate(object);
-    let [spell] = await parent.createEmbeddedDocuments("Item", [object], { temporary: true });
+    let spell = new Item.implementation(object, { temporary: true, parent: parent });
 
     foundry.utils.mergeObject(object, updates);
     spell = spell.clone(object, { keepId: true });
@@ -569,5 +569,34 @@ export class ZHELL_UTILS {
       .fadeIn(2000)
       .fadeOut(2000);
     return sequence.play();
+  }
+
+  // return if token contained within template.
+  static checkTokenInTemplate(token, tempDoc) {
+    const { size } = canvas.scene.grid;
+    const { width, height, x: tokx, y: toky } = token.document;
+    const { x: tempx, y: tempy, object } = tempDoc;
+    const startX = width >= 1 ? 0.5 : width / 2;
+    const startY = height >= 1 ? 0.5 : height / 2;
+    for (let x = startX; x < width; x++) {
+      for (let y = startY; y < width; y++) {
+        const curr = {
+          x: tokx + x * size - tempx,
+          y: toky + y * size - tempy
+        };
+        const contains = object.shape.contains(curr.x, curr.y);
+        if (contains) return true;
+      }
+    }
+    return false;
+  }
+
+  // select all tokens on the scene that are within templateDoc.
+  static selectContained(tempDoc) {
+    const tokens = canvas.tokens.placeables.filter(token => {
+      return ZHELL_UTILS.checkTokenInTemplate(token, tempDoc);
+    });
+    canvas.tokens.releaseAll();
+    return tokens.map(token => token.control({ releaseOthers: false }));
   }
 }
