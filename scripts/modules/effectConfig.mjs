@@ -13,12 +13,12 @@ export function createEffectStatusIdField(sheet, html) {
   </div>
   <div class="form-group">
     <div class="form-fields">
-      <input type="text" name="flags.visual-active-effects.data.intro" value="${vae.intro}" placeholder="Intro...">
+      <input type="text" name="flags.visual-active-effects.data.intro" value="${vae.intro.trim()}" placeholder="Intro...">
     </div>
   </div>
   <div class="form-group">
     <div class="form-fields">
-      <input type="text" name="flags.visual-active-effects.data.content" value="${vae.content}" placeholder="Content...">
+      <input type="text" name="flags.visual-active-effects.data.content" value="${vae.content.trim()}" placeholder="Content...">
     </div>
   </div>`;
   table.before(div);

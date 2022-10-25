@@ -247,14 +247,14 @@ export class DM_TOOL {
         return acc + `<option value="${e}">${e}</option>`;
       }, "<option value=''>&mdash;</option>");
       const effectForm = `
-            <div class="form-group">
-                <div class="form-fields">
-                    <select name="status-effects">${effectOptions}</select>
-                    <input type="number" name="status-time" placeholder="Duration">
-                    <select name="status-units">${timeUnitOptions}</select>
-                    <a name="status-delete"><i class="fas fa-trash"></i></a>
-                </div>
-            </div>`;
+      <div class="form-group">
+        <div class="form-fields">
+          <select name="status-effects">${effectOptions}</select>
+          <input type="number" name="status-time" placeholder="Duration">
+          <select name="status-units">${timeUnitOptions}</select>
+          <a name="status-delete"><i class="fas fa-trash"></i></a>
+        </div>
+      </div>`;
       DIV.innerHTML = effectForm;
     }
     else if (target.name === "damage-create") {
@@ -265,13 +265,13 @@ export class DM_TOOL {
         return acc + `<option value="${key}">${label}</option>`;
       }, "");
       DIV.innerHTML = `
-            <div class="form-group">
-                <div class="form-fields">
-                    <input type="number" name="damage-value">
-                    <select name="damage-type">${damageOptions}</select>
-                    <a name="damage-delete"><i class="fas fa-trash"></i></a>
-                </div>
-            </div>`;
+      <div class="form-group">
+        <div class="form-fields">
+          <input type="number" name="damage-value">
+          <select name="damage-type">${damageOptions}</select>
+          <a name="damage-delete"><i class="fas fa-trash"></i></a>
+        </div>
+      </div>`;
     }
     container.append(...DIV.children);
   }
