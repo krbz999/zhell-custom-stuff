@@ -445,6 +445,21 @@ export class ZHELL_UTILS {
     if (game.user.isGM) return canvas.scene.createEmbeddedDocuments("Tile", tileData);
   }
 
+  static async awardLoot(backpackUuid, push = true) {
+    if (push) {
+      game.socket.emit(`world.${game.world.id}`, {
+        action: "awardLoot",
+        data: { backpackUuid }
+      });
+    }
+    const a = game.user.character;
+    const b = fromUuidSync(backpackUuid);
+    return (!!a && !!b) ? game.modules.get("backpack-manager").api.renderManager(a, b, {
+      title: "Awarded Loot",
+      hideOwnInventory: true
+    }) : null;
+  }
+
   // increase exhaustion.
   static increase_exhaustion = async (actor) => {
     if (!(actor instanceof Actor)) {

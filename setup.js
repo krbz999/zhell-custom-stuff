@@ -35,6 +35,7 @@ Hooks.once("ready", () => {
   // set up sockets.
   ZHELL_SOCKETS.loadTextureSocketOn(); // loadTextureForAll
   ZHELL_SOCKETS.routeTilesThroughGM(); // let players create tiles.
+  ZHELL_SOCKETS.awardLoot(); // award loot UI.
 
   // hook for when measured templates are created to display animation.
   const seq = game.modules.get("sequencer");

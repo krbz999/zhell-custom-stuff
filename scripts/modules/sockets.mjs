@@ -19,4 +19,13 @@ export class ZHELL_SOCKETS {
       }
     });
   }
+
+  // render 'award loot' UI with Backpack Manager.
+  static awardLoot = () => {
+    game.socket.on(`world.${game.world.id}`, (request) => {
+      if (request.action === "awardLoot") {
+        ZHELL_UTILS.awardLoot(request.data.backpackUuid, false);
+      }
+    })
+  }
 }
