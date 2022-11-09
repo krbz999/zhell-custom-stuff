@@ -42,7 +42,6 @@
 
 /* Make collapsed header gray text color and slighly slimmer. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create {
-  height: auto;
   color: darkgray;
 }
 

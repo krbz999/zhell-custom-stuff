@@ -20,22 +20,19 @@ body :root {
   max-height: 15px;
   max-width: 15px;
   background-color: var(--usesUnexpended);
-  border-radius: 25%;
+  border-radius: 2px;
   cursor: pointer;
   box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
-  margin: 0 1px 0 1px;
+  margin: 1px;
 }
 
 .dnd5e .items-list .dot:hover {
-  box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 black;
-  transition: 0.1s;
   transform: scale(1.2);
 }
 
 /* Style of the expended dots. */
 .dnd5e .items-list .dot.empty {
   background-color: lightgray;
-  transition: 0.25s;
 }
 
 /* style of the 'not all dots shown' dot */
@@ -49,13 +46,11 @@ body :root {
 
 /* dot container */
 .dnd5e .items-list div.zhell-dots {
-  flex: none;
-  max-height: 15px;
   flex-direction: row-reverse;
-  align-items: center;
 }
 
 /* show shadow overflow */
+.dnd5e.sheet.actor .inventory-list .item-detail.attunement,
 .dnd5e .items-list .items-header.spellbook-header .item-name {
   overflow: visible;
 }
@@ -71,7 +66,7 @@ body :root {
   filter: drop-shadow(0px 0px 1px black);
 }
 
-.dnd5e.sheet.actor .inventory-list .item .item-name i:hover:not(.original-class) {
+.dnd5e.sheet.actor .inventory-list .item-detail.attunement i:hover {
   text-shadow: 0 0 8px var(--color-shadow-primary) !important;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -110,23 +105,6 @@ body :root {
   color: darkred;
 }
 
-/* additional coloring: */
-
-/* traits, such as resistances, and tools. */
-.dnd5e .traits-list .tag {
-  background-color: burlywood;
-}
-
-.dnd5e.sheet.actor .traits :is(.trait-selector i.fas, .proficiency-selector i.fas, .config-button .fa-cog) {
-  color: blue;
-}
-
-/* headers for embedded documents */
-.dnd5e .items-list .items-header {
-  color: black;
-  border: 2px groove lightslategray;
-}
-
 /* hp colors: */
 /* if below 33% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
@@ -136,15 +114,6 @@ body :root {
 /* if below 66% and above 33% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
   color: peru;
-}
-
-/* make appearance, personality, etc slightly wider. */
-.dnd5e.sheet.actor.character .characteristics {
-  flex: 0 0 250px;
-}
-
-.dnd5e.sheet.actor.character .biography {
-  flex: 0 0 calc(100% - 250px);
 }
 
 /* proficiencies */
@@ -161,14 +130,4 @@ body :root {
 /* twice proficient */
 .dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
   color: var(--proficientTwice) !important;
-}
-
-/* bold ability keys for skills */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-ability {
-  font-weight: bold;
-}
-
-/* hide spell school column of actor sheets. */
-.dnd5e.sheet.actor .spell-school {
-  display: none;
 }
