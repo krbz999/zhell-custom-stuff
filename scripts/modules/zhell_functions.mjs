@@ -230,13 +230,6 @@ export class ZHELL_CATALOG {
 
 export class ZHELL_UTILS {
 
-  // execute an item's Item Macro if it has one, otherwise roll normally.
-  static rollItemMacro = async (item, config = {}, options = {}) => {
-    const itemMacro = game.modules.get("itemacro")?.active;
-    if (itemMacro && item.hasMacro()) return item.executeMacro(options);
-    else return item.use(config, options);
-  }
-
   static setForageDC = async (number) => {
     if (!game.user.isGM) return ui.notifications.warn("Excuse me?");
     return game.settings.set(MODULE, FORAGING, number);
@@ -346,21 +339,20 @@ export class ZHELL_UTILS {
     return new Dialog({
       title: "Whisper",
       content: `
-                <p>Whisper to:</p>${options} <hr>
-                <label for="zhell-whisper-message">Message:</label>
-                <textarea
-                    class="whisper-dialog-textarea"
-                    id="zhell-whisper-message"
-                    name="message"
-                    rows="6"
-                    cols="50"
-                    autofocus
-                ></textarea>
-                <hr>
-            `,
+      <p>Whisper to:</p>${options} <hr>
+      <label for="zhell-whisper-message">Message:</label>
+      <textarea
+        class="whisper-dialog-textarea"
+        id="zhell-whisper-message"
+        name="message"
+        rows="6"
+        cols="50"
+        autofocus
+      ></textarea>
+      <hr>`,
       buttons: {
         go: {
-          icon: `<i class="fas fa-envelope"></i>`,
+          icon: "<i class='fa-solid fa-envelope'></i>",
           label: "Whisper",
           callback: async (html) => {
             let content = html[0].querySelector("#zhell-whisper-message").value;
@@ -368,7 +360,7 @@ export class ZHELL_UTILS {
 
             content = content.split("\n").reduce((acc, e) => {
               return acc + `<p>${e}</p>`;
-            }, ``);
+            }, "");
             const whisperIds = new Set();
             for (const { id } of users) {
               if (!!html[0].querySelector(`span[id="${id}"].selected`)) {
@@ -383,25 +375,10 @@ export class ZHELL_UTILS {
       },
       render: (html) => {
         html[0].addEventListener("click", (event) => {
-          let player = event.target.closest(".whisper-dialog-player-name");
-          if (!player) return;
-          player.classList.toggle("selected");
+          event.target.closest(".whisper-dialog-player-name")?.classList.toggle("selected");
         });
       },
     }).render(true, { height: "auto" });
-  }
-
-  // function to wait for a specified amount of time.
-  static wait = async (ms) => {
-    return new Promise(resolve => setTimeout(resolve, Number(ms)));
-  }
-
-  // function to turn integer into cardinal number.
-  static nth = (number) => {
-    const num = Number(number);
-    const index = ((num + 90) % 100 - 10) % 10 - 1;
-    const suffix = ["st", "nd", "rd"][index] || "th";
-    return `${number}${suffix}`;
   }
 
   // function to turn integer into roman numeral.
@@ -507,7 +484,7 @@ export class ZHELL_UTILS {
 
   // update or set exhaustion to specific level
   static update_exhaustion = async (num, actor) => {
-    if (!Array.fromRange(7).includes(num)) {
+    if (!num.between(0, 6)) {
       ui.notifications.warn("The provided level was not valid.");
       return null;
     }

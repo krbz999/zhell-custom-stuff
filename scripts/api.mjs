@@ -24,10 +24,7 @@ export class api {
         selectContained: ZHELL_UTILS.selectContained
       },
       helper: {
-        wait: ZHELL_UTILS.wait,
-        nth: ZHELL_UTILS.nth,
         roman: ZHELL_UTILS.romanize,
-        rollItemMacro: ZHELL_UTILS.rollItemMacro,
         whisperPlayers: ZHELL_UTILS.whisper_players,
         loadTextureForAll: ZHELL_UTILS.loadTextureForAll,
         createTiles: ZHELL_UTILS.createTiles,

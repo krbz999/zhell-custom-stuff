@@ -18,13 +18,11 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
   } = game.settings.get(MODULE, COLOR);
 
   if (removeResources) {
-    const resources = html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul");
-    if (resources) resources.remove();
+    html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul")?.remove();
   }
 
   if (removeAlignment) {
-    const AL = html[0].querySelector("input[name='system.details.alignment']");
-    if (AL) AL.parentElement?.remove();
+    html[0].querySelector("input[name='system.details.alignment']")?.parentElement?.remove();
   }
 
   if (disableInitiativeButton) {
@@ -41,20 +39,20 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
     const materia = document.createElement("div");
     materia.classList.add("counter", "flexrow", "materia");
     materia.innerHTML = `
-        <h4 class="rollable" data-action="foraging">Foraged Materials</h4>
-        <div class="counter-value">
-            <input
-                class="material"
-                name="flags.${MODULE}.materia-medica.value"
-                type="number"
-                value="${value}"
-                data-dtype="Number"
-                min="0"
-                max="999"
-                oninput="validity.valid || (value=${value})"
-                placeholder="0"
-            >
-        </div>`;
+    <h4 class="rollable" data-action="foraging">Foraged Materials</h4>
+    <div class="counter-value">
+      <input
+        class="material"
+        name="flags.${MODULE}.materia-medica.value"
+        type="number"
+        value="${value}"
+        data-dtype="Number"
+        min="0"
+        max="999"
+        oninput="validity.valid || (value=${value})"
+        placeholder="0"
+      >
+    </div>`;
     // insert before inspiration tracker.
     const beforeThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.inspiration");
     beforeThis.parentNode.insertBefore(materia, beforeThis);
@@ -294,12 +292,12 @@ function mainForaging(event) {
     content: "<p>Are you foraging or crafting?</p>",
     buttons: {
       forage: {
-        icon: "<i class='fas fa-leaf'></i>",
+        icon: "<i class='fa-solid fa-leaf'></i>",
         label: "Foraging",
         callback: () => foraging(actor)
       },
       craft: {
-        icon: "<i class='fas fa-volcano'></i>",
+        icon: "<i class='fa-solid fa-volcano'></i>",
         label: "Crafting",
         callback: () => crafting(actor)
       }
@@ -418,12 +416,12 @@ function exhaustionUpdate(event) {
     content: "<p>Increase or decrease your level of exhaustion.</p>",
     buttons: {
       up: {
-        icon: "<i class='fas fa-arrow-up'></i>",
+        icon: "<i class='fa-solid fa-arrow-up'></i>",
         label: "Gain a Level",
         callback: () => ZHELL_UTILS.increase_exhaustion(actor)
       },
       down: {
-        icon: "<i class='fas fa-arrow-down'></i>",
+        icon: "<i class='fa-solid fa-arrow-down'></i>",
         label: "Down a Level",
         callback: () => ZHELL_UTILS.decrease_exhaustion(actor)
       }

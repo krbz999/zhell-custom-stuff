@@ -90,7 +90,7 @@ ol.trait-list.zhell-profs,
 ol.trait-list.zhell-weapons,
 ol.trait-list.zhell-traits {
   display: grid;
-  margin: 0 10px 0 10px;
+  margin: 0 10px;
 }
 
 ol.trait-list.zhell-profs {

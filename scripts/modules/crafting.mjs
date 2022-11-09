@@ -262,11 +262,10 @@ export async function crafting(actor) {
       const cost = 2 * (i + 2); // the cost of this poison on its own.
       const disabled = (materials - Number(methodCost)) < cost ? "disabled" : "";
       return acc + `
-            <div class="dialog-buttons">
-                <button class="option-button poison" data-id="${id}" data-cost="${cost}" ${disabled}>${e}</button>
-            </div>
-            ${!disabled ? description + (i < 3 ? "<hr>" : "") : ""}
-            `;
+      <div class="dialog-buttons">
+        <button class="option-button poison" data-id="${id}" data-cost="${cost}" ${disabled}>${e}</button>
+      </div>
+      ${!disabled ? description + (i < 3 ? "<hr>" : "") : ""}`;
     }, "");
 
     content = await renderTemplate(`modules/${MODULE}/templates/materia_crafting_poison.hbs`, {
