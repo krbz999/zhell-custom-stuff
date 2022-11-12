@@ -22,7 +22,7 @@ Hooks.once("setup", () => {
 
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", () => {
-  Sequencer.Database.registerEntries(MODULE, database);
+  Sequencer.Database.registerEntries("zhell", database);
 })
 
 Hooks.once("ready", () => {
