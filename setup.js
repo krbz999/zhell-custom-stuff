@@ -6,7 +6,7 @@ import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
 import { refreshColors, ZHELL_SHEET, ZHELL_TRAITS } from "./scripts/modules/sheet_edits.mjs";
 import { ZHELL_COMBAT } from "./scripts/modules/combat_helpers.mjs";
 import { MODULE } from "./scripts/const.mjs";
-import { ZHELL_ANIMATIONS } from "./scripts/modules/animations.mjs";
+import { database, ZHELL_ANIMATIONS, _initD20 } from "./scripts/modules/animations.mjs";
 import { createEffectStatusIdField } from "./scripts/modules/effectConfig.mjs";
 
 Hooks.once("init", () => {
@@ -14,10 +14,17 @@ Hooks.once("init", () => {
   registerSettings();
   api.register();
 });
+
 Hooks.once("setup", () => {
   ZHELL_ADDITIONS();
   ZHELL_REPLACEMENTS();
 });
+
+Hooks.once("diceSoNiceReady", _initD20);
+Hooks.once("sequencerReady", () => {
+  Sequencer.Database.registerEntries(MODULE, database);
+})
+
 Hooks.once("ready", () => {
   Hooks.on("renderActorSheet", ZHELL_SHEET);
   Hooks.on("renderTraitSelector", ZHELL_TRAITS);

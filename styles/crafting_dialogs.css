@@ -9,7 +9,7 @@
 
 .materia-medica-crafting .main.dialog-buttons {
   outline-style: groove;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
   outline-width: 2px;
 }
 
@@ -41,7 +41,7 @@
 
 .materia-medica-crafting .button-container {
   outline-style: groove;
-  padding: 5px 5px 5px 5px;
+  padding: 5px;
   outline-width: 2px;
   flex-direction: column;
 }

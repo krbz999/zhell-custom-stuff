@@ -104,7 +104,7 @@ img.zhell-holy-symbol.thrizur:hover {
 /* PLAYABLE CLASSES LIST */
 .sheet.journal-entry .zhell-class-list .class-header {
   text-align: center;
-  margin: 10px 0 10px 0;
+  margin: 10px 0;
 }
 
 .sheet.journal-entry .zhell-class-list .class-header img {
@@ -141,7 +141,7 @@ img.zhell-holy-symbol.thrizur:hover {
 
 /* the subclass items */
 .zhell-class-list .subclass-links {
-  grid-template-columns: 33.3% 33.3% 33.3%;
+  grid-template-columns: 1fr 1fr 1fr;
   display: grid;
   gap: 5px;
   margin-right: 5px;
@@ -193,7 +193,7 @@ img.zhell-holy-symbol.thrizur:hover {
 /* layout of spell list */
 .journal-page-content .spell-list {
   display: grid;
-  grid-template-columns: 33.3% 33.3% 33.3%;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 5px;
   margin-right: 5px;
 }
@@ -284,7 +284,7 @@ h1.havilon-race-header {
 /* PARTY FEATURES */
 .party-features {
   display: grid;
-  grid-template-columns: 30% 60%;
+  grid-template-columns: 1fr 2fr;
   justify-content: space-evenly;
   row-gap: 20px;
 }
