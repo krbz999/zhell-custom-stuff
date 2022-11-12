@@ -47,6 +47,8 @@ body :root {
 /* dot container */
 .dnd5e .items-list div.zhell-dots {
   flex-direction: row-reverse;
+  max-width: fit-content;
+  margin-right: 0.25em;
 }
 
 /* show shadow overflow */
