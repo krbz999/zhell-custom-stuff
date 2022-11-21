@@ -6,16 +6,19 @@ export class ZHELL_ANIMATIONS {
     if (!uuid) return;
 
     const item = fromUuidSync(uuid);
-    if (!item) return;
+    if (!item || !(item instanceof Item)) return;
 
     // BREATH WEAPON.
     const type = item.getFlag("world", "breath-weapon.type");
     if (type) {
-      new Sequence().effect()
-        .file(type)
-        .atLocation(templateDoc)
-        .stretchTo(templateDoc)
-        .play();
+      return new Sequence().effect().file(type).atLocation(templateDoc).stretchTo(templateDoc).play();
+    }
+
+    // SCORCHING CLEAVER.
+    const name = item.name.includes("Erupting Slash");
+    if (name) {
+      const file = "jb2a.fire_jet.orange";
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
   }
 
@@ -225,3 +228,31 @@ export const database = {
     }
   }
 }
+
+Hooks.on("renderJournalPageSheet", (app, html, options) => {
+  if (app.object.parent.name !== "Index: Available Classes") return;
+  const spells = html[0].querySelectorAll("a.content-link[data-pack='zhell-catalogs.spells']");
+  spells.forEach(s => {
+    const A = document.createElement("A");
+    A.classList.add("spell-desc-toggle");
+    A.setAttribute("data-uuid", s.dataset.uuid);
+    A.innerHTML = "<i class='fa-solid fa-plus'></i>";
+    s.after(A);
+  });
+
+  html[0].addEventListener("click", async (event) => {
+    const a = event.target.closest(".spell-list .sub-spell-list .spell-desc-toggle");
+    if (!a) return;
+    const uuid = a.dataset.uuid;
+    const shown = html[0].querySelector(`.spell-description[data-uuid='${uuid}']`);
+    if (shown) return shown.remove();
+    const p = a.closest("p");
+    const spell = await fromUuid(uuid);
+    const desc = spell.system.description.value;
+    const DIV = document.createElement("DIV");
+    DIV.innerHTML = desc;
+    DIV.classList.add("spell-description");
+    DIV.setAttribute("data-uuid", uuid);
+    p.appendChild(DIV);
+  });
+});

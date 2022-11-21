@@ -109,14 +109,14 @@ img.zhell-holy-symbol.thrizur:hover {
 
 .sheet.journal-entry .zhell-class-list .class-header img {
   border: none;
-  border-radius: 20px;
+  border-radius: 5px;
   max-width: 100px;
   min-width: 100px;
   max-height: 100px;
   min-height: 100px;
   position: absolute;
-  z-index: 0;
   left: 25px;
+  pointer-events: none;
 }
 
 /* the class item */
@@ -124,7 +124,6 @@ img.zhell-holy-symbol.thrizur:hover {
   margin: 0;
   max-height: 100px;
   border: none;
-  z-index: 1;
 }
 
 .sheet.journal-entry .zhell-class-list .class-header a.content-link {
@@ -198,6 +197,17 @@ img.zhell-holy-symbol.thrizur:hover {
   margin-right: 5px;
 }
 
+/* restrict width to one third */
+.journal-page-content .sub-spell-list {
+  overflow-x: hidden;
+}
+
+.journal-entry-page .sub-spell-list>p {
+  display: grid;
+  grid-template-columns: 9fr 1fr;
+  grid-template-areas: "link toggle" "text text";
+}
+
 /* spell-level headers */
 .journal-page-content .sub-spell-list h3 {
   text-align: center;
@@ -207,11 +217,41 @@ img.zhell-holy-symbol.thrizur:hover {
 
 /* individual spells */
 .journal-page-content .sub-spell-list a.content-link {
-  display: block;
+  display: flex;
   font-size: 12px;
-  padding: 5px;
+  padding-left: 0.5em;
+  overflow-x: hidden;
+  height: var(--form-field-height);
+  align-items: center;
+  grid-area: link;
 }
 
+.spell-list .sub-spell-list .spell-desc-toggle {
+  background: purple;
+  color: white;
+  height: var(--form-field-height);
+  width: var(--form-field-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: toggle;
+}
+
+/* toggleable content */
+.spell-list .sub-spell-list .spell-description * {
+  user-select: none;
+  font-size: 11px;
+}
+
+.spell-list .sub-spell-list .spell-description {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px groove purple;
+  border-top: none;
+  grid-area: text;
+  border-radius: 0 0 5px 5px;
+  padding: 0 0.5em;
+}
 
 /* EQUIPMENT TABLES */
 .zhell-equipment-tables table>thead>tr {

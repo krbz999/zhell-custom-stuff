@@ -158,3 +158,13 @@ section.zhell-collapsible.active div.zhell-collapsible-content {
   max-height: 600px;
   overflow-y: scroll;
 }
+
+/* BUTTON FEEL */
+button:active:not(.pm-dropdown),
+a:active {
+  filter: brightness(0.7);
+}
+
+.tab#chat {
+  margin: -5px 0px 0px;
+}
