@@ -256,3 +256,10 @@ Hooks.on("renderJournalPageSheet", (app, html, options) => {
     p.appendChild(DIV);
   });
 });
+
+Hooks.on("preUpdateToken", (doc, update) => {
+  if (doc.lockRotation) return;
+  if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
+  const ray = new Ray(doc, { x: update.x ?? doc.x, y: update.y ?? doc.y });
+  update.rotation = ray.angle * 180 / Math.PI - 90;
+});
