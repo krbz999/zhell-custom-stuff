@@ -45,6 +45,11 @@
   color: darkgray;
 }
 
+/* Hide spell school from actor sheets. */
+.dnd5e.sheet.actor .spell-school {
+  display: none;
+}
+
 /* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create+ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create+ol+ol,

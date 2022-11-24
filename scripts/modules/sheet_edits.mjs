@@ -348,8 +348,7 @@ function toggleAttunement(event) {
 
   if (!!attuned) {
     return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED });
-  }
-  else if (!!not_attuned) {
+  } else if (!!not_attuned) {
     return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED });
   }
 }
