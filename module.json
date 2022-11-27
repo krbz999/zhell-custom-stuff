@@ -37,6 +37,6 @@
     }
   ],
   "url": "https://github.com/krbz999/zhell-custom-stuff",
-  "manifest": "https://raw.githubusercontent.com/krbz999/zhell-custom-stuff/master/module.json",
-  "download": "https://github.com/krbz999/zhell-custom-stuff/raw/master/module.zip"
+  "manifest": "https://raw.githubusercontent.com/krbz999/zhell-custom-stuff/main/module.json",
+  "download": "https://github.com/krbz999/zhell-custom-stuff/raw/main/module.zip"
 }
