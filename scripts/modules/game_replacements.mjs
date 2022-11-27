@@ -1,5 +1,5 @@
 import { MODULE, REPLACEMENT } from "../const.mjs";
-import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.js";
+import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.mjs";
 
 // hooks on setup.
 export function ZHELL_REPLACEMENTS() {

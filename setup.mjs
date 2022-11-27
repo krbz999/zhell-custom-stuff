@@ -6,7 +6,8 @@ import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
 import { refreshColors, ZHELL_SHEET, ZHELL_TRAITS } from "./scripts/modules/sheet_edits.mjs";
 import { ZHELL_COMBAT } from "./scripts/modules/combat_helpers.mjs";
 import { MODULE } from "./scripts/const.mjs";
-import { database, ZHELL_ANIMATIONS, _initD20 } from "./scripts/modules/animations.mjs";
+import { ZHELL_ANIMATIONS, _initD20 } from "./scripts/modules/animations.mjs";
+import { database } from "./sources/animations.mjs";
 
 Hooks.once("init", () => {
   console.log("ZHELL | Initializing Zhell's Custom Stuff");
@@ -43,10 +44,12 @@ Hooks.once("ready", () => {
   ZHELL_SOCKETS.awardLoot(); // award loot UI.
 
   // hook for when measured templates are created to display animation.
-  const seq = game.modules.get("sequencer");
-  const jb2a = game.modules.get("jb2a_patreon");
-  if (seq?.active && jb2a?.active) {
+  const canAnimate = ["sequencer", "jb2a_patreon"].every(id => !!game.modules.get(id)?.active);
+  if (canAnimate) {
     Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);
+    Hooks.on("dnd5e.useItem", ZHELL_ANIMATIONS.onItemUse);
+    Hooks.on("dnd5e.rollAttack", ZHELL_ANIMATIONS.onItemRollAttack);
+    Hooks.on("dnd5e.rollDamage", ZHELL_ANIMATIONS.onItemRollDamage);
   }
   ZHELL_ANIMATIONS.collapsibleSetup();
 

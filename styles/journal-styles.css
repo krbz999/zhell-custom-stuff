@@ -77,13 +77,10 @@ img.zhell-holy-symbol.thrizur:hover {
 /* BANNED SPELL LIST */
 .banned-spell-list a.content-link {
   display: block;
-  background-color: darkseagreen;
+  background-color: #c27e7e;
   font-size: 20px;
   text-align: center;
-  cursor: not-allowed;
-  text-shadow: none !important;
   border-radius: 50px;
-  border: 0;
 }
 
 .banned-spell-list>h2 {
@@ -99,6 +96,11 @@ img.zhell-holy-symbol.thrizur:hover {
   text-align: justify;
   margin-left: auto;
   margin-right: auto;
+}
+
+.banned-spell-list i.fas.fa-suitcase:before {
+  content: "\f00d";
+  color: black;
 }
 
 /* PLAYABLE CLASSES LIST */
@@ -140,10 +142,11 @@ img.zhell-holy-symbol.thrizur:hover {
 
 /* the subclass items */
 .zhell-class-list .subclass-links {
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   display: grid;
-  gap: 5px;
-  margin-right: 5px;
+  margin: 0 2em;
+  row-gap: 5px;
+  column-gap: 1em;
 }
 
 .zhell-class-list .subclass-links p {
@@ -154,21 +157,10 @@ img.zhell-holy-symbol.thrizur:hover {
   display: block;
   padding: 5px;
   text-align: center;
-  min-width: fit-content;
   transition: 0.3s;
-}
-
-.zhell-class-list .subclass-links p:nth-child(3n-2) a.content-link:hover {
-  transform-origin: left;
-  margin-left: 5px;
-}
-
-.zhell-class-list .subclass-links p:nth-child(3n) a.content-link:hover {
-  transform-origin: right;
 }
 
 .zhell-class-list .subclass-links a.content-link:hover {
-  transition: 0.3s;
   transform: scale(1.1);
   background: darkgray;
   box-shadow: 0 0 10px purple;
@@ -185,16 +177,18 @@ img.zhell-holy-symbol.thrizur:hover {
   border-width: 2px;
   border-radius: 30px;
   border-color: black;
-  margin: 20px auto 20px auto;
-  padding: 5px 0 5px 0;
+  margin: 20px auto;
+  padding: 5px 0;
+  font-family: "Modesto Condensed";
+  text-transform: uppercase;
 }
 
 /* layout of spell list */
 .journal-page-content .spell-list {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 5px;
-  margin-right: 5px;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+  padding-bottom: 5em;
 }
 
 /* restrict width to one third */
@@ -204,7 +198,7 @@ img.zhell-holy-symbol.thrizur:hover {
 
 .journal-entry-page .sub-spell-list>p {
   display: grid;
-  grid-template-columns: 9fr 1fr;
+  grid-template-columns: calc(100% - var(--form-field-height)) var(--form-field-height);
   grid-template-areas: "link toggle" "text text";
 }
 
@@ -224,6 +218,7 @@ img.zhell-holy-symbol.thrizur:hover {
   height: var(--form-field-height);
   align-items: center;
   grid-area: link;
+  border-radius: 4px 0 0 0;
 }
 
 .spell-list .sub-spell-list .spell-desc-toggle {
@@ -235,6 +230,11 @@ img.zhell-holy-symbol.thrizur:hover {
   justify-content: center;
   align-items: center;
   grid-area: toggle;
+  border-radius: 0 4px 0 0;
+}
+
+.spell-list .sub-spell-list .spell-desc-toggle:not(:last-child) i::before {
+  content: "\2d";
 }
 
 /* toggleable content */
@@ -249,7 +249,7 @@ img.zhell-holy-symbol.thrizur:hover {
   border: 1px groove purple;
   border-top: none;
   grid-area: text;
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 4px 4px;
   padding: 0 0.5em;
 }
 
@@ -258,10 +258,24 @@ img.zhell-holy-symbol.thrizur:hover {
   height: 40px;
 }
 
-.zhell-equipment-tables :is(h1, h2, h3) {
+.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3) {
   text-align: center;
   border-top: 2px groove darkslategray;
   border-bottom: 2px groove darkslategray;
+  user-select: none;
+  cursor: pointer;
+}
+
+.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3):hover {
+  text-shadow: 0 0 14px red;
+}
+
+.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3).collapsed {
+  color: gray;
+}
+
+.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3).collapsed+section {
+  display: none;
 }
 
 .zhell-equipment-tables table>tbody>tr>td {
@@ -294,27 +308,31 @@ h1.havilon-race-header {
 
 .race-item-links {
   gap: 5px;
-  display: grid;
+  display: flex;
   border: solid;
   border-radius: 20px;
   border-width: 2px;
   width: 90%;
   padding: 5px;
-  margin: 20px auto 20px auto;
+  margin: 20px auto;
+  flex-wrap: wrap;
 }
 
-.race-item-links p {
+.race-item-links>p {
   margin: 0;
-  display: grid;
+  display: flex;
+  flex-grow: 1;
+  flex-basis: calc(50% - 5px);
 }
 
 .race-item-links a.content-link {
   font-size: 16px;
   border-radius: 20px;
   padding: 5px;
-  padding-left: 20px;
-  background-image: linear-gradient(270deg, #89a584, #f9f9f9);
+  background-image: linear-gradient(180deg, #c7aeae, #6ab7fd);
   font-family: cursive;
+  width: 100%;
+  text-align: center;
 }
 
 .race-item-links a.content-link>i {
@@ -324,18 +342,23 @@ h1.havilon-race-header {
 /* PARTY FEATURES */
 .party-features {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  justify-content: space-evenly;
-  row-gap: 20px;
+  gap: 1em;
+}
+
+.party-feature {
+  display: inherit;
+  grid-template-columns: 1fr 3fr;
+  gap: inherit;
 }
 
 .party-feature-image {
-  text-align: center;
-  align-self: center;
+  display: flex;
+  align-items: center;
 }
 
 .party-feature-image img {
   border: none;
+  border-radius: 1em;
 }
 
 .party-feature-details h1 {
@@ -347,7 +370,7 @@ h1.havilon-race-header {
 
 .party-feature-details p {
   text-align: justify;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* MATERIA MEDICA */

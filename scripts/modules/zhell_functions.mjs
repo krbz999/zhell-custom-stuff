@@ -1,5 +1,5 @@
 import { FORAGING, MODULE } from "../const.mjs";
-import { EXHAUSTION_EFFECTS } from "../../sources/conditions.js";
+import { EXHAUSTION_EFFECTS } from "../../sources/conditions.mjs";
 
 export class ZHELL_CATALOG {
 
