@@ -119,16 +119,16 @@ body :root {
 
 /* proficiencies */
 /* half proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust {
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fa-solid.fa-adjust {
   color: var(--proficientHalf) !important;
 }
 
 /* proficient */
-.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check {
+.dnd5e.sheet.actor .proficiency-toggle .fa-solid.fa-check {
   color: var(--proficientNormal) !important;
 }
 
 /* twice proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fa-solid.fa-check-double {
   color: var(--proficientTwice) !important;
 }

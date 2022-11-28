@@ -98,7 +98,7 @@ img.zhell-holy-symbol.thrizur:hover {
   margin-right: auto;
 }
 
-.banned-spell-list i.fas.fa-suitcase:before {
+.banned-spell-list i.fa-solid.fa-suitcase:before {
   content: "\f00d";
   color: black;
 }
