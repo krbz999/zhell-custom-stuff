@@ -8,22 +8,25 @@ export class ZHELL_ANIMATIONS {
     const item = fromUuidSync(uuid);
     if (!item || !(item instanceof Item)) return;
 
+    let check;
+
     // BREATH WEAPON.
-    const type = item.getFlag("world", "breath-weapon.type");
-    if (type) {
-      return new Sequence().effect().file(type).atLocation(templateDoc).stretchTo(templateDoc).play();
+    check = item.getFlag("world", "breath-weapon.type");
+    if (check) {
+      const file = check;
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
 
     // SCORCHING CLEAVER.
-    const name = item.name.includes("Erupting Slash");
-    if (name) {
+    check = item.name.includes("Erupting Slash");
+    if (check) {
       const file = "jb2a.fire_jet.orange";
       return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
 
     // CALL LIGHTNING
-    const callLightning = item.name.includes("Call Lightning");
-    if (callLightning) {
+    check = item.name.includes("Call Lightning");
+    if (check) {
       const file = "jb2a.lightning_strike.blue.0";
       return new Sequence().effect().file(file).atLocation(templateDoc).scale(2).play();
     }
@@ -35,8 +38,12 @@ export class ZHELL_ANIMATIONS {
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
 
-    if (name === "Eldritch Blast") {
-      if(!target || !token) return;
+    let check;
+
+    // ELDRITCH BLAST.
+    check = name === "Eldritch Blast";
+    if (check) {
+      if (!target || !token) return;
       const file = "jb2a.eldritch_blast.rainbow";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
@@ -48,7 +55,11 @@ export class ZHELL_ANIMATIONS {
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
 
-    if (name === "Healing Word" && actor.name.includes("Arkorow")) {
+    let check;
+
+    // HEALING WORD (Arkorow).
+    check = name === "Healing Word" && actor.name.includes("Arkorow");
+    if (check) {
       const file1 = "jb2a.healing_generic.400px.yellow";
       const file2 = "jb2a.butterflies.few.bright_orange";
       if (target) {
@@ -59,11 +70,19 @@ export class ZHELL_ANIMATIONS {
       } else if (token) {
         return new Sequence().effect().attachTo(token).file(file2).scaleIn(0, 500).fadeOut(500).play();
       }
-    } else if (name === "Healing Word" && actor.name.includes("Devinn")) {
+    }
+
+    // HEALING WORD (Devinn).
+    check = name === "Healing Word" && actor.name.includes("Devinn");
+    if (check) {
       if (!target) return;
       const file = "jb2a.cure_wounds.400px.red";
       return new Sequence().effect().attachTo(target).file(file).scaleIn(0, 500).play();
-    } else if (name === "Eldritch Smite") {
+    }
+
+    // ELDRITCH SMITE.
+    check = name === "Eldritch Smite";
+    if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.purplepink";
       return new Sequence().effect().attachTo(target).file(file).play();
@@ -76,17 +95,29 @@ export class ZHELL_ANIMATIONS {
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
 
-    if (name.startsWith("Call of the ")) {
+    let check;
+
+    // CALL OF THE PACK/CLUTCH.
+    check = name.startsWith("Call of the ");
+    if (check) {
       if (!token) return;
       const file = "assets/images/tiles/symbols/holy/hav_draconiz_gold.webp";
       return new Sequence().effect()
         .file(file).duration(2000).atLocation(token).scaleIn(.5, 2000)
         .size(2.5, { gridUnits: true }).fadeIn(500).fadeOut(500).play();
-    } else if (name === "Spotlight") {
+    }
+
+    // SPOTLIGHT.
+    check = name === "Spotlight";
+    if (check) {
       if (!token) return;
       const file = "jb2a.template_circle.out_pulse.01.burst.bluewhite";
       return new Sequence().effect().file(file).atLocation(token).scale(0.75).play();
-    } else if (name === "Pipe" && actor.name.includes("Drazvik")) {
+    }
+
+    // PIPE (Drazvik).
+    check = name === "Pipe" && actor.name.includes("Drazvik");
+    if (check) {
       if (!token) return;
       const file = "jb2a.smoke.puff.centered.dark_green.1";
       return new Sequence().effect().file(file).atLocation(token, {
@@ -94,15 +125,15 @@ export class ZHELL_ANIMATIONS {
       }).size(canvas.grid.size).play();
     }
   }
-
-  static collapsibleSetup() {
-    document.addEventListener("click", (event) => {
-      const t = event.target.closest(".zhell-collapsible-header");
-      if (!t) return;
-      t.closest(".zhell-collapsible").classList.toggle("active");
-    });
-  }
 }
+
+Hooks.once("ready", function() {
+  document.addEventListener("click", (event) => {
+    const t = event.target.closest(".zhell-collapsible-header");
+    if (!t) return;
+    t.closest(".zhell-collapsible").classList.toggle("active");
+  });
+});
 
 export function _initD20(dice3d) {
   dice3d.addSystem({ id: "zhell-custom-stuff", name: "The Rollsmith - Package Jam 2022" }, false);
@@ -116,8 +147,8 @@ export function _initD20(dice3d) {
 
 Hooks.on("renderJournalPageSheet", function(app, html) {
   if (app.object.parent.name !== "Index: Available Classes") return;
-  const spells = html[0].querySelectorAll("a.content-link[data-pack='zhell-catalogs.spells']");
-  spells.forEach(s => {
+  const selector = "a.content-link[data-pack='zhell-catalogs.spells']";
+  html[0].querySelectorAll(selector).forEach(s => {
     const A = document.createElement("A");
     A.classList.add("spell-desc-toggle");
     A.setAttribute("data-uuid", s.dataset.uuid);

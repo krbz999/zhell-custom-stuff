@@ -14,8 +14,10 @@
 }
 
 .materia-medica-crafting .main .option-button {
-  padding-top: 10px;
+  padding: 0.5em;
   color: dimgray;
+  display: grid;
+  font-size: 17px;
 }
 
 .materia-medica-crafting .main .option-button.bomb i {
@@ -32,11 +34,6 @@
 
 .materia-medica-crafting .main .option-button.bomb:hover {
   color: darkgoldenrod;
-}
-
-.materia-medica-crafting .option-button div {
-  font-size: 17px;
-  color: black !important;
 }
 
 .materia-medica-crafting .button-container {

@@ -2,14 +2,14 @@
   <div class="form-group">
     <label for="showLimitedUses">Enable Limited Use Dots</label>
     <div class="form-fields">
-      <input name="showLimitedUses" type="checkbox" {{#if showLimitedUses}} checked {{/if}}>
+      <input name="showLimitedUses" type="checkbox" {{checked showLimitedUses}}>
     </div>
     <p class="notes">Create colored dots on the sheet for items with limited uses.</p>
   </div>
   <div class="form-group">
     <label for="showSpellSlots">Enable Spell Slot Dots</label>
     <div class="form-fields">
-      <input name="showSpellSlots" type="checkbox" {{#if showSpellSlots}} checked {{/if}}>
+      <input name="showSpellSlots" type="checkbox" {{checked showSpellSlots}}>
     </div>
     <p class="notes">Create colored dots on the sheet for spell slots.</p>
   </div>
@@ -122,7 +122,7 @@
 
   <header>
     <button type="submit" name="submit">
-      <i class="fas fa-save"></i> Save Settings
+      <i class="fa-solid fa-save"></i> Save Settings
     </button>
   </header>
 </form>

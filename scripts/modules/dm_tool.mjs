@@ -252,7 +252,7 @@ export class DM_TOOL {
           <select name="status-effects">${effectOptions}</select>
           <input type="number" name="status-time" placeholder="Duration">
           <select name="status-units">${timeUnitOptions}</select>
-          <a name="status-delete"><i class="fas fa-trash"></i></a>
+          <a name="status-delete"><i class="fa-solid fa-trash"></i></a>
         </div>
       </div>`;
       DIV.innerHTML = effectForm;
@@ -269,7 +269,7 @@ export class DM_TOOL {
         <div class="form-fields">
           <input type="number" name="damage-value">
           <select name="damage-type">${damageOptions}</select>
-          <a name="damage-delete"><i class="fas fa-trash"></i></a>
+          <a name="damage-delete"><i class="fa-solid fa-trash"></i></a>
         </div>
       </div>`;
     }

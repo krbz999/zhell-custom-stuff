@@ -17,8 +17,8 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are under the effects of the Bane spell.
-          You subtract <strong>1d4</strong> from all saving throws and attack rolls.`
+          <p>You are under the effects of the Bane spell.</p>
+          <p>You subtract <strong>1d4</strong> from all saving throws and attack rolls.</p>`
         }
       }
     },
@@ -38,8 +38,8 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are under the effects of the Bless spell.
-          You add a <strong>1d4</strong> bonus to all saving throws and attack rolls.`
+          <p>You are under the effects of the Bless spell.</p>
+          <p>You add a <strong>1d4</strong> bonus to all saving throws and attack rolls.</p>`
         }
       }
     },
@@ -59,8 +59,8 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are under the effects of the Haste spell.
-          Your movement speed is doubled, you have a +2 bonus to AC, and you have advantage on Dexterity saving throws.`
+          <p>You are under the effects of the Haste spell.</p>
+          <p>Your movement speed is doubled, you have a +2 bonus to AC, and you have advantage on Dexterity saving throws.</p>`
         }
       }
     },
@@ -81,8 +81,8 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are under the effects of the Slow spell.
-          Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.`
+          <p>You are under the effects of the Slow spell.</p>
+          <p>Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.</p>`
         }
       }
     },
@@ -104,9 +104,9 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are invisible.
-          You are impossible to see, and are considered heavily obscured.
-          Attack rolls against you have disadvantage, and your attack rolls have advantage.`
+          <p>You are invisible.</p>
+          <p>You are impossible to see, and are considered heavily obscured.</p>
+          <p>Attack rolls against you have disadvantage, and your attack rolls have advantage.</p>`
         }
       }
     }
@@ -119,8 +119,8 @@ export const SPELL_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are under the effects of the Fly spell.
-          You have a flying speed of 60 feet.`
+          <p>You are under the effects of the Fly spell.</p>
+          <p>You have a flying speed of 60 feet.</p>`
         }
       }
     },
@@ -146,8 +146,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You cannot see, and you automatically fail any ability checks that require sight.
-          Attack rolls against you have advantage, and your attack rolls have disadvantage.`
+          <p>You cannot see, and you automatically fail any ability checks that require sight.</p>
+          <p>Attack rolls against you have advantage, and your attack rolls have disadvantage.</p>`
         }
       }
     }
@@ -159,8 +159,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You cannot attack the charmer or target them with harmful abilities or magical effects.
-          The charmer has advantage on any ability check to interact socially with you.`
+          <p>You cannot attack the charmer or target them with harmful abilities or magical effects.</p>
+          <p>The charmer has advantage on any ability check to interact socially with you.</p>`
         }
       }
     }
@@ -171,7 +171,7 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: `You have met an unfortunate end.`
+          intro: `<p>You have met an unfortunate end.</p>`
         }
       }
     }
@@ -182,7 +182,7 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: `You cannot hear and automatically fail any ability checks that require hearing.`
+          intro: `<p>You cannot hear and automatically fail any ability checks that require hearing.</p>`
         }
       }
     }
@@ -194,8 +194,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You cannot speak and cannot cast spells with a verbal component.
-          You automatically fail any ability checks that require speech.`
+          <p>You cannot speak and cannot cast spells with a verbal component.</p>
+          <p>You automatically fail any ability checks that require speech.</p>`
         }
       }
     }
@@ -207,8 +207,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight.
-          You cannot willingly move closer to the source of your fear.`
+          <p>You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight.</p>
+          <p>You cannot willingly move closer to the source of your fear.</p>`
         }
       }
     }
@@ -219,7 +219,7 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: `Your speed is zero.`
+          intro: `<p>Your speed is zero.</p>`
         }
       }
     },
@@ -237,7 +237,7 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: `You cannot take actions or reactions.`
+          intro: `<p>You cannot take actions or reactions.</p>`
         }
       }
     }
@@ -249,9 +249,9 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are incapacitated, and you cannot move or speak.
-          You automatically fail Strength and Dexterity saving throws.
-          Attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.`
+          <p>You are incapacitated, and you cannot move or speak.</p>
+          <p>You automatically fail Strength and Dexterity saving throws.</p>
+          <p>Attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.</p>`
         }
       }
     },
@@ -270,10 +270,10 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are inanimate, incapacitated, and unaware of your surroundings.
-          Your weight is increased by a factor of ten, you cannot move or speak, and attack rolls against you have advantage.
-          You automatically fail all Strength and Dexterity saving throws.
-          You have resistance to all damage, and you are immune to poison and disease.`
+          <p>You are inanimate, incapacitated, and unaware of your surroundings.</p>
+          <p>Your weight is increased by a factor of ten, you cannot move or speak, and attack rolls against you have advantage.</p>
+          <p>You automatically fail all Strength and Dexterity saving throws.</p>
+          <p>You have resistance to all damage, and you are immune to poison and disease.</p>`
         }
       }
     }
@@ -284,7 +284,7 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: `You have disadvantage on all attack rolls and ability checks.`
+          intro: `<p>You have disadvantage on all attack rolls and ability checks.</p>`
         }
       }
     }
@@ -296,8 +296,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You can only crawl unless you expend half your movement to stand up.
-          You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you; it otherwise has disadvantage.`
+          <p>You can only crawl unless you expend half your movement to stand up.</p>
+          <p>You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you; it otherwise has disadvantage.</p>`
         }
       }
     }
@@ -309,8 +309,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage.
-          You have disadvantage on Dexterity saving throws.`
+          <p>Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage.</p>
+          <p>You have disadvantage on Dexterity saving throws.</p>`
         }
       }
     },
@@ -329,8 +329,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are incapacitated, cannot move, and can speak only falteringly.
-          You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.`
+          <p>You are incapacitated, cannot move, and can speak only falteringly.</p>
+          <p>You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.</p>`
         }
       }
     },
@@ -349,8 +349,8 @@ export const STATUS_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws.
-          Attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.`
+          <p>You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws.</p>
+          <p>Attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.</p>`
         }
       }
     },
@@ -373,7 +373,7 @@ export const EXHAUSTION_EFFECTS = [
       [MODULE]: { exhaustion: 1 },
       "visual-active-effects": {
         data: {
-          intro: `You have disadvantage on all ability checks.`
+          intro: `<p>You have disadvantage on all ability checks.</p>`
         }
       }
     },
@@ -390,8 +390,8 @@ export const EXHAUSTION_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You have disadvantage on all ability checks.
-          Your movement speed is halved.`
+          <p>You have disadvantage on all ability checks.</p>
+          <p>Your movement speed is halved.</p>`
         }
       }
     },
@@ -413,8 +413,8 @@ export const EXHAUSTION_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You have disadvantage on all ability checks, attack rolls, and saving throws.
-          Your movement speed is halved.`
+          <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
+          <p>Your movement speed is halved.</p>`
         }
       }
     },
@@ -436,8 +436,8 @@ export const EXHAUSTION_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You have disadvantage on all ability checks, attack rolls, and saving throws.
-          Your movement speed and your maximum hit points are halved.`
+          <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
+          <p>Your movement speed and your maximum hit points are halved.</p>`
         }
       }
     },
@@ -460,8 +460,8 @@ export const EXHAUSTION_EFFECTS = [
       "visual-active-effects": {
         data: {
           intro: `
-          You have disadvantage on all ability checks, attack rolls, and saving throws.
-          You cannot move, and your hit point maximum is halved.`
+          <p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>
+          <p>You cannot move, and your hit point maximum is halved.</p>`
         }
       }
     },

@@ -51,14 +51,13 @@ Hooks.once("ready", () => {
     Hooks.on("dnd5e.rollAttack", ZHELL_ANIMATIONS.onItemRollAttack);
     Hooks.on("dnd5e.rollDamage", ZHELL_ANIMATIONS.onItemRollDamage);
   }
-  ZHELL_ANIMATIONS.collapsibleSetup();
 
   // add 'view scene' to scene config headers.
   if (game.user.isGM) {
     Hooks.on("getSceneConfigHeaderButtons", (app, array) => {
       const viewBtn = {
         class: `${MODULE}-view-scene`,
-        icon: "fas fa-eye",
+        icon: "fa-solid fa-eye",
         label: "View Scene",
         onclick: async () => await app.object.view()
       }

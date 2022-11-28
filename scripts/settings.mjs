@@ -224,7 +224,7 @@ const registerSettingsMenus = function () {
     name: "Replacements",
     hint: "A collection of replacements for core and system content.",
     label: "Replacement Settings",
-    icon: "fas fa-atlas",
+    icon: "fa-solid fa-atlas",
     type: ReplacementsSubmenu,
     restricted: true
   });
@@ -246,7 +246,7 @@ const registerSettingsMenus = function () {
     name: "Additions",
     hint: "A collection of additions to dnd5e system content.",
     label: "Addition Settings",
-    icon: "fas fa-atlas",
+    icon: "fa-solid fa-atlas",
     type: AdditionsSubmenu,
     restricted: true
   });
@@ -270,7 +270,7 @@ const registerSettingsMenus = function () {
     name: "Sheet Edits",
     hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
     label: "Sheet Settings",
-    icon: "fas fa-atlas",
+    icon: "fa-solid fa-atlas",
     type: SheetSubmenu,
     restricted: true
   });
@@ -301,7 +301,7 @@ const registerSettingsMenus = function () {
     name: "Sheet Colors",
     hint: "Settings for the colors that are applied to the actor sheets.",
     label: "Sheet Color Settings",
-    icon: "fas fa-paint-roller",
+    icon: "fa-solid fa-paint-roller",
     type: ColorPickerSubmenu,
     restricted: false
   });
@@ -324,7 +324,7 @@ const registerSettingsMenus = function () {
     name: "Rarity Colors",
     hint: "Settings for the colors that are applied to items on an actor sheet depending on rarity.",
     label: "Item Rarity Color Settings",
-    icon: "fas fa-paint-roller",
+    icon: "fa-solid fa-paint-roller",
     type: RarityColorsSubmenu,
     restricted: false
   });

@@ -289,7 +289,7 @@ function mainForaging(event) {
   new ForageDialog({
     object: actor,
     title: `Materia Medica: ${actor.name}`,
-    content: "<p>Are you foraging or crafting?</p>",
+    content: "Are you foraging or crafting?",
     buttons: {
       forage: {
         icon: "<i class='fa-solid fa-leaf'></i>",

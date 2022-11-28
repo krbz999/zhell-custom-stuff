@@ -23,27 +23,27 @@ export async function foraging(actor) {
   new Dialog({
     title: "Foraging",
     content: `
-        <p>You are attempting to forage for materials. Please input the number of hours, and select your method of foraging.</p>
-        <p style="text-align:center">The current DC is <strong>${targetValue}</strong>.</p>
-        <hr>
-        <form>
-            <div class="form-group">
-                <label>Hours of foraging:</label>
-                <div class="form-fields">
-                    <select id="forage-hours">${hours}</select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Select skill or tool:</label>
-                <div class="form-fields">
-                    <select id="forage-checktype">${options}</select>
-                </div>
-            </div>
-        </form>
-        <hr>`,
+    <p>You are attempting to forage for materials. Please input the number of hours, and select your method of foraging.</p>
+    <p style="text-align:center">The current DC is <strong>${targetValue}</strong>.</p>
+    <hr>
+    <form>
+      <div class="form-group">
+        <label>Hours of foraging:</label>
+        <div class="form-fields">
+          <select id="forage-hours">${hours}</select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Select skill or tool:</label>
+        <div class="form-fields">
+          <select id="forage-checktype">${options}</select>
+        </div>
+      </div>
+    </form>
+    <hr>`,
     buttons: {
       go: {
-        icon: '<i class="fas fa-check"></i>',
+        icon: '<i class="fa-solid fa-check"></i>',
         label: "Forage!<br><em>(Hold shift/ctrl/alt to fast-forward all rolls)</em>",
         callback: async (html) => {
           const selection = html[0].querySelector("#forage-checktype").value;
@@ -71,9 +71,7 @@ export async function foraging(actor) {
           const speaker = ChatMessage.getSpeaker({ actor });
           const actorName = actor.name.split(" ")[0];
           const result = `${counter} ${counter === 1 ? "unit" : "units"}`;
-          const content = `
-                    ${actorName} went foraging for ${num} hours and gathered
-                    <strong>${result}</strong> of foraged materials (added to character sheet).`;
+          const content = `${actorName} went foraging for ${num} hours and gathered <strong>${result}</strong> of foraged materials (added to character sheet).`;
           return ChatMessage.create({ speaker, content });
         }
       }
@@ -232,7 +230,7 @@ export async function crafting(actor) {
     content,
     buttons: {
       go: {
-        icon: '<i class="fas fa-check"></i>',
+        icon: '<i class="fa-solid fa-check"></i>',
         label: "Select Method",
         callback: (html) => {
           const type = html[0].querySelector(".method-select").value;

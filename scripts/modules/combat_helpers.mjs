@@ -9,7 +9,7 @@ export class ZHELL_COMBAT {
     if (!tokenDoc.combatant) return;
     const hpUpdate = foundry.utils.getProperty(updates, "actorData.system.attributes.hp.value");
     if (hpUpdate === undefined || hpUpdate > 0) return;
-    const effect = CONFIG.statusEffects.find(e => e.id === "dead");
+    const effect = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED);
     await tokenDoc.object.toggleEffect(effect, { overlay: true });
     return tokenDoc.combatant.update({ defeated: true });
   }
