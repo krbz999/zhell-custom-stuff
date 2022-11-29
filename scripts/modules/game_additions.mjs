@@ -30,3 +30,13 @@ export function ZHELL_ADDITIONS() {
     CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
   }
 }
+
+export function _sceneHeaderView(app, array) {
+  const viewBtn = {
+    class: `${MODULE}-view-scene`,
+    icon: "fa-solid fa-eye",
+    label: "View Scene",
+    onclick: async () => await app.object.view()
+  }
+  array.unshift(viewBtn);
+}

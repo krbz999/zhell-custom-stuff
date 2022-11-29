@@ -1,3 +1,5 @@
+import { database } from "../../sources/animations.mjs";
+
 export class ZHELL_ANIMATIONS {
   static onCreateMeasuredTemplate(templateDoc, _, userId) {
     if (userId !== game.user.id) return;
@@ -24,11 +26,32 @@ export class ZHELL_ANIMATIONS {
       return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
 
-    // CALL LIGHTNING
+    // CALL LIGHTNING.
     check = item.name.includes("Call Lightning");
     if (check) {
       const file = "jb2a.lightning_strike.blue.0";
       return new Sequence().effect().file(file).atLocation(templateDoc).scale(2).play();
+    }
+
+    // JEWEL OF THE LIVING LIGHTNING.
+    check = item.name.includes("Jewel of the Living Lightning");
+    if (check) {
+      const file = "zhell.effects.spells.lightningBolt.yellow.0";
+      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).duration(2000).atLocation(templateDoc).stretchTo(templateDoc).play();
+    }
+
+    // BURNING HANDS.
+    check = item.name.includes("Burning Hands");
+    if (check) {
+      const file = "jb2a.burning_hands.01.orange";
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
+    }
+
+    // STAR DUST.
+    check = item.name.includes("Star Dust");
+    if (check) {
+      const file = "jb2a.side_impact.part.slow.star.pinkyellow";
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
   }
 
@@ -41,10 +64,34 @@ export class ZHELL_ANIMATIONS {
     let check;
 
     // ELDRITCH BLAST.
-    check = name === "Eldritch Blast";
+    check = name.includes("Eldritch Blast");
     if (check) {
       if (!target || !token) return;
-      const file = "jb2a.eldritch_blast.rainbow";
+      const file = "jb2a.eldritch_blast";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // FIRE BOLT.
+    check = name.includes("Fire Bolt");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.fire_bolt.orange";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // RADIANT FLAME.
+    check = name.includes("Radiant Flame");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.chain_lightning.secondary.yellow";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // BOW OF THE OUTCAST.
+    check = name.includes("Bow of the Outcast");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.arrow.physical";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
   }
@@ -73,7 +120,7 @@ export class ZHELL_ANIMATIONS {
     }
 
     // HEALING WORD (Devinn).
-    check = name === "Healing Word" && actor.name.includes("Devinn");
+    check = name.includes("Healing Word") && actor.name.includes("Devinn");
     if (check) {
       if (!target) return;
       const file = "jb2a.cure_wounds.400px.red";
@@ -81,11 +128,27 @@ export class ZHELL_ANIMATIONS {
     }
 
     // ELDRITCH SMITE.
-    check = name === "Eldritch Smite";
+    check = name.includes("Eldritch Smite");
     if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.purplepink";
       return new Sequence().effect().attachTo(target).file(file).play();
+    }
+
+    // DIVINE SMITE.
+    check = name.includes("Divine Smite");
+    if (check) {
+      if (!target) return;
+      const file = "jb2a.divine_smite.target.greenyellow";
+      return new Sequence().effect().attachTo(target).file(file).play();
+    }
+
+    // LIGHTNING TENDRIL.
+    check = name.includes("Lightning Tendril");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.chain_lightning.secondary.blue";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
   }
 
@@ -124,17 +187,38 @@ export class ZHELL_ANIMATIONS {
         offset: { x: canvas.grid.size / 3, y: -canvas.grid.size / 4 }
       }).size(canvas.grid.size).play();
     }
+
+    // TOLL THE DEAD.
+    check = name.includes("Toll the Dead");
+    if (check) {
+      if (!target) return;
+      const file = "jb2a.toll_the_dead.purple.complete";
+      return new Sequence().effect().file(file).scale(0.5).atLocation(target).play();
+    }
+  }
+
+  static onRollSkill(actor, roll, skill) {
+    const token = actor.token?.object ?? actor.getActiveTokens()[0];
+    let check;
+
+    // STEALTH.
+    check = skill === "ste";
+    if (check) {
+      if (!token) return;
+      const file = "jb2a.sneak_attack.";
+      return new Sequence().effect().file(file).attachTo(token).play();
+    }
   }
 }
 
+// COLLAPSIBLES.
 Hooks.once("ready", function() {
   document.addEventListener("click", (event) => {
-    const t = event.target.closest(".zhell-collapsible-header");
-    if (!t) return;
-    t.closest(".zhell-collapsible").classList.toggle("active");
+    event.target.closest(".zhell-collapsible-header")?.closest(".zhell-collapsible")?.classList.toggle("active");
   });
 });
 
+// ADD DICE.
 export function _initD20(dice3d) {
   dice3d.addSystem({ id: "zhell-custom-stuff", name: "The Rollsmith - Package Jam 2022" }, false);
   dice3d.addDicePreset({
@@ -145,7 +229,13 @@ export function _initD20(dice3d) {
   });
 }
 
-Hooks.on("renderJournalPageSheet", function(app, html) {
+// SET UP SEQUENCER DB.
+export function _sequencerSetup() {
+  Sequencer.Database.registerEntries("zhell", database);
+}
+
+// CUSTOM JOURNAL PAGE STUFF.
+export function _classesPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Available Classes") return;
   const selector = "a.content-link[data-pack='zhell-catalogs.spells']";
   html[0].querySelectorAll(selector).forEach(s => {
@@ -171,19 +261,34 @@ Hooks.on("renderJournalPageSheet", function(app, html) {
     DIV.setAttribute("data-uuid", uuid);
     p.appendChild(DIV);
   });
-});
+}
 
-Hooks.on("renderJournalPageSheet", function(app, html) {
+export function _equipmentPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Table Rules") return;
   if (app.object.name !== "Equipment") return;
   html[0].addEventListener("click", (event) => {
     event.target.closest(".zhell-equipment-tables :is(h1,h2,h3)")?.classList.toggle("collapsed");
   });
-});
+}
 
-Hooks.on("preUpdateToken", function(doc, update) {
+// ROTATE TOKENS WHEN THEY MOVE.
+export function _rotateTokensOnMovement(doc, update) {
   if (doc.lockRotation) return;
   if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
   const ray = new Ray(doc, { x: update.x ?? doc.x, y: update.y ?? doc.y });
   update.rotation = ray.angle * 180 / Math.PI - 90;
-});
+}
+
+const gr = new PIXI.Graphics();
+function drawCircle(graphics, tokenDoc, radius) {
+  const [x, y] = canvas.grid.getCenter(tokenDoc.x, tokenDoc.y);
+  const p = graphics
+    .beginFill("0xffffff", 0.8)
+    .drawCircle(x, y, radius)
+    .endFill()
+    .beginHole()
+    .drawCircle(x, y, radius - 5)
+    .endHole();
+  canvas.app.stage.addChild(p);
+  return p;
+}
