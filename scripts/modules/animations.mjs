@@ -53,6 +53,13 @@ export class ZHELL_ANIMATIONS {
       const file = "jb2a.side_impact.part.slow.star.pinkyellow";
       return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
+
+    // EVARD'S BLACK TENTACLES.
+    check = item.name.includes("Black Tentacles");
+    if (check) {
+      const file = "jb2a.arms_of_hadar.dark_purple";
+      return new Sequence().effect().file(file).attachTo(templateDoc).tieToDocuments(templateDoc).persist().play();
+    }
   }
 
   static onItemRollAttack(item, roll, ammo) {

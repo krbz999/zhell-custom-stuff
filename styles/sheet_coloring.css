@@ -59,12 +59,12 @@ body :root {
 /* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name i.attuned {
   color: var(--itemAttuned) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 .dnd5e.sheet.actor .inventory-list .item .item-name i.not-attuned {
   color: var(--itemNotAttuned) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 .dnd5e.sheet.actor .inventory-list .item-detail.attunement i:hover {
@@ -76,28 +76,28 @@ body :root {
 /* Equipment State icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
   color: var(--itemEquipped) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle:not(.active) i {
   color: var(--itemNotEquipped) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 /* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
   color: var(--spellPrepared) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
   color: var(--spellAlwaysPrepared) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
   color: var(--spellNotPrepared) !important;
-  filter: drop-shadow(0px 0px 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 /* Delete icon for items and effects. */
@@ -119,16 +119,16 @@ body :root {
 
 /* proficiencies */
 /* half proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fa-solid.fa-adjust {
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust {
   color: var(--proficientHalf) !important;
 }
 
 /* proficient */
-.dnd5e.sheet.actor .proficiency-toggle .fa-solid.fa-check {
+.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check {
   color: var(--proficientNormal) !important;
 }
 
 /* twice proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fa-solid.fa-check-double {
+.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
   color: var(--proficientTwice) !important;
 }
