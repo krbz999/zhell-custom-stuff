@@ -388,6 +388,10 @@ export class DM_TOOL {
 Hooks.on("dnd5e.preRollDamage", (item, config) => {
   const types = item.getDerivedDamageLabel().map(d => d.damageType);
   config.messageData[`flags.${MODULE}.damageTypes`] = types;
+  config.messageData[`flags.${MODULE}.properties`] = Object.entries(item.system.properties ?? {}).reduce((acc, [key, bool]) => {
+    if (bool) acc.push(key);
+    return acc;
+  }, []);
 });
 
 /**
@@ -399,12 +403,14 @@ Hooks.on("dnd5e.preRollDamage", (item, config) => {
 
 Hooks.on("renderChatMessage", (message, html) => {
   if (!game.user.isGM) return;
-  const isDamage = message.getFlag("dnd5e", "roll.type") === "damage";
+  const data = message.getFlag("dnd5e", "roll");
+  if (!data) return;
+  const isDamage = data.type === "damage";
   if (!isDamage) return;
   const flavor = html[0].querySelector(".flavor-text");
   if (!flavor) return;
 
-  const types = message.getFlag(MODULE, "damageTypes");
+  const types = message.getFlag(MODULE, "damageTypes") ?? [];
   const total = message.rolls.reduce((acc, roll) => acc += roll.total, 0);
 
   const totals = [[]];
@@ -424,6 +430,7 @@ Hooks.on("renderChatMessage", (message, html) => {
     const tokens = canvas.tokens.controlled;
     const parts = foundry.utils.duplicate(totals);
     const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
-    return ZHELL.token.applyDamage(tokens, parts, { global });
+    const properties = message.getFlag(MODULE, "properties") ?? [];
+    return ZHELL.token.applyDamage(tokens, parts, { global, properties });
   });
 });
