@@ -57,44 +57,39 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
     const beforeThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.inspiration");
     beforeThis.parentNode.insertBefore(materia, beforeThis);
 
-    if (!actor.isOwner) return;
-
-    // create listeners (black magic).
-    if (sheet.zhell?.foraging === undefined) {
-      foundry.utils.setProperty(sheet, "zhell.foraging", mainForaging.bind(sheet.object));
-      sheet.element[0].addEventListener("click", sheet.zhell.foraging);
-    } else {
-      sheet.element[0].removeEventListener("click", sheet.zhell.foraging);
-      sheet.element[0].addEventListener("click", sheet.zhell.foraging);
-    }
-  }
-
-  if (showSpellSlots) {
-    const options = ["pact", "spell1", "spell2", "spell3", "spell4",
-      "spell5", "spell6", "spell7", "spell8", "spell9"];
-    const data = sheet.object.system.spells;
-    for (const o of options) {
-      const max = html[0].querySelector(`.spell-max[data-level=${o}]`);
-      if (!max) continue;
-      const beforeThis = max.closest(".spell-slots");
-      if (data[o].max === 0) continue;
-      for (let i = data[o].max; i > 0; i--) {
-        let span = document.createElement("SPAN");
-        beforeThis.insertAdjacentElement("beforeBegin", span)
-        if (i <= data[o].value) span.classList.add("dot");
-        else span.classList.add("dot", "empty");
+    if (actor.isOwner) {
+      // create listeners (black magic).
+      if (sheet.zhell?.foraging === undefined) {
+        foundry.utils.setProperty(sheet, "zhell.foraging", mainForaging.bind(sheet.object));
+        sheet.element[0].addEventListener("click", sheet.zhell.foraging);
+      } else {
+        sheet.element[0].removeEventListener("click", sheet.zhell.foraging);
+        sheet.element[0].addEventListener("click", sheet.zhell.foraging);
       }
     }
   }
 
+  if (showSpellSlots) {
+    Object.entries(sheet.object.system.spells ?? {}).forEach(([key, { value, max }]) => {
+      const _max = html[0].querySelector(`.spell-max[data-level=${key}]`);
+      if (!max || !_max) return;
+      const beforeThis = _max.closest(".spell-slots");
+      for (let i = max; i > 0; i--) {
+        const span = document.createElement("SPAN");
+        beforeThis.insertAdjacentElement("beforeBegin", span)
+        if (i <= value) span.classList.add("dot");
+        else span.classList.add("dot", "empty");
+      }
+    });
+  }
+
   if (showLimitedUses) {
-    const itemUses = sheet.object.items.filter(i => !!i.hasLimitedUses);
-    for (const o of itemUses) {
+    sheet.object.items.filter(i => !!i.hasLimitedUses).forEach(o => {
       const { value, max } = o.system.uses;
-      if (max === 0) continue;
+      if (!max) return;
       const itemHTML = html[0].querySelector(`.item[data-item-id='${o.id}']`);
       // skip if item is hidden via filter.
-      if (!itemHTML) continue;
+      if (!itemHTML) return;
       const position = o.type === "spell" ? "beforeBegin" : "afterEnd";
       const adjacent = o.type === "spell" ? itemHTML.querySelector(".item-detail.spell-uses") : itemHTML.querySelector(".item-name");
 
@@ -104,19 +99,18 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
         dotContainer.innerHTML = Array.fromRange(Math.min(10, max)).reduce((acc, e) => {
           if (e < value) return acc + `<span class="dot"></span>`;
           else return acc + `<span class="dot empty"></span>`;
-        }, ``) + (max > 10 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
+        }, "") + (max > 10 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
         adjacent.insertAdjacentElement(position, dotContainer);
-      }
-      else {
+      } else {
         const dotContainer = document.createElement("DIV");
         dotContainer.classList.add("zhell-dots", "flexrow");
         dotContainer.innerHTML = Array.fromRange(Math.min(5, max)).reduce((acc, e) => {
           if (e < value) return acc + `<span class="dot"></span>`;
           else return acc + `<span class="dot empty"></span>`;
-        }, ``) + (max > 5 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
+        }, "") + (max > 5 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
         adjacent.insertAdjacentElement(position, dotContainer);
       }
-    }
+    });
   }
 
   if (showSpellSlots || showLimitedUses) {
@@ -142,104 +136,91 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
 
   // color magic items.
   if (true) {
-    const items = html[0].querySelectorAll(".items-list .item");
-    for (const item of items) {
+    html[0].querySelectorAll(".items-list .item").forEach(item => {
       const id = item.dataset.itemId;
-      if (!id) continue;
-      const rarity = sheet.object.items.get(id).system.rarity;
+      const rarity = sheet.object.items.get(id)?.system.rarity;
       if (rarity) item.classList.add(rarity.slugify().toLowerCase());
-    }
+    });
   }
 
   // set health color.
   if (true) {
     const { value, max } = sheet.object.system.attributes.hp;
-    const nearDeath = (Math.abs(value) ?? 0) / (max ?? 1) < 0.33;
-    const bloodied = (Math.abs(value) ?? 0) / (max ?? 1) < 0.66;
+    const nearDeath = Math.max(value, 0) / (max ?? 1) < 0.33;
+    const bloodied = Math.max(value, 0) / (max ?? 1) < 0.66;
 
     const hp = html[0].querySelector("input[name='system.attributes.hp.value']");
     if (nearDeath) {
       hp.classList.add("near-death");
       hp.classList.remove("bloodied");
-    }
-    else if (bloodied) {
+    } else if (bloodied) {
       hp.classList.remove("near-death");
       hp.classList.add("bloodied");
-    }
-    else {
-      hp.classList.remove("near-death");
-      hp.classList.remove("bloodied");
-    }
+    } else hp.classList.remove("near-death", "bloodied");
   }
 
   // disable exhaustion, since that's overridden in effects.
   if (true) {
     const exh = html[0].querySelector(".counter.flexrow.exhaustion");
-    if (!exh) return;
+    if (exh) {
 
-    // disable input.
-    exh.querySelector(".counter-value input").disabled = true;
+      // disable input.
+      exh.querySelector(".counter-value input").disabled = true;
 
-    // add class and action to h4.
-    const header = exh.querySelector("h4");
-    header.classList.add("rollable");
-    header.setAttribute("data-action", "updateExhaustion");
+      // add class and action to h4.
+      const header = exh.querySelector("h4");
+      header.classList.add("rollable");
+      header.setAttribute("data-action", "updateExhaustion");
 
-    // create listeners (black magic).
-    if (!sheet.actor.isOwner) return;
-    if (sheet.zhell?.exhaustion === undefined) {
-      foundry.utils.setProperty(sheet, "zhell.exhaustion", exhaustionUpdate.bind(sheet.object));
-      sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
-    } else {
-      sheet.element[0].removeEventListener("click", sheet.zhell.exhaustion);
-      sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
+      // create listeners (black magic).
+      if (sheet.actor.isOwner) {
+        if (sheet.zhell?.exhaustion === undefined) {
+          foundry.utils.setProperty(sheet, "zhell.exhaustion", exhaustionUpdate.bind(sheet.object));
+          sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
+        } else {
+          sheet.element[0].removeEventListener("click", sheet.zhell.exhaustion);
+          sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
+        }
+      }
     }
   }
 
   // makes headers collapsible.
   if (collapsibleHeaders) {
-    // get the headers.
-    const headers = html[0].querySelectorAll(".dnd5e .items-list .items-header h3");
-    const bioHeaders = html[0].querySelectorAll(".dnd5e.sheet.actor .characteristics label");
-
-    // for each header: add listener, and set initial display type.
-    for (const header of headers) {
+    html[0].querySelectorAll(".dnd5e .items-list .items-header h3").forEach(header => {
       const itemHeader = header.closest(".items-header.flexrow");
-      if (!itemHeader) continue;
-
+      if (!itemHeader) return;
       // apply collapse class for hover effect.
       itemHeader.classList.toggle("zhell-header-collapse");
-
       // read from sheet whether no-create should be applied immediately.
       const applyNoCreate = foundry.utils.getProperty(sheet, `section-visibility.${header.innerText}`);
-
       // initially add 'no-create' class if applicable.
       if (applyNoCreate) itemHeader.classList.toggle("no-create");
-
       // set up listeners to change display.
-      header.addEventListener("click", (event) => {
+      header.addEventListener("click", () => {
         const currentDisplay = foundry.utils.getProperty(sheet, `section-visibility.${header.innerText}`);
         foundry.utils.setProperty(sheet, `section-visibility.${header.innerText}`, !currentDisplay);
         itemHeader.classList.toggle("no-create");
       });
-    }
-    for (const header of bioHeaders) {
+    });
+
+    html[0].querySelectorAll(".dnd5e.sheet.actor .characteristics label").forEach(header => {
       // read from sheet, should be collapsed?
       const collapsed = foundry.utils.getProperty(sheet, `section-visibility.${header.innerText}`);
       // add initial 'no-edit' class if true.
       if (collapsed) header.classList.toggle("no-edit");
       // set up listeners to toggle.
-      header.addEventListener("click", (event) => {
+      header.addEventListener("click", () => {
         const currentDisplay = foundry.utils.getProperty(sheet, `section-visibility.${header.innerText}`);
         foundry.utils.setProperty(sheet, `section-visibility.${header.innerText}`, !currentDisplay);
         header.classList.toggle("no-edit");
       });
-    }
+    });
   }
 }
 
 // hooks on renderTraitSelector
-export function ZHELL_TRAITS(selector, html, context) {
+export function ZHELL_TRAITS(selector, html) {
   const { reformatTraitSelectors } = game.settings.get(MODULE, SHEET);
 
   if (reformatTraitSelectors) {
@@ -252,14 +233,12 @@ export function ZHELL_TRAITS(selector, html, context) {
       "system.traits.ci"
     ].includes(selector.attribute)) {
       classList.add("zhell-traits");
-    }
-    else if ([
+    } else if ([
       "system.traits.toolProf",
       "system.traits.armorProf"
     ].includes(selector.attribute)) {
       classList.add("zhell-profs");
-    }
-    else if ([
+    } else if ([
       "system.traits.weaponProf"
     ].includes(selector.attribute)) {
       classList.add("zhell-weapons");
@@ -321,10 +300,9 @@ async function dotToggle(event) {
     if (!level) return;
     const value = actor.system.spells[level].value;
     return actor.update({ [`system.spells.${level}.value`]: value + diff });
-  }
-  else {
-    const { value } = item.system.uses;
-    if (value === undefined) return;
+  } else {
+    const value = item.system.uses?.value;
+    if (!Number.isNumeric(value)) return;
     return item.update({ "system.uses.value": value + diff });
   }
 }
@@ -346,11 +324,9 @@ function toggleAttunement(event) {
   const item = this.items.get(itemId);
   if (!item) return;
 
-  if (!!attuned) {
-    return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED });
-  } else if (!!not_attuned) {
-    return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED });
-  }
+  if (!!attuned) return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.REQUIRED });
+  else if (!!not_attuned) return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes.ATTUNED });
+  return null;
 }
 
 export function refreshColors() {

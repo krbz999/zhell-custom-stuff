@@ -7,30 +7,48 @@
 }
 
 /* Token HUD status effects. */
-#token-hud .status-effects .effect-control {
+#token-hud .col.right .status-effects {
+  width: max-content;
+  column-gap: 0.1em;
+  grid-template-columns: 1fr 1fr 1fr;
+  color: var(--color-text-light-1);
+}
+
+#token-hud .col.right .status-effects .status-effect {
+  display: inline-grid;
+  height: fit-content;
+  align-items: center;
+  grid-template-columns: 2fr 7fr;
+  min-width: max-content;
+}
+
+#token-hud .col.right .status-effects .status-effect.active.overlay {
+  color: deepskyblue;
+  opacity: 1;
+  border: none;
+}
+
+#token-hud .col.right .status-effects .status-effect.active {
+  color: yellowgreen;
+  opacity: 1;
+}
+
+#token-hud .col.right .status-effects .status-effect:is(.active, :hover)>* {
+  opacity: 1;
+}
+
+#token-hud .col.right .status-effects .status-effect-img {
   width: 36px;
   height: 36px;
   margin: 0;
-  padding: 0;
   border: none;
   opacity: 0.15;
 }
 
-#token-hud .status-effects {
-  visibility: hidden;
-  position: absolute;
-  left: 65px;
-  top: 0;
-  display: grid;
-  padding: 3px;
-  box-sizing: content-box;
-  width: 148px;
-  grid-template-columns: repeat(4, 25%);
-  background: rgba(0, 0, 0, 0.6);
-  box-shadow: 0 0 15px var(--color-shadow-dark);
-  border: 1px solid var(--color-border-dark-3);
-  border-radius: 4px;
-  pointer-events: all;
+#token-hud .col.right .status-effects .status-effect-label {
+  font-size: 18px;
+  text-align: left;
+  margin: 0 0 0 3px;
 }
 
 /* collapsible items and effect headers */
@@ -172,4 +190,14 @@ a:active {
 
 .tab#chat {
   margin: -5px 0 0;
+}
+
+/* APPLY DAMAGE */
+span.flavor-text.zhell-apply-damage-flavor:hover {
+  text-shadow: 0 0 8px red;
+  cursor: pointer;
+}
+
+span.flavor-text.zhell-apply-damage-flavor {
+  font-weight: bold;
 }

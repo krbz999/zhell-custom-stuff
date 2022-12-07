@@ -21,7 +21,8 @@ export class api {
         getOwnerIds: ZHELL_UTILS.get_token_owner_ids,
         multiTool: DM_TOOL.RENDER,
         contained: ZHELL_UTILS.checkTokenInTemplate,
-        selectContained: ZHELL_UTILS.selectContained
+        selectContained: ZHELL_UTILS.selectContained,
+        applyDamage: (...T) => DM_TOOL.applyDamageToTokens(...T)
       },
       helper: {
         roman: ZHELL_UTILS.romanize,

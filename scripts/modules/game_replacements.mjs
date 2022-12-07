@@ -165,11 +165,10 @@ export function ZHELL_REPLACEMENTS() {
     }
 
     // delete some weapon properties.
-    const propertiesToDelete = ["fir", "rel"]; // firearm, reload.
-
-    for (const del of propertiesToDelete) {
-      delete CONFIG.DND5E.weaponProperties[del];
-    }
+    const del = ["fir", "rel"];
+    del.forEach(property => {
+      delete CONFIG.DND5E.weaponProperties[property];
+    });
   }
 
   if (replaceStatusEffects) {

@@ -58,15 +58,16 @@ export class ZHELL_ANIMATIONS {
     check = item.name.includes("Black Tentacles");
     if (check) {
       const file = "jb2a.arms_of_hadar.dark_purple";
-      return new Sequence().effect().file(file).attachTo(templateDoc).tieToDocuments(templateDoc).persist().play();
+      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().play();
     }
   }
 
-  static onItemRollAttack(item, roll, ammo) {
+  static onItemRollAttack(item, roll, ammoUpdate) {
     const { name, actor } = item;
     if (!actor) return;
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
+    const ammo = actor.items.get(ammoUpdate[0]?._id);
 
     let check;
 
@@ -101,6 +102,30 @@ export class ZHELL_ANIMATIONS {
       const file = "jb2a.arrow.physical";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
+
+    // GUIDING BOLT.
+    check = name.includes("Guiding Bolt");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.bullet";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // BOWS in general.
+    check = ["shortbow", "longbow"].includes(item.system.baseItem);
+    if (check) {
+      if (!target || !token || !ammo) return;
+      const file = "jb2a.arrow.physical.white.01";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // CROSSBOWS in general.
+    check = ["handcrossbow", "heavycrossbow", "lightcrossbow"].includes(item.system.baseItem);
+    if (check) {
+      if (!target || !token || !ammo) return;
+      const file = "jb2a.bolt.physical.white02";
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
   }
 
   static onItemRollDamage(item, roll) {
@@ -112,7 +137,7 @@ export class ZHELL_ANIMATIONS {
     let check;
 
     // HEALING WORD (Arkorow).
-    check = name === "Healing Word" && actor.name.includes("Arkorow");
+    check = name.includes("Healing Word") && actor.name.includes("Arkorow");
     if (check) {
       const file1 = "jb2a.healing_generic.400px.yellow";
       const file2 = "jb2a.butterflies.few.bright_orange";
@@ -168,7 +193,7 @@ export class ZHELL_ANIMATIONS {
     let check;
 
     // CALL OF THE PACK/CLUTCH.
-    check = name.startsWith("Call of the ");
+    check = name.startsWith("Call of the ") && actor.name.includes("Mordus");
     if (check) {
       if (!token) return;
       const file = "assets/images/tiles/symbols/holy/hav_draconiz_gold.webp";
@@ -178,7 +203,7 @@ export class ZHELL_ANIMATIONS {
     }
 
     // SPOTLIGHT.
-    check = name === "Spotlight";
+    check = name.includes("Spotlight") && actor.name.includes("Arkorow");
     if (check) {
       if (!token) return;
       const file = "jb2a.template_circle.out_pulse.01.burst.bluewhite";
@@ -186,7 +211,7 @@ export class ZHELL_ANIMATIONS {
     }
 
     // PIPE (Drazvik).
-    check = name === "Pipe" && actor.name.includes("Drazvik");
+    check = name.includes("Pipe") && actor.name.includes("Drazvik");
     if (check) {
       if (!token) return;
       const file = "jb2a.smoke.puff.centered.dark_green.1";

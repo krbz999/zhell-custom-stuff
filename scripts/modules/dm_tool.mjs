@@ -1,3 +1,4 @@
+import { MODULE } from "../const.mjs";
 /** COMBINED GM TOOL FOR NPC UTILITY
  * A tool for prompting selected (not player owned) tokens for either (or all):
  *
@@ -277,9 +278,7 @@ export class DM_TOOL {
   }
   // deletes a damage or effect row
   static deleteDamageOrEffectRow(event) {
-    const target = event.target.closest("[name='status-delete'], [name='damage-delete']");
-    if (!target) return;
-    target.closest("div.form-group").remove();
+    event.target.closest("[name='status-delete'], [name='damage-delete']")?.closest("div.form-group").remove();
   }
 
   static async RENDER() {
@@ -382,7 +381,49 @@ export class DM_TOOL {
   // function to gather status ids to remove them from tokens
   static gatherStatusIds(html) {
     const effectSelects = html[0].querySelectorAll("[name='status-effects']");
-    const statusIds = Array.from(effectSelects).map(i => i.value);
-    return statusIds;
+    return Array.from(effectSelects).map(i => i.value);
   }
 }
+
+Hooks.on("dnd5e.preRollDamage", (item, config) => {
+  const types = item.getDerivedDamageLabel().map(d => d.damageType);
+  config.messageData[`flags.${MODULE}.damageTypes`] = types;
+});
+
+/**
+ * TODO:
+ * Somehow append damage type to each die or formula.
+ * Currently "1d6 + 1d4" + "1d8" with two different damage types
+ * will treat the '1d4' as the second damage type instead of the first.
+ */
+
+Hooks.on("renderChatMessage", (message, html) => {
+  if (!game.user.isGM) return;
+  const isDamage = message.getFlag("dnd5e", "roll.type") === "damage";
+  if (!isDamage) return;
+  const flavor = html[0].querySelector(".flavor-text");
+  if (!flavor) return;
+
+  const types = message.getFlag(MODULE, "damageTypes");
+  const total = message.rolls.reduce((acc, roll) => acc += roll.total, 0);
+
+  const totals = [[]];
+  let otherSum = 0;
+  for (let i = 1; i < message.rolls[0].dice.length; i++) {
+    const tot = message.rolls[0].dice[i].total;
+    totals.push([tot, types[i] ?? types[0]]);
+    otherSum += tot;
+  }
+  totals[0] = [total - otherSum, types[0]];
+  html[0].querySelector(".flavor-text")?.classList.add("zhell-apply-damage-flavor");
+
+  html[0].addEventListener("click", function(event) {
+    const f = event.target.closest(".flavor-text");
+    if (!f) return;
+
+    const tokens = canvas.tokens.controlled;
+    const parts = foundry.utils.duplicate(totals);
+    const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
+    return ZHELL.token.applyDamage(tokens, parts, { global });
+  });
+});

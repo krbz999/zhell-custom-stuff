@@ -24,3 +24,42 @@ export class ZHELL_COMBAT {
     return ammo.displayCard();
   }
 }
+
+Hooks.on("renderTokenHUD", (hud, html, tokenData) => {
+  const innerHTML = Object.values(tokenData.statusEffects).reduce((acc, { id, title, src, isActive, isOverlay }) => {
+    return acc + `
+    <div src="${src}" class="status-effect effect-control ${isActive ? 'active' : ''} ${isOverlay ? 'overlay' : ''}" data-status-id="${id}">
+      <img class="status-effect-img" src="${src}">
+      <div class="status-effect-label">${title}</div>
+    </div>`;
+  }, "");
+  const panel = html[0].querySelector(".status-effects");
+  panel.innerHTML = innerHTML;
+});
+
+Hooks.on("renderChatMessage", function(message, html) {
+  if (!game.user.isGM) return;
+  const saveButton = html[0].querySelector("button[data-action='save']");
+  if (!saveButton) return;
+  const [_, __, ___, tar] = saveButton.innerText.trim().split(" ");
+  const abilityId = saveButton.dataset.ability;
+  if (!tar || !abilityId) return;
+
+  const BUTTON = document.createElement("BUTTON");
+  BUTTON.innerHTML = "[ Group Saving Throw ]";
+  saveButton.after(BUTTON);
+  BUTTON.addEventListener("click", (e) => rollSaves(e, abilityId, Number(tar)));
+});
+
+async function rollSaves(event, abilityId, targetValue) {
+  const tokens = canvas.tokens.controlled;
+  const failed = [];
+  for (const token of tokens) {
+    const roll = await token.actor.rollAbilitySave(abilityId, { targetValue, event });
+    if (!roll) continue;
+    if (roll.total < targetValue) failed.push(token);
+  }
+  canvas.tokens.releaseAll();
+  failed.forEach(t => t.control({ releaseOthers: false }));
+  return game.user.updateTokenTargets(failed.map(t => t.id));
+}
