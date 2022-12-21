@@ -1,4 +1,4 @@
-import { ADDITION, COLOR, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY, REPLACEMENT, SHEET } from "./const.mjs";
+import { COLOR, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY } from "./const.mjs";
 import { refreshColors } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
@@ -33,99 +33,49 @@ function _registerSettings() {
   });
 }
 
-class ReplacementsSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
+class SettingsSubmenu extends FormApplication {
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['form'],
+    return mergeObject(super.defaultOptions, {
       popOut: true,
-      width: "550",
+      width: 550,
       height: "auto",
-      template: `/modules/${MODULE}/templates/settings_replacements.hbs`,
-      id: "zhell-settings-submenu-replacers",
-      title: "Replacements",
-      resizable: false
+      template: `modules/${MODULE}/templates/settingsMenu.hbs`,
+      id: "zhell-settings-submenu-additions-and-replacements",
+      title: "Additions and Replacements",
+      resizable: false,
+      classes: [MODULE, "settings-menu"]
     });
   }
+
   async _updateObject(event, formData) {
-    return game.settings.set(MODULE, REPLACEMENT, formData);
+    return game.settings.set(MODULE, "worldSettings", formData);
   }
+
   async getData() {
-    const source = game.settings.get(MODULE, REPLACEMENT);
-    const defaults = {
-      replaceStatusEffects: true,
+    const data = foundry.utils.mergeObject({
+      addConditions: true,
+      addEquipment: true,
+      addPiety: true,
+      addDivine: true,
+      replaceTokenConditions: true,
       replaceLanguages: true,
       replaceTools: true,
       replaceWeapons: true,
-      replaceConsumableTypes: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class AdditionsSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_additions.hbs`,
-      id: "zhell-settings-submenu-additions",
-      title: "Additions",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, ADDITION, formData);
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, ADDITION);
-    const defaults = {
-      addConditions: true,
-      addEquipmentTypes: true,
-      addPiety: true,
-      addDivine: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class SheetSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_sheet.hbs`,
-      id: "zhell-settings-submenu-sheet",
-      title: "Sheet Adjustments",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, SHEET, formData);
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, SHEET);
-    const defaults = {
-      removeResources: true,
+      replaceConsumables: true,
       removeAlignment: true,
       disableInitiativeButton: true,
       createForaging: true,
-      reformatTraitSelectors: true,
       collapsibleHeaders: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
+    }, game.settings.get(MODULE, "worldSettings"));
+    const settings = Object.entries(data).map(s => {
+      return {
+        id: s[0],
+        checked: s[1],
+        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
+        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+      }
+    });
+    return { settings };
   }
 }
 
@@ -135,11 +85,11 @@ class ColorPickerSubmenu extends FormApplication {
   }
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ['form'],
+      classes: [MODULE, "settings-menu"],
       popOut: true,
-      width: "550",
+      width: 550,
       height: "auto",
-      template: `/modules/${MODULE}/templates/settings_colorpickers.hbs`,
+      template: `modules/${MODULE}/templates/settingsColorpickers.hbs`,
       id: "zhell-settings-submenu-colorpickers",
       title: "Character Sheet Color Adjustments",
       resizable: false
@@ -177,11 +127,11 @@ class RarityColorsSubmenu extends FormApplication {
   }
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ['form'],
+      classes: [MODULE, "settings-menu"],
       popOut: true,
-      width: "550",
+      width: 550,
       height: "auto",
-      template: `/modules/${MODULE}/templates/settings_raritycolors.hbs`,
+      template: `modules/${MODULE}/templates/settingsRaritycolors.hbs`,
       id: "zhell-settings-submenu-raritycolors",
       title: "Item Rarity Color Adjustments",
       resizable: false
@@ -205,73 +155,35 @@ class RarityColorsSubmenu extends FormApplication {
   }
 }
 
-const registerSettingsMenus = function () {
-  // replacements.
-  game.settings.register(MODULE, REPLACEMENT, {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {
-      replaceStatusEffects: true,
-      replaceLanguages: true,
-      replaceTools: true,
-      replaceWeapons: true,
-      replaceConsumableTypes: true
-    },
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-  game.settings.registerMenu(MODULE, REPLACEMENT, {
-    name: "Replacements",
-    hint: "A collection of replacements for core and system content.",
-    label: "Replacement Settings",
-    icon: "fa-solid fa-atlas",
-    type: ReplacementsSubmenu,
-    restricted: true
-  });
-
-  // additions.
-  game.settings.register(MODULE, ADDITION, {
+const registerSettingsMenus = function() {
+  game.settings.register(MODULE, "worldSettings", {
     scope: "world",
     config: false,
     type: Object,
     default: {
       addConditions: true,
-      addEquipmentTypes: true,
+      addEquipment: true,
       addPiety: true,
-      addDivine: true
-    },
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-  game.settings.registerMenu(MODULE, ADDITION, {
-    name: "Additions",
-    hint: "A collection of additions to dnd5e system content.",
-    label: "Addition Settings",
-    icon: "fa-solid fa-atlas",
-    type: AdditionsSubmenu,
-    restricted: true
-  });
-
-  // sheet edits.
-  game.settings.register(MODULE, SHEET, {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {
-      removeResources: true,
+      addDivine: true,
+      replaceTokenConditions: true,
+      replaceLanguages: true,
+      replaceTools: true,
+      replaceWeapons: true,
+      replaceConsumables: true,
       removeAlignment: true,
       disableInitiativeButton: true,
       createForaging: true,
-      reformatTraitSelectors: true,
       collapsibleHeaders: true
     },
     onChange: () => SettingsConfig.reloadConfirm({ world: true })
   });
-  game.settings.registerMenu(MODULE, SHEET, {
-    name: "Sheet Edits",
-    hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
-    label: "Sheet Settings",
+
+  game.settings.registerMenu(MODULE, "worldSettings", {
+    name: "Additions and Replacements",
+    hint: "A collection of additions and replacements for core and system content.",
+    label: "Settings Menu",
     icon: "fa-solid fa-atlas",
-    type: SheetSubmenu,
+    type: SettingsSubmenu,
     restricted: true
   });
 

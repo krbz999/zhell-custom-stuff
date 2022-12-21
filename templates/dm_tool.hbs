@@ -4,17 +4,15 @@
     <div class="form-fields">
       <label>Saving Throw:</label>
       <div class="save-inputs">
-        <select name="save-type">{{{abilityOptions}}}</select>
-        <input type="number" name="save-dc" placeholder="Save DC">
+        <select id="save-type">{{{abilityOptions}}}</select>
+        <input type="number" id="save-dc" placeholder="Save DC">
       </div>
       <div class="checks">
         <label for="save-target">Target fails:</label>
-        <input type="checkbox" name="save-target" id="save-target">
+        <input type="checkbox" id="save-target">
       </div>
     </div>
   </div>
-
-  <hr>
 
   <div class="additions">
 
@@ -42,12 +40,9 @@
           <input type="checkbox" id="damage-noDamage">
           <label>Properties:</label>
           <div class="weaponProperties">
-            <label for="mgc">mgc:</label>
-            <input type="checkbox" id="mgc">
-            <label for="sil">sil:</label>
-            <input type="checkbox" id="sil">
-            <label for="ada">ada:</label>
-            <input type="checkbox" id="ada">
+            <label for="mgc">mgc:</label><input type="checkbox" id="mgc">
+            <label for="sil">sil:</label><input type="checkbox" id="sil">
+            <label for="ada">ada:</label><input type="checkbox" id="ada">
           </div>
         </div>
       </div>
@@ -59,8 +54,6 @@
 <hr>
 
 <form class="list-container">
-  <div class="status-container">
-  </div>
-  <div class="damage-container">
-  </div>
+  <div class="status-container"></div>
+  <div class="damage-container"></div>
 </form>

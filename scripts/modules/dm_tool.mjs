@@ -18,59 +18,35 @@ export class DM_TOOL {
 
   // get whether a token's actor has that condition.
   static tokenHasCondition(token, statusId) {
-    const effect = token.actor.effects.find(eff => {
-      const flag = eff.getFlag("core", "statusId");
-      if (!flag) return false;
-      return flag === statusId;
-    });
-    return !!effect;
+    return !!token.actor.effects.find(eff => eff.getFlag("core", "statusId") === statusId);
   }
   // turn a statusId into an effect from the token's actor (if effect exists).
   static tokenConditionFromId(token, statusId) {
-    const effect = token.actor.effects.find(eff => {
-      const flag = eff.getFlag("core", "statusId");
-      if (!flag) return false;
-      return flag === statusId;
-    });
-    return effect;
+    return token.actor.effects.find(eff => eff.getFlag("core", "statusId") === statusId);
   }
   // return an array of effect ids to delete from a token's actor.
   static getDeleteIds(token, statusIds) {
-    const deleteIds = statusIds.filter(id => {
-      return this.tokenHasCondition(token, id);
-    }).map(id => {
-      return this.tokenConditionFromId(token, id);
-    }).map(eff => {
-      return eff.id;
-    });
-    return deleteIds;
+    return token.actor.effects.reduce((acc, effect) => {
+      const id = effect.getFlag("core", "statusId");
+      if (statusIds.includes(id)) acc.push(effect.id);
+      return acc;
+    }, []);
   }
   // create effect data from status id, optionally change duration.
   static createConditionData(statusId, duration) {
-    const data = CONFIG.statusEffects.find(eff => {
-      return eff.id === statusId;
-    });
-    const effectData = foundry.utils.duplicate(data);
-    delete effectData.id;
-    if (duration) {
-      const dur = this.convertDurationToSeconds(duration);
-      effectData.duration = dur;
-    }
-    foundry.utils.mergeObject(effectData, {
-      flags: { core: { statusId } }
-    });
-    return effectData;
+    const data = foundry.utils.duplicate(CONFIG.statusEffects.find(eff => eff.id === statusId));
+    delete data.id;
+    delete data.sort;
+    if (duration) data.duration = this.convertDurationToSeconds(duration);
+    return foundry.utils.mergeObject(data, { "flags.core.statusId": statusId });
   }
   // gets all effects from a token's actor that have a status id from statusEffects
   static getAllCurrentConditions(token) {
     const statusIds = CONFIG.statusEffects.map(i => i.id);
-    const tokenEffects = token.actor.effects;
-    const conditions = tokenEffects.filter(eff => {
+    return token.actor.effects.filter(eff => {
       const statusId = eff.getFlag("core", "statusId");
-      if (!statusId) return false;
       return statusIds.includes(statusId);
     });
-    return conditions;
   }
   // takes time and a unit and convers it to seconds.
   static convertDurationToSeconds({ time, unit }) {
@@ -87,10 +63,7 @@ export class DM_TOOL {
   }
   // remove conditions from token, given a list of status ids.
   static async deleteConditionsFromTokens(tokens, statusIds) {
-    return tokens.map(token => {
-      const ids = this.getDeleteIds(token, statusIds);
-      return token.actor.deleteEmbeddedDocuments("ActiveEffect", ids);
-    });
+    return tokens.map(token => token.actor.deleteEmbeddedDocuments("ActiveEffect", this.getDeleteIds(token, statusIds)));
   }
 
   // create conditions on all tokens' actors given an array of conditionData objects (only applies if they do not already have it)
@@ -372,9 +345,9 @@ export class DM_TOOL {
   }
 
   static gatherSavingThrowInputs(html) {
-    const ability = html[0].querySelector("[name='save-type']").value;
-    const targetValue = Number(html[0].querySelector("[name='save-dc']").value);
-    const targetFailures = html[0].querySelector("[name='save-target']").checked;
+    const ability = html[0].querySelector("#save-type").value;
+    const targetValue = Number(html[0].querySelector("#save-dc").value);
+    const targetFailures = html[0].querySelector("#save-target").checked;
 
     return { ability, targetValue, targetFailures };
   }
@@ -385,27 +358,24 @@ export class DM_TOOL {
   }
 }
 
-Hooks.on("dnd5e.preRollDamage", (item, config) => {
+// dnd5e.preRollDamage.
+export function _appendDataToDamageRolls(item, config) {
   const types = item.getDerivedDamageLabel().map(d => d.damageType);
   config.messageData[`flags.${MODULE}.damageTypes`] = types;
   config.messageData[`flags.${MODULE}.properties`] = Object.entries(item.system.properties ?? {}).reduce((acc, [key, bool]) => {
     if (bool) acc.push(key);
     return acc;
   }, []);
-});
+}
 
 /**
  * TODO:
- * Somehow append damage type to each die or formula.
+ * Somehow append damage type to each die or formula instead.
  * Currently "1d6 + 1d4" + "1d8" with two different damage types
  * will treat the '1d4' as the second damage type instead of the first.
  */
-
-Hooks.on("renderChatMessage", (message, html) => {
-  if (!game.user.isGM) return;
-  const data = message.getFlag("dnd5e", "roll");
-  if (!data) return;
-  const isDamage = data.type === "damage";
+export function _addFlavorListenerToDamageRolls(message, html) {
+  const isDamage = message.getFlag("dnd5e", "roll.type") === "damage";
   if (!isDamage) return;
   const flavor = html[0].querySelector(".flavor-text");
   if (!flavor) return;
@@ -421,16 +391,13 @@ Hooks.on("renderChatMessage", (message, html) => {
     otherSum += tot;
   }
   totals[0] = [total - otherSum, types[0]];
-  html[0].querySelector(".flavor-text")?.classList.add("zhell-apply-damage-flavor");
 
-  html[0].addEventListener("click", function(event) {
-    const f = event.target.closest(".flavor-text");
-    if (!f) return;
-
+  flavor.classList.add("zhell-apply-damage-flavor");
+  flavor.addEventListener("click", function(event) {
     const tokens = canvas.tokens.controlled;
     const parts = foundry.utils.duplicate(totals);
     const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
     const properties = message.getFlag(MODULE, "properties") ?? [];
     return ZHELL.token.applyDamage(tokens, parts, { global, properties });
   });
-});
+}

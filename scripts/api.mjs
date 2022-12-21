@@ -1,4 +1,7 @@
+import { drawCircle } from "./modules/animations.mjs";
 import { DM_TOOL } from "./modules/dm_tool.mjs";
+import { ITEMACRO } from "./modules/itemMacros.mjs";
+import { ZHELL_SOCKETS } from "./modules/sockets.mjs";
 import { ZHELL_CATALOG, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
 
 export class api {
@@ -27,11 +30,13 @@ export class api {
       helper: {
         roman: ZHELL_UTILS.romanize,
         whisperPlayers: ZHELL_UTILS.whisper_players,
-        loadTextureForAll: ZHELL_UTILS.loadTextureForAll,
-        createTiles: ZHELL_UTILS.createTiles,
+        loadTextureForAll: ZHELL_SOCKETS.loadTextureForAll,
+        createTiles: ZHELL_SOCKETS.createTiles,
         titleCard: ZHELL_UTILS.title_card,
-        awardLoot: ZHELL_UTILS.awardLoot
-      }
+        awardLoot: ZHELL_SOCKETS.awardLoot,
+        drawCircle: drawCircle
+      },
+      ITEMACRO
     }
   }
 }

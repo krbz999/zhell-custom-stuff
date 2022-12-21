@@ -7,9 +7,9 @@ export class ZHELL_CATALOG {
     const key = `zhell-catalogs.${catalog}`;
     const pack = game.packs.get(key) ?? game.packs.get(catalog);
     if (!pack) return ui.notifications.warn("Pack not found.");
-    const entry = pack.index.getName(name);
-    if (!entry) return ui.notifications.warn("Entry not found.");
-    const entryDoc = await pack.getDocument(entry._id);
+    const id = pack.index.getName(name)?._id;
+    if (!id) return ui.notifications.warn("Entry not found.");
+    const entryDoc = await pack.getDocument(id);
     if (object) return entryDoc.toObject();
     else return entryDoc;
   }
@@ -34,7 +34,7 @@ export class ZHELL_CATALOG {
     const updates = {
       actor: foundry.utils.mergeObject(updatesActor, warpgateObjects.updates?.actor ?? {}),
       token: foundry.utils.mergeObject(updatesToken, warpgateObjects.updates?.token ?? {}),
-      embedded: warpgateObjects.updates?.embedded
+      embedded: warpgateObjects.updates?.embedded ?? {}
     }
 
     // load images so we don't get weird errors.
@@ -77,8 +77,7 @@ export class ZHELL_CATALOG {
         drawIcon: false,
         icon: "icons/svg/dice-target.svg"
       } : {}
-    },
-      warpgateObjects.options ?? {});
+    }, warpgateObjects.options ?? {});
 
     // either spawn or spawnAt:
     if (at?.x !== undefined && at?.y !== undefined) return warpgate.spawnAt({ x: at.x, y: at.y }, dummyNPC, updates, callbacks, options);
@@ -126,7 +125,7 @@ export class ZHELL_CATALOG {
         foundry.utils.setProperty(updates, "token.texture.src", src);
       }
     }
-    const callbackPost = async () => { }
+    const callbackPost = async () => {}
 
     // data to keep:
     const {
@@ -323,7 +322,7 @@ export class ZHELL_UTILS {
   }
 
   // whisper players.
-  static whisper_players = () => {
+  static whisper_players = async () => {
     const users = game.users.filter(u => u.id !== game.user.id);
     const characterIds = users.map(u => u.character?.id).filter(i => !!i);
     const selectedPlayerIds = canvas.tokens.controlled.map(i => {
@@ -331,27 +330,21 @@ export class ZHELL_UTILS {
     }).filter(i => {
       return characterIds.includes(i);
     });
-    const options = users.reduce((acc, { id, name, character }) => {
-      const checked = (!!character && selectedPlayerIds.includes(character.id)) ? "selected" : "";
-      return acc + `<span class="whisper-dialog-player-name ${checked}" id="${id}">${name}</span>`;
-    }, `<form><div class="form-fields whisper-dialog">`) + `</div></form>`;
+    const template = `modules/${MODULE}/templates/whisperDialog.hbs`;
+    const characters = users.map(user => {
+      const isControlled = selectedPlayerIds.includes(user.character?.id);
+      const selected = (user.character && isControlled) ? "selected" : "";
+      const id = user.id;
+      const name = user.name;
+      return { selected, id, name };
+    });
+    const content = await renderTemplate(template, { characters });
 
     return new Dialog({
       title: "Whisper",
-      content: `
-      <p>Whisper to:</p>${options} <hr>
-      <label for="zhell-whisper-message">Message:</label>
-      <textarea
-        class="whisper-dialog-textarea"
-        id="zhell-whisper-message"
-        name="message"
-        rows="6"
-        cols="50"
-        autofocus
-      ></textarea>
-      <hr>`,
+      content,
       buttons: {
-        go: {
+        whisper: {
           icon: "<i class='fa-solid fa-envelope'></i>",
           label: "Whisper",
           callback: async (html) => {
@@ -359,17 +352,14 @@ export class ZHELL_UTILS {
             if (!content) return;
 
             content = content.split("\n").reduce((acc, e) => {
-              return acc + `<p>${e}</p>`;
+              return acc + `<p>${e.trim()}</p>`;
             }, "");
             const whisperIds = new Set();
             for (const { id } of users) {
-              if (!!html[0].querySelector(`span[id="${id}"].selected`)) {
-                whisperIds.add(id);
-              }
+              if (html[0].querySelector(`span[id="${id}"].selected`)) whisperIds.add(id);
             }
-
-            const whisper = whisperIds.size > 0 ? Array.from(whisperIds) : [game.user.id];
-            await ChatMessage.create({ content, whisper });
+            const whisper = whisperIds.size ? Array.from(whisperIds) : [game.user.id];
+            return ChatMessage.create({ content, whisper });
           }
         }
       },
@@ -399,42 +389,6 @@ export class ZHELL_UTILS {
     }
 
     return str;
-  }
-
-  // load a texture for all clients.
-  static async loadTextureForAll(src, push = true) {
-    if (push) {
-      game.socket.emit(`world.${game.world.id}`, {
-        action: "loadTextureForAll",
-        data: { src }
-      });
-    }
-    return loadTexture(src);
-  }
-
-  static async createTiles(tileData, push = true) {
-    if (push) {
-      game.socket.emit(`world.${game.world.id}`, {
-        action: "createTiles",
-        data: { tileData }
-      });
-    }
-    if (game.user.isGM) return canvas.scene.createEmbeddedDocuments("Tile", tileData);
-  }
-
-  static async awardLoot(backpackUuid, push = true) {
-    if (push) {
-      game.socket.emit(`world.${game.world.id}`, {
-        action: "awardLoot",
-        data: { backpackUuid }
-      });
-    }
-    const a = game.user.character;
-    const b = fromUuidSync(backpackUuid);
-    return (!!a && !!b) ? game.modules.get("backpack-manager").api.renderManager(a, b, {
-      title: "Awarded Loot",
-      hideOwnInventory: true
-    }) : null;
   }
 
   // increase exhaustion.

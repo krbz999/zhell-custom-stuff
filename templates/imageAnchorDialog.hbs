@@ -1,0 +1,23 @@
+<div class="selections">
+  {{#if top.length}}
+  <div class="top-selection">
+    {{#each top as |selection|}}
+    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
+    {{/each}}
+  </div>
+  {{/if}}
+  {{#if middle.length}}
+  <div class="middle-selection">
+    {{#each middle as |selection|}}
+    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
+    {{/each}}
+  </div>
+  {{/if}}
+  {{#if bottom.length}}
+  <div class="bottom-selection">
+    {{#each bottom as |selection|}}
+    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
+    {{/each}}
+  </div>
+  {{/if}}
+</div>

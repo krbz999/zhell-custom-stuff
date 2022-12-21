@@ -1,25 +1,20 @@
-import { COLOR, MODULE, RARITY, SHEET } from "../const.mjs";
-import { crafting, foraging } from "./crafting.mjs";
+import { COLOR, MODULE, RARITY } from "../const.mjs";
+import { MateriaMedica } from "./crafting.mjs";
 import { ZHELL_UTILS } from "./zhell_functions.mjs";
 
 // hooks on renderActorSheet
 export function ZHELL_SHEET(sheet, html, sheetData) {
   const {
-    removeResources,
     removeAlignment,
     disableInitiativeButton,
     createForaging,
     collapsibleHeaders
-  } = game.settings.get(MODULE, SHEET);
+  } = game.settings.get(MODULE, "worldSettings");
 
-  const {
-    showLimitedUses,
-    showSpellSlots
-  } = game.settings.get(MODULE, COLOR);
+  const { showLimitedUses, showSpellSlots } = game.settings.get(MODULE, COLOR);
 
-  if (removeResources) {
-    html[0].querySelector("section > form > section > div.tab.attributes.flexrow > section > ul")?.remove();
-  }
+  // disable exhaustion, since that's overridden in effects.
+  _setupExhaustion(sheet, html);
 
   if (removeAlignment) {
     html[0].querySelector("input[name='system.details.alignment']")?.parentElement?.remove();
@@ -33,41 +28,7 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
     }
   }
 
-  if (createForaging && sheetData.isCharacter) {
-    const actor = sheet.actor;
-    const value = actor.getFlag(MODULE, "materia-medica.value") ?? 0;
-    const materia = document.createElement("div");
-    materia.classList.add("counter", "flexrow", "materia");
-    materia.innerHTML = `
-    <h4 class="rollable" data-action="foraging">Foraged Materials</h4>
-    <div class="counter-value">
-      <input
-        class="material"
-        name="flags.${MODULE}.materia-medica.value"
-        type="number"
-        value="${value}"
-        data-dtype="Number"
-        min="0"
-        max="999"
-        oninput="validity.valid || (value=${value})"
-        placeholder="0"
-      >
-    </div>`;
-    // insert before inspiration tracker.
-    const beforeThis = html[0].querySelector(".tab.attributes.flexrow .counters div.counter.flexrow.inspiration");
-    beforeThis.parentNode.insertBefore(materia, beforeThis);
-
-    if (actor.isOwner) {
-      // create listeners (black magic).
-      if (sheet.zhell?.foraging === undefined) {
-        foundry.utils.setProperty(sheet, "zhell.foraging", mainForaging.bind(sheet.object));
-        sheet.element[0].addEventListener("click", sheet.zhell.foraging);
-      } else {
-        sheet.element[0].removeEventListener("click", sheet.zhell.foraging);
-        sheet.element[0].addEventListener("click", sheet.zhell.foraging);
-      }
-    }
-  }
+  if (createForaging && sheetData.isCharacter) _createForaging(sheet, html);
 
   if (showSpellSlots) {
     Object.entries(sheet.object.system.spells ?? {}).forEach(([key, { value, max }]) => {
@@ -114,23 +75,23 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
   }
 
   if (showSpellSlots || showLimitedUses) {
-    if (sheet.zhell?.dottoggler === undefined) {
-      foundry.utils.setProperty(sheet, "zhell.dottoggler", dotToggle.bind(sheet.object));
-      sheet.element[0].addEventListener("click", sheet.zhell.dottoggler);
+    if (!sheet._zhell?.dottoggler) {
+      foundry.utils.setProperty(sheet, "_zhell.dottoggler", dotToggle.bind(sheet.object));
+      sheet.element[0].addEventListener("click", sheet._zhell.dottoggler);
     } else {
-      sheet.element[0].removeEventListener("click", sheet.zhell.dottoggler);
-      sheet.element[0].addEventListener("click", sheet.zhell.dottoggler);
+      sheet.element[0].removeEventListener("click", sheet._zhell.dottoggler);
+      sheet.element[0].addEventListener("click", sheet._zhell.dottoggler);
     }
   }
 
   // turn attunement icon into a toggle.
   if (sheet.actor.isOwner) {
-    if (sheet.zhell?.attunementToggler === undefined) {
-      foundry.utils.setProperty(sheet, "zhell.attunementToggler", toggleAttunement.bind(sheet.object));
-      sheet.element[0].addEventListener("click", sheet.zhell.attunementToggler);
+    if (!sheet._zhell?.attunementToggler) {
+      foundry.utils.setProperty(sheet, "_zhell.attunementToggler", toggleAttunement.bind(sheet.object));
+      sheet.element[0].addEventListener("click", sheet._zhell.attunementToggler);
     } else {
-      sheet.element[0].removeEventListener("click", sheet.zhell.attunementToggler);
-      sheet.element[0].addEventListener("click", sheet.zhell.attunementToggler);
+      sheet.element[0].removeEventListener("click", sheet._zhell.attunementToggler);
+      sheet.element[0].addEventListener("click", sheet._zhell.attunementToggler);
     }
   }
 
@@ -144,46 +105,7 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
   }
 
   // set health color.
-  if (true) {
-    const { value, max } = sheet.object.system.attributes.hp;
-    const nearDeath = Math.max(value, 0) / (max ?? 1) < 0.33;
-    const bloodied = Math.max(value, 0) / (max ?? 1) < 0.66;
-
-    const hp = html[0].querySelector("input[name='system.attributes.hp.value']");
-    if (nearDeath) {
-      hp.classList.add("near-death");
-      hp.classList.remove("bloodied");
-    } else if (bloodied) {
-      hp.classList.remove("near-death");
-      hp.classList.add("bloodied");
-    } else hp.classList.remove("near-death", "bloodied");
-  }
-
-  // disable exhaustion, since that's overridden in effects.
-  if (true) {
-    const exh = html[0].querySelector(".counter.flexrow.exhaustion");
-    if (exh) {
-
-      // disable input.
-      exh.querySelector(".counter-value input").disabled = true;
-
-      // add class and action to h4.
-      const header = exh.querySelector("h4");
-      header.classList.add("rollable");
-      header.setAttribute("data-action", "updateExhaustion");
-
-      // create listeners (black magic).
-      if (sheet.actor.isOwner) {
-        if (sheet.zhell?.exhaustion === undefined) {
-          foundry.utils.setProperty(sheet, "zhell.exhaustion", exhaustionUpdate.bind(sheet.object));
-          sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
-        } else {
-          sheet.element[0].removeEventListener("click", sheet.zhell.exhaustion);
-          sheet.element[0].addEventListener("click", sheet.zhell.exhaustion);
-        }
-      }
-    }
-  }
+  _setHealthColor(sheet, html);
 
   // makes headers collapsible.
   if (collapsibleHeaders) {
@@ -219,69 +141,10 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
   }
 }
 
-// hooks on renderTraitSelector
-export function ZHELL_TRAITS(selector, html) {
-  const { reformatTraitSelectors } = game.settings.get(MODULE, SHEET);
-
-  if (reformatTraitSelectors) {
-    const classList = html[0].querySelector(".trait-list").classList;
-    if ([
-      "system.traits.languages",
-      "system.traits.di",
-      "system.traits.dr",
-      "system.traits.dv",
-      "system.traits.ci"
-    ].includes(selector.attribute)) {
-      classList.add("zhell-traits");
-    } else if ([
-      "system.traits.toolProf",
-      "system.traits.armorProf"
-    ].includes(selector.attribute)) {
-      classList.add("zhell-profs");
-    } else if ([
-      "system.traits.weaponProf"
-    ].includes(selector.attribute)) {
-      classList.add("zhell-weapons");
-    }
-    html.css("width", "auto");
-    selector.setPosition();
-  }
-}
-
-function mainForaging(event) {
+function _onForage(event) {
   const action = event.target.closest("[data-action=foraging]");
   if (!action) return;
-
-  const actor = this;
-
-  // dialog that asks to forage or craft.
-  // call ZHELL.players.goForaging or .goCrafting.
-  class ForageDialog extends Dialog {
-    constructor(obj, options) {
-      super(obj, options);
-      this.object = obj.object;
-    }
-    get id() {
-      return `${MODULE}-forage-dialog-${this.object.id}`;
-    }
-  }
-  new ForageDialog({
-    object: actor,
-    title: `Materia Medica: ${actor.name}`,
-    content: "Are you foraging or crafting?",
-    buttons: {
-      forage: {
-        icon: "<i class='fa-solid fa-leaf'></i>",
-        label: "Foraging",
-        callback: () => foraging(actor)
-      },
-      craft: {
-        icon: "<i class='fa-solid fa-volcano'></i>",
-        label: "Crafting",
-        callback: () => crafting(actor)
-      }
-    }
-  }).render(true);
+  return new MateriaMedica(this, {}).render(true);
 }
 
 // bound function (this === the actor);
@@ -331,41 +194,26 @@ function toggleAttunement(event) {
 
 export function refreshColors() {
   const style = document.documentElement.style;
-  // set icon colors on sheet.
-  const {
-    usesUnexpended,
-    itemAttuned, itemNotAttuned,
-    itemEquipped, itemNotEquipped,
-    spellPrepared, spellNotPrepared, spellAlwaysPrepared,
-    proficientNormal, proficientHalf, proficientTwice
-  } = game.settings.get(MODULE, COLOR);
+  const colors = game.settings.get(MODULE, COLOR);
+  const rarities = game.settings.get(MODULE, RARITY);
 
-  style.setProperty("--usesUnexpended", usesUnexpended);
-  style.setProperty("--itemAttuned", itemAttuned);
-  style.setProperty("--itemNotAttuned", itemNotAttuned);
-  style.setProperty("--itemEquipped", itemEquipped);
-  style.setProperty("--itemNotEquipped", itemNotEquipped);
-  style.setProperty("--spellPrepared", spellPrepared);
-  style.setProperty("--spellNotPrepared", spellNotPrepared);
-  style.setProperty("--spellAlwaysPrepared", spellAlwaysPrepared);
-  style.setProperty("--proficientNormal", proficientNormal);
-  style.setProperty("--proficientHalf", proficientHalf);
-  style.setProperty("--proficientTwice", proficientTwice);
+  style.setProperty("--usesUnexpended", colors.usesUnexpended);
+  style.setProperty("--itemAttuned", colors.itemAttuned);
+  style.setProperty("--itemNotAttuned", colors.itemNotAttuned);
+  style.setProperty("--itemEquipped", colors.itemEquipped);
+  style.setProperty("--itemNotEquipped", colors.itemNotEquipped);
+  style.setProperty("--spellPrepared", colors.spellPrepared);
+  style.setProperty("--spellNotPrepared", colors.spellNotPrepared);
+  style.setProperty("--spellAlwaysPrepared", colors.spellAlwaysPrepared);
+  style.setProperty("--proficientNormal", colors.proficientNormal);
+  style.setProperty("--proficientHalf", colors.proficientHalf);
+  style.setProperty("--proficientTwice", colors.proficientTwice);
 
-  // set item rarity colors on sheet.
-  const {
-    uncommon,
-    rare,
-    veryRare,
-    legendary,
-    artifact
-  } = game.settings.get(MODULE, RARITY);
-
-  style.setProperty("--rarityUncommon", uncommon);
-  style.setProperty("--rarityRare", rare);
-  style.setProperty("--rarityVeryRare", veryRare);
-  style.setProperty("--rarityLegendary", legendary);
-  style.setProperty("--rarityArtifact", artifact);
+  style.setProperty("--rarityUncommon", rarities.uncommon);
+  style.setProperty("--rarityRare", rarities.rare);
+  style.setProperty("--rarityVeryRare", rarities.veryRare);
+  style.setProperty("--rarityLegendary", rarities.legendary);
+  style.setProperty("--rarityArtifact", rarities.artifact);
 }
 
 function exhaustionUpdate(event) {
@@ -388,7 +236,7 @@ function exhaustionUpdate(event) {
   new ExhaustDialog({
     object: actor,
     title: `Exhaustion: ${actor.name}`,
-    content: "<p>Increase or decrease your level of exhaustion.</p>",
+    content: "<p style='text-align: center;'>Increase or decrease your level of exhaustion.</p>",
     buttons: {
       up: {
         icon: "<i class='fa-solid fa-arrow-up'></i>",
@@ -402,4 +250,60 @@ function exhaustionUpdate(event) {
       }
     }
   }).render(true);
+}
+
+async function _createForaging(sheet, html) {
+  const DIV = document.createElement("DIV");
+  const name = `flags.${MODULE}.materia-medica.value`;
+  const value = sheet.actor.getFlag(MODULE, "materia-medica.value") ?? 0;
+  DIV.innerHTML = await renderTemplate(`modules/${MODULE}/templates/foragingButton.hbs`, { name, value });
+  html[0].querySelector("div.counter.flexrow.exhaustion").after(DIV.firstChild);
+
+  if (sheet.actor.isOwner) {
+    // create listeners (black magic).
+    if (!sheet._zhell?.foraging) {
+      foundry.utils.setProperty(sheet, "_zhell.foraging", _onForage.bind(sheet.object));
+      sheet.element[0].addEventListener("click", sheet._zhell.foraging);
+    } else {
+      sheet.element[0].removeEventListener("click", sheet._zhell.foraging);
+      sheet.element[0].addEventListener("click", sheet._zhell.foraging);
+    }
+  }
+}
+
+function _setupExhaustion(sheet, html) {
+  const exh = html[0].querySelector(".counter.flexrow.exhaustion");
+  if (!exh) return;
+  exh.querySelector(".counter-value input").disabled = true;
+  const header = exh.querySelector("h4");
+  header.classList.add("rollable");
+  header.setAttribute("data-action", "updateExhaustion");
+
+  // create listeners (black magic).
+  if (!sheet.actor.isOwner) return;
+  if (!sheet._zhell?.exhaustion) {
+    foundry.utils.setProperty(sheet, "_zhell.exhaustion", exhaustionUpdate.bind(sheet.object));
+    sheet.element[0].addEventListener("click", sheet._zhell.exhaustion);
+  } else {
+    sheet.element[0].removeEventListener("click", sheet._zhell.exhaustion);
+    sheet.element[0].addEventListener("click", sheet._zhell.exhaustion);
+  }
+}
+
+function _setHealthColor(sheet, html) {
+  const { value, max, temp, tempmax } = sheet.object.system.attributes.hp;
+  const a = (value ?? 0) + (temp ?? 0);
+  const b = (max ?? 0) + (tempmax ?? 0);
+  if (!b) return;
+  const nearDeath = a / b < 0.33;
+  const bloodied = a / b < 0.66;
+
+  const hp = html[0].querySelector("input[name='system.attributes.hp.value']");
+  if (nearDeath) {
+    hp.classList.add("near-death");
+    hp.classList.remove("bloodied");
+  } else if (bloodied) {
+    hp.classList.remove("near-death");
+    hp.classList.add("bloodied");
+  } else hp.classList.remove("near-death", "bloodied");
 }

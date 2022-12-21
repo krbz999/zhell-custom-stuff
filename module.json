@@ -1,6 +1,5 @@
 {
   "id": "zhell-custom-stuff",
-  "name": "zhell-custom-stuff",
   "title": "Zhell's Custom Stuff",
   "version": "10.0.10",
   "authors": [
@@ -11,7 +10,6 @@
       "ko-fi": "https://ko-fi.com/zhell"
     }
   ],
-  "minimumCoreVersion": "10",
   "compatibility": {
     "minimum": "10",
     "maximum": "10",
@@ -22,10 +20,8 @@
   ],
   "styles": [
     "./styles/styles.css",
-    "./styles/sheet_coloring.css",
-    "./styles/raritycolors.css",
-    "./styles/journal-styles.css",
-    "./styles/crafting_dialogs.css",
+    "./styles/sheetEdits.css",
+    "./styles/journalStyles.css",
     "./styles/dm_tool.css"
   ],
   "languages": [
@@ -33,7 +29,7 @@
       "lang": "en",
       "name": "English",
       "path": "languages/en.json",
-      "description": "Personal module for replacing or adding to many things. Modular (see settings)."
+      "description": "Personal module for replacing or adding to many things."
     }
   ],
   "url": "https://github.com/krbz999/zhell-custom-stuff",

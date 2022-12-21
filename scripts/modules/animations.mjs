@@ -1,4 +1,5 @@
 import { database } from "../../sources/animations.mjs";
+import { MODULE } from "../const.mjs";
 
 export class ZHELL_ANIMATIONS {
   static onCreateMeasuredTemplate(templateDoc, _, userId) {
@@ -10,10 +11,12 @@ export class ZHELL_ANIMATIONS {
     const item = fromUuidSync(uuid);
     if (!item || !(item instanceof Item)) return;
 
+    const token = item.actor.token?.object ?? item.actor.getActiveTokens()[0];
+
     let check;
 
     // BREATH WEAPON.
-    check = item.getFlag("world", "breath-weapon.type");
+    check = item.getFlag(MODULE, "breath-weapon.type");
     if (check) {
       const file = check;
       return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
@@ -59,6 +62,17 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       const file = "jb2a.arms_of_hadar.dark_purple";
       return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().play();
+    }
+
+    // FIREBALL.
+    check = item.name === "Fireball";
+    if (check) {
+      const beam = "jb2a.fireball.beam.orange";
+      const expl = "jb2a.fireball.explosion.orange";
+
+      const seq = new Sequence();
+      if (token) seq.effect().file(beam).atLocation(token).stretchTo(templateDoc).playbackRate(2).waitUntilFinished();
+      return seq.effect().file(expl).atLocation(templateDoc).play();
     }
   }
 
@@ -125,6 +139,23 @@ export class ZHELL_ANIMATIONS {
       if (!target || !token || !ammo) return;
       const file = "jb2a.bolt.physical.white02";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+    }
+
+    // ICE KNIFE.
+    check = item.name.includes("Ice Knife");
+    if (check) {
+      if (!target || !token) return;
+      const file = "jb2a.spell_projectile.ice_shard.blue";
+      return new Sequence().effect().file(file).atLocation(token).stretchTo(target).play();
+    }
+
+    // PAST KNOWLEDGE.
+    check = item.name.includes("Energy Burst");
+    if (check) {
+      if (!target || !token) return;
+      const type = item.system.damage.parts[0][1] === "necrotic" ? "dark_bluewhite" : "red";
+      const file = `jb2a.guiding_bolt.02.${type}`;
+      return new Sequence().effect().file(file).playbackRate(1.5).atLocation(token.center).stretchTo(target).play();
     }
   }
 
@@ -227,6 +258,17 @@ export class ZHELL_ANIMATIONS {
       const file = "jb2a.toll_the_dead.purple.complete";
       return new Sequence().effect().file(file).scale(0.5).atLocation(target).play();
     }
+
+    // PALADIN AURA.
+    check = name.includes("Aura of Protection");
+    if (check) {
+      if (!token) return;
+      const name = `paladin-aura-${token.document.id}`;
+      const file = "jb2a.extras.tmfx.border.circle.outpulse.01.normal";
+      const has = !!Sequencer.EffectManager.getEffects({ name }).length;
+      if (has) return Sequencer.EffectManager.endEffects({ name });
+      return new Sequence().effect().attachTo(token).file(file).persist().name(name).tint("#ff7300").play();
+    }
   }
 
   static onRollSkill(actor, roll, skill) {
@@ -244,11 +286,11 @@ export class ZHELL_ANIMATIONS {
 }
 
 // COLLAPSIBLES.
-Hooks.once("ready", function() {
+export function _setupCollapsibles() {
   document.addEventListener("click", (event) => {
     event.target.closest(".zhell-collapsible-header")?.closest(".zhell-collapsible")?.classList.toggle("active");
   });
-});
+}
 
 // ADD DICE.
 export function _initD20(dice3d) {
@@ -311,16 +353,15 @@ export function _rotateTokensOnMovement(doc, update) {
   update.rotation = ray.angle * 180 / Math.PI - 90;
 }
 
-const gr = new PIXI.Graphics();
-function drawCircle(graphics, tokenDoc, radius) {
-  const [x, y] = canvas.grid.getCenter(tokenDoc.x, tokenDoc.y);
-  const p = graphics
-    .beginFill("0xffffff", 0.8)
-    .drawCircle(x, y, radius)
-    .endFill()
-    .beginHole()
-    .drawCircle(x, y, radius - 5)
-    .endHole();
+// draw a circle around a token placeable.
+export function drawCircle(token, radius) {
+  const { x, y } = token.center;
+  const tokenRadius = Math.abs(token.document.x - x);
+  const pixels = radius / canvas.scene.grid.distance * canvas.scene.grid.size + tokenRadius;
+  const color = game.user.color.replace("#", "0x");
+  const p = new PIXI.Graphics()
+    .beginFill(color, 0.5).drawCircle(x, y, pixels).endFill()
+    .beginHole().drawCircle(x, y, pixels - 5).endHole();
   canvas.app.stage.addChild(p);
   return p;
 }

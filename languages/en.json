@@ -1,13 +1,46 @@
 {
-  "DND5E.ConsumablePoisonIngested": "Ingested Poison",
-  "DND5E.ConsumablePoisonInhaled": "Inhaled Poison",
-  "DND5E.ConsumablePoisonInjury": "Injury Poison",
-  "DND5E.ConsumablePoisonContact": "Contact Poison",
   "DND5E.ConsumableDrink": "Drink",
   "DND5E.ConsumableTrap": "Trap",
   "DND5E.ConsumableBomb": "Bomb",
   "DND5E.ConsumableElixir": "Elixir",
   "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
   "DND5E.RestS": "SR",
-  "DND5E.RestL": "LR"
+  "DND5E.RestL": "LR",
+  "ZHELL": {
+    "SETTINGS": {
+      "addConditions.NAME": "Add New Conditions",
+      "addConditions.HINT": "An addition to current available conditions.",
+      "addEquipment.NAME": "Add New Equipment Types",
+      "addEquipment.HINT": "An addition to current available equipment types. Not armor.",
+      "addPiety.NAME": "Add Piety Ability Score",
+      "addPiety.HINT": "Adds 'Piety' as a new ability score.",
+      "addDivine.NAME": "Add Divine Spell School",
+      "addDivine.HINT": "Add 'Divine' as a spell school.",
+      "replaceTokenConditions.NAME": "Token HUD Conditions",
+      "replaceTokenConditions.HINT": "Replace the core conditions on the token HUD.",
+      "replaceLanguages.NAME": "Replace Languages",
+      "replaceLanguages.HINT": "Replace the selection of available languages.",
+      "replaceTools.NAME": "Replace Tools",
+      "replaceTools.HINT": "Replace the selection of available tools.",
+      "replaceWeapons.NAME": "Replace Weapons",
+      "replaceWeapons.HINT": "Replace the selection of available weapons. Also gets rid of firearm-specific weapon attributes.",
+      "replaceConsumables.NAME": "Replace Consumables",
+      "replaceConsumables.HINT": "Replace the selection of available consumable types.",
+      "removeAlignment.NAME": "Remove Alignment",
+      "removeAlignment.HINT": "Remove the Alignment field from character sheets.",
+      "disableInitiativeButton.NAME": "Disable Initiative",
+      "disableInitiativeButton.HINT": "Disable the Initiative button on the character sheet.",
+      "createForaging.NAME": "Create Foraging",
+      "createForaging.HINT": "Create a Foraging button on the sheet.",
+      "collapsibleHeaders.NAME": "Collapsible Headers",
+      "collapsibleHeaders.HINT": "Make headers collapsible on actor sheets."
+    },
+    "CRAFTING": {
+      "INGESTED": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
+      "CONTACT": "This poison can be smeared on an object and remains potent until it is touched or washed off.",
+      "INJURY": "This poison can be applied to weapons, ammunition, trap components, and other objects that deal piercing or slashing damage and remains potent until delivered through a wound or washed off.",
+      "INHALED": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",
+      "COST_WARN": "You need at least {cost} foraged materials to create this item."
+    }
+  }
 }
