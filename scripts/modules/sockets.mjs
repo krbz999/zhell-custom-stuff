@@ -1,6 +1,6 @@
 export class ZHELL_SOCKETS {
 
-  /** LOAD TEXTURES FOR ALL CLIENTS. */
+  /* LOAD TEXTURES FOR ALL CLIENTS. */
   static loadTextureForAllSocketOn = () => {
     game.socket.on(`world.${game.world.id}`, (request) => {
       if (request.action === "loadTextureForAll") {

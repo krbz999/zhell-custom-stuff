@@ -1,43 +1,17 @@
 <form>
+  {{#each settings as |setting|}}
   <div class="form-group">
-    <label>Uncommon</label>
+    <label>{{setting.label}}</label>
     <div class="form-fields">
-      <input type="color" value="{{uncommon}}" data-edit="uncommon">
-      <input name="uncommon" type="text" value="{{uncommon}}">
+      <input type="color" value="{{setting.color}}" data-edit="{{setting.name}}">
+      <input name="{{setting.name}}" type="text" value="{{setting.color}}">
     </div>
   </div>
-  <div class="form-group">
-    <label>Rare</label>
-    <div class="form-fields">
-      <input type="color" value="{{rare}}" data-edit="rare">
-      <input name="rare" type="text" value="{{rare}}">
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Very Rare</label>
-    <div class="form-fields">
-      <input type="color" value="{{veryRare}}" data-edit="veryRare">
-      <input name="veryRare" type="text" value="{{veryRare}}">
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Legendary</label>
-    <div class="form-fields">
-      <input type="color" value="{{legendary}}" data-edit="legendary">
-      <input name="legendary" type="text" value="{{legendary}}">
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Artifact</label>
-    <div class="form-fields">
-      <input type="color" value="{{artifact}}" data-edit="artifact">
-      <input name="artifact" type="text" value="{{artifact}}">
-    </div>
-  </div>
+  {{/each}}
 
   <header>
     <button type="submit" name="submit">
-      <i class="fa-solid fa-save"></i> Save Settings
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
     </button>
   </header>
 </form>

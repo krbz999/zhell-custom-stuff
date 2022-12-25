@@ -59,7 +59,21 @@
       "proficientHalf.NAME": "Half Proficient Color",
       "proficientHalf.HINT": "The color of the Half Proficient icons.",
       "proficientTwice.NAME": "Twice Proficient Color",
-      "proficientTwice.HINT": "The color of the Twice Proficient icons."
+      "proficientTwice.HINT": "The color of the Twice Proficient icons.",
+      "FORAGING.NAME": "Foraging DC",
+      "FORAGING.HINT": "The current DC for foraging.",
+      "DEFEATED.NAME": "Mark Combatants Defeated",
+      "DEFEATED.HINT": "When combatants that are not owned by a player is reduced to 0 or less hp, mark them as defeated.",
+      "DISPLAY_AMMO.NAME": "Show Saving Throw Ammo",
+      "DISPLAY_AMMO.HINT": "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
+      "TRACK_REACTIONS.NAME": "Track Reactions in Combat",
+      "TRACK_REACTIONS.HINT": "Track reactions for combatants when combat is ongoing.",
+      "WORLD_SETTINGS.NAME": "Additions and Replacements",
+      "WORLD_SETTINGS.HINT": "A collection of additions and replacements for core and system content.",
+      "COLOR_SETTINGS.NAME": "Sheet Colors",
+      "COLOR_SETTINGS.HINT": "Settings for the colors that are applied to the actor sheets.",
+      "RARITY_SETTINGS.NAME": "Rarity Colors",
+      "RARITY_SETTINGS.HINT": "Settings for the colors that are applied to items on an actor sheet depending on rarity."
     },
     "CRAFTING": {
       "INGESTED": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
