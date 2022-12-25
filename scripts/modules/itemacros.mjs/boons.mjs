@@ -1,6 +1,6 @@
 import { MODULE } from "../../const.mjs";
 import { imageAnchorDialog } from "../customDialogs.mjs";
-import { _getDependencies } from "../itemMacros.mjs";
+import { _basicFormContent, _getDependencies } from "../itemMacros.mjs";
 
 export const ITEMACRO_BOONS = {
   GOODHUNTER,
@@ -59,7 +59,9 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
         <button id="goodhunter-hit-die"><i class="fa-solid fa-die-d10"></i> Roll Hit Die</button>
         <div class="form-group">
           <label>Damage to take:</label>
-          <div class="form-fields"><input type="number" id="goodhunter-damage-taken" value="50"></div>
+          <div class="form-fields">
+            <input type="number" id="goodhunter-damage-taken" value="50" autofocus>
+          </div>
         </div>
       </form>`,
       buttons: {
@@ -67,11 +69,10 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
           icon: "<i class='fa-solid fa-heart'></i>",
           label: "Apply Damage",
           callback: async (html) => {
-            const value = html[0].querySelector("#goodhunter-damage-taken").value;
-            const damage = Number(value);
+            const value = html[0].querySelector("#goodhunter-damage-taken").valueAsNumber;
             await isConc.delete();
-            await actor.applyDamage(damage);
-            return ChatMessage.create({ speaker, content: `${actor.name} took the ${damage} damage.` });
+            await actor.applyDamage(value);
+            return ChatMessage.create({ speaker, content: `${actor.name} took the ${value} damage.` });
           }
         }
       },
@@ -100,20 +101,14 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
   }).reduce((acc, { id, name, system: { level } }) => {
     return acc + `<option value="${id}">[${level}] ${name}</option>`;
   }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
-  const template = `
-  <div class="form-group">
-    <label>Spell</label>
-    <div class="form-fields">
-      <select name="spell-select">${options}</select>
-    </div>
-  </div>`;
+  const template = _basicFormContent({ label: "Spell:", type: "select", options });
 
   const dialog = new Dialog({
     content: `
     <p style="text-align: center;" data-total="0" id="levelTrack">Total level: <strong>0 / ${maxCombinedSpellLevel}</strong></p>
     <button style="margin: 0;" name="add-new-row"><i class="fa-solid fa-plus"></i> Pick one more</button>
     <hr>
-    <form name="murk-scroll-boon">${template}</form>`,
+    <div name="murk-scroll-boon">${template}</div>`,
     title: "Murk Scrolls",
     buttons: {
       create: {
@@ -135,7 +130,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
             const spell = actor.items.get(value);
             if (!spell) continue;
             const scroll = await Item.implementation.createScrollFromSpell(spell);
-            const itemData = scroll.toObject();
+            const itemData = game.items.fromCompendium(scroll);
             foundry.utils.mergeObject(itemData.flags, spell.flags);
             if (spell.system.components.concentration) foundry.utils.setProperty(itemData, path, true);
             itemData.name = itemData.name.replace("Spell Scroll:", "Murk Scroll:");
@@ -145,13 +140,13 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
           const use = await item.use({}, { configureDialog: false });
           if (!use) return;
           const add = await actor.createEmbeddedDocuments("Item", scrollData);
-          ui.notifications.info(`Created ${add.length} scrolls of Murk.`);
+          return ChatMessage.create({ speaker, content: `Created ${add.length} scrolls of Murk.` });
         }
       }
     },
     render: async (html) => {
       const tracker = html[0].querySelector("#levelTrack");
-      const form = html[0].querySelector("form[name='murk-scroll-boon']");
+      const form = html[0].querySelector("[name='murk-scroll-boon']");
 
       html[0].addEventListener("click", (event) => {
         const button = event.target.closest("button");
@@ -191,19 +186,19 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
     ]);
 
     // lightning strikes
-    const sequenceA = new Sequence()
+    await new Sequence()
       .effect().file("jb2a.lightning_strike.blue.5").atLocation(token)
       .effect().file("jb2a.lightning_strike.blue.5").atLocation(token).mirrorX()
       .wait(1000)
-    await sequenceA.play();
+      .play();
 
     await token.document.update({ width: 2, height: 2 }, { animation: { duration: 500, easing } });
 
-    const sequenceB = new Sequence()
+    return new Sequence()
       .wait(500)
       .effect().file("jb2a.token_border.circle.static.blue.004")
-      .fadeIn(500).attachTo(token).name("Show of Force").persist();
-    return sequenceB.play();
+      .fadeIn(500).attachTo(token).name("Show of Force").persist()
+      .play();
   }
 
   const onDelete = async function() {
@@ -224,6 +219,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
     duration: { seconds: 60 },
     origin: item.uuid,
     flags: {
+      "core.statusId": item.name.slugify(),
       "visual-active-effects.data": {
         intro: "<p>Your size is increased to Large, your movement speed increases by 10 feet, you deal an additional <strong>1d4</strong> damage with melee weapons, and your melee weapon attacks are critical hits on a roll of 19 or 20.</p>"
       },
@@ -300,7 +296,7 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
     if (!effect) return;
     await Sequencer.Preloader.preload([file1, file2]);
 
-    new Sequence()
+    return new Sequence()
       .effect() // music markers
       .file(file1).name("Song of Withertide").persist().attachTo(token)
       .fadeIn(1000).fadeOut(1000).elevation(token.document.elevation - 1)

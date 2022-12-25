@@ -2,7 +2,12 @@ import { registerSettings } from "./scripts/settings.mjs";
 import { api } from "./scripts/api.mjs";
 import { ZHELL_SOCKETS } from "./scripts/modules/sockets.mjs";
 import { refreshColors, ZHELL_SHEET } from "./scripts/modules/sheet_edits.mjs";
-import { ZHELL_COMBAT, _replaceTokenHUD, _setupCustomButtons, _setupGroupSaves } from "./scripts/modules/combatHelpers.mjs";
+import {
+  ZHELL_COMBAT,
+  _replaceTokenHUD,
+  _setupCustomButtons,
+  _setupGroupSaves
+} from "./scripts/modules/combatHelpers.mjs";
 import {
   ZHELL_ANIMATIONS,
   _classesPageListeners,
@@ -15,6 +20,7 @@ import {
 import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
 import { _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
 import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
+import { DEFEATED, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -24,14 +30,13 @@ Hooks.once("setup", _craftingCharacterFlag);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);
 Hooks.once("ready", refreshColors);
-Hooks.once("ready", ZHELL_SOCKETS.loadTextureSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.routeTilesThroughGM);
-Hooks.once("ready", ZHELL_SOCKETS.awardLoot);
+Hooks.once("ready", ZHELL_SOCKETS.loadTextureForAllSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.createTilesSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.awardLootSocketOn);
 Hooks.once("ready", _setupCollapsibles);
 Hooks.once("ready", _setupCustomButtons);
 
 Hooks.on("renderActorSheet", ZHELL_SHEET);
-Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
 Hooks.on("renderJournalPageSheet", _classesPageListeners);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", _rotateTokensOnMovement);
@@ -40,8 +45,19 @@ Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 
 
 Hooks.once("ready", () => {
+  const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);
+  if ((reactionSetting === "gm" && game.user.isGM) || reactionSetting === "all") {
+    Hooks.on("dnd5e.useItem", ZHELL_COMBAT.spendReaction);
+  }
+
+  if (game.settings.get(MODULE, DISPLAY_AMMO)) {
+    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
+  }
+
   if (game.user.isGM) {
-    Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
+    if (game.settings.get(MODULE, DEFEATED)) {
+      Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
+    }
     Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
     Hooks.on("renderChatMessage", _setupGroupSaves);
     Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
@@ -58,4 +74,10 @@ Hooks.once("ready", () => {
     Hooks.on("dnd5e.rollDamage", ZHELL_ANIMATIONS.onItemRollDamage);
     Hooks.on("dnd5e.rollSkill", ZHELL_ANIMATIONS.onRollSkill);
   }
+});
+
+// remove Items With Spells from some item type sheets.
+Hooks.on("renderItemSheet", function(sheet, html) {
+  if (!["class", "subclass", "background", "feat", "race"].includes(sheet.item.type)) return;
+  html[0].querySelector("[data-tab=spells]").style.display = "none";
 });

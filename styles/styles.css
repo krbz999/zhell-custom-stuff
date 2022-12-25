@@ -14,8 +14,9 @@
 #token-hud .col.right .status-effects {
   width: max-content;
   column-gap: 0.1em;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   color: var(--color-text-light-1);
+  top: -100px;
 }
 
 #token-hud .col.right .status-effects .status-effect {
@@ -509,4 +510,20 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 .zhell-custom-stuff.settings-menu .form-group:not(:last-of-type) {
   border-bottom: 2px groove;
+}
+
+/* Column Dialog */
+.dialog.column-dialog {
+  height: auto !important;
+}
+
+.dialog.column-dialog .dialog-buttons {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialog.column-dialog .dynamic-tooltip {
+  margin: 0 1em;
+  font-style: italic;
+  min-height: 100px;
 }

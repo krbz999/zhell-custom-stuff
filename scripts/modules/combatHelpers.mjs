@@ -4,7 +4,6 @@ export class ZHELL_COMBAT {
 
   // hooks on updateToken
   static markDefeatedCombatant = async (tokenDoc, updates) => {
-    if (!game.settings.get(MODULE, DEFEATED)) return;
     if (tokenDoc.actor.hasPlayerOwner) return;
     if (!tokenDoc.combatant) return;
     const hpUpdate = foundry.utils.getProperty(updates, "actorData.system.attributes.hp.value");
@@ -17,15 +16,26 @@ export class ZHELL_COMBAT {
   // hooks on dnd5e.rollAttack
   static displaySavingThrowAmmo = async (weapon, roll, ammoUpdate) => {
     if (!ammoUpdate.length) return;
-    if (!game.settings.get(MODULE, DISPLAY_AMMO)) return;
     const ammoId = ammoUpdate[0]._id;
     const ammo = weapon.actor.items.get(ammoId);
     if (!ammo?.hasSave) return;
     return ammo.displayCard();
   }
+
+  // hooks on dnd5e.useItem
+  static spendReaction(item) {
+    if (item.system.activation?.type !== "reaction") return;
+    if (!game.combat) return;
+    const has = item.parent.effects.find(e => e.getFlag("core", "statusId") === "reaction");
+    if (has) return;
+    const combatant = item.parent.token?.combatant ?? item.parent.getActiveTokens()[0]?.combatant;
+    if (!combatant) return;
+    const reaction = CONFIG.statusEffects.find(e => e.id === "reaction");
+    return combatant.token.toggleActiveEffect(reaction, { active: true });
+  }
 }
 
-export function _replaceTokenHUD(hud, html, tokenData){
+export function _replaceTokenHUD(hud, html, tokenData) {
   const innerHTML = Object.values(tokenData.statusEffects).reduce((acc, { id, title, src, isActive, isOverlay }) => {
     const clss = "status-effect effect-control";
     const atts = (isActive ? "active" : "") + " " + (isOverlay ? "overlay" : "");

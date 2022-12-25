@@ -137,6 +137,7 @@ export const SPELL_EFFECTS = [
   500: Incapacitated, Stunned (540), Unconscious (560)
   600: Paralyzed, Petrified (650)
   700: Invisible, Flying (750)
+  1600: Reaction
 */
 export const STATUS_EFFECTS = [
   {
@@ -361,6 +362,22 @@ export const STATUS_EFFECTS = [
       { key: "system.attributes.movement.climb", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60 },
       { key: "system.attributes.movement.burrow", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60 }
     ]
+  },
+  {
+    id: "reaction", label: "Reaction", sort: 1600,
+    icon: "assets/images/conditions/reaction.webp",
+    duration: { rounds: 1 },
+    flags: {
+      "visual-active-effects": {
+        data: {
+          intro: "<p>You have spent your reaction.</p><p>You cannot take another reaction until the start of your next turn.</p>"
+        }
+      },
+      effectmacro: {
+        onCombatEnd: { script: `(${function() { return effect.delete() }})()` },
+        onTurnStart: { script: `(${function() { return effect.delete() }})()` }
+      }
+    }
   }
 ];
 

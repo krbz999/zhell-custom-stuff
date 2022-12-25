@@ -1,4 +1,6 @@
-import { _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
+import { MODULE } from "../../const.mjs";
+import { columnDialog } from "../customDialogs.mjs";
+import { _basicFormContent, _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
 
 export const ITEMACRO_FEATURES = {
   EYES_OF_NIGHT,
@@ -13,7 +15,8 @@ export const ITEMACRO_FEATURES = {
   ARCANE_RECOVERY,
   DWARVEN_FORTITUDE,
   EXPERIMENTAL_ELIXIR,
-  TENTACLE_OF_THE_DEEPS
+  TENTACLE_OF_THE_DEEPS,
+  STARRY_FORM
 };
 
 async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args) {
@@ -211,15 +214,7 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
     return;
   }
 
-  const content = `
-  <form>
-    <div class="form-group">
-      <label>Spell Slot:</label>
-      <div class="form-fields">
-        <select autofocus>${options}</select>
-      </div>
-    </div>
-  </form>`;
+  const content = _basicFormContent({ label: "Spell Slot:", type: "select", options });
 
   return new Dialog({
     title: item.name,
@@ -242,7 +237,7 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
       { _id: resourceItem.id, "system.uses.value": resource - 1 },
       { _id: item.id, "system.uses.value": uses - 1 }
     ]);
-    ui.notifications.info("Recovered a spell slot!");
+    return ChatMessage.create({ speaker, content: `${actor.name} recovered a spell slot using ${item.name}.` });
   }
 }
 
@@ -326,16 +321,7 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
   const weaponSelect = weapons.reduce((acc, { id, name }) => {
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
-  const content = `
-  <p>Pick your weapon.</p>
-  <form>
-    <div class="form-group">
-      <label>Weapon</label>
-      <div class="form-fields">
-        <select autofocus>${weaponSelect}</select>
-      </div>
-    </div>
-  </form>`;
+  const content = _basicFormContent({label: "Weapon:", type: "select", options: weaponSelect});
 
   return new Dialog({
     title: item.name,
@@ -471,7 +457,7 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
       spells[key].value++;
     });
     await actor.update({ "system.spells": spells });
-    ui.notifications.info("Spell slots recovered!");
+    return ChatMessage.create({ speaker, content: `${actor.name} recovered spell slots using ${item.name}` });
   }
 }
 
@@ -602,7 +588,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
             return acc;
           }, []);
           await actor.createEmbeddedDocuments("Item", itemData);
-          ui.notifications.info(`Created ${keys.length} random single-effect elixirs.`);
+          return ChatMessage.create({ speaker, content: `${actor.name} created ${keys.length} random single-effect elixirs.` });
         }
       },
       build: {
@@ -657,7 +643,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 
           // remove a spell slot.
           await actor.update({ [path]: value - 1 });
-          ui.notifications.info(`Expended a spell slot of level ${keys.length} and created an elixir.`);
+          return ChatMessage.create({ speaker, content: `${actor.name} expended a spell slot of level ${keys.length} and created an elixir.` });
         }
       }
     }
@@ -769,4 +755,105 @@ async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, eve
   await actor.sheet?.maximize();
   if (!spawn) return effect.delete();
   return _addTokenDismissalToEffect(effect, spawn);
+}
+
+async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
+  if (!_getDependencies("effectmacro", "visual-active-effects", "concentrationnotifier", "sequencer", "jb2a_patreon")) return item.use();
+
+  const use = await item.use();
+  if (!use) return;
+
+  const [effectData] = _constructLightEffectData({
+    item,
+    lightData: { dim: 20, bright: 10 },
+    intro: "",
+    flags: {}
+  });
+
+  const title = item.name;
+  const content = `<div class="dynamic-tooltip"></div>`;
+  const buttons = {
+    archer: {
+      icon: `<i class="fa-solid fa-burst"></i>`,
+      label: "Archer",
+      callback: () => "archer"
+    },
+    chalice: {
+      icon: `<i class="fa-solid fa-trophy"></i>`,
+      label: "Chalice",
+      callback: () => "chalice"
+    },
+    dragon: {
+      icon: `<i class="fa-solid fa-dragon"></i>`,
+      label: "Dragon",
+      callback: () => "dragon"
+    }
+  }
+
+  const intro = {
+    archer: "<p>When you activate this form, and as a bonus action on your subsequent turns while it lasts, you can make a ranged spell attack, hurling a luminous arrow that targets one creature within 60 feet of you. On a hit, the attack deals radiant damage equal to 1d8 + your Wisdom modifier.</p>",
+    chalice: "<p>Whenever you cast a spell using a spell slot that restores hit points to a creature, you or another creature within 30 feet of you can regain hit points equal to 1d8 + your Wisdom modifier.</p>",
+    dragon: "<p>When you make an Intelligence or a Wisdom check or a Constitution saving throw to maintain concentration on a spell, you can treat a roll of 9 or lower on the d20 as a 10.</p>"
+  }
+
+  function render(html) {
+    const field = html[0].querySelector(".dynamic-tooltip");
+    html[2].querySelectorAll("[data-button]").forEach(btn => {
+      btn.addEventListener("mouseover", function() {
+        const type = btn.dataset.button;
+        field.innerHTML = intro[type];
+      });
+    });
+  }
+
+  // @scale.stars.starry-form-die
+
+  const form = await columnDialog({ title, content, buttons, render });
+  if (form === "archer") {
+    const itemData = {
+      name: "Starry Form (Archer)",
+      type: "feat",
+      img: "icons/weapons/bows/shortbow-recurve-yellow.webp",
+      system: {
+        description: { value: intro[form] },
+        activation: { type: "bonus", cost: 1 },
+        duration: { units: "inst" },
+        target: { value: 1, type: "creature" },
+        range: { value: 60, units: "ft" },
+        ability: "wis",
+        actionType: "rsak",
+        attackBonus: "",
+        damage: { parts: [["@scale.stars.starry-form-die + @mod", "radiant"]] }
+      }
+    }
+    const effectButtons = ["use", "attack", "damage"].reduce((acc, e) => {
+      return acc + `<a data-type="${e}">${e.titleCase()}</a>`;
+    }, "<p class='zhell-custom-buttons'>") + "</p>";
+    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form] + effectButtons);
+    foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
+  } else if (form === "chalice") {
+    const itemData = {
+      name: "Starry Form (Chalice)",
+      type: "feat",
+      img: "icons/magic/holy/chalice-glowing-gold-water.webp",
+      system: {
+        target: { value: 1, type: "creature" },
+        range: { value: 30, units: "ft" },
+        ability: "wis",
+        actionType: "heal",
+        damage: { parts: [["@scale.stars.starry-form-die + @mod", "healing"]] }
+      }
+    }
+    const effectButtons = `<p class='zhell-custom-buttons'><a data-type="damage">Healing</a></p>`;
+    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form] + effectButtons);
+    foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
+  } else if (form === "dragon") {
+    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    effectData.changes = [{ key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true }];
+  } else return;
+  await actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify())?.delete();
+  const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
+
+  const file = "jb2a.markers.circle_of_stars.blue";
+  return new Sequence().effect().file(file).attachTo(token).scale(2).fadeIn(500).fadeOut(500).tieToDocuments(effect).persist().play();
 }

@@ -1,110 +1,28 @@
 <form>
+  {{#each checks as |check|}}
   <div class="form-group">
-    <label for="showLimitedUses">Enable Limited Use Dots</label>
+    <label for="{{check.id}}">{{localize check.name}}</label>
     <div class="form-fields">
-      <input name="showLimitedUses" type="checkbox" {{checked showLimitedUses}}>
+      <input type="checkbox" name="{{check.id}}" id="{{check.id}}" {{checked check.checked}}>
     </div>
-    <p class="notes">Create colored dots on the sheet for items with limited uses.</p>
+    <p class="notes">{{localize check.hint}}</p>
   </div>
+  {{/each}}
+
+  {{#each colors as |color|}}
   <div class="form-group">
-    <label for="showSpellSlots">Enable Spell Slot Dots</label>
+    <label>{{localize color.name}}</label>
     <div class="form-fields">
-      <input name="showSpellSlots" type="checkbox" {{checked showSpellSlots}}>
+      <input type="color" value="{{color.value}}" data-edit="{{color.id}}">
+      <input type="text" name="{{color.id}}" value="{{color.value}}">
     </div>
-    <p class="notes">Create colored dots on the sheet for spell slots.</p>
+    <p class="notes">{{localize color.hint}}</p>
   </div>
-  <div class="form-group">
-    <label>Full Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{usesUnexpended}}" data-edit="usesUnexpended">
-      <input name="usesUnexpended" type="text" value="{{usesUnexpended}}">
-    </div>
-    <p class="notes">The color of available limited uses and spell slots.</p>
-  </div>
-  <div class="form-group">
-    <label>Attuned Item Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{itemAttuned}}" data-edit="itemAttuned">
-      <input name="itemAttuned" type="text" value="{{itemAttuned}}">
-    </div>
-    <p class="notes">The color of the attunement icon when attuned to an item.</p>
-  </div>
-  <div class="form-group">
-    <label>Not Attuned Item Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{itemNotAttuned}}" data-edit="itemNotAttuned">
-      <input name="itemNotAttuned" type="text" value="{{itemNotAttuned}}">
-    </div>
-    <p class="notes">The color of the attunement icon when not attuned to an item.</p>
-  </div>
-  <div class="form-group">
-    <label>Equipped Item Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{itemEquipped}}" data-edit="itemEquipped">
-      <input name="itemEquipped" type="text" value="{{itemEquipped}}">
-    </div>
-    <p class="notes">The color of the equipped icon when an item is equipped.</p>
-  </div>
-  <div class="form-group">
-    <label>Unequipped Item Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{itemNotEquipped}}" data-edit="itemNotEquipped">
-      <input name="itemNotEquipped" type="text" value="{{itemNotEquipped}}">
-    </div>
-    <p class="notes">The color of the equipped icon when an item is unequipped.</p>
-  </div>
-  <div class="form-group">
-    <label>Prepared Spell Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{spellPrepared}}" data-edit="spellPrepared">
-      <input name="spellPrepared" type="text" value="{{spellPrepared}}">
-    </div>
-    <p class="notes">The color of the prepared icon when a spell is prepared.</p>
-  </div>
-  <div class="form-group">
-    <label>Unprepared Spell Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{spellNotPrepared}}" data-edit="spellNotPrepared">
-      <input name="spellNotPrepared" type="text" value="{{spellNotPrepared}}">
-    </div>
-    <p class="notes">The color of the prepared icon when a spell is not prepared.</p>
-  </div>
-  <div class="form-group">
-    <label>Always Prepared Spell Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{spellAlwaysPrepared}}" data-edit="spellAlwaysPrepared">
-      <input name="spellAlwaysPrepared" type="text" value="{{spellAlwaysPrepared}}">
-    </div>
-    <p class="notes">The color of the prepared icon when a spell is permanently prepared.</p>
-  </div>
-  <div class="form-group">
-    <label>Proficient Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{proficientNormal}}" data-edit="proficientNormal">
-      <input name="proficientNormal" type="text" value="{{proficientNormal}}">
-    </div>
-    <p class="notes">The color of the Proficient icons.</p>
-  </div>
-  <div class="form-group">
-    <label>Half Proficient Color</label>
-    <div class="form-fields">
-      <input type="color" value="{{proficientHalf}}" data-edit="proficientHalf">
-      <input name="proficientHalf" type="text" value="{{proficientHalf}}">
-    </div>
-    <p class="notes">The color of the Half Proficient icons.</p>
-  </div>
-  <div class="form-group">
-    <label>Twice Proficient</label>
-    <div class="form-fields">
-      <input type="color" value="{{proficientTwice}}" data-edit="proficientTwice">
-      <input name="proficientTwice" type="text" value="{{proficientTwice}}">
-    </div>
-    <p class="notes">The color of the Twice Proficient icons.</p>
-  </div>
+  {{/each}}
 
   <header>
-    <button type="submit" name="submit">
-      <i class="fa-solid fa-save"></i> Save Settings
+    <button type="submit">
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
     </button>
   </header>
 </form>

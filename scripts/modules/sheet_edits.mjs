@@ -1,6 +1,6 @@
 import { COLOR, MODULE, RARITY } from "../const.mjs";
 import { MateriaMedica } from "./crafting.mjs";
-import { ZHELL_UTILS } from "./zhell_functions.mjs";
+import { EXHAUSTION } from "./zhell_functions.mjs";
 
 // hooks on renderActorSheet
 export function ZHELL_SHEET(sheet, html, sheetData) {
@@ -33,13 +33,18 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
   if (showSpellSlots) {
     Object.entries(sheet.object.system.spells ?? {}).forEach(([key, { value, max }]) => {
       const _max = html[0].querySelector(`.spell-max[data-level=${key}]`);
+      const dotContainer = document.createElement("DIV");
+      dotContainer.classList.add("zhell-dots", "flexrow");
       if (!max || !_max) return;
       const beforeThis = _max.closest(".spell-slots");
-      for (let i = max; i > 0; i--) {
+      beforeThis.before(dotContainer);
+      const q = 10;
+      for (let i = 0; i < Math.min(q, max); i++) {
         const span = document.createElement("SPAN");
-        beforeThis.insertAdjacentElement("beforeBegin", span)
-        if (i <= value) span.classList.add("dot");
-        else span.classList.add("dot", "empty");
+        dotContainer.appendChild(span);
+        const le = i < (q - 1) || max <= q;
+        const cls = le ? (i < value ? ["dot"] : ["dot", "empty"]) : (value < max ? ["dot", "empty", "has-more"] : ["dot", "has-more"]);
+        span.classList.add(...cls);
       }
     });
   }
@@ -57,20 +62,47 @@ export function ZHELL_SHEET(sheet, html, sheetData) {
       if (o.type !== "spell") {
         const dotContainer = document.createElement("DIV");
         dotContainer.classList.add("zhell-dots", "flexrow");
-        dotContainer.innerHTML = Array.fromRange(Math.min(10, max)).reduce((acc, e) => {
-          if (e < value) return acc + `<span class="dot"></span>`;
-          else return acc + `<span class="dot empty"></span>`;
-        }, "") + (max > 10 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
+        const q = 10;
+        dotContainer.innerHTML = Array.fromRange(Math.min(q, max)).reduce((acc, e) => {
+          const le = e < (q - 1) || max <= q;
+          const cls = le ? (e < value ? "dot" : "dot empty") : (value < max ? "dot empty has-more" : "dot has-more");
+          return acc + `<span class="${cls}"></span>`;
+        }, "");
         adjacent.insertAdjacentElement(position, dotContainer);
       } else {
         const dotContainer = document.createElement("DIV");
         dotContainer.classList.add("zhell-dots", "flexrow");
-        dotContainer.innerHTML = Array.fromRange(Math.min(5, max)).reduce((acc, e) => {
-          if (e < value) return acc + `<span class="dot"></span>`;
-          else return acc + `<span class="dot empty"></span>`;
-        }, "") + (max > 5 ? `<span class="dot ${value < max ? "empty" : ""} has-more"></span>` : "");
+        const q = 5;
+        dotContainer.innerHTML = Array.fromRange(Math.min(q, max)).reduce((acc, e) => {
+          const le = e < (q - 1) || max <= q;
+          const cls = le ? (e < value ? "dot" : "dot empty") : (value < max ? "dot empty has-more" : "dot has-more");
+          return acc + `<span class="${cls}"></span>`;
+        }, "");
         adjacent.insertAdjacentElement(position, dotContainer);
       }
+    });
+    // items with spells
+    sheet.object.items.filter(i => {
+      const f = i.flags["items-with-spells-5e"]?.["item-spells"]?.length;
+      const u = i.hasLimitedUses;
+      return f && u;
+    }).forEach(i => {
+      const header = [...html[0].querySelectorAll(".items-header.spellbook-header > .item-name > h3")].find(h => {
+        return h.innerText.trim() === i.name && !h.dataset.itemId;
+      });
+      if(!header) return;
+      header.setAttribute("data-item-id", i.id);
+      const DIV = document.createElement("DIV");
+      DIV.classList.add("zhell-dots", "flexrow");
+      DIV.setAttribute("data-item-id", i.id);
+      const q = 5;
+      const {value,max} = i.system.uses;
+      DIV.innerHTML = Array.fromRange(Math.min(q, max)).reduce((acc, e) => {
+        const le = e < (q - 1) || max <= q;
+        const cls = le ? (e < value ? "dot" : "dot empty") : (value < max ? "dot empty has-more" : "dot has-more");
+        return acc + `<span class="${cls}"></span>`;
+      }, "");
+      header.after(DIV);
     });
   }
 
@@ -154,7 +186,8 @@ async function dotToggle(event) {
   if (!dot) return;
 
   const itemId = event.target.closest(".item")?.dataset.itemId;
-  const item = actor.items.get(itemId);
+  // nullish operator for Items With Spells
+  const item = actor.items.get(itemId) ?? actor.items.get(event.target.closest(".zhell-dots").dataset.itemId);
   const diff = dot.classList.contains("empty") ? 1 : -1;
 
   // if not item, it's a spell slot.
@@ -241,12 +274,12 @@ function exhaustionUpdate(event) {
       up: {
         icon: "<i class='fa-solid fa-arrow-up'></i>",
         label: "Gain a Level",
-        callback: () => ZHELL_UTILS.increase_exhaustion(actor)
+        callback: () => EXHAUSTION.increase_exhaustion(actor)
       },
       down: {
         icon: "<i class='fa-solid fa-arrow-down'></i>",
         label: "Down a Level",
-        callback: () => ZHELL_UTILS.decrease_exhaustion(actor)
+        callback: () => EXHAUSTION.decrease_exhaustion(actor)
       }
     }
   }).render(true);

@@ -13,17 +13,6 @@ import { MODULE } from "../const.mjs";
  */
 
 export class DM_TOOL {
-
-  // HELPER FUNCTIONS
-
-  // get whether a token's actor has that condition.
-  static tokenHasCondition(token, statusId) {
-    return !!token.actor.effects.find(eff => eff.getFlag("core", "statusId") === statusId);
-  }
-  // turn a statusId into an effect from the token's actor (if effect exists).
-  static tokenConditionFromId(token, statusId) {
-    return token.actor.effects.find(eff => eff.getFlag("core", "statusId") === statusId);
-  }
   // return an array of effect ids to delete from a token's actor.
   static getDeleteIds(token, statusIds) {
     return token.actor.effects.reduce((acc, effect) => {
@@ -32,6 +21,7 @@ export class DM_TOOL {
       return acc;
     }, []);
   }
+
   // create effect data from status id, optionally change duration.
   static createConditionData(statusId, duration) {
     const data = foundry.utils.duplicate(CONFIG.statusEffects.find(eff => eff.id === statusId));
@@ -40,6 +30,7 @@ export class DM_TOOL {
     if (duration) data.duration = this.convertDurationToSeconds(duration);
     return foundry.utils.mergeObject(data, { "flags.core.statusId": statusId });
   }
+
   // gets all effects from a token's actor that have a status id from statusEffects
   static getAllCurrentConditions(token) {
     const statusIds = CONFIG.statusEffects.map(i => i.id);
@@ -48,19 +39,21 @@ export class DM_TOOL {
       return statusIds.includes(statusId);
     });
   }
+
   // takes time and a unit and convers it to seconds.
   static convertDurationToSeconds({ time, unit }) {
     let seconds = Number(time);
     if (!time || !unit) return;
     if (unit === "seconds") return { seconds };
-    if (unit === "minutes") seconds *= 60;
-    if (unit === "hours") seconds *= 60 * 60;
-    if (unit === "days") seconds *= 60 * 60 * 24;
-    if (unit === "weeks") seconds *= 60 * 60 * 24 * 9;
-    if (unit === "months") seconds *= 60 * 60 * 24 * 9 * 3;
-    if (unit === "years") seconds *= 60 * 60 * 24 * 9 * 3 * 12;
+    else if (unit === "minutes") seconds *= 60;
+    else if (unit === "hours") seconds *= 60 * 60;
+    else if (unit === "days") seconds *= 60 * 60 * 24;
+    else if (unit === "weeks") seconds *= 60 * 60 * 24 * 9;
+    else if (unit === "months") seconds *= 60 * 60 * 24 * 9 * 3;
+    else if (unit === "years") seconds *= 60 * 60 * 24 * 9 * 3 * 12;
     return { seconds };
   }
+
   // remove conditions from token, given a list of status ids.
   static async deleteConditionsFromTokens(tokens, statusIds) {
     return tokens.map(token => token.actor.deleteEmbeddedDocuments("ActiveEffect", this.getDeleteIds(token, statusIds)));
@@ -70,77 +63,10 @@ export class DM_TOOL {
   static async applyConditionsToTokens(tokens, conditionDatas) {
     return tokens.map(token => {
       const conditions = conditionDatas.filter(c => {
-        return !this.tokenHasCondition(token, c.flags.core.statusId);
+        return !!token.actor.effects.find(eff => eff.getFlag("core", "statusId") === c.flags.core.statusId);
       });
       if (!conditions.length) return;
       return token.actor.createEmbeddedDocuments("ActiveEffect", conditions);
-    });
-  }
-
-  // get all resistances from a token's actor
-  static getResistancesFromToken(token) {
-    const { value, custom, bypasses } = token.actor.system.traits.dr;
-    const types = new Set(value);
-    if (custom) {
-      for (const val of custom.split(";")) {
-        if (val) types.add(val);
-      }
-    }
-    types.bypasses = bypasses ?? [];
-    return types;
-  }
-  // get all immunities from a token's actor
-  static getImmunitiesFromToken(token) {
-    const { value, custom, bypasses } = token.actor.system.traits.di;
-    const types = new Set(value);
-    if (custom) {
-      for (const val of custom.split(";")) {
-        if (val) types.add(val);
-      }
-    }
-    types.bypasses = bypasses ?? [];
-    return types;
-  }
-  // get all vulnerabilities from a token's actor
-  static getVulnerabilitiesFromToken(token) {
-    const { value, custom, bypasses } = token.actor.system.traits.dv;
-    const types = new Set(value);
-    if (custom) {
-      for (const val of custom.split(";")) {
-        if (val) types.add(val);
-      }
-    }
-    types.bypasses = bypasses ?? [];
-    return types;
-  }
-  // takes an array of parts and returns the damage the token's actor should take
-  static calculateDamageTakenForToken(token, parts, { global = 1, properties = [] } = {}) {
-    const dr = this.getResistancesFromToken(token);
-    const di = this.getImmunitiesFromToken(token);
-    const dv = this.getVulnerabilitiesFromToken(token);
-
-    const props = CONFIG.DND5E.physicalWeaponProperties; // ada, sil, mgc
-    const phys = CONFIG.DND5E.physicalDamageTypes; // piercing, bludgeoning, slashing
-
-    const partsModified = parts.map(([value, type]) => {
-      const imm = di.has(type) && !properties.some(p => di.bypasses.includes(p) && type in phys);
-      const res = dr.has(type) && !properties.some(p => dr.bypasses.includes(p) && type in phys);
-      const vul = dv.has(type) && !properties.some(p => dv.bypasses.includes(p) && type in phys);
-
-      const mod = imm ? 0 : vul ? 2 : res ? 0.5 : 1;
-      const val = Roll.safeEval(value);
-      return Math.floor(val * mod * global);
-    });
-    const damage = partsModified.reduce((acc, dmg) => {
-      return acc + dmg;
-    }, 0);
-    return damage;
-  }
-  // applies damage to tokens' actors, given an array of damage parts
-  static async applyDamageToTokens(tokens, parts, options = {}) {
-    return tokens.map(token => {
-      const damage = this.calculateDamageTakenForToken(token, parts, options);
-      return token.actor.applyDamage(damage);
     });
   }
 
@@ -175,7 +101,7 @@ export class DM_TOOL {
     // apply damage if it should not be resisted.
     const saveToResistDamage = resistDamage && saveNeeded;
     if (!saveToResistDamage) {
-      await this.applyDamageToTokens(tokens, parts, options);
+      await applyDamageToTokens(tokens, parts, options);
     }
 
     // get saving throws if something should be resisted.
@@ -188,10 +114,10 @@ export class DM_TOOL {
         await this.applyConditionsToTokens(failedTokens, effectData);
       }
       if (saveToResistDamage) {
-        await this.applyDamageToTokens(failedTokens, parts, options);
+        await applyDamageToTokens(failedTokens, parts, options);
         if (!noDamage) {
           options.global = 0.5;
-          await this.applyDamageToTokens(succeedTokens, parts, options);
+          await applyDamageToTokens(succeedTokens, parts, options);
         }
       }
       if (targetFailures) {
@@ -230,8 +156,7 @@ export class DM_TOOL {
         </div>
       </div>`;
       DIV.innerHTML = effectForm;
-    }
-    else if (target.name === "damage-create") {
+    } else if (target.name === "damage-create") {
       container = target.closest("div.dialog-content").querySelector("div.damage-container");
       const damageOptions = Object.entries(CONFIG.DND5E.damageTypes).filter(([type]) => {
         return !(type in CONFIG.DND5E.physicalDamageTypes);
@@ -248,10 +173,6 @@ export class DM_TOOL {
       </div>`;
     }
     container.append(...DIV.children);
-  }
-  // deletes a damage or effect row
-  static deleteDamageOrEffectRow(event) {
-    event.target.closest("[name='status-delete'], [name='damage-delete']")?.closest("div.form-group").remove();
   }
 
   static async RENDER() {
@@ -281,7 +202,7 @@ export class DM_TOOL {
         remove: {
           label: "Remove Selected Conditions",
           callback: async (html) => {
-            const statusIds = DM_TOOL.gatherStatusIds(html);
+            const statusIds = [...html[0].querySelectorAll("[name='status-effects']")].map(i => i.value);
             DM_TOOL.deleteConditionsFromTokens(tokens, statusIds);
           }
         },
@@ -299,7 +220,7 @@ export class DM_TOOL {
       render: (html) => {
         html[0].addEventListener("click", (event) => {
           DM_TOOL.createDamageOrEffectRow(event);
-          DM_TOOL.deleteDamageOrEffectRow(event);
+          event.target.closest("[name='status-delete'], [name='damage-delete']")?.closest("div.form-group").remove();
           d.setPosition();
         });
       }
@@ -351,11 +272,6 @@ export class DM_TOOL {
 
     return { ability, targetValue, targetFailures };
   }
-  // function to gather status ids to remove them from tokens
-  static gatherStatusIds(html) {
-    const effectSelects = html[0].querySelectorAll("[name='status-effects']");
-    return Array.from(effectSelects).map(i => i.value);
-  }
 }
 
 // dnd5e.preRollDamage.
@@ -386,8 +302,11 @@ export function _addFlavorListenerToDamageRolls(message, html) {
   const totals = [[]];
   let otherSum = 0;
   for (let i = 1; i < message.rolls[0].dice.length; i++) {
-    const tot = message.rolls[0].dice[i].total;
-    totals.push([tot, types[i] ?? types[0]]);
+    const die = message.rolls[0].dice[i];
+    const tot = die.total;
+    const flavor = CONFIG.DND5E.damageTypes[die.options.flavor];
+    const type = flavor ? die.options.flavor : (types[i] || types[0]);
+    totals.push([tot, type]);
     otherSum += tot;
   }
   totals[0] = [total - otherSum, types[0]];
@@ -399,5 +318,52 @@ export function _addFlavorListenerToDamageRolls(message, html) {
     const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
     const properties = message.getFlag(MODULE, "properties") ?? [];
     return ZHELL.token.applyDamage(tokens, parts, { global, properties });
+  });
+}
+
+export function _gatherTokenDamageTraits(token) {
+  const { dr, di, dv } = token.actor.system.traits;
+
+  return { dr: _mapToTypes(dr), di: _mapToTypes(di), dv: _mapToTypes(dv) };
+
+  // get all resistances from a token's actor
+  function _mapToTypes({ value, custom, bypasses }) {
+    const types = new Set(value);
+    if (custom) {
+      for (const val of custom.split(";")) {
+        if (val) types.add(val);
+      }
+    }
+    types.bypasses = bypasses ?? [];
+    return types;
+  }
+}
+
+// takes an array of parts and returns the damage the token's actor should take
+export function calculateDamageTakenForToken(token, parts, { global = 1, properties = [] } = {}) {
+  const { dr, di, dv } = _gatherTokenDamageTraits(token);
+
+  const props = CONFIG.DND5E.physicalWeaponProperties; // ada, sil, mgc
+  const phys = CONFIG.DND5E.physicalDamageTypes; // piercing, bludgeoning, slashing
+
+  const partsModified = parts.map(([value, type]) => {
+    const imm = di.has(type) && !properties.some(p => di.bypasses.includes(p) && type in phys);
+    const res = dr.has(type) && !properties.some(p => dr.bypasses.includes(p) && type in phys);
+    const vul = dv.has(type) && !properties.some(p => dv.bypasses.includes(p) && type in phys);
+
+    const mod = imm ? 0 : vul ? 2 : res ? 0.5 : 1;
+    const val = Roll.safeEval(value);
+    return Math.floor(val * mod * global);
+  });
+  return partsModified.reduce((acc, dmg) => {
+    return acc + dmg;
+  }, 0);
+}
+
+// applies damage to tokens' actors, given an array of damage parts
+export async function applyDamageToTokens(tokens, parts, options = {}) {
+  return tokens.map(token => {
+    const damage = calculateDamageTakenForToken(token, parts, options);
+    return token.actor.applyDamage(damage);
   });
 }

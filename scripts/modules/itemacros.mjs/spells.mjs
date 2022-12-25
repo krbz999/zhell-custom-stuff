@@ -34,7 +34,10 @@ export const ITEMACRO_SPELLS = {
   SPIRITUAL_WEAPON,
   MAGE_ARMOR,
   MOONBEAM,
-  FIND_FAMILIAR
+  FIND_FAMILIAR,
+  BORROWED_KNOWLEDGE,
+  AID,
+  ELEMENTAL_WEAPON
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
@@ -175,12 +178,14 @@ async function ARMOR_OF_AGATHYS(item, speaker, actor, token, character, event, a
 }
 
 async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, args) {
-  return elementalDialog({
+  const type = await elementalDialog({
     types: ["acid", "cold", "fire", "lightning", "thunder"],
-    callback: resolve,
     content: "Choose the damage type.",
     title: item.name
   });
+  if (!type) return;
+
+  return resolve(type);
 
   async function resolve(s) {
     const use = await item.use();
@@ -226,26 +231,50 @@ async function CALL_LIGHTNING(item, speaker, actor, token, character, event, arg
 }
 
 async function BREATH_WEAPON(item, speaker, actor, token, character, event, args) {
+  const options = [["cone", "Cone (30ft)"], ["line", "Line (60ft)"]].reduce((acc, e) => {
+    return acc + `<option value="${e[0]}">${e[1]}</option>`;
+  }, "");
+  const content = _basicFormContent({ label: "Template Type:", type: "select", options });
+
+  const template = await Dialog.prompt({
+    title: item.name,
+    content,
+    rejectClose: false,
+    label: "Continue",
+    callback: (html) => html[0].querySelector("select").value
+  });
+  if (!template) return;
+
   const breaths = {
-    acid: "jb2a.breath_weapons.fire.cone.green.02",
-    cold: "jb2a.breath_weapons.cold.cone.blue",
-    fire: "jb2a.breath_weapons.fire.cone.orange.02",
-    lightning: "jb2a.breath_weapons.fire.cone.blue.02",
-    poison: "jb2a.breath_weapons.poison.cone.green"
+    line: {
+      acid: "jb2a.breath_weapons.acid.line.green",
+      cold: "jb2a.breath_weapons.acid.line.blue",
+      fire: "jb2a.breath_weapons.fire.line.orange",
+      lightning: "jb2a.breath_weapons.lightning.line.purple",
+      poison: "jb2a.breath_weapons.fire.line.purple"
+    },
+    cone: {
+      acid: "jb2a.breath_weapons.fire.cone.green.02",
+      cold: "jb2a.breath_weapons.cold.cone.blue",
+      fire: "jb2a.breath_weapons.fire.cone.orange.02",
+      lightning: "jb2a.breath_weapons.fire.cone.blue.02",
+      poison: "jb2a.breath_weapons.poison.cone.green"
+    }
   }
 
-  return elementalDialog({
-    types: Object.keys(breaths),
-    callback: resolve,
+  const type = await elementalDialog({
+    types: Object.keys(breaths.line),
     content: "Choose the damage type.",
     title: item.name
   });
+  if (!type) return;
 
-  async function resolve(s) {
-    const type = breaths[s];
-    await item.setFlag(MODULE, "breath-weapon.type", type);
-    return item.use();
-  }
+  const file = breaths[template][type];
+  await item.setFlag(MODULE, "breath-weapon", { type: file, template });
+  const target = template === "line" ? { value: 60, units: "ft", type: template, width: 5 } : { value: 30, units: "ft", type: template, width: "" };
+  const clone = item.clone({ "system.target": target }, { keepId: true });
+  clone.prepareFinalAttributes();
+  return clone.use({}, { "flags.dnd5e.itemData": clone.toObject() });
 }
 
 async function FATHOMLESS_EVARDS_BLACK_TENTACLES(item, speaker, actor, token, character, event, args) {
@@ -635,14 +664,131 @@ async function FIND_FAMILIAR(item, speaker, actor, token, character, event, args
   return _spawnHelper(isDevinn ? isDevinn : isDrazvik ? isDrazvik : "dummy");
 }
 
-async function __(item, speaker, actor, token, character, event, args) {
-  return imageAnchorDialog({
-    label: "Steve",
-    title: "Steve?",
-    callback: () => {},
-    top: canvas.scene.tokens.map(t => ({ name: t.name, src: t.texture.src })),
-    middle: canvas.scene.tokens.map(t => ({ name: t.name, src: t.texture.src })),
-    bottom: canvas.scene.tokens.map(t => ({ name: t.name, src: t.texture.src })),
-    allowMultiple: true
+async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
+  const use = await item.use();
+  if (!use) return;
+
+  const options = Object.entries(actor.system.skills).reduce((acc, [id, { value }]) => {
+    if (value > 0) return acc;
+    const name = CONFIG.DND5E.skills[id].label;
+    return acc + `<option value="${id}">${name}</option>`;
+  }, "");
+
+  const content = _basicFormContent({ label: "Choose a skill:", type: "select", options });
+  const skl = await Dialog.prompt({
+    title: item.name,
+    rejectClose: false,
+    label: "Cast",
+    content,
+    callback: (html) => html[0].querySelector("select").value
   });
+  if (!skl) return;
+
+  const has = actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify());
+  if (has) await has.delete();
+
+  return actor.createEmbeddedDocuments("ActiveEffect", [{
+    label: item.name,
+    icon: item.img,
+    duration: _getItemDuration(item),
+    changes: [{ key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1 }],
+    "flags.core.statusId": item.name.slugify(),
+    "flags.visual-active-effects.data": {
+      intro: `<p>You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.</p>`,
+      content: item.system.description.value
+    }
+  }]);
+}
+
+async function AID(item, speaker, actor, token, character, event, args) {
+  if (!_getDependencies("warpgate", "effectmacro", "visual-active-effects")) return item.use();
+
+  const targets = game.user.targets;
+  if (targets.size > 3) return ui.notifications.warn("You can only choose up to three targets.");
+  if (targets.size < 1) return ui.notifications.warn("You need at least one target.");
+
+  const use = await item.use();
+  if (!use) return;
+
+  const spellLevel = _getSpellLevel(use);
+
+  async function onCreate() {
+    const level = effect.getFlag("effectmacro", "data.spellLevel");
+    const value = 5 * (level - 1);
+    return actor.applyDamage(-value);
+  }
+
+  const effectData = {
+    label: item.name,
+    icon: item.img,
+    duration: _getItemDuration(item),
+    changes: [{ key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1) }],
+    "flags.core.statusId": item.name.slugify(),
+    "flags.visual-active-effects.data.intro": `<p>Your hit point maximum is increased by ${5 * (spellLevel - 1)}.</p>`,
+    "flags.effectmacro.data.spellLevel": spellLevel,
+    "flags.effectmacro.onCreate.script": `(${onCreate.toString()})()`
+  }
+
+  const updates = { embedded: { ActiveEffect: { [effectData.label]: effectData } } };
+  const options = {
+    permanent: true,
+    description: `${actor.name} is casting ${item.name} on you.`,
+    comparisonKeys: { ActiveEffect: "label" }
+  }
+
+  for (const target of targets) await warpgate.mutate(target.document, updates, {}, options);
+}
+
+async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
+  if (!_getDependencies("babonus", "visual-active-effects", "concentrationnotifier")) return item.use();
+
+  const has = actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify());
+  if (has) {
+    await CN.isActorConcentratingOnItem(actor, item)?.delete();
+    return has.delete();
+  }
+
+  const use = await item.use();
+  if (!use) return;
+  const level = _getSpellLevel(use);
+  const bonus = Math.min(3, Math.floor((level - 1) / 2));
+  const dice = `${bonus}d4`;
+
+  const type = await elementalDialog({ types: ["acid", "cold", "fire", "lightning", "thunder"], title: item.name });
+
+  const options = actor.itemTypes.weapon.reduce((acc, e) => {
+    return acc + `<option value="${e.id}">${e.name}</option>`;
+  }, "");
+  const content = _basicFormContent({ label: "Choose Weapon:", options, type: "select" });
+  const weaponId = await Dialog.prompt({
+    content,
+    rejectClose: false,
+    title: item.name,
+    callback: (html) => html[0].querySelector("select").value,
+    label: "Enhance"
+  });
+  const weapon = actor.items.get(weaponId);
+
+  const api = game.modules.get("babonus").api;
+  const atk = api.createBabonus({
+    type: "attack", name: "atk", bonuses: { bonus }, description: item.system.description.value,
+    filters: { customScripts: `return item.id === "${weaponId}";` }
+  }).toObject();
+  const dmg = api.createBabonus({
+    type: "damage", name: "dmg", bonuses: { bonus: `${dice}[${type}]` }, description: item.system.description.value,
+    filters: { customScripts: `return item.id === "${weaponId}";` }
+  }).toObject();
+
+  const conc = CN.isActorConcentratingOnItem(actor, item);
+
+  const effectData = [{
+    icon: item.img,
+    label: `${item.name} (${weapon.name})`,
+    duration: foundry.utils.duplicate(conc.duration),
+    "flags.core.statusId": item.name.slugify(),
+    "flags.babonus.bonuses": { [atk.id]: atk, [dmg.id]: dmg },
+    "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`
+  }];
+
+  return actor.createEmbeddedDocuments("ActiveEffect", effectData);
 }

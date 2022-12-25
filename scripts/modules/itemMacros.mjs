@@ -49,7 +49,7 @@ export function _constructSpellSlotOptions(actor) {
  * and reverts the light when the effect is deleted or disabled (deleting the effect on disable, too).
  * Returns an array of effect data.
  */
-export function _constructLightEffectData({ item, lightData, intro, flags = {} }) {
+export function _constructLightEffectData({ item, lightData, intro, flags }) {
   const config = lightData ?? { dim: 40, bright: 20 };
 
   const onCreate = async function() {
@@ -92,7 +92,8 @@ export function _constructLightEffectData({ item, lightData, intro, flags = {} }
         onCreate: { script: `(${onCreate.toString()})()` },
         onDelete: { script: `(${onDelete.toString()})()` },
         onDisable: { script: `(${onDisable.toString()})()` }
-      }
+      },
+      core: { statusId: item.name.slugify() }
     }, flags ?? {})
   }];
 }

@@ -1,12 +1,10 @@
-import { ZHELL_UTILS } from "./zhell_functions.mjs";
-
 export class ZHELL_SOCKETS {
 
   /** LOAD TEXTURES FOR ALL CLIENTS. */
-  static loadTextureSocketOn = () => {
+  static loadTextureForAllSocketOn = () => {
     game.socket.on(`world.${game.world.id}`, (request) => {
       if (request.action === "loadTextureForAll") {
-        ZHELL_UTILS.loadTextureForAll(request.data.src, false);
+        this.loadTextureForAll(request.data.src, false);
       }
     });
   }
@@ -22,10 +20,10 @@ export class ZHELL_SOCKETS {
   }
 
   /* ROUTE TILE CREATION TO THE GM */
-  static routeTilesThroughGM = () => {
+  static createTilesSocketOn = () => {
     game.socket.on(`world.${game.world.id}`, (request) => {
       if (request.action === "createTiles") {
-        ZHELL_UTILS.createTiles(request.data.tileData, false);
+        this.createTiles(request.data.tileData, false);
       }
     });
   }
@@ -41,10 +39,10 @@ export class ZHELL_SOCKETS {
   }
 
   /* AWARD LOOT USING BACKPACK-MANAGER */
-  static awardLoot = () => {
+  static awardLootSocketOn = () => {
     game.socket.on(`world.${game.world.id}`, (request) => {
       if (request.action === "awardLoot") {
-        ZHELL_UTILS.awardLoot(request.data.backpackUuid, false);
+        this.awardLoot(request.data.backpackUuid, false);
       }
     });
   }

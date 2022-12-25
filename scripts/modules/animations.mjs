@@ -341,7 +341,7 @@ export function _equipmentPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Table Rules") return;
   if (app.object.name !== "Equipment") return;
   html[0].addEventListener("click", (event) => {
-    event.target.closest(".zhell-equipment-tables :is(h1,h2,h3)")?.classList.toggle("collapsed");
+    event.target.closest(".zhell-equipment-tables :is(h1, h2, h3)")?.classList.toggle("collapsed");
   });
 }
 
