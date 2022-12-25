@@ -370,7 +370,9 @@ export const STATUS_EFFECTS = [
     flags: {
       "visual-active-effects": {
         data: {
-          intro: "<p>You have spent your reaction.</p><p>You cannot take another reaction until the start of your next turn.</p>"
+          intro:
+            "<p>You have spent your reaction.</p>"
+            + "<p>You cannot take another reaction until the start of your next turn.</p>"
         }
       },
       effectmacro: {

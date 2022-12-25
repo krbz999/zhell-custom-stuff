@@ -5,6 +5,7 @@ import { elementalDialog, imageAnchorDialog } from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
   _basicFormContent,
+  _bladeCantripDamageBonus,
   _constructGenericEffectData,
   _constructLightEffectData,
   _getDependencies,
@@ -37,7 +38,8 @@ export const ITEMACRO_SPELLS = {
   FIND_FAMILIAR,
   BORROWED_KNOWLEDGE,
   AID,
-  ELEMENTAL_WEAPON
+  ELEMENTAL_WEAPON,
+  BLADE_CANTRIP
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
@@ -790,5 +792,34 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
     "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`
   }];
 
+  return actor.createEmbeddedDocuments("ActiveEffect", effectData);
+}
+
+async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args) {
+  if (!_getDependencies("effectmacro")) return item.use();
+
+  const use = await item.use();
+  if (!use) return;
+
+  const deleteMe = async function() {
+    return effect.delete();
+  }
+
+  const { formula, type } = _bladeCantripDamageBonus(item);
+
+  const effectData = [{
+    icon: item.img,
+    label: item.name,
+    changes: [{ key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: `+${formula}[${type}]` }],
+    "flags.core.statusId": item.name.slugify(),
+    "flags.visual-active-effects.data": {
+      intro: `<p>You deal ${formula} additional ${type} damage on your next damage roll.</p>`,
+      content: item.system.description.value
+    },
+    "flags.effectmacro": {
+      "dnd5e.rollDamage.script": `(${deleteMe.toString()})()`,
+      "onCombatEnd.script": `(${deleteMe.toString()})()`
+    }
+  }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
 }

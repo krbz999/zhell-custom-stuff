@@ -249,3 +249,14 @@ export function _getItemDuration(item) {
 
   return {};
 }
+
+/**
+ * Helper function to get the damage bonus from a blade cantrip.
+ */
+export function _bladeCantripDamageBonus(item) {
+  const [part, type] = item.system.damage.parts[0];
+  const level = item.parent.system.details.level ?? Math.floor(item.parent.system.details.cr);
+  const add = Math.floor((level + 1) / 6);
+  const { formula } = new Roll(part).alter(0, add);
+  return { formula, type };
+}

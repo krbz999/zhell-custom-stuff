@@ -63,7 +63,7 @@ export class DM_TOOL {
   static async applyConditionsToTokens(tokens, conditionDatas) {
     return tokens.map(token => {
       const conditions = conditionDatas.filter(c => {
-        return !!token.actor.effects.find(eff => eff.getFlag("core", "statusId") === c.flags.core.statusId);
+        return !token.actor.effects.find(eff => eff.getFlag("core", "statusId") === c.flags.core.statusId);
       });
       if (!conditions.length) return;
       return token.actor.createEmbeddedDocuments("ActiveEffect", conditions);
@@ -138,9 +138,11 @@ export class DM_TOOL {
     let container;
     if (target.name === "status-create") {
       container = target.closest("div.dialog-content").querySelector("div.status-container");
+      const has = [...container.querySelectorAll("[name='status-effects']")].map(n => n.value);
       const effectOptions = CONFIG.statusEffects.sort((a, b) => {
         return a.label.localeCompare(b.label);
       }).reduce((acc, { id, label }) => {
+        if (has.includes(id)) return acc;
         return acc + `<option value="${id}">${label}</option>`;
       }, "");
       const timeUnitOptions = ["seconds", "minutes", "hours", "days", "weeks", "months", "years"].reduce((acc, e) => {

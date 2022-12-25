@@ -36,7 +36,13 @@ export class ZHELL_COMBAT {
 }
 
 export function _replaceTokenHUD(hud, html, tokenData) {
-  const innerHTML = Object.values(tokenData.statusEffects).reduce((acc, { id, title, src, isActive, isOverlay }) => {
+  const sorting = CONFIG.statusEffects.reduce((acc, e) => {
+    acc[e.id] = e.sort;
+    return acc;
+  }, {});
+  const innerHTML = Object.values(tokenData.statusEffects).sort((a, b) => {
+    return sorting[a.id] - sorting[b.id];
+  }).reduce((acc, { id, title, src, isActive, isOverlay }) => {
     const clss = "status-effect effect-control";
     const atts = (isActive ? "active" : "") + " " + (isOverlay ? "overlay" : "");
     return acc + `

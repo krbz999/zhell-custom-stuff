@@ -346,8 +346,9 @@ export function _equipmentPageListeners(app, html) {
 }
 
 // ROTATE TOKENS WHEN THEY MOVE.
-export function _rotateTokensOnMovement(doc, update) {
+export function _rotateTokensOnMovement(doc, update, options) {
   if (doc.lockRotation) return;
+  if (options.animate === false) return;
   if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
   const ray = new Ray(doc, { x: update.x ?? doc.x, y: update.y ?? doc.y });
   update.rotation = ray.angle * 180 / Math.PI - 90;
