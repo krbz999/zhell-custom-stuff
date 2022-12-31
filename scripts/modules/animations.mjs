@@ -315,25 +315,25 @@ export function _classesPageListeners(app, html) {
   html[0].querySelectorAll(selector).forEach(s => {
     const A = document.createElement("A");
     A.classList.add("spell-desc-toggle");
+    A.setAttribute("data-action", "toggleDescription");
     A.setAttribute("data-uuid", s.dataset.uuid);
     A.innerHTML = "<i class='fa-solid fa-plus'></i>";
     s.after(A);
   });
 
-  html[0].addEventListener("click", async (event) => {
-    const a = event.target.closest(".spell-list .sub-spell-list .spell-desc-toggle");
-    if (!a) return;
-    const uuid = a.dataset.uuid;
-    const shown = html[0].querySelector(`.spell-description[data-uuid='${uuid}']`);
-    if (shown) return shown.remove();
-    const p = a.closest("p");
-    const spell = await fromUuid(uuid);
-    const desc = spell.system.description.value;
-    const DIV = document.createElement("DIV");
-    DIV.innerHTML = desc;
-    DIV.classList.add("spell-description");
-    DIV.setAttribute("data-uuid", uuid);
-    p.appendChild(DIV);
+  html[0].querySelectorAll("[data-action=toggleDescription]").forEach(a => {
+    a.addEventListener("click", async () => {
+      const uuid = a.dataset.uuid;
+      const shown = html[0].querySelector(`.spell-description[data-uuid='${uuid}']`);
+      if (shown) return shown.remove();
+      const spell = await fromUuid(uuid);
+      const desc = spell.system.description.value;
+      const DIV = document.createElement("DIV");
+      DIV.innerHTML = desc;
+      DIV.classList.add("spell-description");
+      DIV.setAttribute("data-uuid", uuid);
+      a.after(DIV);
+    });
   });
 }
 

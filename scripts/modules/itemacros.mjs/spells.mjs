@@ -6,6 +6,7 @@ import {
   _addTokenDismissalToEffect,
   _basicFormContent,
   _bladeCantripDamageBonus,
+  _constructDetectionModeEffectData,
   _constructGenericEffectData,
   _constructLightEffectData,
   _getDependencies,
@@ -39,7 +40,8 @@ export const ITEMACRO_SPELLS = {
   BORROWED_KNOWLEDGE,
   AID,
   ELEMENTAL_WEAPON,
-  BLADE_CANTRIP
+  BLADE_CANTRIP,
+  SEE_INVISIBILITY
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
@@ -822,4 +824,22 @@ async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args
     }
   }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
+}
+
+async function SEE_INVISIBILITY(item, speaker, actor, token, character, event, args) {
+  const data = _constructDetectionModeEffectData({
+    item,
+    modes: [{
+      id: "seeInvisibility",
+      range: token.document.sight.range ?? 60,
+      enabled: true
+    }]
+  });
+  foundry.utils.mergeObject(data[0], {
+    "flags.visual-active-effects.data": {
+      intro: "<p>You can see invisible creatures.</p>",
+      content: item.system.description.value
+    }
+  });
+  return actor.createEmbeddedDocuments("ActiveEffect", data);
 }

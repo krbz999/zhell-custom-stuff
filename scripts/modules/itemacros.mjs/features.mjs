@@ -27,12 +27,14 @@ async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args
     ui.notifications.error(`Please target between 1 and ${mod} creatures.`);
     return;
   }
+
+  const name = `Darkvision (${range}ft)`;
   const updates = {
     actor: { "system.attributes.senses.darkvision": range },
     token: { sight: { visionMode: "darkvision", range } }
   }
   const options = {
-    name: `Darkvision (${range}ft)`,
+    name,
     description: `You are being granted ${range} feet of darkvision.`
   }
 

@@ -3,7 +3,7 @@ import { DEFEATED, DISPLAY_AMMO, MODULE } from "../const.mjs";
 export class ZHELL_COMBAT {
 
   // hooks on updateToken
-  static markDefeatedCombatant = async (tokenDoc, updates) => {
+  static async markDefeatedCombatant(tokenDoc, updates) {
     if (tokenDoc.actor.hasPlayerOwner) return;
     if (!tokenDoc.combatant) return;
     const hpUpdate = foundry.utils.getProperty(updates, "actorData.system.attributes.hp.value");
@@ -14,7 +14,7 @@ export class ZHELL_COMBAT {
   }
 
   // hooks on dnd5e.rollAttack
-  static displaySavingThrowAmmo = async (weapon, roll, ammoUpdate) => {
+  static async displaySavingThrowAmmo(weapon, roll, ammoUpdate) {
     if (!ammoUpdate.length) return;
     const ammoId = ammoUpdate[0]._id;
     const ammo = weapon.actor.items.get(ammoId);

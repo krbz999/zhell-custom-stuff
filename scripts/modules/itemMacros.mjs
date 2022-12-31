@@ -99,6 +99,41 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
 }
 
 /**
+ * Helper function to construct an effect that grants a detection mode to a token.
+ * Reverts the array by deleting only what was added, when the effect is deleted.
+ * Returns the array of effect data.
+ */
+export function _constructDetectionModeEffectData({ modes = [], item }) {
+  const onCreate = async function() {
+    const { modes } = effect.getFlag("effectmacro", "data");
+    const previousModes = foundry.utils.duplicate(token.document.detectionModes);
+    const ids = previousModes.map(m => m.id);
+    previousModes.push(...modes.filter(m => !ids.includes(m.id)));
+    await token.document.update({ detectionModes: previousModes.filter(m => m.id !== "basicSight") });
+  }
+
+  const onDelete = async function() {
+    const { detectionModes } = await actor.getTokenDocument();
+    await token.document.update({ detectionModes });
+  }
+
+  return [{
+    icon: item.img,
+    label: item.name,
+    origin: item.uuid,
+    duration: _getItemDuration(item),
+    "flags.core.statusId": type,
+    "flags.effectmacro": {
+      "onCreate.script": `(${onCreate.toString()})()`,
+      "onEnable.script": `(${onCreate.toString()})()`,
+      "onDelete.script": `(${onDelete.toString()})()`,
+      "onDisable.script": `(${onDelete.toString()})()`,
+      data: { modes }
+    }
+  }];
+}
+
+/**
  * Helper function to create basic effect data, showing that some temporary item is active,
  * which does not require concentration.
  * Returns an array of effect data.

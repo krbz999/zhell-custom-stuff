@@ -252,7 +252,11 @@ img.zhell-holy-symbol.thrizur:hover {
   height: var(--form-field-height);
   align-items: center;
   grid-area: link;
-  border-radius: 4px 0 0 0;
+  border-radius: 8px 0 0 0;
+}
+
+.journal-page-content .sub-spell-list a.content-link:first-child:nth-last-child(2) {
+  border-radius: 8px 0 0 8px;
 }
 
 .spell-list .sub-spell-list .spell-desc-toggle {
@@ -264,7 +268,11 @@ img.zhell-holy-symbol.thrizur:hover {
   justify-content: center;
   align-items: center;
   grid-area: toggle;
-  border-radius: 0 4px 0 0;
+  border-radius: 0 8px 0 0;
+}
+
+.spell-list .sub-spell-list .spell-desc-toggle:last-child {
+  border-radius: 0 8px 8px 0;
 }
 
 .spell-list .sub-spell-list .spell-desc-toggle:not(:last-child) i::before {
@@ -280,10 +288,10 @@ img.zhell-holy-symbol.thrizur:hover {
 .spell-list .sub-spell-list .spell-description {
   max-height: 300px;
   overflow-y: auto;
-  border: 1px groove purple;
+  border: 1px groove black;
   border-top: none;
   grid-area: text;
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 8px 8px;
   padding: 0 0.5em;
 }
 

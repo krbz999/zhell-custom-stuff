@@ -161,7 +161,7 @@ export function _romanize(number) {
 export class EXHAUSTION {
 
   // increase exhaustion.
-  static increase_exhaustion = async (actor) => {
+  static async increase_exhaustion(actor) {
     if (!(actor instanceof Actor)) {
       ui.notifications.warn("Invalid actor provided.");
       return null;
@@ -183,7 +183,7 @@ export class EXHAUSTION {
   }
 
   // decrease exhaustion.
-  static decrease_exhaustion = async (actor) => {
+  static async decrease_exhaustion(actor) {
     if (!(actor instanceof Actor)) {
       ui.notifications.warn("Invalid actor provided.");
       return null;
@@ -206,7 +206,7 @@ export class EXHAUSTION {
   }
 
   // update or set exhaustion to specific level
-  static update_exhaustion = async (num, actor) => {
+  static async update_exhaustion(num, actor) {
     if (!num.between(0, 6)) {
       ui.notifications.warn("The provided level was not valid.");
       return null;

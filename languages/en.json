@@ -32,6 +32,8 @@
       "disableInitiativeButton.HINT": "Disable the Initiative button on the character sheet.",
       "createForaging.NAME": "Create Foraging",
       "createForaging.HINT": "Create a Foraging button on the sheet.",
+      "createMoneySpender.NAME": "Create Money Spender",
+      "createMoneySpender.HINT": "Create a 'Spend Money' button on the sheet.",
       "collapsibleHeaders.NAME": "Collapsible Headers",
       "collapsibleHeaders.HINT": "Make headers collapsible on actor sheets.",
       "showLimitedUses.NAME": "Enable Limited Use Dots",

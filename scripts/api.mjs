@@ -33,11 +33,13 @@ export class api {
         getDocument: _getDocumentFromCompendium,
         roman: _romanize,
         whisperPlayers: _whisperPlayers,
+        titleCard: _titleCard,
+        drawCircle: drawCircle,
         loadTextureForAll: ZHELL_SOCKETS.loadTextureForAll,
         createTiles: ZHELL_SOCKETS.createTiles,
-        titleCard: _titleCard,
         awardLoot: ZHELL_SOCKETS.awardLoot,
-        drawCircle: drawCircle
+        updateToken: ZHELL_SOCKETS.updateTokens,
+        grantItems: ZHELL_SOCKETS.grantItems
       },
       ITEMACRO
     }

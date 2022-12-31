@@ -53,6 +53,62 @@ function _registerSettings() {
   });
 }
 
+function _registerSettingsMenus() {
+  // game additions, replacements, and tweaks.
+  game.settings.register(MODULE, "worldSettings", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: WORLD_DEFAULTS,
+    onChange: () => SettingsConfig.reloadConfirm({ world: true })
+  });
+
+  game.settings.registerMenu(MODULE, "worldSettings", {
+    name: "ZHELL.SETTINGS.WORLD_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.WORLD_SETTINGS.HINT",
+    label: "Settings Menu",
+    icon: "fa-solid fa-atlas",
+    type: SettingsSubmenu,
+    restricted: true
+  });
+
+  // sheet color settings.
+  game.settings.register(MODULE, COLOR, {
+    scope: "client",
+    config: false,
+    type: Object,
+    default: COLOR_DEFAULTS,
+    onChange: () => refreshColors()
+  });
+
+  game.settings.registerMenu(MODULE, COLOR, {
+    name: "ZHELL.SETTINGS.COLOR_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.COLOR_SETTINGS.HINT",
+    label: "Sheet Color Settings",
+    icon: "fa-solid fa-paint-roller",
+    type: ColorPickerSubmenu,
+    restricted: false
+  });
+
+  // item rarity color settings.
+  game.settings.register(MODULE, RARITY, {
+    scope: "client",
+    config: false,
+    type: Object,
+    default: RARITY_DEFAULTS,
+    onChange: () => refreshColors()
+  });
+
+  game.settings.registerMenu(MODULE, RARITY, {
+    name: "ZHELL.SETTINGS.RARITY_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.RARITY_SETTINGS.HINT",
+    label: "Item Rarity Color Settings",
+    icon: "fa-solid fa-paint-roller",
+    type: RarityColorsSubmenu,
+    restricted: false
+  });
+}
+
 class SettingsSubmenu extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
@@ -172,60 +228,4 @@ class RarityColorsSubmenu extends FormApplication {
       })
     };
   }
-}
-
-function _registerSettingsMenus() {
-  // game additions, replacements, and tweaks.
-  game.settings.register(MODULE, "worldSettings", {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: WORLD_DEFAULTS,
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-
-  game.settings.registerMenu(MODULE, "worldSettings", {
-    name: "ZHELL.SETTINGS.WORLD_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.WORLD_SETTINGS.HINT",
-    label: "Settings Menu",
-    icon: "fa-solid fa-atlas",
-    type: SettingsSubmenu,
-    restricted: true
-  });
-
-  // sheet color settings.
-  game.settings.register(MODULE, COLOR, {
-    scope: "client",
-    config: false,
-    type: Object,
-    default: COLOR_DEFAULTS,
-    onChange: () => refreshColors()
-  });
-
-  game.settings.registerMenu(MODULE, COLOR, {
-    name: "ZHELL.SETTINGS.COLOR_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.COLOR_SETTINGS.HINT",
-    label: "Sheet Color Settings",
-    icon: "fa-solid fa-paint-roller",
-    type: ColorPickerSubmenu,
-    restricted: false
-  });
-
-  // item rarity color settings.
-  game.settings.register(MODULE, RARITY, {
-    scope: "client",
-    config: false,
-    type: Object,
-    default: RARITY_DEFAULTS,
-    onChange: () => refreshColors()
-  });
-
-  game.settings.registerMenu(MODULE, RARITY, {
-    name: "ZHELL.SETTINGS.RARITY_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.RARITY_SETTINGS.HINT",
-    label: "Item Rarity Color Settings",
-    icon: "fa-solid fa-paint-roller",
-    type: RarityColorsSubmenu,
-    restricted: false
-  });
 }

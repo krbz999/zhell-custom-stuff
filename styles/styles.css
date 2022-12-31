@@ -527,3 +527,88 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-style: italic;
   min-height: 100px;
 }
+
+/* Exhaustion Dialog */
+.exhaustion.dialog .dialog-content {
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+
+/* MONEY SPENDER */
+.money-spender .form {
+  display: grid;
+  grid-template-rows: 1fr 2fr 0fr;
+  grid-template-columns: 1fr;
+}
+
+.money-spender .tally {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 30px;
+  margin: 0 1em;
+}
+
+.money-spender .total[data-denom=pp]:after {
+  content: " pp";
+}
+
+.money-spender .total[data-denom=gp]:after {
+  content: " gp";
+}
+
+.money-spender .total[data-denom=ep]:after {
+  content: " ep";
+}
+
+.money-spender .total[data-denom=sp]:after {
+  content: " sp";
+}
+
+.money-spender .total[data-denom=cp]:after {
+  content: " cp";
+}
+
+.money-spender .utils {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.money-spender .util {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.money-spender .currency {
+  border-left: 2px groove;
+  width: 4em;
+  max-width: 4em;
+  border-right: 2px groove;
+  text-align: center;
+}
+
+.money-spender .adjust {
+  width: 4em;
+  max-width: 4em;
+  text-align: center;
+  border: 2px groove;
+  background-color: cornsilk;
+}
+
+.money-spender .adjust:hover {
+  text-shadow: none;
+}
+
+.money-spender .currency > * {
+  margin: 0.5em 0;
+  text-transform: uppercase;
+}
+
+.money-spender .current {
+  font-style: italic;
+  width: 4em;
+  text-align: center;
+  max-width: 4em;
+  padding-top: 0.5em;
+}

@@ -18,6 +18,7 @@ export const WORLD_DEFAULTS = {
   removeAlignment: true,
   disableInitiativeButton: true,
   createForaging: true,
+  createMoneySpender: true,
   collapsibleHeaders: true
 };
 export const COLOR_DEFAULTS = {

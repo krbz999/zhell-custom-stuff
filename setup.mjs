@@ -33,6 +33,8 @@ Hooks.once("ready", refreshColors);
 Hooks.once("ready", ZHELL_SOCKETS.loadTextureForAllSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.createTilesSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.awardLootSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.updateTokensSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
 Hooks.once("ready", _setupCollapsibles);
 Hooks.once("ready", _setupCustomButtons);
 
@@ -44,7 +46,7 @@ Hooks.on("renderTokenHUD", _replaceTokenHUD);
 Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 
 
-Hooks.once("ready", () => {
+Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);
   if ((reactionSetting === "gm" && game.user.isGM) || reactionSetting === "all") {
     Hooks.on("dnd5e.useItem", ZHELL_COMBAT.spendReaction);
@@ -79,5 +81,6 @@ Hooks.once("ready", () => {
 // remove Items With Spells from some item type sheets.
 Hooks.on("renderItemSheet", function(sheet, html) {
   if (!["class", "subclass", "background", "feat", "race"].includes(sheet.item.type)) return;
-  html[0].querySelector("[data-tab=spells]").style.display = "none";
+  const h = html[0].querySelector("[data-tab=spells]");
+  if (h) h.style.display = "none";
 });
