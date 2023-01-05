@@ -1,4 +1,4 @@
-import { DEFEATED, DISPLAY_AMMO, MODULE } from "../const.mjs";
+import { MODULE } from "../const.mjs";
 
 export class ZHELL_COMBAT {
 

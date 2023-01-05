@@ -203,7 +203,16 @@ export class MateriaMedica extends Application {
     const critical = null;
     const tool = this.actor.items.get(type);
 
-    const rollConfig = { targetValue: this.targetValue, fumble, critical, event };
+    const rollConfig = {
+      targetValue: this.targetValue,
+      fumble,
+      critical,
+      event,
+      dialogOptions: {
+        left: event.clientX - 200,
+        top: event.clientY - 180
+      }
+    };
 
     let roll;
     try {
