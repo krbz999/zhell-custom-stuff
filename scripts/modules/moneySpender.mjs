@@ -28,16 +28,6 @@ export class MoneySpender extends Application {
     return !!this.actor.getFlag("dnd5e", "speedCrafting");
   }
 
-  get conversion() {
-    // convert from 'denom' to another currency:
-    const denom = this.element[0].querySelector(".total").dataset.denom;
-    if (denom === "pp") return { pp: 1, gp: 0.1, ep: 0.05, sp: 0.01, cp: 0.001 };
-    else if (denom === "gp") return { pp: 10, gp: 1, ep: 0.5, sp: 0.1, cp: 0.01 };
-    else if (denom === "ep") return { pp: 20, gp: 2, ep: 1, sp: 0.2, cp: 0.02 };
-    else if (denom === "sp") return { pp: 100, gp: 10, ep: 5, sp: 1, cp: 0.1 };
-    else if (denom === "cp") return { pp: 1000, gp: 100, ep: 50, sp: 10, cp: 1 };
-  }
-
   get precision() {
     const denom = this.element[0].querySelector(".total").dataset.denom;
     return { pp: 3, gp: 2, ep: 2, sp: 1, cp: 0 }[denom];
@@ -51,6 +41,13 @@ export class MoneySpender extends Application {
     return data;
   }
 
+  _displayTotal() {
+    const node = this.element[0].querySelector(".total");
+    const value = Number(node.dataset.value);
+    const denom = node.dataset.denom;
+    node.innerText = (value * CONFIG.DND5E.currencies[denom].conversion).toFixed(this.precision);
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -61,24 +58,27 @@ export class MoneySpender extends Application {
         const currentNode = node.closest(".util").querySelector(".value");
         const currentValue = Number(currentNode.innerText.trim());
         const totNode = html[0].querySelector(".tally .total");
-        const totValue = Number(totNode.innerText.trim());
+        const totValue = Number(totNode.dataset.value);
         const cu = node.closest(".util").dataset.currency;
+
         if (adjustment === "up") {
           // adjust UP and ADD TO counter.
           const max = this.actor.system.currency[cu];
           const diff = event.ctrlKey ? Math.min(100, max - currentValue) : event.shiftKey ? Math.min(5, max - currentValue) : 1;
-          const newVal = currentValue + diff;
-          if (newVal > max) return;
-          currentNode.innerText = newVal;
-          totNode.innerText = (totValue + this.conversion[cu] * diff).toFixed(this.precision);
+          if (currentValue + diff > max) return;
+          const newTotal = totValue + diff / CONFIG.DND5E.currencies[cu].conversion;
+          totNode.setAttribute("data-value", Number(newTotal).toFixed(2));
+          this._displayTotal();
+          currentNode.innerText = currentValue + diff;
         } else if (adjustment === "down") {
           // adjust DOWN and REMOVE FROM counter.
           const min = 0;
           const diff = event.ctrlKey ? Math.min(100, currentValue - min) : event.shiftKey ? Math.min(5, currentValue - min) : 1;
-          const newVal = currentValue - diff;
-          if (newVal < min) return;
-          currentNode.innerText = newVal;
-          totNode.innerText = (totValue - this.conversion[cu] * diff).toFixed(this.precision);
+          if (currentValue - diff < min) return;
+          const newTotal = totValue - diff / CONFIG.DND5E.currencies[cu].conversion;
+          totNode.setAttribute("data-value", Number(newTotal).toFixed(2));
+          this._displayTotal();
+          currentNode.innerText = currentValue - diff;
         }
       });
     });
@@ -107,13 +107,10 @@ export class MoneySpender extends Application {
 
     // change denom.
     html[0].querySelector(".total").addEventListener("click", (event) => {
-      const tot = event.currentTarget(".total");
-      const curr = tot.dataset.denom;
-      const den = { pp: "gp", gp: "ep", ep: "sp", sp: "cp", cp: "pp" }[curr];
-      tot.setAttribute("data-denom", den);
-      const value = Number(tot.innerText.trim());
-      const newVal = value * { pp: 10, gp: 2, ep: 5, sp: 10, cp: 0.001 }[curr];
-      tot.innerText = newVal.toFixed(this.precision);
+      const denom = event.currentTarget.dataset.denom;
+      const newDenom = { pp: "gp", gp: "ep", ep: "sp", sp: "cp", cp: "pp" }[denom];
+      event.currentTarget.setAttribute("data-denom", newDenom);
+      this._displayTotal();
     });
   }
 }

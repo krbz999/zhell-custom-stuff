@@ -501,7 +501,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     alacrity: {
       name: "Alacrity",
       data: {
-        changes: [{ key: "flags.world.initiative-bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8" }],
+        changes: [{ key: "system.attributes.init.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8" }],
         duration: { seconds: 60 },
         icon: "icons/magic/movement/trail-streak-zigzag-yellow.webp",
         "flags.visual-active-effects.data.intro": "<p>You add a <strong>1d8</strong> bonus to initiative rolls for 1 minute.</p>"
