@@ -1,6 +1,11 @@
 import { MODULE } from "../../const.mjs";
 import { columnDialog } from "../customDialogs.mjs";
-import { _basicFormContent, _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
+import {
+  _basicFormContent,
+  _constructLightEffectData,
+  _constructSpellSlotOptions,
+  _getDependencies
+} from "../itemMacros.mjs";
 
 export const ITEMACRO_FEATURES = {
   EYES_OF_NIGHT,
