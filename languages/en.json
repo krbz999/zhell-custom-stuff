@@ -28,8 +28,6 @@
       "replaceConsumables.HINT": "Replace the selection of available consumable types.",
       "removeAlignment.NAME": "Remove Alignment",
       "removeAlignment.HINT": "Remove the Alignment field from character sheets.",
-      "disableInitiativeButton.NAME": "Disable Initiative",
-      "disableInitiativeButton.HINT": "Disable the Initiative button on the character sheet.",
       "createForaging.NAME": "Create Foraging",
       "createForaging.HINT": "Create a Foraging button on the sheet.",
       "createMoneySpender.NAME": "Create Money Spender",

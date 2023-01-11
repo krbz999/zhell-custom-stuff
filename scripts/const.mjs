@@ -16,7 +16,6 @@ export const WORLD_DEFAULTS = {
   replaceWeapons: true,
   replaceConsumables: true,
   removeAlignment: true,
-  disableInitiativeButton: true,
   createForaging: true,
   createMoneySpender: true,
   collapsibleHeaders: true

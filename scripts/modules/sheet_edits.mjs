@@ -7,7 +7,6 @@ import { EXHAUSTION } from "./zhell_functions.mjs";
 export async function ZHELL_SHEET(sheet, html, sheetData) {
   const {
     removeAlignment,
-    disableInitiativeButton,
     createForaging,
     createMoneySpender,
     collapsibleHeaders
@@ -15,14 +14,6 @@ export async function ZHELL_SHEET(sheet, html, sheetData) {
 
   if (removeAlignment) {
     html[0].querySelector("input[name='system.details.alignment']")?.parentElement?.remove();
-  }
-
-  if (disableInitiativeButton) {
-    const initButton = html[0].querySelector(".dnd5e.sheet.actor .sheet-header .attributes .attribute.initiative > h4");
-    if (initButton) {
-      initButton.classList.remove("rollable");
-      initButton.removeAttribute("data-action");
-    }
   }
 
   // color magic items.
