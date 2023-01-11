@@ -122,7 +122,7 @@ export function _constructDetectionModeEffectData({ modes = [], item }) {
     label: item.name,
     origin: item.uuid,
     duration: _getItemDuration(item),
-    "flags.core.statusId": type,
+    "flags.core.statusId": item.name.slugify(),
     "flags.effectmacro": {
       "onCreate.script": `(${onCreate.toString()})()`,
       "onEnable.script": `(${onCreate.toString()})()`,
