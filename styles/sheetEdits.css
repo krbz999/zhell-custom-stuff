@@ -78,11 +78,6 @@ body :root {
   color: var(--itemNotAttuned) !important;
 }
 
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement i:hover {
-  text-shadow: 0 0 8px var(--color-shadow-primary) !important;
-  padding: 0.5em;
-}
-
 /* Equipment State icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
   color: var(--itemEquipped) !important;

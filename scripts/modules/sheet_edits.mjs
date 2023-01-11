@@ -26,18 +26,18 @@ export async function ZHELL_SHEET(sheet, html, sheetData) {
   if (collapsibleHeaders) _setCollapsibleHeaders(sheet, html);
 
   // sheet apps and new functions.
-  if (true) _createDots(sheet, html, game.settings.get(MODULE, COLOR));
-  if (true) _createAttunement(sheet, html);
-  if (createForaging && sheetData.isCharacter) await _createForaging(sheet, html);
-  if (true) _createExhaustion(sheet, html);
-  if (createMoneySpender) _createSpendMoney(sheet, html);
+  const isPC = sheet.document.type === "character";
+  const isNPC = sheet.document.type === "npc";
+  if (isPC || isNPC) _createDots(sheet, html, game.settings.get(MODULE, COLOR));
+  if (isPC && createForaging) await _createForaging(sheet, html);
+  if (isPC) _createExhaustion(sheet, html);
+  if (isPC && createMoneySpender) _createSpendMoney(sheet, html);
 
 
   // SHEET FUNCTIONS
   if (sheet.object.isOwner && !sheet._zhell) {
     sheet._zhell = {
       _onClickDot: _onClickDot.bind(sheet.object),
-      _onClickAttunement: _onClickAttunement.bind(sheet.object),
       _onClickForaging: _onClickForaging.bind(sheet.object),
       _onClickExhaustion: _onClickExhaustion.bind(sheet.object),
       _onClickSpendMoney: _onClickSpendMoney.bind(sheet.object)
@@ -52,7 +52,6 @@ export async function ZHELL_SHEET(sheet, html, sheetData) {
       else if (action === "updateExhaustion") return sheet._zhell._onClickExhaustion();
       else if (action === "spendMoney") return sheet._zhell._onClickSpendMoney();
       else if (action === "toggleDot") return sheet._zhell._onClickDot(target);
-      else if (action === "toggleAttunement") return sheet._zhell._onClickAttunement(target);
     }));
   }
 }
@@ -82,21 +81,22 @@ export function refreshColors() {
 }
 
 function _setHealthColor(sheet, html) {
-  const { value, max, temp, tempmax } = sheet.object.system.attributes.hp;
-  const a = (value ?? 0) + (temp ?? 0);
-  const b = (max ?? 0) + (tempmax ?? 0);
+  const hp = sheet.object.system.attributes.hp;
+  if (!hp) return;
+  const a = (hp.value ?? 0) + (hp.temp ?? 0);
+  const b = (hp.max ?? 0) + (hp.tempmax ?? 0);
   if (!b) return;
   const nearDeath = a / b < 0.33;
   const bloodied = a / b < 0.66;
 
-  const hp = html[0].querySelector("input[name='system.attributes.hp.value']");
+  const node = html[0].querySelector("input[name='system.attributes.hp.value']");
   if (nearDeath) {
-    hp.classList.add("near-death");
-    hp.classList.remove("bloodied");
+    node.classList.add("near-death");
+    node.classList.remove("bloodied");
   } else if (bloodied) {
-    hp.classList.remove("near-death");
-    hp.classList.add("bloodied");
-  } else hp.classList.remove("near-death", "bloodied");
+    node.classList.remove("near-death");
+    node.classList.add("bloodied");
+  } else node.classList.remove("near-death", "bloodied");
 }
 
 function _setMagicItemsColor(sheet, html) {
@@ -250,17 +250,11 @@ function _createDots(sheet, html, { showSpellSlots, showLimitedUses }) {
       DIV.innerHTML = Array.fromRange(Math.min(q, max)).reduce((acc, e) => {
         const le = e < (q - 1) || max <= q;
         const cls = le ? (e < value ? "dot" : "dot empty") : (value < max ? "dot empty has-more" : "dot has-more");
-        return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${o.id}"></span>`;
+        return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${i.id}"></span>`;
       }, "");
       header.after(DIV);
     });
   }
-}
-
-function _createAttunement(sheet, html) {
-  html[0].querySelectorAll(".item-detail.attunement > :is(.attuned, .not-attuned)").forEach(att => {
-    att.setAttribute("data-action", "toggleAttunement");
-  });
 }
 
 /**
@@ -324,10 +318,4 @@ async function _onClickDot(dot) {
     const value = item.system.uses.value;
     return item.update({ "system.uses.value": value + diff });
   }
-}
-
-async function _onClickAttunement(icon) {
-  const state = !!icon.classList.contains("attuned") ? "REQUIRED" : "ATTUNED";
-  const item = this.items.get(icon.closest(".item").dataset.itemId);
-  return item.update({ "system.attunement": CONFIG.DND5E.attunementTypes[state] });
 }
