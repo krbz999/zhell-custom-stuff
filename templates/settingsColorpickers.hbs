@@ -1,0 +1,28 @@
+<form>
+  {{#each checks as |check|}}
+  <div class="form-group">
+    <label for="{{check.id}}">{{localize check.name}}</label>
+    <div class="form-fields">
+      <input type="checkbox" name="{{check.id}}" id="{{check.id}}" {{checked check.checked}}>
+    </div>
+    <p class="notes">{{localize check.hint}}</p>
+  </div>
+  {{/each}}
+
+  {{#each colors as |color|}}
+  <div class="form-group">
+    <label>{{localize color.name}}</label>
+    <div class="form-fields">
+      <input type="color" value="{{color.value}}" data-edit="{{color.id}}">
+      <input type="text" name="{{color.id}}" value="{{color.value}}">
+    </div>
+    <p class="notes">{{localize color.hint}}</p>
+  </div>
+  {{/each}}
+
+  <header>
+    <button type="submit">
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
+    </button>
+  </header>
+</form>

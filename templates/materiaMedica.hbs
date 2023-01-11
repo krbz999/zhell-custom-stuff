@@ -1,0 +1,87 @@
+<div class="materia-medica-crafting">
+
+  <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
+    <a class="item" data-tab="forage"><i class="fa-solid fa-leaf"></i> Foraging</a>
+    <a class="item" data-tab="potion"><i class="fa-solid fa-flask"></i> Potions</a>
+    <a class="item" data-tab="poison"><i class="fa-solid fa-skull"></i> Poisons</a>
+    <a class="item" data-tab="misc"><i class="fa-solid fa-bomb"></i> Misc</a>
+  </nav>
+
+  <div class="content-tabs">
+    <div class="tab" data-tab="forage">
+      <div class="description">{{{forageDescription}}}</div>
+      <form>
+        <div class="form-group">
+          <label>Select skill or tool:</label>
+          <div class="form-fields">
+            <select id="forage-tool">{{{options}}}</select>
+          </div>
+        </div>
+      </form>
+      <button id="forage-initiate"><i class="fa-solid fa-leaf"></i> Forage!</button>
+      <div class="results"></div>
+      <button id="forage-accept"><i class="fa-solid fa-boxes-stacked"></i> Accept</button>
+    </div>
+
+    <div class="tab" data-tab="potion" editable="{{editable}}">
+      <div class="description">{{{potionDescription}}}</div>
+      <div class="selections">
+        {{#each potionItems as |item|}}
+        <div class="selection">
+          <div class="item">
+            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
+            {{#if item.scaling}}
+            <select id="scale-potion">{{{item.scaling}}}</select>
+            {{/if}}
+          </div>
+          <div class="item-description">{{{item.description}}}</div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab" data-tab="poison" editable="{{editable}}">
+      <div class="description">{{{poisonDescription}}}</div>
+      <form>
+        <div class="form-group">
+          <label>Delivery Method</label>
+          <div class="form-fields">
+            <select id="poison-delivery-method">{{{poisonMethods}}}</select>
+          </div>
+        </div>
+        <div class="method-description">{{{initMethod}}}</div>
+      </form>
+      <div class="selections">
+        {{#each poisonItems as |item|}}
+        <div class="selection">
+          <div class="item">
+            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
+            {{#if item.scaling}}
+            <select id="scale-poison">{{{item.scaling}}}</select>
+            {{/if}}
+          </div>
+          <div class="item-description">{{{item.description}}}</div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab" data-tab="misc" editable="{{editable}}">
+      <div class="description">{{{miscDescription}}}</div>
+      <div class="selections">
+        {{#each miscItems as |item|}}
+        <div class="selection">
+          <div class="item">
+            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
+            {{#if item.scaling}}
+            <select id="{{item.button}}">{{{item.scaling}}}</select>
+            {{/if}}
+          </div>
+          <div class="item-description">{{{item.description}}}</div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,22 @@
+<div class="form">
+  <div class="tally">
+    <div class="label">Spending:</div>
+    <a class="total" data-value="0" data-denom="gp">0.00</a>
+  </div>
+  <div class="utils">
+    {{#each currencies as |currency|}}
+    <div class="util" data-currency="{{currency.label}}">
+      <a class="adjust" data-adjustment="up"><i class="fa-solid fa-arrow-up"></i></a>
+      <div class="currency">
+        <div class="value">0</div>
+        <div class="label">{{currency.label}}</div>
+      </div>
+      <a class="adjust" data-adjustment="down"><i class="fa-solid fa-arrow-down"></i></a>
+      <div class="current">({{currency.value}})</div>
+    </div>
+    {{/each}}
+  </div>
+  <div class="footer">
+    <button type="submit"><i class="fa-solid fa-save"></i> Save</button>
+  </div>
+</div>

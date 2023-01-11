@@ -1,277 +1,74 @@
-import { ADDITION, COLOR, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY, REPLACEMENT, SHEET } from "./const.mjs";
+import { COLOR, COLOR_DEFAULTS, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY, RARITY_DEFAULTS, TRACK_REACTIONS, WORLD_DEFAULTS } from "./const.mjs";
 import { refreshColors } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
   _registerSettings();
-  registerSettingsMenus();
+  _registerSettingsMenus();
 }
 
 function _registerSettings() {
   game.settings.register(MODULE, FORAGING, {
-    name: "Foraging DC",
-    hint: "The current DC for foraging.",
+    name: "ZHELL.SETTINGS.FORAGING.NAME",
+    hint: "ZHELL.SETTINGS.FORAGING.HINT",
     scope: "world",
     config: true,
     type: Number,
-    default: 15
+    default: 15,
+    requiresReload: false
   });
+
   game.settings.register(MODULE, DEFEATED, {
-    name: "Mark Combatants Defeated",
-    hint: "When combatants that are not owned by a player is reduced to 0 or less hp, mark them as defeated.",
+    name: "ZHELL.SETTINGS.DEFEATED.NAME",
+    hint: "ZHELL.SETTINGS.DEFEATED.HINT",
     scope: "world",
     config: true,
     type: Boolean,
-    default: true
+    default: true,
+    requiresReload: true
   });
+
   game.settings.register(MODULE, DISPLAY_AMMO, {
-    name: "Show Saving Throw Ammo",
-    hint: "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
+    name: "ZHELL.SETTINGS.DISPLAY_AMMO.NAME",
+    hint: "ZHELL.SETTINGS.DISPLAY_AMMO.HINT",
     scope: "world",
     config: true,
     type: Boolean,
-    default: true
+    default: true,
+    requiresReload: true
+  });
+
+  game.settings.register(MODULE, TRACK_REACTIONS, {
+    name: "ZHELL.SETTINGS.TRACK_REACTIONS.NAME",
+    hint: "ZHELL.SETTINGS.TRACK_REACTIONS.HINT",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "all",
+    requiresReload: true,
+    choices: {
+      disabled: "Do not track reactions",
+      gm: "Track reactions for the GM",
+      all: "Track reactions for all actors"
+    }
   });
 }
 
-class ReplacementsSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_replacements.hbs`,
-      id: "zhell-settings-submenu-replacers",
-      title: "Replacements",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, REPLACEMENT, formData);
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, REPLACEMENT);
-    const defaults = {
-      replaceStatusEffects: true,
-      replaceLanguages: true,
-      replaceTools: true,
-      replaceWeapons: true,
-      replaceConsumableTypes: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class AdditionsSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_additions.hbs`,
-      id: "zhell-settings-submenu-additions",
-      title: "Additions",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, ADDITION, formData);
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, ADDITION);
-    const defaults = {
-      addConditions: true,
-      addEquipmentTypes: true,
-      addPiety: true,
-      addDivine: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class SheetSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_sheet.hbs`,
-      id: "zhell-settings-submenu-sheet",
-      title: "Sheet Adjustments",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, SHEET, formData);
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, SHEET);
-    const defaults = {
-      removeResources: true,
-      removeAlignment: true,
-      disableInitiativeButton: true,
-      createForaging: true,
-      reformatTraitSelectors: true,
-      collapsibleHeaders: true
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class ColorPickerSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_colorpickers.hbs`,
-      id: "zhell-settings-submenu-colorpickers",
-      title: "Character Sheet Color Adjustments",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, COLOR, formData);
-    refreshColors();
-    return set;
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, COLOR);
-    const defaults = {
-      showLimitedUses: true,
-      showSpellSlots: true,
-      usesUnexpended: "#ff2e2e",
-      itemAttuned: "#21c050",
-      itemNotAttuned: "#c2c2c2",
-      itemEquipped: "#6dff38",
-      itemNotEquipped: "#c2c2c2",
-      spellPrepared: "#0000ff",
-      spellNotPrepared: "#c2c2c2",
-      spellAlwaysPrepared: "#ff0004",
-      proficientNormal: "#228b22",
-      proficientHalf: "#696969",
-      proficientTwice: "#ff6347"
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-class RarityColorsSubmenu extends FormApplication {
-  constructor() {
-    super({});
-  }
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['form'],
-      popOut: true,
-      width: "550",
-      height: "auto",
-      template: `/modules/${MODULE}/templates/settings_raritycolors.hbs`,
-      id: "zhell-settings-submenu-raritycolors",
-      title: "Item Rarity Color Adjustments",
-      resizable: false
-    });
-  }
-  async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, RARITY, formData);
-    refreshColors();
-    return set;
-  }
-  async getData() {
-    const source = game.settings.get(MODULE, RARITY);
-    const defaults = {
-      uncommon: "#008000",
-      rare: "#0000ff",
-      veryRare: "#800080",
-      legendary: "#ffa500",
-      artifact: "#d2691e"
-    }
-    return foundry.utils.mergeObject(defaults, source);
-  }
-}
-
-const registerSettingsMenus = function () {
-  // replacements.
-  game.settings.register(MODULE, REPLACEMENT, {
+function _registerSettingsMenus() {
+  // game additions, replacements, and tweaks.
+  game.settings.register(MODULE, "worldSettings", {
     scope: "world",
     config: false,
     type: Object,
-    default: {
-      replaceStatusEffects: true,
-      replaceLanguages: true,
-      replaceTools: true,
-      replaceWeapons: true,
-      replaceConsumableTypes: true
-    },
+    default: WORLD_DEFAULTS,
     onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-  game.settings.registerMenu(MODULE, REPLACEMENT, {
-    name: "Replacements",
-    hint: "A collection of replacements for core and system content.",
-    label: "Replacement Settings",
-    icon: "fa-solid fa-atlas",
-    type: ReplacementsSubmenu,
-    restricted: true
   });
 
-  // additions.
-  game.settings.register(MODULE, ADDITION, {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {
-      addConditions: true,
-      addEquipmentTypes: true,
-      addPiety: true,
-      addDivine: true
-    },
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-  game.settings.registerMenu(MODULE, ADDITION, {
-    name: "Additions",
-    hint: "A collection of additions to dnd5e system content.",
-    label: "Addition Settings",
+  game.settings.registerMenu(MODULE, "worldSettings", {
+    name: "ZHELL.SETTINGS.WORLD_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.WORLD_SETTINGS.HINT",
+    label: "Settings Menu",
     icon: "fa-solid fa-atlas",
-    type: AdditionsSubmenu,
-    restricted: true
-  });
-
-  // sheet edits.
-  game.settings.register(MODULE, SHEET, {
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {
-      removeResources: true,
-      removeAlignment: true,
-      disableInitiativeButton: true,
-      createForaging: true,
-      reformatTraitSelectors: true,
-      collapsibleHeaders: true
-    },
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
-  });
-  game.settings.registerMenu(MODULE, SHEET, {
-    name: "Sheet Edits",
-    hint: "A collection of edits, removals, and additions to the core dnd5e character sheets.",
-    label: "Sheet Settings",
-    icon: "fa-solid fa-atlas",
-    type: SheetSubmenu,
+    type: SettingsSubmenu,
     restricted: true
   });
 
@@ -280,26 +77,13 @@ const registerSettingsMenus = function () {
     scope: "client",
     config: false,
     type: Object,
-    default: {
-      showLimitedUses: true,
-      showSpellSlots: true,
-      usesUnexpended: "#ff2e2e",
-      itemAttuned: "#21c050",
-      itemNotAttuned: "#c2c2c2",
-      itemEquipped: "#6dff38",
-      itemNotEquipped: "#c2c2c2",
-      spellPrepared: "#0000ff",
-      spellNotPrepared: "#c2c2c2",
-      spellAlwaysPrepared: "#ff0004",
-      proficientNormal: "#228b22",
-      proficientHalf: "#696969",
-      proficientTwice: "#ff6347"
-    },
+    default: COLOR_DEFAULTS,
     onChange: () => refreshColors()
   });
+
   game.settings.registerMenu(MODULE, COLOR, {
-    name: "Sheet Colors",
-    hint: "Settings for the colors that are applied to the actor sheets.",
+    name: "ZHELL.SETTINGS.COLOR_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.COLOR_SETTINGS.HINT",
     label: "Sheet Color Settings",
     icon: "fa-solid fa-paint-roller",
     type: ColorPickerSubmenu,
@@ -311,21 +95,137 @@ const registerSettingsMenus = function () {
     scope: "client",
     config: false,
     type: Object,
-    default: {
-      uncommon: "#008000",
-      rare: "#0000ff",
-      veryRare: "#800080",
-      legendary: "#ffa500",
-      artifact: "#d2691e"
-    },
+    default: RARITY_DEFAULTS,
     onChange: () => refreshColors()
   });
+
   game.settings.registerMenu(MODULE, RARITY, {
-    name: "Rarity Colors",
-    hint: "Settings for the colors that are applied to items on an actor sheet depending on rarity.",
+    name: "ZHELL.SETTINGS.RARITY_SETTINGS.NAME",
+    hint: "ZHELL.SETTINGS.RARITY_SETTINGS.HINT",
     label: "Item Rarity Color Settings",
     icon: "fa-solid fa-paint-roller",
     type: RarityColorsSubmenu,
     restricted: false
   });
+}
+
+class SettingsSubmenu extends FormApplication {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      popOut: true,
+      width: 550,
+      height: "auto",
+      template: `modules/${MODULE}/templates/settingsMenu.hbs`,
+      id: "zhell-settings-submenu-additions-and-replacements",
+      title: "Additions and Replacements",
+      resizable: false,
+      classes: [MODULE, "settings-menu"]
+    });
+  }
+
+  async _updateObject(event, formData) {
+    return game.settings.set(MODULE, "worldSettings", formData);
+  }
+
+  async getData() {
+    const data = foundry.utils.mergeObject(
+      WORLD_DEFAULTS,
+      game.settings.get(MODULE, "worldSettings")
+    );
+    const settings = Object.entries(data).map(s => {
+      return {
+        id: s[0],
+        checked: s[1],
+        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
+        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+      }
+    });
+    return { settings };
+  }
+}
+
+class ColorPickerSubmenu extends FormApplication {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: [MODULE, "settings-menu"],
+      popOut: true,
+      width: 550,
+      height: "auto",
+      template: `modules/${MODULE}/templates/settingsColorpickers.hbs`,
+      id: "zhell-settings-submenu-colorpickers",
+      title: "Character Sheet Color Adjustments",
+      resizable: false
+    });
+  }
+
+  async _updateObject(event, formData) {
+    const set = await game.settings.set(MODULE, COLOR, formData);
+    refreshColors();
+    return set;
+  }
+
+  async getData() {
+    const data = foundry.utils.mergeObject(
+      COLOR_DEFAULTS,
+      game.settings.get(MODULE, COLOR)
+    );
+    const checks = Object.entries({
+      showLimitedUses: data.showLimitedUses,
+      showSpellSlots: data.showSpellSlots
+    }).map(s => {
+      return {
+        id: s[0],
+        checked: s[1],
+        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
+        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+      };
+    });
+    delete data.showLimitedUses;
+    delete data.showSpellSlots;
+
+    const colors = Object.entries(data).map(s => {
+      return {
+        id: s[0],
+        value: s[1],
+        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
+        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+      }
+    });
+    return { checks, colors };
+  }
+}
+
+class RarityColorsSubmenu extends FormApplication {
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: [MODULE, "settings-menu"],
+      popOut: true,
+      width: 550,
+      height: "auto",
+      template: `modules/${MODULE}/templates/settingsRaritycolors.hbs`,
+      id: "zhell-settings-submenu-raritycolors",
+      title: "Item Rarity Color Adjustments",
+      resizable: false
+    });
+  }
+
+  async _updateObject(event, formData) {
+    const set = await game.settings.set(MODULE, RARITY, formData);
+    refreshColors();
+    return set;
+  }
+
+  async getData() {
+    return {
+      settings: Object.entries(foundry.utils.mergeObject(
+        RARITY_DEFAULTS,
+        game.settings.get(MODULE, RARITY)
+      )).map(d => {
+        const label = CONFIG.DND5E.itemRarity[d[0]].titleCase();
+        const name = d[0];
+        const color = d[1];
+        return { label, name, color };
+      })
+    };
+  }
 }

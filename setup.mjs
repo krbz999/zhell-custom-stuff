@@ -1,45 +1,71 @@
 import { registerSettings } from "./scripts/settings.mjs";
 import { api } from "./scripts/api.mjs";
 import { ZHELL_SOCKETS } from "./scripts/modules/sockets.mjs";
-import { ZHELL_ADDITIONS, _sceneHeaderView } from "./scripts/modules/game_additions.mjs";
-import { ZHELL_REPLACEMENTS } from "./scripts/modules/game_replacements.mjs";
-import { refreshColors, ZHELL_SHEET, ZHELL_TRAITS } from "./scripts/modules/sheet_edits.mjs";
-import { ZHELL_COMBAT } from "./scripts/modules/combat_helpers.mjs";
+import { refreshColors, ZHELL_SHEET } from "./scripts/modules/sheet_edits.mjs";
+import {
+  ZHELL_COMBAT,
+  _replaceTokenHUD,
+  _setupCustomButtons,
+  _setupGroupSaves
+} from "./scripts/modules/combatHelpers.mjs";
 import {
   ZHELL_ANIMATIONS,
   _classesPageListeners,
   _equipmentPageListeners,
   _initD20,
   _rotateTokensOnMovement,
-  _sequencerSetup
+  _sequencerSetup,
+  _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
+import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
+import { _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
+import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
+import { DEFEATED, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
-Hooks.once("setup", ZHELL_ADDITIONS);
-Hooks.once("setup", ZHELL_REPLACEMENTS);
+Hooks.once("init", _visionModes);
+Hooks.once("setup", _setUpGameChanges);
+Hooks.once("setup", _craftingCharacterFlag);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);
 Hooks.once("ready", refreshColors);
-Hooks.once("ready", ZHELL_SOCKETS.loadTextureSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.routeTilesThroughGM);
-Hooks.once("ready", ZHELL_SOCKETS.awardLoot);
+Hooks.once("ready", ZHELL_SOCKETS.loadTextureForAllSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.createTilesSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.awardLootSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.updateTokensSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
+Hooks.once("ready", _setupCollapsibles);
+Hooks.once("ready", _setupCustomButtons);
 
 Hooks.on("renderActorSheet", ZHELL_SHEET);
-Hooks.on("renderTraitSelector", ZHELL_TRAITS);
-Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
 Hooks.on("renderJournalPageSheet", _classesPageListeners);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", _rotateTokensOnMovement);
+Hooks.on("renderTokenHUD", _replaceTokenHUD);
+Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 
 
-Hooks.once("ready", () => {
-  if (game.user.isGM) {
-    Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
-    Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
+Hooks.once("ready", function() {
+  const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);
+  if ((reactionSetting === "gm" && game.user.isGM) || reactionSetting === "all") {
+    Hooks.on("dnd5e.useItem", ZHELL_COMBAT.spendReaction);
   }
 
-  // hook for when measured templates are created to display animation.
+  if (game.settings.get(MODULE, DISPLAY_AMMO)) {
+    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
+  }
+
+  if (game.user.isGM) {
+    if (game.settings.get(MODULE, DEFEATED)) {
+      Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
+    }
+    Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
+    Hooks.on("renderChatMessage", _setupGroupSaves);
+    Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
+  }
+
+  // hook for various actions are performed to display animations.
   const canAnimate = [
     "sequencer", "jb2a_patreon"
   ].every(id => !!game.modules.get(id)?.active);
@@ -50,4 +76,11 @@ Hooks.once("ready", () => {
     Hooks.on("dnd5e.rollDamage", ZHELL_ANIMATIONS.onItemRollDamage);
     Hooks.on("dnd5e.rollSkill", ZHELL_ANIMATIONS.onRollSkill);
   }
+});
+
+// remove Items With Spells from some item type sheets.
+Hooks.on("renderItemSheet", function(sheet, html) {
+  if (!["class", "subclass", "background", "feat", "race"].includes(sheet.item.type)) return;
+  const h = html[0].querySelector("[data-tab=spells]");
+  if (h) h.style.display = "none";
 });

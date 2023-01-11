@@ -6,12 +6,17 @@
   padding-right: 5px;
 }
 
+.auto-height-dialog {
+  height: auto !important;
+}
+
 /* Token HUD status effects. */
 #token-hud .col.right .status-effects {
   width: max-content;
   column-gap: 0.1em;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   color: var(--color-text-light-1);
+  top: -100px;
 }
 
 #token-hud .col.right .status-effects .status-effect {
@@ -33,7 +38,7 @@
   opacity: 1;
 }
 
-#token-hud .col.right .status-effects .status-effect:is(.active, :hover)>* {
+#token-hud .col.right .status-effects .status-effect:is(.active, :hover) > * {
   opacity: 1;
 }
 
@@ -58,8 +63,9 @@
   cursor: pointer;
 }
 
-/* Make collapsed header gray text color and slighly slimmer. */
-.dnd5e.sheet.actor .items-header.flexrow.no-create {
+/* Make collapsed header gray text color. */
+.dnd5e.sheet.actor .items-header.flexrow.no-create,
+.dnd5e.sheet.actor .items-header.flexrow.no-create * {
   color: darkgray;
 }
 
@@ -69,11 +75,11 @@
 }
 
 /* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
-.dnd5e.sheet.actor .items-header.flexrow.no-create+ol,
-.dnd5e.sheet.actor .items-header.flexrow.no-create+ol+ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
-.dnd5e.sheet.actor .characteristics label.no-edit+textarea {
+.dnd5e.sheet.actor .characteristics label.no-edit + textarea {
   display: none;
 }
 
@@ -89,7 +95,7 @@
 }
 
 .whisper-dialog-player-name {
-  padding: 5px 0 5px 0;
+  padding: 5px 0;
   border: 1px solid black;
   border-radius: 5px;
   text-align: center;
@@ -108,32 +114,7 @@
 }
 
 /* TRAITS LISTS */
-ol.trait-list.zhell-profs,
-ol.trait-list.zhell-weapons,
-ol.trait-list.zhell-traits {
-  display: grid;
-  margin: 0 10px;
-}
-
-ol.trait-list.zhell-profs {
-  grid-template-columns: auto auto auto auto;
-  gap: 20px;
-}
-
-ol.trait-list.zhell-traits {
-  grid-template-columns: auto auto auto;
-}
-
-ol.trait-list.zhell-weapons {
-  grid-template-columns: auto auto;
-  gap: 20px;
-}
-
-ol.trait-list.zhell-profs ol.trait-list {
-  max-height: 200px;
-  overflow: auto;
-  border-bottom: 2px groove gray;
-}
+/* removed until new app cometh */
 
 /* COLLAPSIBLES */
 section.zhell-collapsible {
@@ -183,8 +164,8 @@ section.zhell-collapsible.active div.zhell-collapsible-content {
 }
 
 /* BUTTON FEEL */
-button:active:not(.pm-dropdown),
-a:active {
+button:active:not(.pm-dropdown, :disabled),
+:not(:disabled) a:active {
   filter: brightness(0.7);
 }
 
@@ -200,4 +181,434 @@ span.flavor-text.zhell-apply-damage-flavor:hover {
 
 span.flavor-text.zhell-apply-damage-flavor {
   font-weight: bold;
+}
+
+/* MONSTER STAT BLOCKS */
+.monster-stat-block {
+  margin: 1em;
+  padding: 0.5em 1em;
+  background: burlywood;
+  border: inset 0.3em indianred;
+  border-radius: 5px;
+}
+
+:not(.actor) .monster-stat-block :is(.traits, .abilities) {
+  border-bottom: 2px groove indianred;
+  padding: 0.4em 0;
+  margin: 0;
+}
+
+.monster-stat-block .name {
+  font-size: 30px;
+  font-family: "Modesto Condensed";
+  border-bottom: 2px groove indianred;
+  margin: 0;
+  line-height: 28px;
+}
+
+.monster-stat-block .details {
+  font-style: italic;
+  padding: 3px 0 0 3px;
+  margin: 0;
+}
+
+.monster-stat-block .label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.monster-stat-block .traits .trait {
+  margin: 0;
+}
+
+.monster-stat-block .abilities {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.monster-stat-block .abilities .score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.monster-stat-block .abilities .modifier {
+  text-align: center;
+}
+
+.monster-stat-block .header {
+  font-size: 25px;
+  font-family: "Modesto Condensed";
+  border-bottom: 2px groove indianred;
+  margin: 0;
+  line-height: 28px;
+}
+
+/* CUSTOM VAE BUTTONS, COPYING CN */
+.zhell-custom-buttons a:hover {
+  text-shadow: 0 0 8px white;
+  background: brown;
+  color: black;
+}
+
+.zhell-custom-buttons a {
+  font-size: 14px;
+  height: 30px;
+  line-height: 26px;
+  margin: 2px 0;
+  background: #6f2f31ad;
+  border: 2px groove #9e6161;
+  width: 100%;
+  border-radius: 6px;
+  text-align: center;
+  padding: 1px 6px;
+}
+
+.zhell-custom-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Elemental dialog coloring */
+.dialog.elemental {
+  height: auto;
+}
+
+.dialog.elemental .dialog-content {
+  text-align: center;
+  font-size: 20px;
+  margin: 0.5em 0 1em;
+}
+
+.dialog.elemental .dialog-buttons {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialog.elemental .dialog-button {
+  font-size: 25px;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 2fr;
+}
+
+.dialog.elemental .dialog-button i {
+  font-size: 40px;
+  padding: 7px;
+  margin: 0;
+}
+
+.dialog.elemental .dialog-button.acid:hover {
+  color: darkgreen;
+  background-color: yellowgreen;
+}
+
+.dialog.elemental .dialog-button.cold:hover {
+  color: blue;
+  background-color: lightblue;
+}
+
+.dialog.elemental .dialog-button.fire:hover {
+  color: red;
+  background-color: burlywood;
+}
+
+.dialog.elemental .dialog-button.lightning:hover {
+  color: darkblue;
+  background-color: cornflowerblue;
+}
+
+.dialog.elemental .dialog-button.thunder:hover {
+  color: white;
+  background-color: mediumslateblue;
+}
+
+.dialog.elemental .dialog-button.poison:hover {
+  color: purple;
+  background-color: plum;
+}
+
+/* ANCHOR SELECTOR DIALOG */
+.image-selector .window-content {
+  overflow: visible;
+}
+
+.image-selector .selections {
+  margin: 1em 0;
+  gap: 1em;
+  display: grid;
+}
+
+.image-selector img {
+  opacity: 0.2;
+  border: none;
+  transition: 0.2s;
+  width: 80%;
+}
+
+.image-selector img:hover {
+  opacity: 0.75;
+}
+
+.image-selector a {
+  text-align: center;
+}
+
+.image-selector .active img {
+  opacity: 1;
+  filter: drop-shadow(2px 4px 6px black);
+}
+
+.image-selector :is(.top-selection, .middle-selection, .bottom-selection) {
+  display: grid;
+}
+
+/* EXPERIMENTAL ELIXIR */
+.dialog.elixir .dialog-buttons {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialog.elixir .dialog-button:hover,
+.dialog.elixir-builder .dialog-button:hover {
+  color: purple;
+}
+
+.dialog.elixir .dialog-button {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.dialog.elixir .dialog-button i {
+  font-size: 40px;
+  align-self: center;
+  transition: 0.2s;
+}
+
+.dialog.elixir .dialog-button:hover i {
+  transform: scale(1.5);
+}
+
+.dialog.elixir-builder div.form-fields {
+  flex: 1;
+  justify-content: center;
+}
+
+.elixir-builder .form-group label {
+  line-height: var(--line-height-16);
+  margin: 0.5em 0;
+}
+
+/* MATERIA MEDICA CRAFTING */
+.materia-medica-crafting [data-tab=forage] .results {
+  margin: 0.5em 0;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result {
+  display: grid;
+  grid-template-columns: 5fr 5fr 0fr;
+  align-items: center;
+  justify-items: center;
+  min-height: 2.5em;
+  border: 1px inset;
+  margin: 0 2em;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result .type {
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result .formula {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: double;
+  border: 1px groove forestgreen;
+  border-radius: 3px;
+  background-color: indianred;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables.active {
+  background-color: darkseagreen;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables i:before {
+  content: "\f00d";
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables.active i:before {
+  content: "\f00c";
+}
+
+.materia-medica-crafting section.window-content {
+  overflow-y: hidden;
+}
+
+.materia-medica-crafting nav.sheet-tabs.tabs {
+  min-height: 1.5em;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 2px groove black;
+  border-top: 2px groove black;
+  padding: 0.5em 0;
+}
+
+.materia-medica-crafting .description {
+  padding: 1em;
+}
+
+.materia-medica-crafting .method-description {
+  padding: 0.5em 0.3em 1em;
+  font-style: italic;
+}
+
+.materia-medica-crafting .item-description {
+  padding: 0 1em;
+  font-style: italic;
+}
+
+.materia-medica-crafting .content-tabs .item {
+  display: flex;
+  align-items: center;
+}
+
+.materia-medica-crafting .content-tabs .item select {
+  min-width: 25%;
+}
+
+.materia-medica-crafting .selection {
+  border-top: 2px groove;
+  padding-top: 1em;
+}
+
+.materia-medica-crafting .selections {
+  gap: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.materia-medica-crafting form {
+  padding: 0 1em;
+}
+
+/* SETTINGS MENU */
+.zhell-custom-stuff.settings-menu form .form-group .form-fields input[type=checkbox] {
+  margin-right: 5em;
+}
+
+.zhell-custom-stuff.settings-menu .form-group:not(:last-of-type) {
+  border-bottom: 2px groove;
+}
+
+/* Column Dialog */
+.dialog.column-dialog {
+  height: auto !important;
+}
+
+.dialog.column-dialog .dialog-buttons {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialog.column-dialog .dynamic-tooltip {
+  margin: 0 1em;
+  font-style: italic;
+  min-height: 100px;
+}
+
+/* Exhaustion Dialog */
+.exhaustion.dialog .dialog-content {
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+
+/* MONEY SPENDER */
+.money-spender .form {
+  display: grid;
+  grid-template-rows: 1fr 2fr 0fr;
+  grid-template-columns: 1fr;
+}
+
+.money-spender .tally {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 30px;
+  margin: 0 1em;
+}
+
+.money-spender .total[data-denom=pp]:after {
+  content: " pp";
+}
+
+.money-spender .total[data-denom=gp]:after {
+  content: " gp";
+}
+
+.money-spender .total[data-denom=ep]:after {
+  content: " ep";
+}
+
+.money-spender .total[data-denom=sp]:after {
+  content: " sp";
+}
+
+.money-spender .total[data-denom=cp]:after {
+  content: " cp";
+}
+
+.money-spender .utils {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.money-spender .util {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.money-spender .currency {
+  border-left: 2px groove;
+  width: 4em;
+  max-width: 4em;
+  border-right: 2px groove;
+  text-align: center;
+}
+
+.money-spender .adjust {
+  width: 4em;
+  max-width: 4em;
+  text-align: center;
+  border: 2px groove;
+  background-color: cornsilk;
+}
+
+.money-spender .adjust:hover {
+  text-shadow: none;
+}
+
+.money-spender .currency > * {
+  margin: 0.5em 0;
+  text-transform: uppercase;
+}
+
+.money-spender .current {
+  font-style: italic;
+  width: 4em;
+  text-align: center;
+  max-width: 4em;
+  padding-top: 0.5em;
 }

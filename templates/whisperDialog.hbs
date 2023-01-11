@@ -1,0 +1,12 @@
+<p>Whisper to:</p>
+<form>
+  <div class="form-fields whisper-dialog">
+    {{#each characters as |c|}}
+    <span class="whisper-dialog-player-name {{c.selected}}" id="{{c.id}}">{{c.name}}</span>
+    {{/each}}
+  </div>
+</form>
+<hr>
+<label for="zhell-whisper-message">Message:</label>
+<textarea class="whisper-dialog-textarea" name="message" id="zhell-whisper-message" cols="50" rows="6" autofocus></textarea>
+<hr>

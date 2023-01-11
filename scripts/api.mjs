@@ -1,37 +1,47 @@
-import { DM_TOOL } from "./modules/dm_tool.mjs";
-import { ZHELL_CATALOG, ZHELL_UTILS } from "./modules/zhell_functions.mjs";
+import { drawCircle } from "./modules/animations.mjs";
+import { applyDamageToTokens, DM_TOOL } from "./modules/dm_tool.mjs";
+import { ITEMACRO } from "./modules/itemMacros.mjs";
+import { ZHELL_SOCKETS } from "./modules/sockets.mjs";
+import {
+  _checkTokenInTemplate,
+  _getDocumentFromCompendium,
+  _getTokenOwnerIds,
+  _romanize,
+  _selectContained,
+  _setForageDC,
+  _targetTokens,
+  _teleportTokens,
+  _titleCard,
+  _whisperPlayers
+} from "./modules/zhell_functions.mjs";
 
 export class api {
 
   static register() {
     globalThis.ZHELL = {
-      setting: {
-        setForageDC: ZHELL_UTILS.setForageDC
-      },
-      catalog: {
-        getDocument: ZHELL_CATALOG.getDocument,
-        spawn: ZHELL_CATALOG.spawn,
-        mutate: ZHELL_CATALOG.mutate,
-        cast: ZHELL_CATALOG.cast,
-        castCharges: ZHELL_CATALOG.castCharges
-      },
       token: {
-        teleport: ZHELL_UTILS.teleportTokens,
-        target: ZHELL_UTILS.targetTokens,
-        getOwnerIds: ZHELL_UTILS.get_token_owner_ids,
+        teleport: _teleportTokens,
+        target: _targetTokens,
+        getOwnerIds: _getTokenOwnerIds,
         multiTool: DM_TOOL.RENDER,
-        contained: ZHELL_UTILS.checkTokenInTemplate,
-        selectContained: ZHELL_UTILS.selectContained,
-        applyDamage: (...T) => DM_TOOL.applyDamageToTokens(...T)
+        contained: _checkTokenInTemplate,
+        selectContained: _selectContained,
+        applyDamage: applyDamageToTokens
       },
-      helper: {
-        roman: ZHELL_UTILS.romanize,
-        whisperPlayers: ZHELL_UTILS.whisper_players,
-        loadTextureForAll: ZHELL_UTILS.loadTextureForAll,
-        createTiles: ZHELL_UTILS.createTiles,
-        titleCard: ZHELL_UTILS.title_card,
-        awardLoot: ZHELL_UTILS.awardLoot
-      }
+      utils: {
+        setForageDC: _setForageDC,
+        getDocument: _getDocumentFromCompendium,
+        roman: _romanize,
+        whisperPlayers: _whisperPlayers,
+        titleCard: _titleCard,
+        drawCircle: drawCircle,
+        loadTextureForAll: ZHELL_SOCKETS.loadTextureForAll,
+        createTiles: ZHELL_SOCKETS.createTiles,
+        awardLoot: ZHELL_SOCKETS.awardLoot,
+        updateToken: ZHELL_SOCKETS.updateTokens,
+        grantItems: ZHELL_SOCKETS.grantItems
+      },
+      ITEMACRO
     }
   }
 }

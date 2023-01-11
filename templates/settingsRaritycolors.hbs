@@ -1,0 +1,17 @@
+<form>
+  {{#each settings as |setting|}}
+  <div class="form-group">
+    <label>{{setting.label}}</label>
+    <div class="form-fields">
+      <input type="color" value="{{setting.color}}" data-edit="{{setting.name}}">
+      <input name="{{setting.name}}" type="text" value="{{setting.color}}">
+    </div>
+  </div>
+  {{/each}}
+
+  <header>
+    <button type="submit" name="submit">
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
+    </button>
+  </header>
+</form>

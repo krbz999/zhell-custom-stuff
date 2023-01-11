@@ -1,0 +1,19 @@
+<form>
+
+  {{#each settings as |setting|}}
+  <div class="form-group">
+    <label for="{{setting.id}}">{{localize setting.name}}</label>
+    <div class="form-fields">
+      <input name="{{setting.id}}" id="{{setting.id}}" type="checkbox" {{checked setting.checked}}>
+    </div>
+    <p class="notes">{{localize setting.hint}}</p>
+  </div>
+  {{/each}}
+
+  <header>
+    <button type="submit">
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
+    </button>
+  </header>
+
+</form>
