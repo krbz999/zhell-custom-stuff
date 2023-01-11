@@ -1,9 +1,9 @@
 import { MODULE } from "../const.mjs";
 import { drawCircle } from "./animations.mjs";
-import { ITEMACRO_BOONS } from "./itemacros.mjs/boons.mjs";
-import { ITEMACRO_FEATURES } from "./itemacros.mjs/features.mjs";
-import { ITEMACRO_ITEMS } from "./itemacros.mjs/items.mjs";
-import { ITEMACRO_SPELLS } from "./itemacros.mjs/spells.mjs";
+import { ITEMACRO_BOONS } from "./itemacros/boons.mjs";
+import { ITEMACRO_FEATURES } from "./itemacros/features.mjs";
+import { ITEMACRO_ITEMS } from "./itemacros/items.mjs";
+import { ITEMACRO_SPELLS } from "./itemacros/spells.mjs";
 
 // item, speaker, actor, token, character, event, args
 export const ITEMACRO = {
