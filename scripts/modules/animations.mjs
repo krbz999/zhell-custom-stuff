@@ -128,7 +128,7 @@ export class ZHELL_ANIMATIONS {
     // BOWS in general.
     check = ["shortbow", "longbow"].includes(item.system.baseItem);
     if (check) {
-      if (!target || !token || !ammo) return;
+      if (!target || !token) return;
       const file = "jb2a.arrow.physical.white.01";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
@@ -136,7 +136,7 @@ export class ZHELL_ANIMATIONS {
     // CROSSBOWS in general.
     check = ["handcrossbow", "heavycrossbow", "lightcrossbow"].includes(item.system.baseItem);
     if (check) {
-      if (!target || !token || !ammo) return;
+      if (!target || !token) return;
       const file = "jb2a.bolt.physical.white02";
       return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
