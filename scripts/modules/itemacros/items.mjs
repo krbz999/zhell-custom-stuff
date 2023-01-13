@@ -117,8 +117,8 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
         callback: async (html) => {
           const id = html[0].querySelector("select").value;
           const uses = servings.find(i => i.id === id).uses;
-          const { clone, itemData } = createClone(uses);
-          await clone.use({}, { "flags.dnd5e.itemData": itemData });
+          const clone = createClone(uses);
+          await clone.use({}, { "flags.dnd5e.itemData": clone.toObject() });
           return item.update({ "system.uses.value": value - uses });
         }
       }
@@ -126,7 +126,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
   }).render(true);
 
   function createClone(uses) {
-    const itemData = { "system.uses": { value: 0, max: "", per: "" } }
+    const itemData = { "system.uses": { value: 0, max: Math.max(...servings.map(s => s.uses)) } }
 
     if (uses === 2) {
       itemData["system.damage.parts"] = [["1d6", "healing"], ["1d6", "temphp"]];
@@ -136,8 +136,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
         { label: "Temp HP", parts: [1] }
       ]
     }
-    const clone = item.clone(itemData, { keepId: true });
-    return { clone, itemData };
+    return item.clone(itemData, { keepId: true });
   }
 }
 
