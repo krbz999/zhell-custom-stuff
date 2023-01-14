@@ -237,9 +237,7 @@ export async function _spawnHelper(name, updates = {}, callbacks = {}, options =
  * Returns an integer.
  */
 export function _getSpellLevel(use) {
-  const DIV = document.createElement("DIV");
-  DIV.innerHTML = use.content;
-  return Number(DIV.firstChild.dataset.spellLevel);
+  return use.flags?.dnd5e?.use?.spellLevel ?? 0;
 }
 
 /**
@@ -248,10 +246,10 @@ export function _getSpellLevel(use) {
  */
 export function _basicFormContent({ label = "", type = "text", options = "" }) {
   const lab = label.length ? `<label>${label}</label>` : "";
-  let inp;
-  if (type === "select") inp = `<select autofocus>${options}</select>`;
-  else if (type === "number") inp = `<input type="number" autofocus>`;
-  else inp = `<input type="text" autofocus>`;
+  const inp = {
+    "select": `<select autofocus>${options}</select>`,
+    "number": `<input type="number" autofocus>`
+  }[type] ?? `<input type="text" autofocus>`;
   return `<form><div class="form-group">${lab}<div class="form-fields">${inp}</div></div></form>`;
 }
 
