@@ -71,13 +71,9 @@ async function TORCH(item, speaker, actor, token, character, event, args) {
   if (!use) return;
 
   const lightData = {
-    alpha: 0.05, angle: 360,
-    animation: { type: "flame", speed: 2, intensity: 4 },
-    attenuation: 0.5, color: "#ff4d00",
-    bright: 20, dim: 40,
-    coloration: 1, contrast: 0,
-    darkness: { min: 0, max: 1 },
-    luminosity: 0.5, saturation: 0, shadows: 0
+    alpha: 0.05, angle: 360, animation: { type: "flame", speed: 2, intensity: 4 },
+    attenuation: 0.5, color: "#ff4d00", bright: 20, dim: 40, coloration: 1, contrast: 0,
+    darkness: { min: 0, max: 1 }, luminosity: 0.5, saturation: 0, shadows: 0
   };
   return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({ item, lightData }));
 }
@@ -93,6 +89,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
   // get current limited uses and bail out if not enough.
   const value = item.system.uses.value;
   const minimum = Math.min(...servings.map(i => i.uses));
+
   if (value < minimum) {
     ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
     return;
@@ -126,7 +123,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
   }).render(true);
 
   function createClone(uses) {
-    const itemData = { "system.uses": { value: 0, max: Math.max(...servings.map(s => s.uses)) } }
+    const itemData = { "system.uses.per": "" };
 
     if (uses === 2) {
       itemData["system.damage.parts"] = [["1d6", "healing"], ["1d6", "temphp"]];
@@ -149,6 +146,13 @@ async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event
 
   const use = await item.use();
   if (!use) return;
+  const lightData = {
+    alpha: 0.05, angle: 360, bright: 30, coloration: 1, dim: 60,
+    luminosity: 0.5, saturation: 0, contrast: 0, shadows: 0,
+    animation: { speed: 2, intensity: 4, reverse: false, type: "flame" },
+    darkness: { min: 0, max: 1 }, color: "#ff4d00", attenuation: 0.5
+  };
+  await actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({ item, lightData }));
   return oilFlask.update({ "system.quantity": quantity - 1 });
 }
 
