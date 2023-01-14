@@ -1,10 +1,13 @@
 import { MODULE } from "../../const.mjs";
 import { columnDialog } from "../customDialogs.mjs";
 import {
+  _addTokenDismissalToEffect,
   _basicFormContent,
+  _constructGenericEffectData,
   _constructLightEffectData,
   _constructSpellSlotOptions,
-  _getDependencies
+  _getDependencies,
+  _spawnHelper
 } from "../itemMacros.mjs";
 
 export const ITEMACRO_FEATURES = {
@@ -328,7 +331,7 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
   const weaponSelect = weapons.reduce((acc, { id, name }) => {
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
-  const content = _basicFormContent({label: "Weapon:", type: "select", options: weaponSelect});
+  const content = _basicFormContent({ label: "Weapon:", type: "select", options: weaponSelect });
 
   return new Dialog({
     title: item.name,
@@ -353,7 +356,7 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       "animation.type": "torch",
       "animation.speed": 1
     };
-    const babonusData = game.modules.get("babonus").api.createBabonus({
+    const babonusData = babonus.createBabonus({
       type: "damage",
       name: item.name,
       description: item.system.description.value,
@@ -476,7 +479,7 @@ async function DWARVEN_FORTITUDE(item, speaker, actor, token, character, event, 
 
 async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies("effective-transferral", "rollgroups")) return item.use();
-  const { abilities, scale, classes } = foundry.utils.duplicate(actor.getRollData());
+  const rollData = actor.getRollData();
   const { files } = await FilePicker.browse("public", "icons/consumables/potions");
   const randomName = [
     "Daily Pick-Me-Up",
@@ -539,7 +542,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     healing: {
       name: "Healing",
       data: {
-        "flags.visual-active-effects.data.intro": `<p>You regain <strong>2d4 + ${abilities.int.mod}</strong> hit points.</p>`
+        "flags.visual-active-effects.data.intro": `<p>You regain <strong>2d4 + ${rollData.abilities.int.mod}</strong> hit points.</p>`
       }
     },
     resilience: {
@@ -574,7 +577,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     transfer: false,
     flags: {
       "effective-transferral": {
-        transferBlock: { button: true, chat: true, displayCard: false }
+        transferBlock: { button: true, chat: true, displayCard: true }
       }
     }
   }
@@ -666,8 +669,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       const text = intro.replaceAll("<p>", "").replaceAll("</p>", "");
       return acc + `<p><strong><em>${name}.</em></strong> ${text}</p>`;
     }, "");
-    if (classes.artificer.levels >= 9) {
-      description += `<p><strong><em>Restorative Reagents.</em></strong> The drinker gains <strong>2d6 + ${abilities.int.mod}</strong> temporary hit points.</p>`;
+    if (rollData.classes.artificer.levels >= 9) {
+      description += `<p><strong><em>Restorative Reagents.</em></strong> The drinker gains <strong>2d6 + ${rollData.abilities.int.mod}</strong> temporary hit points.</p>`;
     }
     // construct damage.parts and rollgroups flags.
     const { parts, flags } = createDamageParts(keys);
@@ -703,8 +706,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
   // create damage parts and rollgroup flags.
   function createDamageParts(keys = []) {
     const parts = [];
-    if (keys.includes("healing")) parts.push([`2d4 + ${abilities.int.mod}`, "healing"]);
-    if (classes.artificer.levels >= 9) parts.push([`2d6 + ${abilities.int.mod}`, "temphp"]);
+    if (keys.includes("healing")) parts.push([`2d4 + ${rollData.abilities.int.mod}`, "healing"]);
+    if (rollData.classes.artificer.levels >= 9) parts.push([`2d6 + ${rollData.abilities.int.mod}`, "temphp"]);
     const flags = (parts.length > 1) ? foundry.utils.expandObject({
       "rollgroups.config.groups": [
         { parts: [0], label: "Healing" },
@@ -732,7 +735,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     if (!use) return;
 
     // roll a number of d8s, and for each 8 roll once more (rerolling 8s).
-    const elixRoll = new Roll(`${scale.alchemist.elixirs}d8x8rr8`);
+    const elixRoll = new Roll("(@scale.alchemist.elixirs)d8x8rr8", rollData);
     const { rolls } = await elixRoll.toMessage({ speaker, flavor: `${actor.name} rolls random elixirs` });
 
     // for each active die, map to an elixir type.
