@@ -1,6 +1,9 @@
 import { MODULE } from "../../const.mjs";
 import { imageAnchorDialog } from "../customDialogs.mjs";
-import { _basicFormContent, _getDependencies } from "../itemMacros.mjs";
+import {
+  _basicFormContent,
+  _getDependencies
+} from "../itemMacros.mjs";
 
 export const ITEMACRO_BOONS = {
   GOODHUNTER,

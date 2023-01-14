@@ -773,8 +773,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
   });
   const weapon = actor.items.get(weaponId);
 
-  const api = game.modules.get("babonus").api;
-  const atk = api.createBabonus({
+  const atk = babonus.createBabonus({
     type: "attack", name: "atk", bonuses: { bonus }, description: item.system.description.value,
     filters: { customScripts: `return item.id === "${weaponId}";` }
   }).toObject();
