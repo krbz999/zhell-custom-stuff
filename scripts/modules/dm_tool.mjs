@@ -16,7 +16,7 @@ export class DM_TOOL {
   // return an array of effect ids to delete from a token's actor.
   static getDeleteIds(token, statusIds) {
     return token.actor.effects.reduce((acc, effect) => {
-      const id = effect.getFlag("core", "statusId");
+      const id = effect.flags.core?.statusId;
       if (statusIds.includes(id)) acc.push(effect.id);
       return acc;
     }, []);
@@ -35,7 +35,7 @@ export class DM_TOOL {
   static getAllCurrentConditions(token) {
     const statusIds = CONFIG.statusEffects.map(i => i.id);
     return token.actor.effects.filter(eff => {
-      const statusId = eff.getFlag("core", "statusId");
+      const statusId = eff.flags.core?.statusId;
       return statusIds.includes(statusId);
     });
   }
@@ -63,7 +63,7 @@ export class DM_TOOL {
   static async applyConditionsToTokens(tokens, conditionDatas) {
     return tokens.map(token => {
       const conditions = conditionDatas.filter(c => {
-        return !token.actor.effects.find(eff => eff.getFlag("core", "statusId") === c.flags.core.statusId);
+        return !token.actor.effects.find(eff => eff.flags.core?.statusId === c.flags.core.statusId);
       });
       if (!conditions.length) return;
       return token.actor.createEmbeddedDocuments("ActiveEffect", conditions);
@@ -293,12 +293,12 @@ export function _appendDataToDamageRolls(item, config) {
  * will treat the '1d4' as the second damage type instead of the first.
  */
 export function _addFlavorListenerToDamageRolls(message, html) {
-  const isDamage = message.getFlag("dnd5e", "roll.type") === "damage";
+  const isDamage = message.flags.dnd5e?.roll?.type === "damage";
   if (!isDamage) return;
   const flavor = html[0].querySelector(".flavor-text");
   if (!flavor) return;
 
-  const types = message.getFlag(MODULE, "damageTypes") ?? [];
+  const types = message.flags[MODULE]?.damageTypes ?? [];
   const total = message.rolls.reduce((acc, roll) => acc += roll.total, 0);
 
   const totals = [[]];
@@ -318,7 +318,7 @@ export function _addFlavorListenerToDamageRolls(message, html) {
     const tokens = canvas.tokens.controlled;
     const parts = foundry.utils.duplicate(totals);
     const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
-    const properties = message.getFlag(MODULE, "properties") ?? [];
+    const properties = message.flags[MODULE]?.properties ?? [];
     return ZHELL.token.applyDamage(tokens, parts, { global, properties });
   });
 }
@@ -349,9 +349,9 @@ export function calculateDamageTakenForToken(token, parts, { global = 1, propert
   const phys = CONFIG.DND5E.physicalDamageTypes; // piercing, bludgeoning, slashing
 
   const partsModified = parts.map(([value, type]) => {
-    const imm = di.has(type) && !properties.some(p => di.bypasses.includes(p) && type in phys);
-    const res = dr.has(type) && !properties.some(p => dr.bypasses.includes(p) && type in phys);
-    const vul = dv.has(type) && !properties.some(p => dv.bypasses.includes(p) && type in phys);
+    const imm = di.has(type) && !properties.some(p => di.bypasses.has(p) && type in phys);
+    const res = dr.has(type) && !properties.some(p => dr.bypasses.has(p) && type in phys);
+    const vul = dv.has(type) && !properties.some(p => dv.bypasses.has(p) && type in phys);
 
     const mod = imm ? 0 : vul ? 2 : res ? 0.5 : 1;
     const val = Roll.safeEval(value);

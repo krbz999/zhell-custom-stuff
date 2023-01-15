@@ -1,6 +1,11 @@
 import { FORAGING, MODULE } from "../const.mjs";
 import { EXHAUSTION_EFFECTS } from "../../sources/conditions.mjs";
 
+/**
+ * Get a document from a compendium.
+ * @param {String} documentName Name of the document.
+ * @param {String} catalog      Key of the compendium, or suffix of the catalog.
+ */
 export async function _getDocumentFromCompendium(documentName, catalog) {
   const key = `zhell-catalogs.${catalog}`;
   const pack = game.packs.get(key) ?? game.packs.get(catalog);
@@ -10,11 +15,21 @@ export async function _getDocumentFromCompendium(documentName, catalog) {
   return pack.getDocument(id);
 }
 
+/**
+ * Set the current foraging DC programmatically.
+ * @param {Number} number The new foraging DC
+ */
 export async function _setForageDC(number) {
   if (!game.user.isGM) return ui.notifications.warn("Excuse me?");
   return game.settings.set(MODULE, FORAGING, number);
 }
 
+/**
+ * Teleport the tokens within one circular area.
+ * @param {Object} crosshairsConfig Options for the warpgate crosshairs.
+ * @param {Boolean} fade            Whether or not to use Sequencer to fade in and out.
+ * @param {Number} fadeDuration     The duration of the fade in and out.
+ */
 export async function _teleportTokens(crosshairsConfig = {}, fade = true, fadeDuration = 500) {
   const config = foundry.utils.mergeObject({
     size: 4, drawIcon: false, fillAlpha: 0.1,
@@ -65,6 +80,10 @@ export async function _teleportTokens(crosshairsConfig = {}, fade = true, fadeDu
   return update;
 }
 
+/**
+ * Target all tokens within an area.
+ * @param {Object} crosshairsConfig Options for the warpgate crosshairs.
+ */
 export async function _targetTokens(crosshairsConfig = {}) {
   const config = foundry.utils.mergeObject({
     size: 4, drawIcon: false, fillAlpha: 0.1,
@@ -79,6 +98,11 @@ export async function _targetTokens(crosshairsConfig = {}) {
   return tokenIds;
 }
 
+/**
+ * Get the user ids of the owners of an array of tokens.
+ * @param {Array} tokens      An array of tokens.
+ * @param {Boolean} excludeGM Whether or not to exclude GM user ids.
+ */
 export function _getTokenOwnerIds(tokens = [], excludeGM = false) {
   const permissions = tokens.map(t => t.actor.ownership);
   const userIds = game.users.filter(user => {
@@ -90,6 +114,9 @@ export function _getTokenOwnerIds(tokens = [], excludeGM = false) {
   else return userIds;
 }
 
+/**
+ * Render a dialog to whisper a set of players privately.
+ */
 export async function _whisperPlayers() {
   const users = game.users.filter(u => u.id !== game.user.id);
   const characterIds = users.map(u => u.character?.id).filter(i => !!i);
@@ -139,6 +166,10 @@ export async function _whisperPlayers() {
   }).render(true, { height: "auto" });
 }
 
+/**
+ * Convert a number to a Roman numeral.
+ * @param {Number} number The number to convert.
+ */
 export function _romanize(number) {
   let num = Number(number);
   const roman = {
@@ -256,6 +287,11 @@ export class EXHAUSTION {
   }
 }
 
+/**
+ * Show text on the screen for all users.
+ * @param {String} text     The text to display.
+ * @param {Number} fontSize The font size of the text.
+ */
 export async function _titleCard(text, fontSize = 80) {
   if (!text) {
     ui.notifications.warn("No text given.");
@@ -286,6 +322,11 @@ export async function _titleCard(text, fontSize = 80) {
   return sequence.play();
 }
 
+/**
+ * Get whether a Token is contained within a TemplateDocument.
+ * @param {Token5e} token                     The token placeable.
+ * @param {MeasuredTemplateDocument} tempDoc  The template document.
+ */
 export function _checkTokenInTemplate(token, tempDoc) {
   const { size } = canvas.scene.grid;
   const { width, height, x: tokx, y: toky } = token.document;
@@ -305,6 +346,10 @@ export function _checkTokenInTemplate(token, tempDoc) {
   return false;
 }
 
+/**
+ * Release all tokens and then control all tokens contained within a template.
+ * @param {MeasuredTemplateDocument} tempDoc The template document.
+ */
 export function _selectContained(tempDoc) {
   const tokens = canvas.tokens.placeables.filter(token => {
     return _checkTokenInTemplate(token, tempDoc);

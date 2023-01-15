@@ -266,7 +266,7 @@ export class MateriaMedica extends Application {
     const baseCost = this.getCost(uuid);
     const itemScales = baseCost === 2 && ["potion", "poison"].includes(tab);
     const scale = !itemScales ? null : Number(html[0].querySelector(`#scale-${tab}`).value);
-    if(!scale && scale !== null){
+    if (!scale && scale !== null) {
       ui.notifications.warn("You must select a valid scale for the item.");
       return;
     }
@@ -276,7 +276,7 @@ export class MateriaMedica extends Application {
     else if (tab === "misc") return this._createMisc(uuid, baseCost);
   }
 
-  _onDeliveryMethodChange(event, html){
+  _onDeliveryMethodChange(event, html) {
     const c = html[0].querySelector("#poison-delivery-method").value;
     html[0].querySelector(".method-description").innerText = this.descriptionAppend[c];
   }
@@ -354,7 +354,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = method + (scale ? scale : baseCost);
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", {cost}));
+      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", { cost }));
       return;
     }
     itemData.system.description.value += `<p>${append}</p>`;
@@ -389,7 +389,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = baseCost;
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", {cost}));
+      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", { cost }));
       return;
     }
 
