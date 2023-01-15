@@ -77,10 +77,3 @@ Hooks.once("ready", function() {
     Hooks.on("dnd5e.rollSkill", ZHELL_ANIMATIONS.onRollSkill);
   }
 });
-
-// remove Items With Spells from some item type sheets.
-Hooks.on("renderItemSheet", function(sheet, html) {
-  if (!["class", "subclass", "background", "feat", "race"].includes(sheet.item.type)) return;
-  const h = html[0].querySelector("[data-tab=spells]");
-  if (h) h.style.display = "none";
-});
