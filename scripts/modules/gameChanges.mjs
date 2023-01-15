@@ -34,6 +34,7 @@ function _addConditions() {
 function _addPiety() {
   CONFIG.DND5E.abilities["pty"] = "Piety";
   CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
+  CONFIG.DND5E.featureTypes.boon = { label: "Divine Boon" };
 }
 
 function _consumables() {
