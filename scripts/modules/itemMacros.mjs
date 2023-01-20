@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import { DEPEND, MODULE } from "../const.mjs";
 import { drawCircle } from "./animations.mjs";
 import { ITEMACRO_BOONS } from "./itemacros/boons.mjs";
 import { ITEMACRO_FEATURES } from "./itemacros/features.mjs";
@@ -53,12 +53,12 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
   const config = lightData ?? { dim: 40, bright: 20 };
 
   const onCreate = async function() {
-    const config = effect.getFlag("effectmacro", "lightConfig") ?? {};
+    const config = effect.getFlag(DEPEND.EM, "lightConfig") ?? {};
     return token?.document.update({ light: config });
   }
 
   const onDelete = async function() {
-    const config = effect.getFlag("effectmacro", "lightConfig") ?? {};
+    const config = effect.getFlag(DEPEND.EM, "lightConfig") ?? {};
     const prototype = await actor.getTokenDocument();
     const protoData = foundry.utils.flattenObject(prototype.light);
     for (const key of Object.keys(protoData)) {
@@ -105,7 +105,7 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
  */
 export function _constructDetectionModeEffectData({ modes = [], item }) {
   const onCreate = async function() {
-    const { modes } = effect.getFlag("effectmacro", "data");
+    const { modes } = effect.getFlag(DEPEND.EM, "data");
     const previousModes = foundry.utils.duplicate(token.document.detectionModes);
     const ids = previousModes.map(m => m.id);
     previousModes.push(...modes.filter(m => !ids.includes(m.id)));
@@ -158,7 +158,7 @@ export function _constructGenericEffectData({ item, level = null }) {
  * Returns the effect.
  */
 export async function _addTokenDismissalToEffect(effect, tokenId) {
-  return effect.setFlag("effectmacro", "onDelete.script", `await warpgate.dismiss("${tokenId}");`);
+  return effect.setFlag(DEPEND.EM, "onDelete.script", `await warpgate.dismiss("${tokenId}");`);
 }
 
 /**

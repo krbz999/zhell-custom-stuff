@@ -1,4 +1,4 @@
-import { MODULE } from "../scripts/const.mjs";
+import { DEPEND, MODULE } from "../scripts/const.mjs";
 
 /*
   1000: Bless
@@ -14,7 +14,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/bane.webp",
     duration: { seconds: 60 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are under the effects of the Bane spell.</p>"
@@ -35,7 +35,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/bless.webp",
     duration: { seconds: 60 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are under the effects of the Bless spell.</p>"
@@ -56,7 +56,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/haste.webp",
     duration: { seconds: 60 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are under the effects of the Haste spell.</p>"
@@ -78,7 +78,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/slowed.webp",
     duration: { seconds: 60 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are under the effects of the Slow spell.</p>"
@@ -101,7 +101,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/invisible.webp",
     duration: { seconds: 3600 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are invisible.</p>"
@@ -116,7 +116,7 @@ export const SPELL_EFFECTS = [
     icon: "assets/images/conditions/flying.webp",
     duration: { seconds: 600 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are under the effects of the Fly spell.</p>"
@@ -144,7 +144,7 @@ export const STATUS_EFFECTS = [
     id: "blind", label: "Blinded", sort: 300,
     icon: "assets/images/conditions/blinded.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You cannot see, and you automatically fail any ability checks that require sight.</p>"
@@ -157,7 +157,7 @@ export const STATUS_EFFECTS = [
     id: "charm", label: "Charmed", sort: 200,
     icon: "assets/images/conditions/charmed.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You cannot attack the charmer or target them with harmful abilities or magical effects.</p>"
@@ -170,7 +170,7 @@ export const STATUS_EFFECTS = [
     id: "dead", label: "Dead", sort: 100,
     icon: "assets/images/conditions/dead.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>You have met an unfortunate end.</p>"
         }
@@ -181,7 +181,7 @@ export const STATUS_EFFECTS = [
     id: "deaf", label: "Deafened", sort: 330,
     icon: "assets/images/conditions/deafened.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>You cannot hear and automatically fail any ability checks that require hearing.</p>"
         }
@@ -192,7 +192,7 @@ export const STATUS_EFFECTS = [
     id: "mute", label: "Muted", sort: 360,
     icon: "assets/images/conditions/muted.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You cannot speak and cannot cast spells with a verbal component.</p>"
@@ -205,7 +205,7 @@ export const STATUS_EFFECTS = [
     id: "fear", label: "Frightened", sort: 250,
     icon: "assets/images/conditions/frightened.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight.</p>"
@@ -218,7 +218,7 @@ export const STATUS_EFFECTS = [
     id: "grappled", label: "Grappled", sort: 430,
     icon: "assets/images/conditions/grappled.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>Your speed is zero.</p>"
         }
@@ -236,7 +236,7 @@ export const STATUS_EFFECTS = [
     id: "incapacitated", label: "Incapacitated", sort: 500,
     icon: "assets/images/conditions/incapacitated.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>You cannot take actions or reactions.</p>"
         }
@@ -247,7 +247,7 @@ export const STATUS_EFFECTS = [
     id: "paralysis", label: "Paralyzed", sort: 600,
     icon: "assets/images/conditions/paralyzed.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are incapacitated, and you cannot move or speak.</p>"
@@ -268,7 +268,7 @@ export const STATUS_EFFECTS = [
     id: "petrified", label: "Petrified", sort: 650,
     icon: "assets/images/conditions/petrified.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are inanimate, incapacitated, and unaware of your surroundings.</p>"
@@ -283,7 +283,7 @@ export const STATUS_EFFECTS = [
     id: "poison", label: "Poisoned", sort: 280,
     icon: "assets/images/conditions/poisoned.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>You have disadvantage on all attack rolls and ability checks.</p>"
         }
@@ -294,7 +294,7 @@ export const STATUS_EFFECTS = [
     id: "prone", label: "Prone", sort: 400,
     icon: "assets/images/conditions/prone.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You can only crawl unless you expend half your movement to stand up.</p>"
@@ -307,7 +307,7 @@ export const STATUS_EFFECTS = [
     id: "restrain", label: "Restrained", sort: 450,
     icon: "assets/images/conditions/restrained.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage.</p>"
@@ -327,7 +327,7 @@ export const STATUS_EFFECTS = [
     id: "stun", label: "Stunned", sort: 540,
     icon: "assets/images/conditions/stunned.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are incapacitated, cannot move, and can speak only falteringly.</p>"
@@ -347,7 +347,7 @@ export const STATUS_EFFECTS = [
     id: "unconscious", label: "Unconscious", sort: 560,
     icon: "assets/images/conditions/unconscious.webp",
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws.</p>"
@@ -368,7 +368,7 @@ export const STATUS_EFFECTS = [
     icon: "assets/images/conditions/reaction.webp",
     duration: { rounds: 1 },
     flags: {
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have spent your reaction.</p>"
@@ -390,7 +390,7 @@ export const EXHAUSTION_EFFECTS = [
     icon: "icons/skills/wounds/injury-body-pain-gray.webp",
     flags: {
       [MODULE]: { exhaustion: 1 },
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro: "<p>You have disadvantage on all ability checks.</p>"
         }
@@ -406,7 +406,7 @@ export const EXHAUSTION_EFFECTS = [
     icon: "icons/skills/wounds/injury-body-pain-gray.webp",
     flags: {
       [MODULE]: { exhaustion: 2 },
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have disadvantage on all ability checks.</p>"
@@ -429,7 +429,7 @@ export const EXHAUSTION_EFFECTS = [
     icon: "icons/skills/wounds/injury-body-pain-gray.webp",
     flags: {
       [MODULE]: { exhaustion: 3 },
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>"
@@ -452,7 +452,7 @@ export const EXHAUSTION_EFFECTS = [
     icon: "icons/skills/wounds/injury-body-pain-gray.webp",
     flags: {
       [MODULE]: { exhaustion: 4 },
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>"
@@ -476,7 +476,7 @@ export const EXHAUSTION_EFFECTS = [
     icon: "icons/skills/wounds/injury-body-pain-gray.webp",
     flags: {
       [MODULE]: { exhaustion: 5 },
-      "visual-active-effects": {
+      [DEPEND.VAE]: {
         data: {
           intro:
             "<p>You have disadvantage on all ability checks, attack rolls, and saving throws.</p>"

@@ -1,4 +1,4 @@
-import { MODULE } from "../../const.mjs";
+import { DEPEND, MODULE } from "../../const.mjs";
 import { _basicFormContent, _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
 
 export const ITEMACRO_ITEMS = {
@@ -55,7 +55,7 @@ async function HIT_DIE_APPLY(item, speaker, actor, token, character, event, args
 }
 
 async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -65,7 +65,7 @@ async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args
 }
 
 async function TORCH(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -79,7 +79,7 @@ async function TORCH(item, speaker, actor, token, character, event, args) {
 }
 
 async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("rollgroups")) return item.use();
+  if (!_getDependencies(DEPEND.RG)) return item.use();
 
   const servings = [
     { id: foundry.utils.randomID(), uses: 1, label: "Quiant Serving (1 use)" },

@@ -1,4 +1,4 @@
-import { MODULE } from "../../const.mjs";
+import { DEPEND, MODULE } from "../../const.mjs";
 import { columnDialog } from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
@@ -28,7 +28,7 @@ export const ITEMACRO_FEATURES = {
 };
 
 async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.WG)) return item.use();
   const range = 120;
   const mod = Math.max(actor.system.abilities.wis.mod, 1);
   if (!game.user.targets.size.between(1, mod)) {
@@ -74,7 +74,7 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
 }
 
 async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "jb2a_patreon", "warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
 
   // CONSTS
   const id = item.name.slugify();
@@ -309,7 +309,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
 }
 
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "babonus", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
   const weapons = actor.itemTypes.weapon.filter(i => i.system.equipped);
   if (!weapons.length) {
@@ -370,7 +370,7 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
 }
 
 async function WARMING_RESPITE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.WG)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -478,7 +478,7 @@ async function DWARVEN_FORTITUDE(item, speaker, actor, token, character, event, 
 }
 
 async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effective-transferral", "rollgroups")) return item.use();
+  if (!_getDependencies(DEPEND.ET, DEPEND.RG)) return item.use();
   const rollData = actor.getRollData();
   const { files } = await FilePicker.browse("public", "icons/consumables/potions");
   const randomName = [
@@ -576,9 +576,10 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
   const universal = {
     transfer: false,
     flags: {
-      "effective-transferral": {
+      [DEPEND.ET]: {
         transferBlock: { button: true, chat: true, displayCard: true }
-      }
+      },
+      [MODULE]: { "experimental-elixir": true }
     }
   }
 
@@ -745,7 +746,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 }
 
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
     return e.getFlag("core", "statusId") === item.name.slugify();
   });
@@ -768,7 +769,7 @@ async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, eve
 }
 
 async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "visual-active-effects", "concentrationnotifier", "sequencer", "jb2a_patreon")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const use = await item.use();
   if (!use) return;

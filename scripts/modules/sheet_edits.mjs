@@ -168,7 +168,7 @@ function _createSpendMoney(sheet, html) {
 
   const template = `
   <h3>Spend
-    <a data-action="spendMoney" title="Spend Money">
+    <a data-action="spendMoney" data-tooltip="Spend Money">
       <i class="fa-solid fa-hand-holding-dollar"></i>
     </a>
   </h3>`;

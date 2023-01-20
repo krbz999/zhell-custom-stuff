@@ -229,3 +229,19 @@ export function _visionModes() {
     },
   });
 }
+
+// delete items after a rest.
+export async function _restItemDeletion(actor, data) {
+  if (!data.longRest) return;
+  let experimentalElixir = false;
+  const ids = actor.items.filter(item => {
+    const a = !!item.getFlag(MODULE, "experimental-elixir");
+    if (a) experimentalElixir = true;
+    return a;
+  }).map(i => i.id);
+  await actor.deleteEmbeddedDocuments("Item", ids);
+  if (experimentalElixir) await ChatMessage.create({
+    content: `${actor.name}'s experimental elixirs evaporated.`,
+    speaker: ChatMessage.getSpeaker({ actor })
+  });
+}

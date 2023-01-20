@@ -1,4 +1,4 @@
-import { MODULE } from "../../const.mjs";
+import { DEPEND, MODULE } from "../../const.mjs";
 import { imageAnchorDialog } from "../customDialogs.mjs";
 import {
   _basicFormContent,
@@ -16,7 +16,7 @@ export const ITEMACRO_BOONS = {
 };
 
 async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier")) return item.use();
+  if (!_getDependencies(DEPEND.CN)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
 
@@ -176,7 +176,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
 }
 
 async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "jb2a_patreon", "effectmacro", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -267,7 +267,7 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
 }
 
 async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "concentrationnotifier", "sequencer", "jb2a_patreon")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const active = CN.isActorConcentratingOnItem(actor, item);
   const file1 = "jb2a.markers.music.blueyellow";
@@ -319,7 +319,7 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
 }
 
 async function FIND_FRIEND(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "warpgate", "jb2a_patreon")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A)) return item.use();
 
   // jb2a assets.
   const assets = [
@@ -494,7 +494,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
 }
 
 async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("visual-active-effects", "concentrationnotifier", "sequencer", "jb2a_patreon")) return item.use();
+  if (!_getDependencies(DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
   const use = await item.use();
   if (!use) return;
 

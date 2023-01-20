@@ -5,6 +5,17 @@ export const FORAGING = "foragingDC";
 export const DEFEATED = "markDefeatedCombatants";
 export const DISPLAY_AMMO = "displaySavingThrowAmmo";
 export const TRACK_REACTIONS = "trackReactions";
+export const DEPEND = {
+  CN: "concentrationnotifier",
+  EM: "effectmacro",
+  WG: "warpgate",
+  ET: "effective-transferral",
+  VAE: "visual-active-effects",
+  SEQ: "sequencer",
+  JB2A: "jb2a_patreon",
+  BAB: "babonus",
+  RG: "rollgroups"
+}
 export const WORLD_DEFAULTS = {
   addConditions: true,
   addEquipment: true,

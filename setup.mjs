@@ -18,9 +18,9 @@ import {
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
 import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
-import { _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
+import { _restItemDeletion, _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
 import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
-import { DEFEATED, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
+import { DEFEATED, DEPEND, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -44,6 +44,7 @@ Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", _rotateTokensOnMovement);
 Hooks.on("renderTokenHUD", _replaceTokenHUD);
 Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
+Hooks.on("dnd5e.restCompleted", _restItemDeletion);
 
 
 Hooks.once("ready", function() {
@@ -67,7 +68,7 @@ Hooks.once("ready", function() {
 
   // hook for various actions are performed to display animations.
   const canAnimate = [
-    "sequencer", "jb2a_patreon"
+    DEPEND.SEQ, DEPEND.JB2A
   ].every(id => !!game.modules.get(id)?.active);
   if (canAnimate) {
     Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);

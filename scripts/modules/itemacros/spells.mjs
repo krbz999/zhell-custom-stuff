@@ -1,4 +1,4 @@
-import { MODULE } from "../../const.mjs";
+import { DEPEND, MODULE } from "../../const.mjs";
 import { drawCircle } from "../animations.mjs";
 import { _redisplayItem } from "../combatHelpers.mjs";
 import { elementalDialog, imageAnchorDialog } from "../customDialogs.mjs";
@@ -45,7 +45,7 @@ export const ITEMACRO_SPELLS = {
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate", "concentrationnotifier", "effectmacro")) return item.use();
+  if (!_getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return CN.redisplayCard(actor, item);
@@ -66,7 +66,7 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
 }
 
 async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro", "warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
     return e.getFlag("core", "statusId") === item.name.slugify();
   });
@@ -93,7 +93,7 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
 }
 
 async function MISTY_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "jb2a_patreon", "warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
   const vanish = "jb2a.misty_step.01.blue";
   const appear = "jb2a.misty_step.02.blue";
   const distance = 30;
@@ -105,7 +105,7 @@ async function MISTY_STEP(item, speaker, actor, token, character, event, args) {
 }
 
 async function THUNDER_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "jb2a_patreon", "warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
   const vanish = "jb2a.thunderwave.center.blue";
   const appear = "jb2a.thunderwave.center.blue";
   const distance = 90;
@@ -117,7 +117,7 @@ async function THUNDER_STEP(item, speaker, actor, token, character, event, args)
 }
 
 async function FAR_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("sequencer", "jb2a_patreon", "warpgate", "concentrationnotifier")) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG, DEPEND.CN)) return item.use();
   const vanish = "jb2a.misty_step.01.purple";
   const appear = "jb2a.misty_step.02.purple";
   const distance = 60;
@@ -133,7 +133,7 @@ async function FAR_STEP(item, speaker, actor, token, character, event, args) {
 }
 
 async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -162,7 +162,7 @@ async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args
 
   async function flagEffect(type) {
     const effect = CN.isActorConcentratingOnItem(actor, item);
-    const level = effect.getFlag("concentrationnotifier", "data.castData.castLevel");
+    const level = effect.getFlag(DEPEND.CN, "data.castData.castLevel");
     const value = `+${Math.ceil(level / 2) - 1}d8[${type}]`;
     const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
     const changes = [
@@ -219,7 +219,7 @@ async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, ar
 }
 
 async function CALL_LIGHTNING(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
   const concentrating = CN.isActorConcentratingOnItem(actor, item);
   if (!concentrating) {
     const use = await item.use();
@@ -288,7 +288,7 @@ async function FATHOMLESS_EVARDS_BLACK_TENTACLES(item, speaker, actor, token, ch
 }
 
 async function MOONBEAM(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate", "concentrationnotifier", "effectmacro")) return item.use();
+  if (!_getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return CN.redisplayCard(actor, item);
@@ -373,7 +373,7 @@ async function SHIELD(item, speaker, actor, token, character, event, args) {
 }
 
 async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier", "rollgroups")) return item.use();
+  if (!_getDependencies(DEPEND.CN, DEPEND.RG)) return item.use();
 
   let effect = CN.isActorConcentratingOnItem(actor, item);
 
@@ -451,7 +451,7 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 
     const addSave = { indigo: "con", violet: "wis" }[arrow] ?? false;
 
-    await effect.setFlag("concentrationnotifier", "data", {
+    await effect.setFlag(DEPEND.CN, "data", {
       "itemData.flags.rollgroups.config.groups": groups
     });
 
@@ -478,7 +478,7 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 }
 
 async function CROWN_OF_STARS(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier")) return item.use();
+  if (!_getDependencies(DEPEND.CN)) return item.use();
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (!isConc) {
     const use = await item.use();
@@ -497,7 +497,7 @@ async function CROWN_OF_STARS(item, speaker, actor, token, character, event, arg
 }
 
 async function VORTEX_WARP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate", "sequencer", "jb2a_patreon")) return item.use();
+  if (!_getDependencies(DEPEND.WG, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const target = game.user.targets.first();
   if (!target) {
@@ -547,7 +547,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
 }
 
 async function WIELDING(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("concentrationnotifier", "visual-active-effects", "effectmacro")) return item.use();
+  if (!_getDependencies(DEPEND.CN, DEPEND.VAE, DEPEND.EM)) return item.use();
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return;
 
@@ -608,7 +608,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
 }
 
 async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.WG)) return item.use();
 
   const mutName = `${item.name} (${actor.name})`;
   const statusId = `${item.name.slugify()}-${actor.name.slugify()}`;
@@ -660,7 +660,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
 }
 
 async function FIND_FAMILIAR(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate")) return item.use();
+  if (!_getDependencies(DEPEND.WG)) return item.use();
   const isDevinn = actor.name.includes("Devinn") && "Alyk";
   const isDrazvik = actor.name.includes("Draz") && "Vrax";
   const use = await item.use();
@@ -705,7 +705,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
 }
 
 async function AID(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("warpgate", "effectmacro", "visual-active-effects")) return item.use();
+  if (!_getDependencies(DEPEND.WG, DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const targets = game.user.targets;
   if (targets.size > 3) return ui.notifications.warn("You can only choose up to three targets.");
@@ -717,7 +717,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
   const spellLevel = _getSpellLevel(use);
 
   async function onCreate() {
-    const level = effect.getFlag("effectmacro", "data.spellLevel");
+    const level = effect.getFlag(DEPEND.EM, "data.spellLevel");
     const value = 5 * (level - 1);
     return actor.applyDamage(-value);
   }
@@ -744,7 +744,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
 }
 
 async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("babonus", "visual-active-effects", "concentrationnotifier")) return item.use();
+  if (!_getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
   const has = actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify());
   if (has) {
@@ -797,7 +797,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
 }
 
 async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies("effectmacro")) return item.use();
+  if (!_getDependencies(DEPEND.EM)) return item.use();
 
   const use = await item.use();
   if (!use) return;
