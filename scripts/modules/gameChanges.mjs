@@ -245,3 +245,11 @@ export async function _restItemDeletion(actor, data) {
     speaker: ChatMessage.getSpeaker({ actor })
   });
 }
+
+// Add more feature types.
+export function _addFeatureTypes() {
+  foundry.utils.mergeObject(CONFIG.DND5E.featureTypes.class.subtypes, {
+    arcaneArcherShot: "Arcane Archer Shot",
+    primordialEffect: "Primordial Effect"
+  });
+}

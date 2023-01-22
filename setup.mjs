@@ -18,7 +18,7 @@ import {
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
 import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
-import { _restItemDeletion, _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
+import { _addFeatureTypes, _restItemDeletion, _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
 import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
 import { DEFEATED, DEPEND, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
 
@@ -27,6 +27,7 @@ Hooks.once("init", api.register);
 Hooks.once("init", _visionModes);
 Hooks.once("setup", _setUpGameChanges);
 Hooks.once("setup", _craftingCharacterFlag);
+Hooks.once("setup", _addFeatureTypes);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);
 Hooks.once("ready", refreshColors);
