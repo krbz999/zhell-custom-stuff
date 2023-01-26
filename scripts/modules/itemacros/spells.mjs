@@ -8,7 +8,6 @@ import {
   _bladeCantripDamageBonus,
   _constructDetectionModeEffectData,
   _constructGenericEffectData,
-  _constructLightEffectData,
   _getDependencies,
   _getItemDuration,
   _getSpellLevel,
@@ -717,7 +716,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
   const spellLevel = _getSpellLevel(use);
 
   async function onCreate() {
-    const level = effect.getFlag(DEPEND.EM, "data.spellLevel");
+    const level = effect.getFlag("effectmacro", "data.spellLevel");
     const value = 5 * (level - 1);
     return actor.applyDamage(-value);
   }
