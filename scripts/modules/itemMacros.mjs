@@ -58,7 +58,6 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
   }
 
   const onDelete = async function() {
-    console.log("ON DELETE");
     const config = effect.getFlag("effectmacro", "lightConfig") ?? {};
     const prototype = await actor.getTokenDocument();
     const protoData = foundry.utils.flattenObject(prototype.light);
