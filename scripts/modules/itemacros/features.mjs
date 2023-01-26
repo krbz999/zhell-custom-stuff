@@ -48,6 +48,7 @@ async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args
 
   const use = await item.use();
   if (!use) return;
+  ui.notifications.info("Granting darkvision to your targets!");
   for (const target of game.user.targets) warpgate.mutate(target.document, updates, {}, options);
 }
 
@@ -136,7 +137,10 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
       permanent: true,
       description: `${actor.name} is granting you ${total} temporary hit points.`
     }
-    if (total > temp) return warpgate.mutate(target.document, updates, {}, options);
+    if (total > temp) {
+      ui.notifications.info(`Granting temporary hit points to ${target.document.name}!`);
+      return warpgate.mutate(target.document, updates, {}, options);
+    }
   }
 
   async function removeEffect() {
@@ -372,6 +376,12 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
 async function WARMING_RESPITE(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.WG)) return item.use();
 
+  const targets = game.user.targets;
+  if (!targets.size) {
+    ui.notifications.warn("You need at least one target to use this feature!");
+    return null;
+  }
+
   const use = await item.use();
   if (!use) return;
 
@@ -382,7 +392,8 @@ async function WARMING_RESPITE(item, speaker, actor, token, character, event, ar
     description: `${actor.name} is granting you ${levels} temporary hit points.`
   }
 
-  for (const target of game.user.targets) {
+  ui.notifications.info("Granting temporary hit points to your targets!");
+  for (const target of targets) {
     if (target.actor.system.attributes.hp.temp < levels) {
       warpgate.mutate(target.document, updates, {}, options);
     }

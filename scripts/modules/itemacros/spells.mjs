@@ -542,6 +542,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
         .animation().delay(1000).on(tokenDoc).fadeIn(1000).waitUntilFinished().play();
     }
   }
+  ui.notifications.info(`Attempting to warp ${target.document.name}!`);
   return warpgate.mutate(target.document, update, callbacks, options);
 }
 
@@ -636,8 +637,9 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
 
   async function _mageArmor(html) {
     const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
-    const token = canvas.scene.tokens.get(tokenId);
-    return warpgate.mutate(token, {
+    const target = canvas.scene.tokens.get(tokenId);
+    ui.notifications.info(`Applying Mage Armor to ${target.name}!`);
+    return warpgate.mutate(target, {
       embedded: {
         ActiveEffect: {
           [statusId]: {
@@ -739,6 +741,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
     comparisonKeys: { ActiveEffect: "label" }
   }
 
+  ui.notifications.info("Granting hit points to your targets!");
   for (const target of targets) await warpgate.mutate(target.document, updates, {}, options);
 }
 
