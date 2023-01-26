@@ -1,4 +1,15 @@
-import { COLOR, COLOR_DEFAULTS, DEFEATED, DISPLAY_AMMO, FORAGING, MODULE, RARITY, RARITY_DEFAULTS, TRACK_REACTIONS, WORLD_DEFAULTS } from "./const.mjs";
+import {
+  COLOR,
+  COLOR_DEFAULTS,
+  DEFEATED,
+  DISPLAY_AMMO,
+  FORAGING,
+  MODULE,
+  RARITY,
+  RARITY_DEFAULTS,
+  TRACK_REACTIONS,
+  WORLD_DEFAULTS
+} from "./const.mjs";
 import { refreshColors } from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
@@ -124,20 +135,22 @@ class SettingsSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    return game.settings.set(MODULE, "worldSettings", formData);
+    return game.settings.set(MODULE, "worldSettings", formData, { diff: false });
   }
 
   async getData() {
     const data = foundry.utils.mergeObject(
       WORLD_DEFAULTS,
-      game.settings.get(MODULE, "worldSettings")
+      game.settings.get(MODULE, "worldSettings"),
+      { insertKeys: false }
     );
     const settings = Object.entries(data).map(s => {
+      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         checked: s[1],
-        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
-        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+        name: `ZHELL.SettingsWorld${str}Name`,
+        hint: `ZHELL.SettingsWorld${str}Hint`
       }
     });
     return { settings };
@@ -159,7 +172,7 @@ class ColorPickerSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, COLOR, formData);
+    const set = await game.settings.set(MODULE, COLOR, formData, { diff: false });
     refreshColors();
     return set;
   }
@@ -167,28 +180,31 @@ class ColorPickerSubmenu extends FormApplication {
   async getData() {
     const data = foundry.utils.mergeObject(
       COLOR_DEFAULTS,
-      game.settings.get(MODULE, COLOR)
+      game.settings.get(MODULE, COLOR),
+      { insertKeys: false }
     );
     const checks = Object.entries({
       showLimitedUses: data.showLimitedUses,
       showSpellSlots: data.showSpellSlots
     }).map(s => {
+      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         checked: s[1],
-        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
-        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+        name: `ZHELL.SettingsColor${str}Name`,
+        hint: `ZHELL.SettingsColor${str}Hint`
       };
     });
     delete data.showLimitedUses;
     delete data.showSpellSlots;
 
     const colors = Object.entries(data).map(s => {
+      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         value: s[1],
-        name: `ZHELL.SETTINGS.${s[0]}.NAME`,
-        hint: `ZHELL.SETTINGS.${s[0]}.HINT`
+        name: `ZHELL.SettingsColor${str}Name`,
+        hint: `ZHELL.SettingsColor${str}Hint`
       }
     });
     return { checks, colors };
@@ -210,7 +226,7 @@ class RarityColorsSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, RARITY, formData);
+    const set = await game.settings.set(MODULE, RARITY, formData, { diff: false });
     refreshColors();
     return set;
   }
@@ -219,7 +235,8 @@ class RarityColorsSubmenu extends FormApplication {
     return {
       settings: Object.entries(foundry.utils.mergeObject(
         RARITY_DEFAULTS,
-        game.settings.get(MODULE, RARITY)
+        game.settings.get(MODULE, RARITY),
+        { insertKeys: false }
       )).map(d => {
         const label = CONFIG.DND5E.itemRarity[d[0]].titleCase();
         const name = d[0];

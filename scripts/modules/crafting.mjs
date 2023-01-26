@@ -116,10 +116,10 @@ export class MateriaMedica extends Application {
 
   get descriptionAppend() {
     return {
-      0: game.i18n.localize("ZHELL.CRAFTING.INGESTED"),
-      1: game.i18n.localize("ZHELL.CRAFTING.CONTACT"),
-      2: game.i18n.localize("ZHELL.CRAFTING.INJURY"),
-      3: game.i18n.localize("ZHELL.CRAFTING.INHALED")
+      0: game.i18n.localize("ZHELL.CraftingTypeIngested"),
+      1: game.i18n.localize("ZHELL.CraftingTypeContact"),
+      2: game.i18n.localize("ZHELL.CraftingTypeInjury"),
+      3: game.i18n.localize("ZHELL.CraftingTypeInhaled")
     }
   }
 
@@ -354,7 +354,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = method + (scale ? scale : baseCost);
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", { cost }));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
       return;
     }
     itemData.system.description.value += `<p>${append}</p>`;
@@ -389,7 +389,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = baseCost;
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CRAFTING.COST_WARN", { cost }));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
       return;
     }
 
