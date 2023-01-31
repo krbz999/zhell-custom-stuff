@@ -26,7 +26,7 @@ export class ZHELL_COMBAT {
   static spendReaction(item) {
     if (item.system.activation?.type !== "reaction") return;
     if (!game.combat) return;
-    const has = item.parent.effects.find(e => e.getFlag("core", "statusId") === "reaction");
+    const has = item.parent.effects.find(e => e.flags.core?.statusId === "reaction");
     if (has) return;
     const combatant = item.parent.token?.combatant ?? item.parent.getActiveTokens()[0]?.combatant;
     if (!combatant) return;

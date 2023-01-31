@@ -441,8 +441,9 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     const { name: nameShape } = shapeA.dataset;
 
     // pick position.
+    await actor.sheet?.minimize();
     const { x, y, cancelled } = await warpgate.crosshairs.show({ drawIcon: false });
-    if (cancelled) return;
+    if (cancelled) return actor.sheet?.maximize();
 
     // construct updates.
     const { updatesShape, updatesSteed } = _generateUpdateObjects(nameSteed, nameShape);
@@ -469,6 +470,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       .file(assets[3]).attachTo(token).size(canvas.grid.size).waitUntilFinished(-2000)
       .play();
     await warpgate.mutate(token.document, updatesShape, {}, { name: item.name });
+    await actor.sheet?.maximize();
     return actor.createEmbeddedDocuments("ActiveEffect", [{
       icon: item.img,
       label: item.name,

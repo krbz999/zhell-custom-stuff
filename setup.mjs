@@ -18,7 +18,14 @@ import {
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
 import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
-import { _addFeatureTypes, _restItemDeletion, _sceneHeaderView, _setUpGameChanges, _visionModes } from "./scripts/modules/gameChanges.mjs";
+import {
+  _dropActorFolder,
+  _miscAdjustments,
+  _restItemDeletion,
+  _sceneHeaderView,
+  _setUpGameChanges,
+  _visionModes
+} from "./scripts/modules/gameChanges.mjs";
 import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
 import { DEFEATED, DEPEND, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
 
@@ -27,7 +34,7 @@ Hooks.once("init", api.register);
 Hooks.once("init", _visionModes);
 Hooks.once("setup", _setUpGameChanges);
 Hooks.once("setup", _craftingCharacterFlag);
-Hooks.once("setup", _addFeatureTypes);
+Hooks.once("setup", _miscAdjustments);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);
 Hooks.once("ready", refreshColors);
@@ -36,6 +43,7 @@ Hooks.once("ready", ZHELL_SOCKETS.createTilesSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.awardLootSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.updateTokensSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
+Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 Hooks.once("ready", _setupCustomButtons);
 
@@ -65,6 +73,7 @@ Hooks.once("ready", function() {
     Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
     Hooks.on("renderChatMessage", _setupGroupSaves);
     Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
+    Hooks.on("dropCanvasData", _dropActorFolder);
   }
 
   // hook for various actions are performed to display animations.

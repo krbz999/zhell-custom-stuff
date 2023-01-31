@@ -2,7 +2,7 @@ import { MODULE } from "../const.mjs";
 
 export async function imageAnchorDialog({ label = "OK", callback, title, allowMultiple = false, top = [], middle = [], bottom = [] }) {
   const content = await renderTemplate(`modules/${MODULE}/templates/imageAnchorDialog.hbs`, { top, middle, bottom });
-  await Dialog.prompt({
+  return Dialog.prompt({
     title,
     label,
     content,
@@ -10,7 +10,7 @@ export async function imageAnchorDialog({ label = "OK", callback, title, allowMu
     options: { classes: ["dialog", "image-selector"] },
     render: (html) => _imageAnchorDialogOnRender(html, allowMultiple),
     rejectClose: false
-  })
+  });
 }
 
 function _imageAnchorDialogOnRender(html, allowMultiple) {

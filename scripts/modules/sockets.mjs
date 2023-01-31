@@ -1,3 +1,5 @@
+import { imageAnchorDialog } from "./customDialogs.mjs";
+
 export class ZHELL_SOCKETS {
 
   /* LOAD TEXTURES FOR ALL CLIENTS. */
@@ -35,7 +37,9 @@ export class ZHELL_SOCKETS {
         data: { tileData }
       });
     }
-    if (game.user.isGM) return canvas.scene.createEmbeddedDocuments("Tile", tileData);
+    if (game.user.isGM) {
+      return canvas.scene.createEmbeddedDocuments("Tile", tileData);
+    }
   }
 
   /* AWARD LOOT USING BACKPACK-MANAGER */
@@ -56,10 +60,11 @@ export class ZHELL_SOCKETS {
     }
     const a = game.user.character;
     const b = fromUuidSync(backpackUuid);
-    return (!!a && (b instanceof Actor)) ? game.modules.get("backpack-manager").api.renderManager(a, b, {
-      title: "Awarded Loot",
-      hideOwnInventory: true
-    }) : null;
+    if (!!a && b instanceof Actor) {
+      return game.modules.get("backpack-manager").api.renderManager(a, b, {
+        title: "Awarded Loot", hideOwnInventory: true
+      });
+    } else return null;
   }
 
   /* UPDATE OTHER TOKENS */
@@ -78,14 +83,17 @@ export class ZHELL_SOCKETS {
         data: { updates }
       });
     }
-    else if (game.user.isGM) return canvas.scene.updateEmbeddedDocuments("Token", updates);
+    else if (game.user.isGM) {
+      return canvas.scene.updateEmbeddedDocuments("Token", updates);
+    }
   }
 
   /* GRANT ITEMS TO TOKEN */
   static grantItemsSocketOn() {
     game.socket.on(`world.${game.world.id}`, (request) => {
       if (request.action === "grantItems" && request.data.userId === game.user.id) {
-        return canvas.scene.tokens.get(request.data.tokenId).actor.createEmbeddedDocuments("Item", request.data.itemData);
+        const token = canvas.scene.tokens.get(request.data.tokenId);
+        return token.actor.createEmbeddedDocuments("Item", request.data.itemData);
       }
     });
   }
@@ -103,17 +111,51 @@ export class ZHELL_SOCKETS {
       return canvas.scene.tokens.get(tokenId).actor.createEmbeddedDocuments("Item", itemData);
     }
   }
+
+  static async _onDropData(canvas, data) {
+    if (data.type !== "Item") return;
+    const item = await fromUuid(data.uuid);
+    if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
+    const itemData = game.items.fromCompendium(item);
+    const tokens = canvas.tokens.placeables.filter(t => {
+      const tb = t.bounds.contains(data.x, data.y);
+      if (game.user.isGM) return tb;
+      return tb && t.actor?.hasPlayerOwner;
+    });
+    if (!tokens.length) return;
+    if (tokens.length > 1) return _pickTokenTarget(tokens, itemData);
+    const grant = await Dialog.confirm({
+      title: "Grant Item",
+      content: `<p>Grant ${itemData.name} to ${tokens[0].document.name}?</p>`
+    });
+    if (!grant) return;
+    ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
+    return ZHELL_SOCKETS.grantItems([itemData], tokens[0].id);
+  }
 }
 
 // find an active user who is the owner of the token, defaulting to an active GM.
 // returns found user's id.
 function _getTargetUser(tokenId) {
   if (game.user.isGM) return game.user.id;
+  const OWNER = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
   const user = game.users.find(u => {
-    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.ownership[u.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.ownership[u.id] === OWNER;
   }) ?? game.users.find(u => {
     return u.active && u.isGM;
   });
-  if (!user) return null;
-  return user.id;
+  return user?.id ?? null;
+}
+
+// select a token from a selection of tokens.
+async function _pickTokenTarget(tokens, itemData) {
+  const top = tokens.map(t => ({ name: t.document.id, src: t.document.texture.src }));
+  const title = `Pick Target for ${itemData.name}`;
+  const callback = async function(html) {
+    const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
+    const target = canvas.scene.tokens.get(tokenId);
+    ui.notifications.info(`Adding item to ${target.name}!`);
+    return ZHELL_SOCKETS.grantItems([itemData], tokenId);
+  }
+  return imageAnchorDialog({ top, title, callback });
 }

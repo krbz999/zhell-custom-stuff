@@ -62,15 +62,16 @@ function _consumables() {
 function _languages() {
   CONFIG.DND5E.languages = {
     common: "Common",
-    aarakocra: "Aarakocra",
+    cait: "Cait",
     draconic: "Draconic",
     dwarvish: "Dwarvish",
     elvish: "Elvish",
     infernal: "Infernal",
-    cait: "Cait",
     orc: "Orcish",
+    aarakocra: "Aarakocra",
     abyssal: "Abyssal",
     celestial: "Celestial",
+    giant: "Giant",
     primordial: "Primordial",
     aquan: "Aquan",
     auran: "Auran",
@@ -183,7 +184,7 @@ function _weapons() {
     warpick: `${key}.evvPCgenUmPXFSb0`,
     warhammer: `${key}.YZzXPxRgpYcPh61M`,
     whip: `${key}.KGH7gJe5mvpbRoFZ`
-  }
+  };
 
   // delete some weapon properties.
   const del = ["fir", "rel"];
@@ -200,7 +201,7 @@ function _conditions() {
   CONFIG.statusEffects = statusEffects;
 }
 
-// add View button to scene headers (for gm only).
+// Add 'View' button to scene headers for the GM.
 export function _sceneHeaderView(app, array) {
   const viewBtn = {
     class: `${MODULE}-view-scene`,
@@ -233,23 +234,34 @@ export function _visionModes() {
 // delete items after a rest.
 export async function _restItemDeletion(actor, data) {
   if (!data.longRest) return;
-  let experimentalElixir = false;
   const ids = actor.items.filter(item => {
-    const a = !!item.getFlag(MODULE, "experimental-elixir");
-    if (a) experimentalElixir = true;
-    return a;
+    return !!item.getFlag(MODULE, "experimental-elixir");
   }).map(i => i.id);
+  if (!ids.length) return;
   await actor.deleteEmbeddedDocuments("Item", ids);
-  if (experimentalElixir) await ChatMessage.create({
+  return ChatMessage.create({
     content: `${actor.name}'s experimental elixirs evaporated.`,
     speaker: ChatMessage.getSpeaker({ actor })
   });
 }
 
-// Add more feature types.
-export function _addFeatureTypes() {
+// Miscellaneous adjustments.
+export function _miscAdjustments() {
+  // Add more feature types.
   foundry.utils.mergeObject(CONFIG.DND5E.featureTypes.class.subtypes, {
     arcaneArcherShot: "Arcane Archer Shot",
     primordialEffect: "Primordial Effect"
   });
+
+  // Adjust the time it takes for tooltips to fade in and out.
+  TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
+}
+
+// Drop folder of actors.
+export async function _dropActorFolder(canvas, data) {
+  if (data.type !== "Folder" || data.documentName !== "Actor") return;
+  const folder = await fromUuid(data.uuid);
+  const { x, y } = data;
+  const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({ x, y })));
+  return canvas.scene.createEmbeddedDocuments("Token", tokenData);
 }

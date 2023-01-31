@@ -512,6 +512,8 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
 
   const p = drawCircle(token, range);
 
+  await actor.sheet?.minimize();
+
   const pos = await warpgate.crosshairs.show({
     size: target.document.height,
     label: "Pick target location",
@@ -522,7 +524,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
     tileTexture: false
   });
   canvas.app.stage.removeChild(p);
-  if (pos.cancelled) return;
+  if (pos.cancelled) return actor.sheet?.maximize();
 
   const offset = (target.document.height * canvas.scene.grid.size) / 2
 
@@ -543,6 +545,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
     }
   }
   ui.notifications.info(`Attempting to warp ${target.document.name}!`);
+  await actor.sheet?.maximize();
   return warpgate.mutate(target.document, update, callbacks, options);
 }
 
