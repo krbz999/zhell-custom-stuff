@@ -118,9 +118,9 @@ export class ZHELL_SOCKETS {
     if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
     const itemData = game.items.fromCompendium(item);
     const tokens = canvas.tokens.placeables.filter(t => {
-      const tb = t.bounds.contains(data.x, data.y);
+      const tb = t.bounds.contains(data.x, data.y) && !!t.actor;
       if (game.user.isGM) return tb;
-      return tb && t.actor?.hasPlayerOwner;
+      return tb && t.document.disposition !== CONST.TOKEN_DISPOSITIONS.HOSTILE;
     });
     if (!tokens.length) return;
     if (tokens.length > 1) return _pickTokenTarget(tokens, itemData);
