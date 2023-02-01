@@ -268,7 +268,10 @@ export async function _dropActorFolder(canvas, data) {
 
 export function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
-  const inventory = game.actors.find(a => a.type === "group" && a.ownership[game.user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER);
+  const inventory = game.actors.find(a => {
+    const owner = a.ownership[game.user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+    return owner && a.type === "group" && a !== item.actor;
+  });
   if (!inventory) return;
   array.push({
     icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
