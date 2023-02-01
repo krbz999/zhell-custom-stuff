@@ -265,3 +265,17 @@ export async function _dropActorFolder(canvas, data) {
   const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({ x, y })));
   return canvas.scene.createEmbeddedDocuments("Token", tokenData);
 }
+
+export function _moveItemToSharedInventory(item, array) {
+  if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
+  const inventory = game.actors.find(a => a.type === "group" && a.ownership[game.user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER);
+  if (!inventory) return;
+  array.push({
+    icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
+    name: `Move to ${inventory.name}`,
+    callback: async () => {
+      const [c] = await inventory.createEmbeddedDocuments("Item", [item.toObject()]);
+      if (c) await item.delete();
+    }
+  });
+}
