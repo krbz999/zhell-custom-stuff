@@ -276,8 +276,7 @@ export function _addContextMenuOptions(item, array) {
 function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
   const inventory = game.actors.find(a => {
-    const owner = a.ownership[game.user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-    return owner && a.type === "group" && a !== item.actor;
+    return a.isOwner && a.type === "group" && a !== item.actor;
   });
   if (!inventory) return;
   array.push({

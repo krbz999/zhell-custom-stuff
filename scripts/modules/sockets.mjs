@@ -138,9 +138,8 @@ export class ZHELL_SOCKETS {
 // returns found user's id.
 function _getTargetUser(tokenId) {
   if (game.user.isGM) return game.user.id;
-  const OWNER = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
   const user = game.users.find(u => {
-    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.ownership[u.id] === OWNER;
+    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.isOwner;
   }) ?? game.users.find(u => {
     return u.active && u.isGM;
   });

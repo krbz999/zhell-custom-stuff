@@ -104,10 +104,9 @@ export async function _targetTokens(crosshairsConfig = {}) {
  * @param {Boolean} excludeGM Whether or not to exclude GM user ids.
  */
 export function _getTokenOwnerIds(tokens = [], excludeGM = false) {
-  const permissions = tokens.map(t => t.actor.ownership);
   const userIds = game.users.filter(user => {
-    return permissions.some(permission => {
-      return permission[user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+    return tokens.map(t => t.actor).some(a => {
+      return a?.testUserPermission(user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER);
     });
   }).map(i => i.id);
   if (excludeGM) return userIds.filter(i => !game.users.get(i).isGM);
