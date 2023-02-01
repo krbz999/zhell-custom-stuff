@@ -19,9 +19,9 @@ import {
 } from "./scripts/modules/animations.mjs";
 import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
 import {
+  _addContextMenuOptions,
   _dropActorFolder,
   _miscAdjustments,
-  _moveItemToSharedInventory,
   _restItemDeletion,
   _sceneHeaderView,
   _setUpGameChanges,
@@ -55,7 +55,7 @@ Hooks.on("preUpdateToken", _rotateTokensOnMovement);
 Hooks.on("renderTokenHUD", _replaceTokenHUD);
 Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 Hooks.on("dnd5e.restCompleted", _restItemDeletion);
-Hooks.on("dnd5e.getItemContextOptions", _moveItemToSharedInventory);
+Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);

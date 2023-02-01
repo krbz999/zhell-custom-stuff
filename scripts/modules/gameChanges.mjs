@@ -266,7 +266,14 @@ export async function _dropActorFolder(canvas, data) {
   return canvas.scene.createEmbeddedDocuments("Token", tokenData);
 }
 
-export function _moveItemToSharedInventory(item, array) {
+// Add item context menu options.
+export function _addContextMenuOptions(item, array) {
+  _moveItemToSharedInventory(item, array);
+  _createScrollFromOwnedSpell(item, array);
+}
+
+// Context menu option to move an item into a shared inventory (an owned Group actor).
+function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
   const inventory = game.actors.find(a => {
     const owner = a.ownership[game.user.id] === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
@@ -279,6 +286,24 @@ export function _moveItemToSharedInventory(item, array) {
     callback: async () => {
       const [c] = await inventory.createEmbeddedDocuments("Item", [item.toObject()]);
       if (c) await item.delete();
+    }
+  });
+}
+
+// Context menu option to create a scroll from a spell in an actor's spellbook.
+function _createScrollFromOwnedSpell(spell, array) {
+  if (spell.type !== "spell") return;
+  array.push({
+    name: "Create Scroll",
+    icon: "<i class='fa-solid fa-scroll'></i>",
+    callback: async () => {
+      const path = "flags.concentrationnotifier.data.requiresConcentration";
+      const scroll = await Item.implementation.createScrollFromSpell(spell);
+      const itemData = game.items.fromCompendium(scroll);
+      foundry.utils.mergeObject(itemData.flags, spell.flags);
+      if (spell.system.components.concentration) foundry.utils.setProperty(itemData, path, true);
+      ui.notifications.info(`Created scroll from ${spell.name}.`);
+      return spell.actor.createEmbeddedDocuments("Item", [itemData]);
     }
   });
 }
