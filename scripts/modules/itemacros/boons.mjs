@@ -6,13 +6,13 @@ import {
 } from "../itemMacros.mjs";
 
 export const ITEMACRO_BOONS = {
+  FIND_FRIEND,
   GOODHUNTER,
-  SPREAD_THE_KNOWLEDGE,
+  PAST_KNOWLEDGE,
   SHOW_OF_FORCE,
   SIZE_UP,
   SONG_OF_WITHERTIDE,
-  FIND_FRIEND,
-  PAST_KNOWLEDGE
+  SPREAD_THE_KNOWLEDGE,
 };
 
 async function GOODHUNTER(item, speaker, actor, token, character, event, args) {

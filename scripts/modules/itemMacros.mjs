@@ -230,7 +230,8 @@ export async function _teleportationHelper({ item, actor, token, vanish, appear,
 export async function _spawnHelper(name, updates = {}, callbacks = {}, options = {}) {
   const images = await game.actors.getName(name).getTokenImages();
   await Promise.all(images.map(img => loadTexture(img)));
-  return warpgate.spawn(name, updates, callbacks, options) ?? [];
+  const spawn = await warpgate.spawn(name, updates, callbacks, options) ?? [];
+  return spawn;
 }
 
 /**

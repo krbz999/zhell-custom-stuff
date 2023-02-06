@@ -16,31 +16,31 @@ import {
 } from "../itemMacros.mjs";
 
 export const ITEMACRO_SPELLS = {
-  FLAMING_SPHERE,
-  MISTY_STEP,
-  THUNDER_STEP,
-  SPIRIT_SHROUD,
-  FAR_STEP,
-  ARMOR_OF_AGATHYS,
   ABSORB_ELEMENTS,
-  CALL_LIGHTNING,
+  AID,
+  ARMOR_OF_AGATHYS,
+  BLADE_CANTRIP,
+  BORROWED_KNOWLEDGE,
   BREATH_WEAPON,
-  FATHOMLESS_EVARDS_BLACK_TENTACLES,
+  CALL_LIGHTNING,
   CREATE_OR_DESTROY_WATER,
-  SHIELD,
-  RAINBOW_RECURVE,
   CROWN_OF_STARS,
+  ELEMENTAL_WEAPON,
+  FAR_STEP,
+  FATHOMLESS_EVARDS_BLACK_TENTACLES,
+  FIND_FAMILIAR,
+  FLAMING_SPHERE,
+  MAGE_ARMOR,
+  MISTY_STEP,
+  MOONBEAM,
+  RAINBOW_RECURVE,
+  SEE_INVISIBILITY,
+  SHIELD,
+  SPIRIT_SHROUD,
+  SPIRITUAL_WEAPON,
+  THUNDER_STEP,
   VORTEX_WARP,
   WIELDING,
-  SPIRITUAL_WEAPON,
-  MAGE_ARMOR,
-  MOONBEAM,
-  FIND_FAMILIAR,
-  BORROWED_KNOWLEDGE,
-  AID,
-  ELEMENTAL_WEAPON,
-  BLADE_CANTRIP,
-  SEE_INVISIBILITY
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
@@ -846,4 +846,73 @@ async function SEE_INVISIBILITY(item, speaker, actor, token, character, event, a
     }
   });
   return actor.createEmbeddedDocuments("ActiveEffect", data);
+}
+
+async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
+  /* Dialog to allow for attack rerolls in case of Seeking Spell. */
+  const castOrAttack = await Dialog.wait({
+    title: "Is this a casting, or a reroll of an attack?",
+    buttons: {
+      cast: { icon: `<i class="fas fa-check"></i>`, label: "Cast", callback: () => "cast" },
+      attack: { icon: `<i class="fas fa-times"></i>`, label: "Reroll", callback: () => "reroll" }
+    }
+  });
+
+  /* Bail out of dialog was cancelled. */
+  if (!castOrAttack) return;
+
+  /**
+   * If "cast" was selected, cast the spell normally, and save a flag noting its most recent level.
+   * To be used in damage rolls and if reroll is ever selected.
+   */
+  if (castOrAttack === "cast") {
+    const use = await item.use();
+    if (!use) return;
+    item._recentLevel = use.flags.dnd5e?.use?.spellLevel ?? 1;
+  }
+
+  await throwChaos();
+
+  /* The main function. */
+  async function throwChaos() {
+    const attack = await item.rollAttack();
+    if (!attack) return;
+
+    const spellLevel = item._recentLevel ?? 1;
+    const damage = await item.rollDamage({ spellLevel });
+    if (!damage) return;
+
+    const isChaining = await decideDamage(damage);
+    if (isChaining) return throwChaos();
+  }
+
+  /**
+   * Function to decide on damage depending on the dice results.
+   * User gets no prompt if there is no decision to be made.
+   */
+  async function decideDamage(damage) {
+    const totals = damage.dice[0].results.map(r => r.result);
+
+    const damageTypes = [
+      "acid", "cold", "fire", "force", "lightning",
+      "poison", "psychic", "thunder"
+    ];
+
+    /* Async dialog */
+    const buttons = {}
+    const entries = damageTypes.map(type => [type, CONFIG.DND5E.damageTypes[type]]);
+    for (const { result } of damage.dice[0].results) {
+      buttons[entries[result - 1][0]] = {
+        label: entries[result - 1][1],
+        callback: () => entries[result - 1]
+      }
+    }
+    const dmgType = await Dialog.wait({ title: "Choose damage type.", buttons });
+    let flavor = "<p><strong>Chaos Bolt</strong></p>";
+    flavor += `<p>Damage type: ${dmgType[1]}</p>`;
+    const chain = totals.length > new Set(totals).size;
+    if (chain) flavor += `<p style="text-align: center;"><strong><em>Chaining!</em></strong></p>`;
+    await ChatMessage.create({ content: flavor, speaker });
+    return chain;
+  }
 }

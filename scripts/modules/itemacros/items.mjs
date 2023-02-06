@@ -3,12 +3,12 @@ import { _basicFormContent, _constructLightEffectData, _getDependencies } from "
 
 export const ITEMACRO_ITEMS = {
   AMULET_OF_EQUILLIBRIUM,
+  FREE_USE,
+  HIT_DIE_APPLY,
+  LANTERN_OF_TRACKING,
   RING_OF_LIGHT,
   TORCH,
-  HIT_DIE_APPLY,
   WHITEHARBOUR_TEA_SET,
-  LANTERN_OF_TRACKING,
-  FREE_USE
 };
 
 async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, event, args) {
