@@ -300,7 +300,7 @@ export class MateriaMedica extends Application {
     }
 
     // find existing item and add to quantity.
-    const found = this.actor.items.find(i => i.getFlag("core", "sourceId") === uuid);
+    const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
     if (found) {
       const quantity = found.system.quantity;
       const created = await found.update({ "system.quantity": quantity + 1 });
@@ -372,7 +372,7 @@ export class MateriaMedica extends Application {
 
     // find existing item and add to quantity.
     const found = this.actor.items.find(i => {
-      return i.getFlag("core", "sourceId") === uuid && i.getFlag(MODULE, "poisonType") === method;
+      return i.flags.core?.sourceId === uuid && i.getFlag(MODULE, "poisonType") === method;
     });
     if (found) {
       const quantity = found.system.quantity;
@@ -394,7 +394,7 @@ export class MateriaMedica extends Application {
     }
 
     // find existing item and add to quantity.
-    const found = this.actor.items.find(i => i.getFlag("core", "sourceId") === uuid);
+    const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
     if (found) {
       const quantity = found.system.quantity;
       const created = await found.update({ "system.quantity": quantity + 1 });

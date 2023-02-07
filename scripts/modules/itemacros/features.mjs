@@ -85,7 +85,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   const target = game.user.targets.first();
 
   // find Sequencer effect
-  const e = actor.effects.find(e => e.getFlag("core", "statusId") === id);
+  const e = actor.effects.find(e => e.flags.core?.statusId === id);
 
   if (!e) {
     const use = await item.use();
@@ -760,7 +760,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.getFlag("core", "statusId") === item.name.slugify();
+    return e.flags.core?.statusId === item.name.slugify();
   });
   if (isActive) return item.displayCard();
 
@@ -874,7 +874,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
     foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
     effectData.changes = [{ key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true }];
   } else return;
-  await actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify())?.delete();
+  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify())?.delete();
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
   const file = "jb2a.markers.circle_of_stars.blue";

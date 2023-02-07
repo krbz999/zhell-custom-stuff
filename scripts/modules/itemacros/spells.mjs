@@ -68,7 +68,7 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
 async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.getFlag("core", "statusId") === item.name.slugify();
+    return e.flags.core?.statusId === item.name.slugify();
   });
   if (isActive) {
     const level = isActive.getFlag(MODULE, "spellLevel");
@@ -619,7 +619,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
 
   const hasArmor = canvas.scene.tokens.filter(token => {
     return token.actor.effects.find(e => {
-      return e.getFlag("core", "statusId") === statusId;
+      return e.flags.core?.statusId === statusId;
     });
   });
 
@@ -693,7 +693,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
   });
   if (!skl) return;
 
-  const has = actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify());
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify());
   if (has) await has.delete();
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
@@ -754,7 +754,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
 async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
-  const has = actor.effects.find(e => e.getFlag("core", "statusId") === item.name.slugify());
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify());
   if (has) {
     await CN.isActorConcentratingOnItem(actor, item)?.delete();
     return has.delete();

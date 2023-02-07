@@ -19,8 +19,8 @@ export function registerSettings() {
 
 function _registerSettings() {
   game.settings.register(MODULE, FORAGING, {
-    name: "ZHELL.SETTINGS.FORAGING.NAME",
-    hint: "ZHELL.SETTINGS.FORAGING.HINT",
+    name: "ZHELL.SettingsForagingDifficultyName",
+    hint: "ZHELL.SettingsForagingDifficultyHint",
     scope: "world",
     config: true,
     type: Number,
@@ -29,8 +29,8 @@ function _registerSettings() {
   });
 
   game.settings.register(MODULE, DEFEATED, {
-    name: "ZHELL.SETTINGS.DEFEATED.NAME",
-    hint: "ZHELL.SETTINGS.DEFEATED.HINT",
+    name: "ZHELL.SettingsCombatantDefeatedName",
+    hint: "ZHELL.SettingsCombatantDefeatedHint",
     scope: "world",
     config: true,
     type: Boolean,
@@ -39,8 +39,8 @@ function _registerSettings() {
   });
 
   game.settings.register(MODULE, DISPLAY_AMMO, {
-    name: "ZHELL.SETTINGS.DISPLAY_AMMO.NAME",
-    hint: "ZHELL.SETTINGS.DISPLAY_AMMO.HINT",
+    name: "ZHELL.SettingsDisplayAmmoName",
+    hint: "ZHELL.SettingsDisplayAmmoHint",
     scope: "world",
     config: true,
     type: Boolean,
@@ -49,8 +49,8 @@ function _registerSettings() {
   });
 
   game.settings.register(MODULE, TRACK_REACTIONS, {
-    name: "ZHELL.SETTINGS.TRACK_REACTIONS.NAME",
-    hint: "ZHELL.SETTINGS.TRACK_REACTIONS.HINT",
+    name: "ZHELL.SettingsTrackReactionsName",
+    hint: "ZHELL.SettingsTrackReactionsHint",
     scope: "world",
     config: true,
     type: String,
@@ -75,8 +75,8 @@ function _registerSettingsMenus() {
   });
 
   game.settings.registerMenu(MODULE, "worldSettings", {
-    name: "ZHELL.SETTINGS.WORLD_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.WORLD_SETTINGS.HINT",
+    name: "ZHELL.SettingsMenuWorldSettingsName",
+    hint: "ZHELL.SettingsMenuWorldSettingsHint",
     label: "Settings Menu",
     icon: "fa-solid fa-atlas",
     type: SettingsSubmenu,
@@ -93,8 +93,8 @@ function _registerSettingsMenus() {
   });
 
   game.settings.registerMenu(MODULE, COLOR, {
-    name: "ZHELL.SETTINGS.COLOR_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.COLOR_SETTINGS.HINT",
+    name: "ZHELL.SettingsMenuColorSettingsName",
+    hint: "ZHELL.SettingsMenuColorSettingsHint",
     label: "Sheet Color Settings",
     icon: "fa-solid fa-paint-roller",
     type: ColorPickerSubmenu,
@@ -111,8 +111,8 @@ function _registerSettingsMenus() {
   });
 
   game.settings.registerMenu(MODULE, RARITY, {
-    name: "ZHELL.SETTINGS.RARITY_SETTINGS.NAME",
-    hint: "ZHELL.SETTINGS.RARITY_SETTINGS.HINT",
+    name: "ZHELL.SettingsMenuRarityColorsName",
+    hint: "ZHELL.SettingsMenuRarityColorsHint",
     label: "Item Rarity Color Settings",
     icon: "fa-solid fa-paint-roller",
     type: RarityColorsSubmenu,
@@ -145,12 +145,11 @@ class SettingsSubmenu extends FormApplication {
       { insertKeys: false }
     );
     const settings = Object.entries(data).map(s => {
-      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         checked: s[1],
-        name: `ZHELL.SettingsWorld${str}Name`,
-        hint: `ZHELL.SettingsWorld${str}Hint`
+        name: `ZHELL.SettingsWorld${s[0].capitalize()}Name`,
+        hint: `ZHELL.SettingsWorld${s[0].capitalize()}Hint`
       }
     });
     return { settings };
@@ -187,24 +186,22 @@ class ColorPickerSubmenu extends FormApplication {
       showLimitedUses: data.showLimitedUses,
       showSpellSlots: data.showSpellSlots
     }).map(s => {
-      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         checked: s[1],
-        name: `ZHELL.SettingsColor${str}Name`,
-        hint: `ZHELL.SettingsColor${str}Hint`
+        name: `ZHELL.SettingsColor${s[0].capitalize()}Name`,
+        hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
       };
     });
     delete data.showLimitedUses;
     delete data.showSpellSlots;
 
     const colors = Object.entries(data).map(s => {
-      const str = s[0].charAt(0).toUpperCase() + s[0].slice(1);
       return {
         id: s[0],
         value: s[1],
-        name: `ZHELL.SettingsColor${str}Name`,
-        hint: `ZHELL.SettingsColor${str}Hint`
+        name: `ZHELL.SettingsColor${s[0].capitalize()}Name`,
+        hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
       }
     });
     return { checks, colors };

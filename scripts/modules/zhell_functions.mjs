@@ -199,7 +199,7 @@ export class EXHAUSTION {
 
     // get current exhaustion effect, if any.
     const exhaustion = actor.effects.find(i => {
-      return i.getFlag("core", "statusId") === "exhaustion";
+      return i.flags.core?.statusId === "exhaustion";
     });
 
     // if exhausted, increase the level.
@@ -221,7 +221,7 @@ export class EXHAUSTION {
 
     // get current exhaustion effect, if any.
     const exhaustion = actor.effects.find(i => {
-      return i.getFlag("core", "statusId") === "exhaustion";
+      return i.flags.core?.statusId === "exhaustion";
     });
 
     // if exhausted, decrease the level.
@@ -248,7 +248,7 @@ export class EXHAUSTION {
 
     // attempt to find any current exhaustion effect.
     let exhaustion = actor.effects.find(i => {
-      return i.getFlag("core", "statusId") === "exhaustion";
+      return i.flags.core?.statusId === "exhaustion";
     });
 
     // if num===0, remove it.
