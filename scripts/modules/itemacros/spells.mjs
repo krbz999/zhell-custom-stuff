@@ -23,6 +23,7 @@ export const ITEMACRO_SPELLS = {
   BORROWED_KNOWLEDGE,
   BREATH_WEAPON,
   CALL_LIGHTNING,
+  CHAOS_BOLT,
   CREATE_OR_DESTROY_WATER,
   CROWN_OF_STARS,
   ELEMENTAL_WEAPON,
@@ -712,8 +713,10 @@ async function AID(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.WG, DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const targets = game.user.targets;
-  if (targets.size > 3) return ui.notifications.warn("You can only choose up to three targets.");
-  if (targets.size < 1) return ui.notifications.warn("You need at least one target.");
+  if (!targets.size.between(1, 3)) {
+    ui.notifications.warn("You need to have between 1 and 3 targets.");
+    return null;
+  }
 
   const use = await item.use();
   if (!use) return;
@@ -871,7 +874,7 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
     item._recentLevel = use.flags.dnd5e?.use?.spellLevel ?? 1;
   }
 
-  await throwChaos();
+  return throwChaos();
 
   /* The main function. */
   async function throwChaos() {
