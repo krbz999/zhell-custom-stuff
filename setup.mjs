@@ -21,6 +21,7 @@ import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
 import {
   _addContextMenuOptions,
   _dropActorFolder,
+  _itemStatusCondition,
   _miscAdjustments,
   _restItemDeletion,
   _sceneHeaderView,
@@ -48,6 +49,7 @@ Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 Hooks.once("ready", _setupCustomButtons);
 
+Hooks.on("renderItemSheet", _itemStatusCondition);
 Hooks.on("renderActorSheet", ZHELL_SHEET);
 Hooks.on("renderJournalPageSheet", _classesPageListeners);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);

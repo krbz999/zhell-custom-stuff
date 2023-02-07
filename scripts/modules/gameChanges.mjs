@@ -306,3 +306,60 @@ function _createScrollFromOwnedSpell(spell, array) {
     }
   });
 }
+
+// Add dropdown to add status conditions in items.
+export async function _itemStatusCondition(sheet, html) {
+  if (sheet.document.actor) return;
+  const list = html[0].querySelector(".items-list.effects-list");
+  if (!list) return;
+
+  const options = CONFIG.statusEffects.reduce(function(acc, { id, label }) {
+    return acc + `<option value="${id}">${game.i18n.localize(label)}</option>`;
+  }, "")
+
+  const inner = `
+  <li class="items-header flexrow" data-effect-type="statusCondition">
+    <h3 class="item-name effect-name flexrow">Add Status Condition</h3>
+    <div class="item-controls effect-controls flexrow">
+      <a class="effect-control" data-action="statusCondition" data-tooltip="DND5E.EffectCreate">
+        <i class="fas fa-plus"></i> ${game.i18n.localize("DND5E.Add")}
+      </a>
+    </div>
+  </li>`;
+  const DIV = document.createElement("DIV");
+  DIV.innerHTML = inner;
+  list.append(...DIV.children);
+
+  const add = html[0].querySelector("[data-effect-type='statusCondition'] a[data-action='statusCondition']");
+  if (add) add.addEventListener("click", async function() {
+    const id = sheet.document.uuid.replaceAll(".", "-") + "-" + "add-status-condition";
+    const effId = await Dialog.wait({
+      title: "Add Status Condition",
+      content: `
+      <form>
+        <div class="form-group">
+          <div class="form-fields">
+            <select autofocus>${options}</select>
+          </div>
+        </div>
+      </form>`,
+      buttons: {
+        ok: {
+          label: "Add",
+          icon: `<i class="fa-solid fa-check"></i>`,
+          callback: (html) => html[0].querySelector("select").value
+        }
+      }
+    }, { id });
+    if (!effId) return;
+    const eff = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === effId));
+    const data = foundry.utils.mergeObject(eff, {
+      "flags.core.statusId": eff.id,
+      transfer: false,
+      origin: sheet.document.uuid,
+      "flags.effective-transferral.transferrable.self": false,
+      "flags.effective-transferral.transferrable.target": true,
+    });
+    return sheet.document.createEmbeddedDocuments("ActiveEffect", [data]);
+  });
+}

@@ -36,7 +36,7 @@ export function _getDependencies(...moduleIds) {
  * Returns a string (possibly of length 0).
  */
 export function _constructSpellSlotOptions(actor) {
-  return Object.entries(foundry.utils.duplicate(actor.system.spells)).reduce((acc, [key, data]) => {
+  return Object.entries(actor.system.spells).reduce((acc, [key, data]) => {
     const n = data.value;
     if (n <= 0 || data.max <= 0) return acc;
     const level = key === "pact" ? data.level : game.i18n.localize("DND5E.SpellLevel" + key.at(-1));
