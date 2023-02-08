@@ -355,6 +355,7 @@ export async function _itemStatusCondition(sheet, html) {
       origin: sheet.document.uuid,
       "flags.effective-transferral.transferrable.self": false,
       "flags.effective-transferral.transferrable.target": true,
+      label: game.i18n.localize(eff.label)
     });
     return sheet.document.createEmbeddedDocuments("ActiveEffect", [data]);
   });

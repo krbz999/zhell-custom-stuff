@@ -260,8 +260,11 @@ export class EXHAUSTION {
       const dead = foundry.utils.duplicate(CONFIG.statusEffects.find(i => {
         return i.id === "dead";
       }));
-      const coreFlag = { statusId: dead.id, overlay: true };
-      foundry.utils.setProperty(dead, "flags.core", coreFlag);
+      foundry.utils.mergeObject(dead, {
+        "flags.core.statusId": dead.id,
+        "flags.core.overlay": true,
+        label: game.i18n.localize(dead.label)
+      });
       return actor.createEmbeddedDocuments("ActiveEffect", [dead]);
     }
 

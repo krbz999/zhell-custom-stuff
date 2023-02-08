@@ -28,7 +28,10 @@ export class DM_TOOL {
     delete data.id;
     delete data.sort;
     if (duration) data.duration = this.convertDurationToSeconds(duration);
-    return foundry.utils.mergeObject(data, { "flags.core.statusId": statusId });
+    return foundry.utils.mergeObject(data, {
+      "flags.core.statusId": statusId,
+      label: game.i18n.localize(data.label)
+    });
   }
 
   // gets all effects from a token's actor that have a status id from statusEffects
@@ -143,7 +146,7 @@ export class DM_TOOL {
         return a.label.localeCompare(b.label);
       }).reduce((acc, { id, label }) => {
         if (has.includes(id)) return acc;
-        return acc + `<option value="${id}">${label}</option>`;
+        return acc + `<option value="${id}">${game.i18n.localize(label)}</option>`;
       }, "");
       const timeUnitOptions = ["seconds", "minutes", "hours", "days", "weeks", "months", "years"].reduce((acc, e) => {
         return acc + `<option value="${e}">${e}</option>`;

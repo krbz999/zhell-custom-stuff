@@ -10,7 +10,7 @@ import { DEPEND, MODULE } from "../scripts/const.mjs";
 */
 export const SPELL_EFFECTS = [
   {
-    id: "bane", label: "Bane", sort: 1100,
+    id: "bane", label: "ZHELL.StatusConditionBane", sort: 1100,
     icon: "assets/images/conditions/bane.webp",
     duration: { seconds: 60 },
     flags: {
@@ -31,7 +31,7 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "bless", label: "Bless", sort: 1000,
+    id: "bless", label: "ZHELL.StatusConditionBless", sort: 1000,
     icon: "assets/images/conditions/bless.webp",
     duration: { seconds: 60 },
     flags: {
@@ -52,7 +52,7 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "haste", label: "Haste", sort: 1200,
+    id: "haste", label: "ZHELL.StatusConditionHaste", sort: 1200,
     icon: "assets/images/conditions/haste.webp",
     duration: { seconds: 60 },
     flags: {
@@ -74,7 +74,7 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "slow", label: "Slow", sort: 1300,
+    id: "slow", label: "ZHELL.StatusConditionSlow", sort: 1300,
     icon: "assets/images/conditions/slowed.webp",
     duration: { seconds: 60 },
     flags: {
@@ -97,7 +97,7 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "invisible", label: "Invisible", sort: 1500,
+    id: "invisible", label: "ZHELL.StatusConditionInvisible", sort: 1500,
     icon: "assets/images/conditions/invisible.webp",
     duration: { seconds: 3600 },
     flags: {
@@ -112,7 +112,7 @@ export const SPELL_EFFECTS = [
     }
   },
   {
-    id: "fly", label: "Flying", sort: 1400,
+    id: "fly", label: "ZHELL.StatusConditionFlying", sort: 1400,
     icon: "assets/images/conditions/flying.webp",
     duration: { seconds: 600 },
     flags: {
@@ -141,7 +141,7 @@ export const SPELL_EFFECTS = [
 */
 export const STATUS_EFFECTS = [
   {
-    id: "blind", label: "Blinded", sort: 300,
+    id: "blind", label: "ZHELL.StatusConditionBlinded", sort: 300,
     icon: "assets/images/conditions/blinded.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -154,7 +154,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "charm", label: "Charmed", sort: 200,
+    id: "charm", label: "ZHELL.StatusConditionCharmed", sort: 200,
     icon: "assets/images/conditions/charmed.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -167,7 +167,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "dead", label: "Dead", sort: 100,
+    id: "dead", label: "ZHELL.StatusConditionDead", sort: 100,
     icon: "assets/images/conditions/dead.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -178,7 +178,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "deaf", label: "Deafened", sort: 330,
+    id: "deaf", label: "ZHELL.StatusConditionDeafened", sort: 330,
     icon: "assets/images/conditions/deafened.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -189,7 +189,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "mute", label: "Muted", sort: 360,
+    id: "mute", label: "ZHELL.StatusConditionMuted", sort: 360,
     icon: "assets/images/conditions/muted.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -202,7 +202,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "fear", label: "Frightened", sort: 250,
+    id: "fear", label: "ZHELL.StatusConditionFrightened", sort: 250,
     icon: "assets/images/conditions/frightened.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -215,7 +215,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "grappled", label: "Grappled", sort: 430,
+    id: "grappled", label: "ZHELL.StatusConditionGrappled", sort: 430,
     icon: "assets/images/conditions/grappled.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -233,7 +233,7 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "incapacitated", label: "Incapacitated", sort: 500,
+    id: "incapacitated", label: "ZHELL.StatusConditionIncapacitated", sort: 500,
     icon: "assets/images/conditions/incapacitated.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -244,7 +244,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "paralysis", label: "Paralyzed", sort: 600,
+    id: "paralysis", label: "ZHELL.StatusConditionParalyzed", sort: 600,
     icon: "assets/images/conditions/paralyzed.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -265,7 +265,7 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "petrified", label: "Petrified", sort: 650,
+    id: "petrified", label: "ZHELL.StatusConditionPetrified", sort: 650,
     icon: "assets/images/conditions/petrified.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -280,7 +280,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "poison", label: "Poisoned", sort: 280,
+    id: "poison", label: "ZHELL.StatusConditionPoisoned", sort: 280,
     icon: "assets/images/conditions/poisoned.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -291,7 +291,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "prone", label: "Prone", sort: 400,
+    id: "prone", label: "ZHELL.StatusConditionProne", sort: 400,
     icon: "assets/images/conditions/prone.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -304,7 +304,7 @@ export const STATUS_EFFECTS = [
     }
   },
   {
-    id: "restrain", label: "Restrained", sort: 450,
+    id: "restrain", label: "ZHELL.StatusConditionRestrained", sort: 450,
     icon: "assets/images/conditions/restrained.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -324,7 +324,7 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "stun", label: "Stunned", sort: 540,
+    id: "stun", label: "ZHELL.StatusConditionStunned", sort: 540,
     icon: "assets/images/conditions/stunned.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -344,7 +344,7 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "unconscious", label: "Unconscious", sort: 560,
+    id: "unconscious", label: "ZHELL.StatusConditionUnconscious", sort: 560,
     icon: "assets/images/conditions/unconscious.webp",
     flags: {
       [DEPEND.VAE]: {
@@ -364,7 +364,7 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "reaction", label: "Reaction", sort: 1600,
+    id: "reaction", label: "ZHELL.StatusConditionReaction", sort: 1600,
     icon: "assets/images/conditions/reaction.webp",
     duration: { rounds: 1 },
     flags: {
