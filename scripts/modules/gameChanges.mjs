@@ -313,21 +313,16 @@ export async function _itemStatusCondition(sheet, html) {
   const list = html[0].querySelector(".items-list.effects-list");
   if (!list) return;
 
-  const options = CONFIG.statusEffects.reduce(function(acc, { id, label }) {
-    return acc + `<option value="${id}">${game.i18n.localize(label)}</option>`;
-  }, "")
+  const options = CONFIG.statusEffects.filter(s => {
+    return !sheet.document.effects.find(e => e.flags.core?.statusId === s.id);
+  }).sort((a, b) => a.label.localeCompare(b.label)).reduce(function(acc, s) {
+    return acc + `<option value="${s.id}">${game.i18n.localize(s.label)}</option>`;
+  }, "");
 
-  const inner = `
-  <li class="items-header flexrow" data-effect-type="statusCondition">
-    <h3 class="item-name effect-name flexrow">Add Status Condition</h3>
-    <div class="item-controls effect-controls flexrow">
-      <a class="effect-control" data-action="statusCondition" data-tooltip="DND5E.EffectCreate">
-        <i class="fas fa-plus"></i> ${game.i18n.localize("DND5E.Add")}
-      </a>
-    </div>
-  </li>`;
+  if (!options.length) return;
+
   const DIV = document.createElement("DIV");
-  DIV.innerHTML = inner;
+  DIV.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/statusConditionSelect.hbs");
   list.append(...DIV.children);
 
   const add = html[0].querySelector("[data-effect-type='statusCondition'] a[data-action='statusCondition']");
@@ -346,10 +341,11 @@ export async function _itemStatusCondition(sheet, html) {
       buttons: {
         ok: {
           label: "Add",
-          icon: `<i class="fa-solid fa-check"></i>`,
+          icon: '<i class="fa-solid fa-check"></i>',
           callback: (html) => html[0].querySelector("select").value
         }
-      }
+      },
+      default: "ok"
     }, { id });
     if (!effId) return;
     const eff = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === effId));
