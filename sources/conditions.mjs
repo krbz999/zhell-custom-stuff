@@ -377,6 +377,7 @@ export const STATUS_EFFECTS = [
       },
       effectmacro: {
         onCombatEnd: { script: `(${function() { return effect.delete() }})()` },
+        onCombatStart: { script: `(${function() { return effect.delete() }})()` },
         onTurnStart: { script: `(${function() { return effect.delete() }})()` }
       }
     }
