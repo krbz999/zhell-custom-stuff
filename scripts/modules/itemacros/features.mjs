@@ -67,7 +67,7 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
     }],
     duration: { seconds: 60 },
     icon: item.img,
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data": {
       intro: "<p>You have a flying speed equal to your walking speed.</p>",
       content: item.system.description.value
@@ -79,7 +79,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
 
   // CONSTS
-  const id = item.name.slugify();
+  const id = item.name.slugify({ strict: true });
   const file = "jb2a.markers.circle_of_stars.orangepurple";
   const error = "Please target a token.";
   const target = game.user.targets.first();
@@ -263,7 +263,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
     return;
   }
 
-  const range = HandlebarsHelpers.rangePicker({ hash: { min: 1, max: value, value: 1, step: 1, name: item.name.slugify() } });
+  const range = HandlebarsHelpers.rangePicker({ hash: { min: 1, max: value, value: 1, step: 1, name: item.name.slugify({ strict: true }) } });
 
   const content = `
   ${item.system.description.value}
@@ -760,7 +760,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify();
+    return e.flags.core?.statusId === item.name.slugify({ strict: true });
   });
   if (isActive) return item.displayCard();
 
@@ -874,7 +874,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
     foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
     effectData.changes = [{ key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true }];
   } else return;
-  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify())?.delete();
+  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }))?.delete();
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
   const file = "jb2a.markers.circle_of_stars.blue";

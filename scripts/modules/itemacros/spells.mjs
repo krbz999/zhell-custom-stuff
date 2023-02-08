@@ -68,7 +68,7 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
 async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify();
+    return e.flags.core?.statusId === item.name.slugify({ strict: true });
   });
   if (isActive) {
     const level = isActive.getFlag(MODULE, "spellLevel");
@@ -208,7 +208,7 @@ async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, ar
       label: item.name,
       origin: item.uuid,
       duration: { rounds: 1 },
-      "flags.core.statusId": item.name.slugify(),
+      "flags.core.statusId": item.name.slugify({ strict: true }),
       "flags.visual-active-effects.data": {
         intro: `<p>You have ${s} resistance and deal ${level}d6 additional ${s} damage on your first melee attack before this effect expires.</p>`,
         content: item.system.description.value
@@ -363,7 +363,7 @@ async function SHIELD(item, speaker, actor, token, character, event, args) {
     label: item.name,
     origin: item.uuid,
     duration: { rounds: 1 },
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data": {
       intro: "<p>You have a +5 bonus to your AC and immunity to damage from the Magic Missile spell.</p>",
       content: item.system.description.value
@@ -598,7 +598,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
   const [{ id }] = await actor.createEmbeddedDocuments("ActiveEffect", [{
     icon: itemData.img,
     label: `${itemData.name} (${item.name})`,
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     origin: actor.uuid,
     duration: foundry.utils.duplicate(conc.duration),
     "flags.visual-active-effects.data": {
@@ -615,7 +615,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.WG)) return item.use();
 
   const mutName = `${item.name} (${actor.name})`;
-  const statusId = `${item.name.slugify()}-${actor.name.slugify()}`;
+  const statusId = `${item.name.slugify({ strict: true })}-${actor.name.slugify({ strict: true })}`;
 
   const hasArmor = canvas.scene.tokens.filter(token => {
     return token.actor.effects.find(e => {
@@ -693,7 +693,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
   });
   if (!skl) return;
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify());
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
   if (has) await has.delete();
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
@@ -701,7 +701,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
     icon: item.img,
     duration: _getItemDuration(item),
     changes: [{ key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1 }],
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data": {
       intro: `<p>You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.</p>`,
       content: item.system.description.value
@@ -734,7 +734,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
     icon: item.img,
     duration: _getItemDuration(item),
     changes: [{ key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1) }],
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data.intro": `<p>Your hit point maximum is increased by ${5 * (spellLevel - 1)}.</p>`,
     "flags.effectmacro.data.spellLevel": spellLevel,
     "flags.effectmacro.onCreate.script": `(${onCreate.toString()})()`
@@ -754,7 +754,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
 async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify());
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
   if (has) {
     await CN.isActorConcentratingOnItem(actor, item)?.delete();
     return has.delete();
@@ -796,7 +796,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
     icon: item.img,
     label: `${item.name} (${weapon.name})`,
     duration: foundry.utils.duplicate(conc.duration),
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.babonus.bonuses": { [atk.id]: atk, [dmg.id]: dmg },
     "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`
   }];
@@ -820,7 +820,7 @@ async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args
     icon: item.img,
     label: item.name,
     changes: [{ key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: `+${formula}[${type}]` }],
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data": {
       intro: `<p>You deal ${formula} additional ${type} damage on your next damage roll.</p>`,
       content: item.system.description.value

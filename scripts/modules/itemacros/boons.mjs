@@ -222,7 +222,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
     duration: { seconds: 60 },
     origin: item.uuid,
     flags: {
-      "core.statusId": item.name.slugify(),
+      "core.statusId": item.name.slugify({ strict: true }),
       "visual-active-effects.data": {
         intro: "<p>Your size is increased to Large, your movement speed increases by 10 feet, you deal an additional <strong>1d4</strong> damage with melee weapons, and your melee weapon attacks are critical hits on a roll of 19 or 20.</p>"
       },
@@ -476,7 +476,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       label: item.name,
       origin: actor.uuid,
       duration: { seconds: actor.system.attributes.prof * 60 * 60 },
-      "flags.core.statusId": item.name.slugify(),
+      "flags.core.statusId": item.name.slugify({ strict: true }),
       "flags.visual-active-effects.data": {
         intro: "<p>You are transformed using Find Friend.</p>",
         content: item.system.description.value
@@ -529,7 +529,7 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
       duration: { seconds: 60 },
       changes: [{ key: "flags.dnd5e.concentrationBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+2" }],
       flags: {
-        core: { statusId: item.name.slugify() },
+        core: { statusId: item.name.slugify({ strict: true }) },
         "visual-active-effects.data": {
           forceInclude: true,
           intro: `<p>You have assumed the form of Yebraztos the Scrollkeeper.</p>${buttons}`,

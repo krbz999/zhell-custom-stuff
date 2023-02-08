@@ -94,7 +94,7 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
         onDelete: { script: `(${onDelete.toString()})()` },
         onDisable: { script: `(${onDisable.toString()})()` }
       },
-      core: { statusId: item.name.slugify() }
+      core: { statusId: item.name.slugify({ strict: true }) }
     }, flags ?? {})
   }];
 }
@@ -123,7 +123,7 @@ export function _constructDetectionModeEffectData({ modes = [], item }) {
     label: item.name,
     origin: item.uuid,
     duration: _getItemDuration(item),
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.effectmacro": {
       "onCreate.script": `(${onCreate.toString()})()`,
       "onEnable.script": `(${onCreate.toString()})()`,
@@ -145,7 +145,7 @@ export function _constructGenericEffectData({ item, level = null }) {
     label: item.name,
     icon: item.img,
     duration: _getItemDuration(item),
-    "flags.core.statusId": item.name.slugify(),
+    "flags.core.statusId": item.name.slugify({ strict: true }),
     "flags.visual-active-effects.data": {
       intro: `<p class="zhell-custom-buttons"><a data-type="redisplay" ${dataLevel}>${item.name}</a></p>`,
       content: item.system.description.value
