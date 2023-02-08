@@ -250,8 +250,8 @@ export function _basicFormContent({ label = "", type = "text", options = "" }) {
   const lab = label.length ? `<label>${label}</label>` : "";
   const inp = {
     "select": `<select autofocus>${options}</select>`,
-    "number": `<input type="number" autofocus>`
-  }[type] ?? `<input type="text" autofocus>`;
+    "number": '<input type="number" autofocus>'
+  }[type] ?? '<input type="text" autofocus>';
   return `<form><div class="form-group">${lab}<div class="form-fields">${inp}</div></div></form>`;
 }
 

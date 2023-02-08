@@ -856,8 +856,8 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
   const castOrAttack = await Dialog.wait({
     title: "Is this a casting, or a reroll of an attack?",
     buttons: {
-      cast: { icon: `<i class="fas fa-check"></i>`, label: "Cast", callback: () => "cast" },
-      attack: { icon: `<i class="fas fa-times"></i>`, label: "Reroll", callback: () => "reroll" }
+      cast: { icon: '<i class="fas fa-check"></i>', label: "Cast", callback: () => "cast" },
+      attack: { icon: '<i class="fas fa-times"></i>', label: "Reroll", callback: () => "reroll" }
     }
   });
 
@@ -914,7 +914,7 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
     let flavor = "<p><strong>Chaos Bolt</strong></p>";
     flavor += `<p>Damage type: ${dmgType[1]}</p>`;
     const chain = totals.length > new Set(totals).size;
-    if (chain) flavor += `<p style="text-align: center;"><strong><em>Chaining!</em></strong></p>`;
+    if (chain) flavor += '<p style="text-align: center;"><strong><em>Chaining!</em></strong></p>';
     await ChatMessage.create({ content: flavor, speaker });
     return chain;
   }

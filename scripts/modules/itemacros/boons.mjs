@@ -506,12 +506,12 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
     buttons: {
       necrotic: {
         label: "Necrotic",
-        icon: `<i class="fa-solid fa-skull"></i>`,
+        icon: '<i class="fa-solid fa-skull"></i>',
         callback: () => _createEffectData("necrotic")
       },
       fire: {
         label: "Fire",
-        icon: `<i class="fa-solid fa-fire"></i>`,
+        icon: '<i class="fa-solid fa-fire"></i>',
         callback: () => _createEffectData("fire")
       }
     }

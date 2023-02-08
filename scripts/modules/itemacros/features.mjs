@@ -449,7 +449,7 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
     content: `<p name="header">Recovering spell slots: <strong>${spent}</strong> / ${maxSum}.</p> <hr> <form>${levels}</form>`,
     buttons: {
       recover: {
-        icon: `<i class="fa-solid fa-hand-sparkles"></i>`,
+        icon: '<i class="fa-solid fa-hand-sparkles"></i>',
         label: "Recover",
         callback: recover
       }
@@ -794,20 +794,20 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
   });
 
   const title = item.name;
-  const content = `<div class="dynamic-tooltip"></div>`;
+  const content = '<div class="dynamic-tooltip"></div>';
   const buttons = {
     archer: {
-      icon: `<i class="fa-solid fa-burst"></i>`,
+      icon: '<i class="fa-solid fa-burst"></i>',
       label: "Archer",
       callback: () => "archer"
     },
     chalice: {
-      icon: `<i class="fa-solid fa-trophy"></i>`,
+      icon: '<i class="fa-solid fa-trophy"></i>',
       label: "Chalice",
       callback: () => "chalice"
     },
     dragon: {
-      icon: `<i class="fa-solid fa-dragon"></i>`,
+      icon: '<i class="fa-solid fa-dragon"></i>',
       label: "Dragon",
       callback: () => "dragon"
     }
@@ -867,7 +867,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         damage: { parts: [["@scale.stars.starry-form-die + @mod", "healing"]] }
       }
     }
-    const effectButtons = `<p class='zhell-custom-buttons'><a data-type="damage">Healing</a></p>`;
+    const effectButtons = '<p class="zhell-custom-buttons"><a data-type="damage">Healing</a></p>';
     foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form] + effectButtons);
     foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
   } else if (form === "dragon") {

@@ -167,7 +167,7 @@ export class MateriaMedica extends Application {
     herbalismKits.forEach(kit => {
       options += `<option value="${kit.id}">${kit.name}</option>`;
     });
-    options += `<option value="nat">Nature</option><option value="sur">Survival</option>`;
+    options += '<option value="nat">Nature</option><option value="sur">Survival</option>';
     const hours = Array.fromRange(12).reduce((acc, e) => {
       return acc + `<option value=${e + 1}>${e + 1} hours</option>`;
     }, "");
