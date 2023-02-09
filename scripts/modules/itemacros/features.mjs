@@ -530,13 +530,9 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     boldness: {
       name: "Boldness",
       data: {
-        changes: [
-          { key: "system.bonuses.mwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" },
-          { key: "system.bonuses.rwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" },
-          { key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" },
-          { key: "system.bonuses.rsak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" },
-          { key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" }
-        ],
+        changes: ["mwak.attack", "rwak.attack", "msak.attack", "rsak.attack", "abilities.save"].map(prop => {
+          return { key: `system.bonuses.${prop}`, mode: COSNT.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" };
+        }),
         duration: { seconds: 60 },
         icon: "icons/magic/movement/trail-streak-pink.webp",
         "flags.visual-active-effects.data.intro": "<p>You add a <strong>1d4</strong> bonus to attack rolls and saving throws for 1 minute.</p>"

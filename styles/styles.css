@@ -421,15 +421,19 @@ section > .materia-medica-crafting {
 .materia-medica-crafting [data-tab=forage] .results {
   margin: 0.25em;
   overflow-y: auto;
+  border: 2px inset;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result {
   display: grid;
-  grid-template-columns: 5fr 5fr 0fr;
+  grid-template-columns: 7fr 3fr 0fr;
   align-items: center;
   justify-items: center;
   min-height: 2.5em;
-  border: 1px inset;
+}
+
+.materia-medica-crafting [data-tab=forage] .results .result:nth-child(odd) {
+  background-color: #afc2ac;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result .type {
@@ -446,15 +450,14 @@ section > .materia-medica-crafting {
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result a.add-forageables {
-  width: 30px;
-  height: 30px;
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  border-style: double;
-  border: 1px groove forestgreen;
+  border: 1px groove;
   border-radius: 3px;
   background-color: indianred;
+  align-items: center;
+  min-height: 100%;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result a.add-forageables.active {
@@ -518,7 +521,7 @@ section > .materia-medica-crafting {
 }
 
 .materia-medica-crafting .content-tabs .item select {
-  min-width: 25%;
+  min-width: fit-content;
 }
 
 .materia-medica-crafting .selections {

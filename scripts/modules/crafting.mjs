@@ -41,11 +41,12 @@ export class MateriaMedica extends Application {
   constructor(actor, ...T) {
     super(actor, ...T);
     this.actor = actor;
+    this.maxRolls = 20;
   }
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      width: 400,
+      width: 420,
       height: 700,
       classes: ["materia-medica-crafting"],
       resizable: true,
@@ -168,12 +169,12 @@ export class MateriaMedica extends Application {
       options += `<option value="${kit.id}">${kit.name}</option>`;
     });
     options += '<option value="nat">Nature</option><option value="sur">Survival</option>';
-    const hours = Array.fromRange(12).reduce((acc, e) => {
-      return acc + `<option value=${e + 1}>${e + 1} hours</option>`;
+    const hours = Array.fromRange(this.maxRolls, 1).reduce((acc, n) => {
+      return acc + `<option value=${n}>${n} hours</option>`;
     }, "");
 
     return foundry.utils.mergeObject(data, {
-      options, hours, forageDescription: `You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>${this.targetValue}</strong>. Once you are done foraging (maximum of 12 hours), adjust and accept the results.`,
+      options, hours, forageDescription: `You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>${this.targetValue}</strong>. Once you are done foraging (maximum of ${this.maxRolls} hours), adjust and accept the results.`,
       potionItems, potionDescription: `Select a type of potion to create.`,
       poisonMethods, poisonItems, poisonDescription: `Select a delivery method and a type of poison to create.`,
       miscItems, miscDescription: `Select a type of miscellaneous item to create.`,
@@ -193,7 +194,7 @@ export class MateriaMedica extends Application {
   async _onForage(event, html) {
     event.target.closest("#forage-initiate").disabled = true;
     const forageResults = html[0].querySelector("[data-tab=forage] .results");
-    const canAddMore = forageResults.childElementCount < 12;
+    const canAddMore = forageResults.childElementCount < this.maxRolls;
     if (!canAddMore) {
       ui.notifications.warn("You cannot roll any more.");
       return;
