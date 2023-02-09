@@ -30,7 +30,8 @@ export class MoneySpender extends Application {
 
   get precision() {
     const denom = this.element[0].querySelector(".total").dataset.denom;
-    return { pp: 3, gp: 2, ep: 2, sp: 1, cp: 0 }[denom];
+    const conversion = CONFIG.DND5E.currencies[denom].conversion;
+    return conversion < 1 ? 3 : conversion < 10 ? 2 : conversion < 100 ? 1 : 0;
   }
 
   async getData() {
@@ -100,17 +101,21 @@ export class MoneySpender extends Application {
       if (!foundry.utils.isEmpty(diffs)) {
         const content = Object.entries(diffs).reduce((acc, [denom, spent]) => {
           return acc + `<br>${denom.toUpperCase()}: ${spent}`;
-        }, `${this.actor.name} spent some money:`);
+        }, `Spent some money:`);
         return ChatMessage.create({ content, speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
       }
     });
 
     // change denom.
-    html[0].querySelector(".total").addEventListener("click", (event) => {
-      const denom = event.currentTarget.dataset.denom;
-      const newDenom = { pp: "gp", gp: "ep", ep: "sp", sp: "cp", cp: "pp" }[denom];
-      event.currentTarget.setAttribute("data-denom", newDenom);
-      this._displayTotal();
+    ["click", "contextmenu"].forEach(type => {
+      html[0].querySelector(".total").addEventListener(type, (event) => {
+        const value = event.currentTarget.dataset.denom;
+        const denoms = Object.keys(CONFIG.DND5E.currencies);
+        const idx = denoms.indexOf(value);
+        const next = idx + (event.type === "click" ? 1 : (denoms.length - 1));
+        event.currentTarget.setAttribute("data-denom", denoms[next % denoms.length]);
+        this._displayTotal();
+      });
     });
   }
 }
