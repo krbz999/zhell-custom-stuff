@@ -11,13 +11,12 @@ export function _craftingCharacterFlag() {
 
 /* Helper methods to create the select options. */
 function _getScalingHealing(materials, speedCrafting = false) {
-  let scalingHeal = "<option>&mdash;</option>";
+  let scalingHeal = "<option value=''>&mdash;</option>";
   let power = 1;
   let roll = new Roll("2d4 + 2");
   const upperBound = materials * (speedCrafting ? 2 : 1);
   while (2 ** power <= upperBound) {
-    let formula = roll.formula;
-    scalingHeal += `<option value="${2 ** power}">${formula}</option>`;
+    scalingHeal += `<option value="${2 ** power}">${roll.formula}</option>`;
     power++;
     roll = roll.alter(2, 0, { multiplyNumeric: true });
   }
@@ -25,12 +24,11 @@ function _getScalingHealing(materials, speedCrafting = false) {
 }
 
 function _getScalingDamage(materials) {
-  let scalingDamage = "<option>&mdash;</option>";
+  let scalingDamage = "<option value=''>&mdash;</option>";
   let mult = 1;
   let roll = new Roll("2d6 + 2");
   while (2 * mult <= materials) {
-    let formula = roll.formula;
-    scalingDamage += `<option value="${2 * mult}">${formula}</option>`;
+    scalingDamage += `<option value="${2 * mult}">${roll.formula}</option>`;
     mult++;
     roll = new Roll("2d6+2").alter(mult, 0, { multiplyNumeric: true });
   }
