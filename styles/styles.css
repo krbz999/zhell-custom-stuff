@@ -441,6 +441,8 @@ section > .materia-medica-crafting {
 .materia-medica-crafting [data-tab=forage] .results .result .formula {
   overflow: hidden;
   white-space: nowrap;
+  padding: 5px;
+  font-weight: bold;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result a.add-forageables {
