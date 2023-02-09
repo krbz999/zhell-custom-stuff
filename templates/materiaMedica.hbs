@@ -9,7 +9,7 @@
   <div class="content-tabs">
     <div class="tab" data-tab="forage">
       <div class="description">{{{forageDescription}}}</div>
-      <form>
+      <form class="dnd5e">
         <div class="form-group">
           <label>Select skill or tool:</label>
           <div class="form-fields">
@@ -17,9 +17,11 @@
           </div>
         </div>
       </form>
-      <button id="forage-initiate"><i class="fa-solid fa-leaf"></i> Forage!</button>
-      <div class="results"></div>
-      <button id="forage-accept"><i class="fa-solid fa-boxes-stacked"></i> Accept</button>
+      <div class="foraging">
+        <button id="forage-initiate"><i class="fa-solid fa-leaf"></i> Forage!</button>
+        <div class="results"></div>
+        <button id="forage-accept"><i class="fa-solid fa-boxes-stacked"></i> Accept</button>
+      </div>
     </div>
 
     <div class="tab" data-tab="potion" editable="{{editable}}">
@@ -41,7 +43,7 @@
 
     <div class="tab" data-tab="poison" editable="{{editable}}">
       <div class="description">{{{poisonDescription}}}</div>
-      <form>
+      <form class="dnd5e">
         <div class="form-group">
           <label>Delivery Method</label>
           <div class="form-fields">

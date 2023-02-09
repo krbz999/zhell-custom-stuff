@@ -403,8 +403,24 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* MATERIA MEDICA CRAFTING */
+.app.window-app.materia-medica-crafting {
+  min-width: 340px;
+  min-height: 430px;
+}
+
+section > .materia-medica-crafting {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.materia-medica-crafting button {
+  align-self: center;
+}
+
 .materia-medica-crafting [data-tab=forage] .results {
-  margin: 0.5em 0;
+  margin: 0.25em;
+  overflow-y: auto;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result {
@@ -414,7 +430,6 @@ span.flavor-text.zhell-apply-damage-flavor {
   justify-items: center;
   min-height: 2.5em;
   border: 1px inset;
-  margin: 0 2em;
 }
 
 .materia-medica-crafting [data-tab=forage] .results .result .type {
@@ -452,8 +467,11 @@ span.flavor-text.zhell-apply-damage-flavor {
   content: "\f00c";
 }
 
-.materia-medica-crafting section.window-content {
-  overflow-y: hidden;
+.materia-medica-crafting [data-tab=forage] .foraging {
+  padding: 0.5em 1em;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .materia-medica-crafting nav.sheet-tabs.tabs {
@@ -479,24 +497,43 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-style: italic;
 }
 
+.materia-medica-crafting .content-tabs {
+  overflow: hidden;
+  flex: 1;
+}
+
+.materia-medica-crafting .content-tabs .tab.active {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .materia-medica-crafting .content-tabs .item {
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0 1em;
 }
 
 .materia-medica-crafting .content-tabs .item select {
   min-width: 25%;
 }
 
-.materia-medica-crafting .selection {
-  border-top: 2px groove;
-  padding-top: 1em;
+.materia-medica-crafting .selections {
+  overflow-y: auto;
+  border: 1px inset;
 }
 
-.materia-medica-crafting .selections {
-  gap: 1em;
-  display: flex;
-  flex-direction: column;
+.materia-medica-crafting .selection:not(:first-child) {
+  border-top: 2px groove;
+}
+
+.materia-medica-crafting .selection:last-child {
+  border-bottom: 2px groove;
+}
+
+.materia-medica-crafting .selection {
+  padding: 1em 0;
 }
 
 .materia-medica-crafting form {

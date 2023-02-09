@@ -45,10 +45,10 @@ export class MateriaMedica extends Application {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      width: 450,
-      height: 850,
+      width: 400,
+      height: 700,
       classes: ["materia-medica-crafting"],
-      resizable: false,
+      resizable: true,
       scrollY: [],
       tabs: [{ navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage" }],
       dragDrop: [],

@@ -311,12 +311,12 @@ export function _sequencerSetup() {
 // CUSTOM JOURNAL PAGE STUFF.
 export function _classesPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Available Classes") return;
-  const selector = "a.content-link[data-pack='zhell-catalogs.spells']";
-  html[0].querySelectorAll(selector).forEach(s => {
+  html[0].querySelectorAll("a.content-link[data-pack='zhell-catalogs.spells']").forEach(s => {
     const A = document.createElement("A");
     A.classList.add("spell-desc-toggle");
     A.setAttribute("data-action", "toggleDescription");
     A.setAttribute("data-uuid", s.dataset.uuid);
+    A.setAttribute("data-tooltip", "Toggle Details");
     A.innerHTML = "<i class='fa-solid fa-plus'></i>";
     s.after(A);
   });
@@ -347,8 +347,7 @@ export function _equipmentPageListeners(app, html) {
 
 // ROTATE TOKENS WHEN THEY MOVE.
 export function _rotateTokensOnMovement(doc, update, options) {
-  if (doc.lockRotation) return;
-  if (options.animate === false) return;
+  if (doc.lockRotation || (options.animate === false)) return;
   if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
   const ray = new Ray(doc, { x: update.x ?? doc.x, y: update.y ?? doc.y });
   update.rotation = ray.angle * 180 / Math.PI - 90;
