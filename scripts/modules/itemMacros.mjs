@@ -33,14 +33,18 @@ export function _getDependencies(...moduleIds) {
 /**
  * Helper function to return a string of options for each spell slot
  * level for which you have slots available, including pact slots.
+ * Optionally instead levels for which you have expended spell slots.
+ * Optionally with a maximum level.
  * Returns a string (possibly of length 0).
  */
-export function _constructSpellSlotOptions(actor) {
+export function _constructSpellSlotOptions(actor, { missing = false, maxLevel = Infinity } = {}) {
   return Object.entries(actor.system.spells).reduce((acc, [key, data]) => {
-    const n = data.value;
-    if (n <= 0 || data.max <= 0) return acc;
-    const level = key === "pact" ? data.level : game.i18n.localize("DND5E.SpellLevel" + key.at(-1));
-    const label = game.i18n.format("DND5E.SpellLevel" + (key === "pact" ? "Pact" : "Slot"), { level, n });
+    if ((missing && (data.value >= data.max)) || (!missing && (data.value <= 0))) return acc;
+    if ((data.level > maxLevel) || (key.at(-1) > maxLevel)) return acc;
+    const label = game.i18n.format(`DND5E.SpellLevel${key === "pact" ? "Pact" : "Slot"}`, {
+      level: key === "pact" ? data.level : game.i18n.localize(`DND5E.SpellLevel${key.at(-1)}`),
+      n: `${data.value}/${data.max}`
+    });
     return acc + `<option value="${key}">${label}</option>`;
   }, "");
 }

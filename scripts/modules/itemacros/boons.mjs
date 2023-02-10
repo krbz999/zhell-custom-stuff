@@ -95,14 +95,13 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
   // The spells should have a combined spell level no higher than n = half character level rounded up.
 
   // CONSTANTS
-  const { itemTypes: { spell }, system: { details: { level } } } = actor;
-  const maxCombinedSpellLevel = Math.min(10, Math.ceil(level / 2));
-  const options = spell.filter(s => {
+  const maxCombinedSpellLevel = Math.min(10, Math.ceil(actor.system.details.level / 2));
+  const options = actor.itemTypes.spell.filter(s => {
     return Number(s.system.level).between(1, 5) && s.system.activation?.type === "action";
   }).sort((a, b) => {
     return b.name.localeCompare(a.name);
-  }).reduce((acc, { id, name, system: { level } }) => {
-    return acc + `<option value="${id}">[${level}] ${name}</option>`;
+  }).reduce((acc, spell) => {
+    return acc + `<option value="${spell.id}">[${spell.system.level}] ${spell.name}</option>`;
   }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
   const template = _basicFormContent({ label: "Spell:", type: "select", options });
 

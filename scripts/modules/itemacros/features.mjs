@@ -200,16 +200,10 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
 }
 
 async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, event, args) {
-  const { spells, attributes } = foundry.utils.duplicate(actor.getRollData());
-  const maxLevel = Math.ceil(attributes.prof / 2);
+  const data = actor.getRollData();
+  const maxLevel = Math.ceil(data.attributes.prof / 2);
 
-  const options = Object.entries(spells).reduce((acc, [key, data]) => {
-    if (data.value >= data.max || data.value <= 0) return acc;
-    const level = key === "pact" ? data.level : Number(key.at(-1));
-    if (level > maxLevel) return acc;
-    const label = key === "pact" ? "Pact Slots" : game.i18n.localize("DND5E.SpellLevel" + key.at(-1));
-    return acc + `<option value="${key}">${label} [${data.value} / ${data.max}]</option>`;
-  }, "");
+  const options = _constructSpellSlotOptions(actor, { missing: true, maxLevel });
 
   if (!options.length) {
     ui.notifications.warn("You are not missing any valid spell slots.");
@@ -412,8 +406,7 @@ async function RELENTLESS_ENDURANCE(item, speaker, actor, token, character, even
 }
 
 async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, args) {
-  const { spells, classes } = foundry.utils.duplicate(actor.getRollData());
-  const maxSum = Math.ceil(classes.wizard.levels / 2);
+  const maxSum = Math.ceil(actor.getRollData().classes.wizard.levels / 2);
 
   // bail out if you can't use this item again.
   const available = item.system.uses.value > 0;
@@ -423,11 +416,11 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
   }
 
   // creating the form.
-  const levels = Object.entries(spells).reduce((acc, [key, data]) => {
-    const level = key === "pact" ? data.level : Number(key.at(-1));
-    if (!level.between(1, 6) || data.max < 1) return acc;
-    const slots = Array.fromRange(data.max).reduce((ac, n) => {
-      const cd = (n < data.value) ? "checked disabled" : "";
+  const levels = Object.entries(actor.system.spells).reduce((acc, [key, values]) => {
+    const level = key === "pact" ? values.level : Number(key.at(-1));
+    if (!level.between(1, 6) || values.max < 1) return acc;
+    const slots = Array.fromRange(values.max).reduce((ac, n) => {
+      const cd = (n < values.value) ? "checked disabled" : "";
       return ac + `<input type="checkbox" data-key="${key}" data-level="${level}" ${cd}>`
     }, "");
     const label = key === "pact" ? "Pact Slots" : game.i18n.localize("DND5E.SpellLevel" + level);
@@ -474,11 +467,9 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
     }
 
     const inputs = html[0].querySelectorAll("input:not(:disabled):checked");
-    inputs.forEach(input => {
-      const key = input.dataset.key;
-      spells[key].value++;
-    });
-    await actor.update({ "system.spells": spells });
+    const update = actor.toObject().system.spells;
+    for (const input of inputs) update[input.dataset.key].value++;
+    await actor.update({ "system.spells": update });
     return ChatMessage.create({ speaker, content: `${actor.name} recovered spell slots using ${item.name}` });
   }
 }
@@ -662,7 +653,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 
           // remove a spell slot.
           await actor.update({ [path]: value - 1 });
-          return ChatMessage.create({ speaker, content: `${actor.name} expended a spell slot of level ${keys.length} and created an elixir.` });
+          return ChatMessage.create({ speaker, content: `${actor.name} expended a ${keys.length.ordinalString()} level spell slot and created an elixir.` });
         }
       }
     }
@@ -887,7 +878,7 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
   }
   </style>`;
   const spellPoints = item.system.uses;
-  const spellSlots = { ...actor.system.spells };
+  const spellSlots = actor.toObject().system.spells;
 
   // array of spell levels for converting points to slots.
   const validLevelsWithSpentSpellSlots = Object.entries(spellSlots).filter(([key, entry]) => {
