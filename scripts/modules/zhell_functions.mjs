@@ -1,5 +1,4 @@
 import { FORAGING, MODULE } from "../const.mjs";
-import { EXHAUSTION_EFFECTS } from "../../sources/conditions.mjs";
 
 /**
  * Get a document from a compendium.
@@ -190,8 +189,8 @@ export function _romanize(number) {
 
 export class EXHAUSTION {
 
-  // increase exhaustion.
-  static async increase_exhaustion(actor) {
+  // Increase exhaustion.
+  static async increaseExhaustion(actor) {
     if (!(actor instanceof Actor)) {
       ui.notifications.warn("Invalid actor provided.");
       return null;
@@ -205,15 +204,15 @@ export class EXHAUSTION {
     // if exhausted, increase the level.
     if (exhaustion) {
       const currentLevel = exhaustion.flags[MODULE].exhaustion;
-      return this.update_exhaustion(currentLevel + 1, actor);
+      return this.updateExhaustion(currentLevel + 1, actor);
     }
 
     // if not exhausted, set to 1.
-    if (!exhaustion) return this.update_exhaustion(1, actor);
+    if (!exhaustion) return this.updateExhaustion(1, actor);
   }
 
-  // decrease exhaustion.
-  static async decrease_exhaustion(actor) {
+  // Decrease exhaustion.
+  static async decreaseExhaustion(actor, suppress = false) {
     if (!(actor instanceof Actor)) {
       ui.notifications.warn("Invalid actor provided.");
       return null;
@@ -227,38 +226,39 @@ export class EXHAUSTION {
     // if exhausted, decrease the level.
     if (exhaustion) {
       const currentLevel = exhaustion.flags[MODULE].exhaustion;
-      return this.update_exhaustion(currentLevel - 1, actor);
+      return this.updateExhaustion(currentLevel - 1, actor);
     }
 
     // if not exhausted, error.
-    ui.notifications.warn(`${actor.name} was not exhausted.`);
+    if (!suppress) ui.notifications.warn(`${actor.name} was not exhausted.`);
     return null;
   }
 
-  // update or set exhaustion to specific level
-  static async update_exhaustion(num, actor) {
-    if (!num.between(0, 6)) {
+  // Update or set exhaustion to specific level.
+  static async updateExhaustion(num, actor) {
+    if (!num.between(0, 11)) {
       ui.notifications.warn("The provided level was not valid.");
       return null;
     }
+
     if (!(actor instanceof Actor)) {
       ui.notifications.warn("Invalid actor provided.");
       return null;
     }
 
-    // attempt to find any current exhaustion effect.
-    let exhaustion = actor.effects.find(i => {
+    // Attempt to find any current exhaustion effect.
+    const exhaustion = actor.effects.find(i => {
       return i.flags.core?.statusId === "exhaustion";
     });
 
     // if num===0, remove it.
     if (num === 0) return exhaustion?.delete();
 
-    // if num===6, remove it and apply dead.
-    if (num === 6) {
+    // if num===11, remove it and apply dead.
+    if (num === 11) {
       await exhaustion?.delete();
       const dead = foundry.utils.duplicate(CONFIG.statusEffects.find(i => {
-        return i.id === "dead";
+        return i.id === CONFIG.specialStatusEffects.DEFEATED;
       }));
       foundry.utils.mergeObject(dead, {
         "flags.core.statusId": dead.id,
@@ -268,24 +268,36 @@ export class EXHAUSTION {
       return actor.createEmbeddedDocuments("ActiveEffect", [dead]);
     }
 
-    // if actor has exhaustion, update.
-    if (exhaustion) {
-      const { label, changes, flags } = EXHAUSTION_EFFECTS[num - 1];
-      await exhaustion.update({ label, changes, flags });
-    }
+    // Otherwise either update or create the exhaustion effect.
+    const data = {
+      label: game.i18n.localize("ZHELL.StatusConditionExhaustion"),
+      "flags.core.statusId": "exhaustion",
+      "flags.visual-active-effects.data.intro": `<p>${game.i18n.format("ZHELL.StatusConditionExhaustionDescription", { level: num })}</p>`,
+      "flags.zhell-custom-stuff.exhaustion": num,
+      icon: "icons/skills/wounds/injury-body-pain-gray.webp",
+      changes: [
+        { key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.abilities.check", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.mwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.rwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.rsak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.bonuses.spell.dc", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
+        { key: "system.attributes.exhaustion", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: num },
+      ]
+    };
 
-    // if actor not already exhausted, find and apply.
-    else if (!exhaustion) {
-      exhaustion = foundry.utils.duplicate(EXHAUSTION_EFFECTS[num - 1]);
-      const coreFlag = { statusId: exhaustion.id };
-      foundry.utils.setProperty(exhaustion, "flags.core", coreFlag);
-      await actor.createEmbeddedDocuments("ActiveEffect", [exhaustion]);
-    }
+    // If actor has exhaustion, update it to the new level.
+    if (exhaustion) return exhaustion.update(data);
 
-    // lastly, update actor hp.
-    const { value, max } = actor.system.attributes.hp;
-    const newValue = Math.floor(Math.min(value, max));
-    return actor.update({ "system.attributes.hp.value": newValue });
+    // If actor not already exhausted, find and apply.
+    return actor.createEmbeddedDocuments("ActiveEffect", [data]);
+  }
+
+  // Reduce exhaustion on a long rest.
+  static async _longRestExhaustionReduction(actor, data) {
+    if (!data.longRest) return;
+    return EXHAUSTION.decreaseExhaustion(actor, true);
   }
 }
 

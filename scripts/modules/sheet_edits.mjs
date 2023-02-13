@@ -149,7 +149,7 @@ async function _createForaging(sheet, html) {
   const DIV = document.createElement("DIV");
   DIV.innerHTML = await renderTemplate(`modules/${MODULE}/templates/foragingButton.hbs`, {
     name: `flags.${MODULE}.materia-medica.value`,
-    value: foundry.utils.getPropert(sheet.actor, `flags.${MODULE}.materia-medica.value`) ?? 0
+    value: foundry.utils.getProperty(sheet.actor, `flags.${MODULE}.materia-medica.value`) ?? 0
   });
   html[0].querySelector("div.counter.flexrow.exhaustion").after(DIV.firstChild);
 }
@@ -269,31 +269,33 @@ function _onClickForaging() {
   return new MateriaMedica(this, {}).render(true);
 }
 
-// render exhaustion app.
+// render exhaustion dialog.
 function _onClickExhaustion() {
   const level = this.system.attributes.exhaustion;
-  let effect;
-  if (level === 0) effect = "You are not currently exhausted";
-  else if (level === 1) effect = "You currently have 1 level of exhaustion";
-  else effect = `You currently have ${level} levels of exhaustion`;
+  const effect = {
+    0: "You are not currently exhausted.",
+    1: "You currently have 1 level of exhaustion.",
+  }[level] ?? `You currently have ${level} levels of exhaustion.`;
   const buttons = {
     up: {
       icon: "<i class='fa-solid fa-arrow-up'></i>",
       label: "Gain a Level",
-      callback: () => EXHAUSTION.increase_exhaustion(this)
+      callback: () => EXHAUSTION.increaseExhaustion(this)
     },
     down: {
       icon: "<i class='fa-solid fa-arrow-down'></i>",
       label: "Down a Level",
-      callback: () => EXHAUSTION.decrease_exhaustion(this)
+      callback: () => EXHAUSTION.decreaseExhaustion(this)
     }
   };
   if (level < 1) delete buttons.down;
-  if (level > 5) delete buttons.up;
+  if (level > 10) delete buttons.up;
 
   return new Dialog({
     title: `Exhaustion: ${this.name}`,
-    content: `<p>Adjust your level of exhaustion.</p><p>${effect}.</p>`,
+    content: `
+    <p>Adjust your level of exhaustion.</p>
+    <p>${effect}</p>`,
     buttons
   }, {
     id: `${MODULE}-exhaustion-dialog-${this.id}`,

@@ -28,8 +28,18 @@ import {
   _setUpGameChanges,
   _visionModes
 } from "./scripts/modules/gameChanges.mjs";
-import { _addFlavorListenerToDamageRolls, _appendDataToDamageRolls } from "./scripts/modules/dm_tool.mjs";
-import { DEFEATED, DEPEND, DISPLAY_AMMO, MODULE, TRACK_REACTIONS } from "./scripts/const.mjs";
+import {
+  _addFlavorListenerToDamageRolls,
+  _appendDataToDamageRolls
+} from "./scripts/modules/dm_tool.mjs";
+import {
+  DEFEATED,
+  DEPEND,
+  DISPLAY_AMMO,
+  MODULE,
+  TRACK_REACTIONS
+} from "./scripts/const.mjs";
+import { EXHAUSTION } from "./scripts/modules/zhell_functions.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -57,6 +67,7 @@ Hooks.on("preUpdateToken", _rotateTokensOnMovement);
 Hooks.on("renderTokenHUD", _replaceTokenHUD);
 Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 Hooks.on("dnd5e.restCompleted", _restItemDeletion);
+Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
 Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 
 Hooks.once("ready", function() {

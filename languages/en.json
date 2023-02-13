@@ -98,5 +98,7 @@
   "ZHELL.StatusConditionRestrained": "Restrained",
   "ZHELL.StatusConditionSlow": "Slow",
   "ZHELL.StatusConditionStunned": "Stunned",
-  "ZHELL.StatusConditionUnconscious": "Unconscious"
+  "ZHELL.StatusConditionUnconscious": "Unconscious",
+  "ZHELL.StatusConditionExhaustion": "Exhaustion",
+  "ZHELL.StatusConditionExhaustionDescription": "You have a &minus;{level} penalty to your attack rolls, saving throws, ability checks, and spell save DC. If your level of exhaustion exceeds 10, you die. When you finish a long rest, you may remove one level of exhaustion."
 }
