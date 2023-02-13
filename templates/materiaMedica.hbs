@@ -8,12 +8,14 @@
 
   <div class="content-tabs">
     <div class="tab" data-tab="forage">
-      <div class="description">{{{forageDescription}}}</div>
+      <div class="description">{{{localize "ZHELL.CraftingDescriptionForaging" dc=dc max=max}}}</div>
       <form class="dnd5e">
         <div class="form-group">
           <label>Select skill or tool:</label>
           <div class="form-fields">
-            <select id="forage-tool">{{{options}}}</select>
+            <select id="forage-tool">
+              {{selectOptions forageOptions nameAttr="id" labelAttr="label"}}
+            </select>
           </div>
         </div>
       </form>
@@ -25,7 +27,7 @@
     </div>
 
     <div class="tab" data-tab="potion" editable="{{editable}}">
-      <div class="description">{{{potionDescription}}}</div>
+      <div class="description">{{localize "ZHELL.CraftingDescriptionPotions"}}</div>
       <div class="selections">
         {{#each potionItems as |item|}}
         <div class="selection">
@@ -42,12 +44,14 @@
     </div>
 
     <div class="tab" data-tab="poison" editable="{{editable}}">
-      <div class="description">{{{poisonDescription}}}</div>
+      <div class="description">{{localize "ZHELL.CraftingDescriptionPoisons"}}</div>
       <form class="dnd5e">
         <div class="form-group">
           <label>Delivery Method</label>
           <div class="form-fields">
-            <select id="poison-delivery-method">{{{poisonMethods}}}</select>
+            <select id="poison-delivery-method">
+              {{selectOptions poisonOptions nameAttr="value" labelAttr="label"}}
+            </select>
           </div>
         </div>
         <div class="method-description">{{{initMethod}}}</div>
@@ -68,7 +72,7 @@
     </div>
 
     <div class="tab" data-tab="misc" editable="{{editable}}">
-      <div class="description">{{{miscDescription}}}</div>
+      <div class="description">{{localize "ZHELL.CraftingDescriptionMisc"}}</div>
       <div class="selections">
         {{#each miscItems as |item|}}
         <div class="selection">

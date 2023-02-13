@@ -3,7 +3,7 @@ import { FORAGING, MODULE } from "../const.mjs";
 export function _craftingCharacterFlag() {
   CONFIG.DND5E.characterFlags.speedCrafting = {
     name: "Speed Crafting",
-    hint: "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
+    hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),
     section: "Feats",
     type: Boolean
   }
@@ -140,9 +140,7 @@ export class MateriaMedica extends Application {
     const miscItems = [];
     const { potions, poisons, misc } = this.uuids;
     for (const n of [2, 4, 6, 8, 10]) {
-      const itemA = await fromUuid(potions[n]);
-      const itemB = await fromUuid(poisons[n]);
-      const itemC = await fromUuid(misc[n]);
+      const [itemA, itemB, itemC] = await Promise.all([fromUuid(potions[n]), fromUuid(poisons[n]), fromUuid(misc[n])]);
       const scalingH = n === 2 ? _getScalingHealing(materials, this.speedCrafting) : null;
       const scalingD = n === 2 ? _getScalingDamage(materials) : null;
       const costA = n === 2 ? "varies" : n;
@@ -154,35 +152,23 @@ export class MateriaMedica extends Application {
 
 
     /* POISONS */
-    const poisonMethods = Object.entries(this.methods).reduce((acc, [cost, label]) => {
-      return acc + `<option value="${cost}">${label} (cost ${cost})</option>`;
-    }, "");
+    const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({ value: cost, label: `${label} (${cost})` }));
 
     /* FORAGING */
-    const herbalismKits = this.actor.itemTypes.tool.filter(tool => {
-      return (tool.system.baseItem === "herb") && (tool.system.proficient > 0);
-    });
-    let options = "";
-    herbalismKits.forEach(kit => {
-      options += `<option value="${kit.id}">${kit.name}</option>`;
-    });
-    options += '<option value="nat">Nature</option><option value="sur">Survival</option>';
-    const hours = Array.fromRange(this.maxRolls, 1).reduce((acc, n) => {
-      return acc + `<option value=${n}>${n} hours</option>`;
-    }, "");
+    const forageOptions = this.actor.items.filter(item => {
+      return (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
+    }).map(tool => ({ id: tool.id, label: tool.name })).concat([
+      { id: "nat", label: "Nature" }, { id: "sur", label: "Survival" }
+    ]);
 
     return foundry.utils.mergeObject(data, {
-      options,
-      hours,
-      forageDescription: `You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>${this.targetValue}</strong>. Once you are done foraging (maximum of ${this.maxRolls} hours), adjust and accept the results.`,
+      forageOptions,
+      poisonOptions,
+      dc: this.targetValue,
+      max: this.maxRolls,
       potionItems,
-      potionDescription: `Select a type of potion to create.`,
-      poisonMethods,
       poisonItems,
-      poisonDescription: `Select a delivery method and a type of poison to create.`,
-      miscItems,
-      miscDescription: `Select a type of miscellaneous item to create.`,
-      initMethod: this.descriptionAppend[0]
+      miscItems
     });
   }
 
@@ -200,7 +186,7 @@ export class MateriaMedica extends Application {
     const forageResults = html[0].querySelector("[data-tab=forage] .results");
     const canAddMore = forageResults.childElementCount < this.maxRolls;
     if (!canAddMore) {
-      ui.notifications.warn("You cannot roll any more.");
+      ui.notifications.warn("ZHELL.CraftingCannotRollMore", { localize: true });
       return;
     }
     const type = html[0].querySelector("#forage-tool").value;
@@ -232,7 +218,9 @@ export class MateriaMedica extends Application {
     const data = {
       total: roll.total,
       formula: roll.formula,
-      type: tool ? tool.name : game.i18n.format("DND5E.SkillPromptTitle", { skill: CONFIG.DND5E.skills[type].label }),
+      type: tool ? tool.name : game.i18n.format("DND5E.SkillPromptTitle", {
+        skill: CONFIG.DND5E.skills[type].label
+      }),
       success: roll.total >= this.targetValue
     };
     const DIV = document.createElement("DIV");
@@ -251,11 +239,13 @@ export class MateriaMedica extends Application {
     const attempts = html[0].querySelectorAll(".result").length;
     const foraged = html[0].querySelectorAll(".result .active").length;
     if (!attempts) {
-      ui.notifications.warn("You must roll at least once.");
+      ui.notifications.warn("ZHELL.CraftingMustRollOnce", { localize: true });
       return;
     }
     await ChatMessage.create({
-      content: `${this.actor.name} went foraging for ${attempts} hours and found ${foraged} lbs of forageable goods.`,
+      content: game.i18n.format("ZHELL.CraftingWentForaging", {
+        name: this.actor.name, hours: attempts, amount: foraged
+      }),
       speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
     html[0].querySelector(".results").innerHTML = "";
@@ -281,6 +271,11 @@ export class MateriaMedica extends Application {
     else if (tab === "misc") return this._createMisc(uuid, baseCost);
   }
 
+  async _render(...T) {
+    await super._render(...T);
+    this._onDeliveryMethodChange({}, this.element);
+  }
+
   _onDeliveryMethodChange(event, html) {
     const c = html[0].querySelector("#poison-delivery-method").value;
     html[0].querySelector(".method-description").innerText = this.descriptionAppend[c];
@@ -291,7 +286,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = (scale ? scale : baseCost) * (this.speedCrafting ? 0.5 : 1);
     if (cost > this.materials) {
-      ui.notifications.warn(`You need at least ${cost} foraged materials to create this item.`);
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
       return;
     }
 
@@ -411,7 +406,9 @@ export class MateriaMedica extends Application {
   }
 
   async _finalize(item, cost) {
-    const content = `${this.actor.name} spent ${cost} foraged materials to create one ${item.link}.`;
+    const content = game.i18n.format("ZHELL.CraftingComplete", {
+      name: this.actor.name, amount: cost, link: item.link
+    });
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     await ChatMessage.create({ content, speaker });
     await this.actor.setFlag(MODULE, "materia-medica.value", this.materials - cost);
