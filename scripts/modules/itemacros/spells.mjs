@@ -71,7 +71,7 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
     return e.flags.core?.statusId === item.name.slugify({ strict: true });
   });
   if (isActive) {
-    const level = isActive.getFlag(MODULE, "spellLevel");
+    const level = isActive.flags[MODULE].spellLevel;
     return _redisplayItem(item, level);
   }
 
@@ -162,7 +162,7 @@ async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args
 
   async function flagEffect(type) {
     const effect = CN.isActorConcentratingOnItem(actor, item);
-    const level = effect.getFlag(DEPEND.CN, "data.castData.castLevel");
+    const level = effect.flags[DEPEND.CN].data.castData.castLevel;
     const value = `+${Math.ceil(level / 2) - 1}d8[${type}]`;
     const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
     const changes = [
@@ -274,7 +274,7 @@ async function BREATH_WEAPON(item, speaker, actor, token, character, event, args
   if (!type) return;
 
   const file = breaths[template][type];
-  await item.setFlag(MODULE, "breath-weapon", { type: file, template });
+  await item.setFlag(MODULE, "breathWeapon", { type: file, template });
   const target = template === "line" ? { value: 60, units: "ft", type: template, width: 5 } : { value: 30, units: "ft", type: template, width: "" };
   const clone = item.clone({ "system.target": target }, { keepId: true });
   clone.prepareFinalAttributes();
@@ -397,7 +397,7 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
   return chooseArrow();
 
   async function _checkForRemainingArrows() {
-    const arrows = effect.getFlag(MODULE, "arrow-fired") ?? {};
+    const arrows = effect.flags[MODULE]?.arrowFired ?? {};
     const available = colors.filter(c => !arrows[c.color]);
     if (!available.length) {
       await effect.delete();
@@ -472,7 +472,7 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
       oldSave.after(newSaveButton);
       await card.update({ content: div.innerHTML });
     }
-    await effect.setFlag(MODULE, `arrow-fired.${arrow}`, true);
+    await effect.setFlag(MODULE, `arrowFired.${arrow}`, true);
     return _checkForRemainingArrows();
   }
 }
@@ -487,13 +487,13 @@ async function CROWN_OF_STARS(item, speaker, actor, token, character, event, arg
     if (!conc) return;
     const level = _getSpellLevel(use);
     const motes = 2 * level - 7;
-    return conc.setFlag(MODULE, "crown-of-stars", motes);
+    return conc.setFlag(MODULE, "crownStars", motes);
   }
 
-  const motes = isConc.getFlag(MODULE, "crown-of-stars") ?? 1;
+  const motes = isConc.flags[MODULE]?.crownStars ?? 1;
   if (motes < 1) return isConc.delete();
   await CN.redisplayCard(actor);
-  return (motes - 1 === 0) ? isConc.delete() : isConc.setFlag(MODULE, "crown-of-stars", motes - 1)
+  return (motes - 1 === 0) ? isConc.delete() : isConc.setFlag(MODULE, "crownStars", motes - 1)
 }
 
 async function VORTEX_WARP(item, speaker, actor, token, character, event, args) {
@@ -591,7 +591,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
   delete itemData.system.uses;
   const conc = CN.isActorConcentratingOnItem(actor, item);
   await conc.createMacro("onDelete", function() {
-    const id = effect.getFlag("world", "storedFlag");
+    const id = effect.flags.world?.storedFlag;
     return actor.effects.get(id)?.delete();
   });
 
@@ -724,7 +724,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
   const spellLevel = _getSpellLevel(use);
 
   async function onCreate() {
-    const level = effect.getFlag("effectmacro", "data.spellLevel");
+    const level = effect.flags.effectmacro.data.spellLevel;
     const value = 5 * (level - 1);
     return actor.applyDamage(-value);
   }

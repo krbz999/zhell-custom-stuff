@@ -25,7 +25,7 @@ export class MoneySpender extends Application {
   }
 
   get speedCrafting() {
-    return !!this.actor.getFlag("dnd5e", "speedCrafting");
+    return !!this.actor.flags.dnd5e?.speedCrafting;
   }
 
   get precision() {

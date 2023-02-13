@@ -24,7 +24,7 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
   if (!isConc) return item.use();
 
   // case 2: conc, prompt to use reaction or extend.
-  const currentDC = isConc.getFlag("world", "goodhunter-dc") ?? 10;
+  const currentDC = isConc.flags.world?.goodhunter ?? 10;
   new Dialog({
     title: "Goodhunter's True Strike",
     buttons: {
@@ -49,7 +49,7 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
       await ChatMessage.create({ speaker, content: `${actor.name} extends ${item.name} by another round.` });
       return isConc.update({
         "duration.rounds": isConc.duration.rounds + 1,
-        "flags.world.goodhunter-dc": currentDC + 1
+        "flags.world.goodhunter": currentDC + 1
       });
     }
   }
@@ -384,7 +384,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
         alpha: 0,
         displayName: CONST.TOKEN_DISPLAY_MODES.NONE,
         displayBars: CONST.TOKEN_DISPLAY_MODES.NONE,
-        flags: { world: { "find-friend": actor.id } }
+        flags: { world: { findFriend: actor.id } }
       }
     }
     // the items that the steed should NOT have.
@@ -485,7 +485,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
         await warpgate.revert(token.document, name);
         const sequence = new Sequence();
         sequence.effect().file("jb2a.explosion.tealyellow.1").attachTo(token).size(canvas.grid.size * 1.5).waitUntilFinished(-2000);
-        const steedToken = canvas.scene.tokens.find(i => i.getFlag("world", "find-friend") === actor.id);
+        const steedToken = canvas.scene.tokens.find(i => i.flags.world?.findFriend === actor.id);
         if (steedToken) sequence.effect().file("jb2a.explosion.greenorange.1").atLocation(steedToken.object.center).scale(0.5);
         await sequence.play();
         return warpgate.dismiss(steedToken?.id);

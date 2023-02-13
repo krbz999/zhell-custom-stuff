@@ -578,7 +578,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       [DEPEND.ET]: {
         transferBlock: { button: true, chat: true, displayCard: true }
       },
-      [MODULE]: { "experimental-elixir": true }
+      [MODULE]: { experimentalElixir: true }
     }
   }
 

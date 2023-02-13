@@ -5,7 +5,7 @@ export class ZHELL_ANIMATIONS {
   static onCreateMeasuredTemplate(templateDoc, _, userId) {
     if (userId !== game.user.id) return;
 
-    const uuid = templateDoc.getFlag("dnd5e", "origin");
+    const uuid = templateDoc.flags.dnd5e?.origin;
     if (!uuid) return;
 
     const item = fromUuidSync(uuid);
@@ -16,7 +16,7 @@ export class ZHELL_ANIMATIONS {
     let check;
 
     // BREATH WEAPON.
-    check = item.getFlag(MODULE, "breath-weapon.type");
+    check = item.flags[MODULE]?.breathWeapon?.type;
     if (check) {
       const file = check;
       return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();

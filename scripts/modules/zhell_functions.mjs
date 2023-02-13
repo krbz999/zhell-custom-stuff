@@ -204,7 +204,7 @@ export class EXHAUSTION {
 
     // if exhausted, increase the level.
     if (exhaustion) {
-      const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
+      const currentLevel = exhaustion.flags[MODULE].exhaustion;
       return this.update_exhaustion(currentLevel + 1, actor);
     }
 
@@ -226,7 +226,7 @@ export class EXHAUSTION {
 
     // if exhausted, decrease the level.
     if (exhaustion) {
-      const currentLevel = exhaustion.getFlag(MODULE, "exhaustion");
+      const currentLevel = exhaustion.flags[MODULE].exhaustion;
       return this.update_exhaustion(currentLevel - 1, actor);
     }
 

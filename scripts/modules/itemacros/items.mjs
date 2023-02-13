@@ -169,7 +169,7 @@ async function FREE_USE(item, speaker, actor, token, character, event, args) {
 }
 
 async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
-  const uuid = item.getFlag(MODULE, "sourceWeapon");
+  const uuid = item.flags[MODULE].sourceWeapon;
   const weapon = actor.items.find(i => i.uuid === uuid);
   const value = weapon.system.uses.value;
   if (value < 3) {

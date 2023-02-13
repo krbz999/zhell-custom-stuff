@@ -147,9 +147,10 @@ function _setCollapsibleHeaders(sheet, html) {
 
 async function _createForaging(sheet, html) {
   const DIV = document.createElement("DIV");
-  const name = `flags.${MODULE}.materia-medica.value`;
-  const value = sheet.actor.getFlag(MODULE, "materia-medica.value") ?? 0;
-  DIV.innerHTML = await renderTemplate(`modules/${MODULE}/templates/foragingButton.hbs`, { name, value });
+  DIV.innerHTML = await renderTemplate(`modules/${MODULE}/templates/foragingButton.hbs`, {
+    name: `flags.${MODULE}.materia-medica.value`,
+    value: foundry.utils.getPropert(sheet.actor, `flags.${MODULE}.materia-medica.value`) ?? 0
+  });
   html[0].querySelector("div.counter.flexrow.exhaustion").after(DIV.firstChild);
 }
 

@@ -123,11 +123,11 @@ export class MateriaMedica extends Application {
   }
 
   get speedCrafting() {
-    return !!this.actor.getFlag("dnd5e", "speedCrafting");
+    return !!this.actor.flags.dnd5e?.speedCrafting;
   }
 
   get materials() {
-    return Number(this.actor.getFlag(MODULE, "materia-medica.value"));
+    return Number(this.actor.flags[MODULE]?.["materia-medica"]?.value ?? 0);
   }
 
   async getData() {
@@ -371,7 +371,7 @@ export class MateriaMedica extends Application {
 
     // find existing item and add to quantity.
     const found = this.actor.items.find(i => {
-      return i.flags.core?.sourceId === uuid && i.getFlag(MODULE, "poisonType") === method;
+      return (i.flags.core?.sourceId === uuid) && (i.flags[MODULE]?.poisonType === method);
     });
     if (found) {
       const quantity = found.system.quantity;

@@ -58,12 +58,12 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
   const config = lightData ?? { dim: 40, bright: 20 };
 
   const onCreate = async function() {
-    const config = effect.getFlag("effectmacro", "lightConfig") ?? {};
+    const config = effect.flags.effectmacro?.lightConfig ?? {};
     return token?.document.update({ light: config });
   }
 
   const onDelete = async function() {
-    const config = effect.getFlag("effectmacro", "lightConfig") ?? {};
+    const config = effect.flags.effectmacro?.lightConfig ?? {};
     const prototype = await actor.getTokenDocument();
     const protoData = foundry.utils.flattenObject(prototype.light);
     for (const key of Object.keys(protoData)) {
@@ -110,16 +110,16 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
  */
 export function _constructDetectionModeEffectData({ modes = [], item }) {
   const onCreate = async function() {
-    const { modes } = effect.getFlag("effectmacro", "data");
+    const modes = effect.flags.effectmacro.data.modes;
     const previousModes = foundry.utils.duplicate(token.document.detectionModes);
     const ids = previousModes.map(m => m.id);
     previousModes.push(...modes.filter(m => !ids.includes(m.id)));
-    await token.document.update({ detectionModes: previousModes.filter(m => m.id !== "basicSight") });
+    return token.document.update({ detectionModes: previousModes.filter(m => m.id !== "basicSight") });
   }
 
   const onDelete = async function() {
     const { detectionModes } = await actor.getTokenDocument();
-    await token.document.update({ detectionModes });
+    return token.document.update({ detectionModes });
   }
 
   return [{
@@ -133,7 +133,7 @@ export function _constructDetectionModeEffectData({ modes = [], item }) {
       "onEnable.script": `(${onCreate.toString()})()`,
       "onDelete.script": `(${onDelete.toString()})()`,
       "onDisable.script": `(${onDelete.toString()})()`,
-      data: { modes }
+      "data.modes": modes
     }
   }];
 }

@@ -92,7 +92,7 @@ export function _setupCustomButtons() {
     const uuid = button.closest("[data-effect-uuid")?.dataset.effectUuid;
     if (!uuid) return;
     const effect = await fromUuid(uuid);
-    const itemData = effect.getFlag(MODULE, "itemData");
+    const itemData = effect.flags[MODULE]?.itemData;
     if (!itemData) return;
     const item = new Item.implementation(itemData, { parent: effect.parent });
     if (button.dataset.type === "use") return item.use({}, { "flags.dnd5e.itemData": itemData });
