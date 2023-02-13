@@ -275,18 +275,19 @@ export function _addContextMenuOptions(item, array) {
 // Context menu option to move an item into a shared inventory (an owned Group actor).
 function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
-  const inventory = game.actors.find(a => {
+  const inventory = game.actors.filter(a => {
     return a.isOwner && a.type === "group" && a !== item.actor;
   });
-  if (!inventory) return;
-  array.push({
-    icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
-    name: `Move to ${inventory.name}`,
-    callback: async () => {
-      const [c] = await inventory.createEmbeddedDocuments("Item", [item.toObject()]);
-      if (c) await item.delete();
-    }
-  });
+  for(const inv of inventory){
+    array.push({
+      icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
+      name: `Move to ${inv.name}`,
+      callback: async () => {
+        const [c] = await inv.createEmbeddedDocuments("Item", [item.toObject()]);
+        if (c) await item.delete();
+      }
+    });
+  }
 }
 
 // Context menu option to create a scroll from a spell in an actor's spellbook.
