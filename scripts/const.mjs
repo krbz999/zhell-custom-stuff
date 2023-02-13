@@ -33,12 +33,7 @@ export const WORLD_DEFAULTS = {
 };
 export const COLOR_DEFAULTS = {
   itemAttuned: "#21c050",
-  itemEquipped: "#6dff38",
   itemNotAttuned: "#c2c2c2",
-  itemNotEquipped: "#c2c2c2",
-  proficientHalf: "#696969",
-  proficientNormal: "#228b22",
-  proficientTwice: "#ff6347",
   showLimitedUses: true,
   showSpellSlots: true,
   spellAlwaysPrepared: "#ff0004",

@@ -64,14 +64,9 @@ export function refreshColors() {
   style.setProperty("--usesUnexpended", colors.usesUnexpended);
   style.setProperty("--itemAttuned", colors.itemAttuned);
   style.setProperty("--itemNotAttuned", colors.itemNotAttuned);
-  style.setProperty("--itemEquipped", colors.itemEquipped);
-  style.setProperty("--itemNotEquipped", colors.itemNotEquipped);
   style.setProperty("--spellPrepared", colors.spellPrepared);
   style.setProperty("--spellNotPrepared", colors.spellNotPrepared);
   style.setProperty("--spellAlwaysPrepared", colors.spellAlwaysPrepared);
-  style.setProperty("--proficientNormal", colors.proficientNormal);
-  style.setProperty("--proficientHalf", colors.proficientHalf);
-  style.setProperty("--proficientTwice", colors.proficientTwice);
 
   style.setProperty("--rarityUncommon", rarities.uncommon);
   style.setProperty("--rarityRare", rarities.rare);

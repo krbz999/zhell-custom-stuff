@@ -6,11 +6,6 @@ body :root {
   --spellPrepared: #7a7971;
   --spellNotPrepared: #44191A;
   --spellAlwaysPrepared: #7F7F7F;
-  --itemEquipped: #7a7971;
-  --itemNotEquipped: #44191A;
-  --proficientNormal: #228b22;
-  --proficientHalf: #696969;
-  --proficientTwice: #ff6347;
   --rarityUncommon: #008000;
   --rarityRare: #0000ff;
   --rarityVeryRare: #800080;
@@ -78,17 +73,6 @@ body :root {
   color: var(--itemNotAttuned) !important;
 }
 
-/* Equipment State icon. */
-.dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle.active i {
-  color: var(--itemEquipped) !important;
-  filter: drop-shadow(0 0 1px black);
-}
-
-.dnd5e.sheet.actor .inventory-list .item .item-controls .item-toggle:not(.active) i {
-  color: var(--itemNotEquipped) !important;
-  filter: drop-shadow(0 0 1px black);
-}
-
 /* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
   color: var(--spellPrepared) !important;
@@ -105,11 +89,6 @@ body :root {
   filter: drop-shadow(0 0 1px black);
 }
 
-/* Delete icon for items and effects. */
-.dnd5e.sheet.actor :is(.item-delete, [data-action=delete]) {
-  color: darkred;
-}
-
 /* hp colors: */
 /* if below 33% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
@@ -119,22 +98,6 @@ body :root {
 /* if below 66% and above 33% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
   color: peru;
-}
-
-/* proficiencies */
-/* half proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-adjust {
-  color: var(--proficientHalf) !important;
-}
-
-/* proficient */
-.dnd5e.sheet.actor .proficiency-toggle .fas.fa-check {
-  color: var(--proficientNormal) !important;
-}
-
-/* twice proficient */
-.dnd5e.sheet.actor ul.skills-list li.skill .skill-proficiency .fas.fa-check-double {
-  color: var(--proficientTwice) !important;
 }
 
 /* RARITY COLORS */
