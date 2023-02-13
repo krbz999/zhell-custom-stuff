@@ -256,7 +256,13 @@ export function _basicFormContent({ label = "", type = "text", options = "" }) {
     "select": `<select autofocus>${options}</select>`,
     "number": '<input type="number" autofocus>'
   }[type] ?? '<input type="text" autofocus>';
-  return `<form><div class="form-group">${lab}<div class="form-fields">${inp}</div></div></form>`;
+  return `
+  <form>
+    <div class="form-group">
+      ${lab}
+      <div class="form-fields">${inp}</div>
+    </div>
+  </form>`;
 }
 
 /**

@@ -439,7 +439,9 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
 
   const dialog = new Dialog({
     title: item.name,
-    content: `<p name="header">Recovering spell slots: <strong>${spent}</strong> / ${maxSum}.</p> <hr> <form>${levels}</form>`,
+    content: `
+    <p name="header">Recovering spell slots: <strong>${spent}</strong> / ${maxSum}.</p>
+    <form>${levels}</form>`,
     buttons: {
       recover: {
         icon: '<i class="fa-solid fa-hand-sparkles"></i>',
