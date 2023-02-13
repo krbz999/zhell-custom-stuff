@@ -30,7 +30,7 @@ function _getScalingDamage(materials) {
   while (2 * mult <= materials) {
     scalingDamage += `<option value="${2 * mult}">${roll.formula}</option>`;
     mult++;
-    roll = new Roll("2d6+2").alter(mult, 0, { multiplyNumeric: true });
+    roll = new Roll("2d6 + 2").alter(mult, 0, { multiplyNumeric: true });
   }
   return scalingDamage;
 }
@@ -172,10 +172,16 @@ export class MateriaMedica extends Application {
     }, "");
 
     return foundry.utils.mergeObject(data, {
-      options, hours, forageDescription: `You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>${this.targetValue}</strong>. Once you are done foraging (maximum of ${this.maxRolls} hours), adjust and accept the results.`,
-      potionItems, potionDescription: `Select a type of potion to create.`,
-      poisonMethods, poisonItems, poisonDescription: `Select a delivery method and a type of poison to create.`,
-      miscItems, miscDescription: `Select a type of miscellaneous item to create.`,
+      options,
+      hours,
+      forageDescription: `You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>${this.targetValue}</strong>. Once you are done foraging (maximum of ${this.maxRolls} hours), adjust and accept the results.`,
+      potionItems,
+      potionDescription: `Select a type of potion to create.`,
+      poisonMethods,
+      poisonItems,
+      poisonDescription: `Select a delivery method and a type of poison to create.`,
+      miscItems,
+      miscDescription: `Select a type of miscellaneous item to create.`,
       initMethod: this.descriptionAppend[0]
     });
   }
