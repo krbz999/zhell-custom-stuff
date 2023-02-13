@@ -1,4 +1,4 @@
-/* Default colors. */
+/* Default colors */
 body :root {
   --usesUnexpended: #b33737;
   --itemAttuned: #7a7971;
@@ -13,7 +13,7 @@ body :root {
   --rarityArtifact: #d2691e;
 }
 
-/* Style of the dots. */
+/* Style of the dots */
 .dnd5e .items-list .zhell-dots .dot {
   height: 15px;
   width: 15px;
@@ -29,7 +29,7 @@ body :root {
   transform: scale(1.2);
 }
 
-/* Style of the expended dots. */
+/* Style of the expended dots */
 .dnd5e .items-list .zhell-dots .dot.empty {
   background-color: lightgray;
 }
@@ -60,7 +60,7 @@ body :root {
   overflow: visible;
 }
 
-/* Attunement icon. */
+/* Attunement icon */
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement {
   filter: drop-shadow(0 0 1px black);
 }
@@ -73,7 +73,7 @@ body :root {
   color: var(--itemNotAttuned) !important;
 }
 
-/* Prepared icon. */
+/* Prepared icon */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
   color: var(--spellPrepared) !important;
   filter: drop-shadow(0 0 1px black);
@@ -89,13 +89,12 @@ body :root {
   filter: drop-shadow(0 0 1px black);
 }
 
-/* hp colors: */
-/* if below 33% */
+/* HP colors if below 33% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
   color: red;
 }
 
-/* if below 66% and above 33% */
+/* HP colors if below 66% */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
   color: peru;
 }
@@ -122,13 +121,14 @@ body :root {
 }
 
 /* nuke resources */
-.dnd5e.sheet.actor section > form > section > div.tab.attributes.flexrow > section.center-pane > ul {
+.dnd5e.sheet.actor .tab.attributes.flexrow .center-pane .attributes {
   display: none;
 }
 
 /* Fix overflow in sheet header (race, background, alignment, proficiency) */
 .dnd5e.sheet.actor .sheet-header .summary {
   white-space: nowrap;
+  /* TODO: not needed after 2.2.x */
 }
 
 .dnd5e.sheet.actor .sheet-header .summary li {

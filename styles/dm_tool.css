@@ -55,22 +55,22 @@
   gap: 1em;
 }
 
-.list-container .status-container .form-group .form-fields {
+.gm-tool .list-container .status-container .form-group .form-fields {
   display: grid;
   grid-template-columns: 3fr 3fr 3fr 1fr;
 }
 
-.list-container .damage-container .form-group .form-fields {
+.gm-tool .list-container .damage-container .form-group .form-fields {
   display: grid;
   grid-template-columns: 9fr 9fr 2fr;
 }
 
-.list-container .form-group .form-fields a {
+.gm-tool .list-container .form-group .form-fields a {
   text-align: center;
 }
 
-.list-container .damage-container,
-.list-container .status-container {
+.gm-tool .list-container .damage-container,
+.gm-tool .list-container .status-container {
   max-height: 230px;
   overflow-y: auto;
   padding: 0 1em;
