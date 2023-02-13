@@ -54,7 +54,7 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
     }
   }
 
-  async function react(_, e) {
+  async function react() {
     new Dialog({
       title: "Goodhunter: Take the damage",
       content: `

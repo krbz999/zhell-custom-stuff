@@ -130,6 +130,7 @@ export class ZHELL_SOCKETS {
     });
     if (!grant) return;
     ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
+    await tokens[0].actor.sheet._onDropSingleItem(itemData);
     return ZHELL_SOCKETS.grantItems([itemData], tokens[0].id);
   }
 }
