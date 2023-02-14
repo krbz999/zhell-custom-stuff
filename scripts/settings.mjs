@@ -89,7 +89,7 @@ function _registerSettingsMenus() {
     config: false,
     type: Object,
     default: COLOR_DEFAULTS,
-    onChange: () => refreshColors()
+    onChange: refreshColors
   });
 
   game.settings.registerMenu(MODULE, COLOR, {
@@ -107,7 +107,7 @@ function _registerSettingsMenus() {
     config: false,
     type: Object,
     default: RARITY_DEFAULTS,
-    onChange: () => refreshColors()
+    onChange: refreshColors
   });
 
   game.settings.registerMenu(MODULE, RARITY, {
@@ -171,14 +171,12 @@ class ColorPickerSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, COLOR, formData, { diff: false });
-    refreshColors();
-    return set;
+    return game.settings.set(MODULE, COLOR, formData, { diff: false });
   }
 
   async getData() {
     const data = foundry.utils.mergeObject(
-      COLOR_DEFAULTS,
+      foundry.utils.duplicate(COLOR_DEFAULTS),
       game.settings.get(MODULE, COLOR),
       { insertKeys: false }
     );
