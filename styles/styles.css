@@ -1,5 +1,5 @@
 /* The materia medica counter on the character sheets */
-.dnd5e.sheet.actor .counters .counter input[type="number"].material {
+.dnd5e.sheet.actor .counters .counter.materia-medica input {
   max-width: 40px;
   width: fit-content;
   text-align: right;

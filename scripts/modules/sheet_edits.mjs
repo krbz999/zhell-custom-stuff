@@ -147,6 +147,9 @@ async function _createForaging(sheet, html) {
     value: foundry.utils.getProperty(sheet.actor, `flags.${MODULE}.materia-medica.value`) ?? 0
   });
   html[0].querySelector("div.counter.flexrow.exhaustion").after(DIV.firstChild);
+  const input = html[0].querySelector(`[name="${`flags.${MODULE}.materia-medica.value`}"]`);
+  input.addEventListener("focus", e => e.currentTarget.select());
+  input.addEventListener("change", e => _onChangeInputDeltaCustom(sheet, e, { min: 0, max: 999 }));
 }
 
 function _createExhaustion(sheet, html) {
@@ -316,4 +319,15 @@ async function _onClickDot(dot) {
     const value = item.system.uses.value;
     return item.update({ "system.uses.value": value + diff });
   }
+}
+
+function _onChangeInputDeltaCustom(sheet, event, { min = null, max = null } = {}) {
+  const input = event.target;
+  const value = input.value;
+  if (["+", "-"].includes(value[0])) {
+    const delta = parseFloat(value);
+    input.value = Number(foundry.utils.getProperty(sheet.actor, input.name)) + delta;
+  } else if (value[0] === "=") input.value = value.slice(1);
+  if (min !== null) input.value = Math.max(input.value, min);
+  if (max !== null) input.value = Math.min(input.value, max);
 }
