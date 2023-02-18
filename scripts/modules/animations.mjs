@@ -61,7 +61,7 @@ export class ZHELL_ANIMATIONS {
     check = item.name.includes("Black Tentacles");
     if (check) {
       const file = "jb2a.arms_of_hadar.dark_purple";
-      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().play();
+      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().belowTokens().play();
     }
 
     // FIREBALL.
@@ -173,10 +173,12 @@ export class ZHELL_ANIMATIONS {
       const file1 = "jb2a.healing_generic.400px.yellow";
       const file2 = "jb2a.butterflies.few.bright_orange";
       if (target) {
-        return new Sequence()
-          .effect().attachTo(target).file(file1).scaleIn(0, 500)
-          .effect().attachTo(target).file(file2).scaleIn(0, 500).fadeOut(500)
-          .play();
+        const seq = new Sequence();
+        for (const t of game.user.targets) {
+          seq.effect().attachTo(t).file(file1).scaleIn(0, 500)
+            .effect().attachTo(t).file(file2).scaleIn(0, 500).fadeOut(500);
+        }
+        return seq.play();
       } else if (token) {
         return new Sequence().effect().attachTo(token).file(file2).scaleIn(0, 500).fadeOut(500).play();
       }
@@ -187,7 +189,11 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target) return;
       const file = "jb2a.cure_wounds.400px.red";
-      return new Sequence().effect().attachTo(target).file(file).scaleIn(0, 500).play();
+      const seq = new Sequence();
+      for (const t of game.user.targets) {
+        seq.effect().attachTo(t).file(file).scaleIn(0, 500);
+      }
+      return seq.play();
     }
 
     // ELDRITCH SMITE.
