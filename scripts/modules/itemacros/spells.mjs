@@ -531,7 +531,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
 
   const update = { token: { x: pos.x - offset, y: pos.y - offset, alpha: 0 } };
   const options = {
-    token: { animate: false }, // fix this when badger fixes the discrepancy; nest in 'updateOpts'.
+    updateOpts: { token: { animate: false } },
     name: item.name,
     permanent: true,
     description: `${token.document.name} is attempting to move ${target.document.name} out of the way using ${item.name}. You can choose to fail the saving throw.`
