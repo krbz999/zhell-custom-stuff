@@ -30,7 +30,11 @@ export class ZHELL_COMBAT {
     if (has) return;
     const combatant = item.parent.token?.combatant ?? item.parent.getActiveTokens()[0]?.combatant;
     if (!combatant) return;
-    const reaction = CONFIG.statusEffects.find(e => e.id === "reaction");
+    const reaction = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === "reaction"));
+    reaction["flags.visual-active-effects.data"] = {
+      intro: "<p>" + game.i18n.format("ZHELL.StatusConditionReactionDescription", { name: item.name }) + "</p>",
+      content: item.system.description.value
+    };
     return combatant.token.toggleActiveEffect(reaction, { active: true });
   }
 }
@@ -115,5 +119,8 @@ export function _redisplayItem(item, level, itemData = {}) {
     consumeSpellLevel: false,
     consumeSpellSlot: false,
     consumeUsage: false
-  }, { configureDialog: false, "flags.dnd5e.itemData": itemData });
+  }, {
+    configureDialog: false,
+    "flags.dnd5e.itemData": itemData
+  });
 }

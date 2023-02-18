@@ -368,13 +368,7 @@ export const STATUS_EFFECTS = [
     icon: "assets/images/conditions/reaction.webp",
     duration: { rounds: 1 },
     flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You have spent your reaction.</p>"
-            + "<p>You cannot take another reaction until the start of your next turn.</p>"
-        }
-      },
+      [DEPEND.VAE]: { data: { intro: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>" } },
       effectmacro: {
         onCombatEnd: { script: `(${function() { return effect.delete() }})()` },
         onCombatStart: { script: `(${function() { return effect.delete() }})()` },

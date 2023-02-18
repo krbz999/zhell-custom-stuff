@@ -96,6 +96,7 @@
   "ZHELL.StatusConditionPoisoned": "Poisoned",
   "ZHELL.StatusConditionProne": "Prone",
   "ZHELL.StatusConditionReaction": "Reaction",
+  "ZHELL.StatusConditionReactionDescription": "You have spent your reaction on {name}. You cannot take another reaction until the start of your next turn.",
   "ZHELL.StatusConditionRestrained": "Restrained",
   "ZHELL.StatusConditionSlow": "Slow",
   "ZHELL.StatusConditionStunned": "Stunned",
