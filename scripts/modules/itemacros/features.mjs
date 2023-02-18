@@ -781,6 +781,9 @@ async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, eve
 async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
+  const has = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({ strict: true }));
+  if (has) return has.delete();
+
   const use = await item.use();
   if (!use) return;
 
