@@ -527,7 +527,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
   canvas.app.stage.removeChild(p);
   if (pos.cancelled) return actor.sheet?.maximize();
 
-  const offset = (target.document.height * canvas.scene.grid.size) / 2
+  const offset = (target.document.height * canvas.scene.grid.size) / 2;
 
   const update = { token: { x: pos.x - offset, y: pos.y - offset, alpha: 0 } };
   const options = {

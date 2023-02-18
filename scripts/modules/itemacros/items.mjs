@@ -1,4 +1,4 @@
-import { DEPEND, MODULE } from "../../const.mjs";
+import { DEPEND } from "../../const.mjs";
 import { _basicFormContent, _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
 
 export const ITEMACRO_ITEMS = {
@@ -7,6 +7,7 @@ export const ITEMACRO_ITEMS = {
   HIT_DIE_APPLY,
   LANTERN_OF_TRACKING,
   RING_OF_LIGHT,
+  SCORCHING_CLEAVER,
   TORCH,
   WHITEHARBOUR_TEA_SET,
 };
@@ -169,9 +170,12 @@ async function FREE_USE(item, speaker, actor, token, character, event, args) {
 }
 
 async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
-  const uuid = item.flags[MODULE].sourceWeapon;
-  const weapon = actor.items.find(i => i.uuid === uuid);
+  if (!_getDependencies(DEPEND.EM)) return item.use();
+
+  const effect = await fromUuid(item.flags[DEPEND.EM].effectUuid);
+  const weapon = actor.items.find(i => i.uuid === effect.origin);
   const value = weapon.system.uses.value;
+
   if (value < 3) {
     ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
     return;
