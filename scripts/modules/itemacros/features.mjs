@@ -310,6 +310,9 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
+  const effect = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({ strict: true }));
+  if (effect) return effect.delete();
+
   const weapons = actor.itemTypes.weapon.filter(i => i.system.equipped);
   if (!weapons.length) {
     ui.notifications.warn("You have no equipped weapons.");
@@ -322,6 +325,9 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
     ui.notifications.warn("You have no uses left of Channel Divinity.");
     return;
   }
+
+  const use = await item.use();
+  if (!use) return;
 
   // exactly one weapon
   if (weapons.length === 1) return createEffect(weapons[0].id);
@@ -362,7 +368,10 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       bonuses: { bonus: `@abilities.cha.mod[fire]` },
       filters: { customScripts: `return item.id === "${id}";` }
     }).toObject();
-    const flags = { [`babonus.bonuses.${babonusData.id}`]: babonusData };
+    const flags = {
+      [`babonus.bonuses.${babonusData.id}`]: babonusData,
+      "flags.core.statusId": item.name.slugify({ strict: true })
+    };
     const effectData = _constructLightEffectData({ item, lightData, flags });
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }
