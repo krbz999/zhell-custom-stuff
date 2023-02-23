@@ -141,7 +141,7 @@ export async function _whisperPlayers() {
         icon: "<i class='fa-solid fa-envelope'></i>",
         label: "Whisper",
         callback: async (html) => {
-          let content = html[0].querySelector("#zhell-whisper-message").value;
+          let content = html[0].querySelector("textarea").value;
           if (!content) return;
 
           content = content.split("\n").reduce((acc, e) => {
@@ -157,11 +157,11 @@ export async function _whisperPlayers() {
       }
     },
     render: (html) => {
-      html[0].querySelectorAll(".whisper-dialog-player-name").forEach(n => {
+      html[0].querySelectorAll(".zhell-whisper .player-name").forEach(n => {
         n.addEventListener("click", (event) => event.currentTarget.classList.toggle("selected"));
       });
     },
-  }).render(true, {height: "auto"});
+  }, {classes: ["dialog", "zhell-whisper"]}).render(true, {height: "auto"});
 }
 
 /**

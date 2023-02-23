@@ -84,32 +84,37 @@
 }
 
 /* WHISPER DIALOG */
-.form-fields.whisper-dialog {
+.zhell-whisper form {
+  margin: 1em 0;
+}
+
+.zhell-whisper .form-fields {
   display: grid;
   grid-template-columns: auto auto auto;
   gap: 3px;
 }
 
-.whisper-dialog-textarea {
+.zhell-whisper textarea {
   resize: none;
 }
 
-.whisper-dialog-player-name {
+.zhell-whisper .player-name {
   padding: 5px 0;
   border: 1px solid black;
   border-radius: 5px;
   text-align: center;
-  transition: 0.3s;
+  transition: 0.15s;
   transform: scale(0.9);
+  font-family: 'Modesto Condensed';
+  font-size: 23px;
 }
 
-.whisper-dialog-player-name.selected {
+.zhell-whisper .player-name.selected {
   background-color: darkgray;
-  transition: 0.3s;
   transform: scale(1.0);
 }
 
-.whisper-dialog-player-name:not(.selected):hover {
+.zhell-whisper .player-name:not(.selected):hover {
   box-shadow: 0 0 8px red;
 }
 
