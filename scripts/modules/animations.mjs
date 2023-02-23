@@ -1,5 +1,5 @@
-import { database } from "../../sources/animations.mjs";
-import { MODULE } from "../const.mjs";
+import {database} from "../../sources/animations.mjs";
+import {MODULE} from "../const.mjs";
 
 export class ZHELL_ANIMATIONS {
   static onCreateMeasuredTemplate(templateDoc, _, userId) {
@@ -77,7 +77,7 @@ export class ZHELL_ANIMATIONS {
   }
 
   static onItemRollAttack(item, roll, ammoUpdate) {
-    const { name, actor } = item;
+    const {name, actor} = item;
     if (!actor) return;
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
@@ -160,7 +160,7 @@ export class ZHELL_ANIMATIONS {
   }
 
   static onItemRollDamage(item, roll) {
-    const { name, actor } = item;
+    const {name, actor} = item;
     if (!actor) return;
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
@@ -222,7 +222,7 @@ export class ZHELL_ANIMATIONS {
   }
 
   static onItemUse(item) {
-    const { name, actor } = item;
+    const {name, actor} = item;
     if (!actor) return;
     const token = actor.token?.object ?? actor.getActiveTokens()[0];
     const target = game.user.targets.first();
@@ -236,7 +236,7 @@ export class ZHELL_ANIMATIONS {
       const file = "assets/images/tiles/symbols/holy/hav_draconiz_gold.webp";
       return new Sequence().effect()
         .file(file).duration(2000).atLocation(token).scaleIn(.5, 2000)
-        .size(2.5, { gridUnits: true }).fadeIn(500).fadeOut(500).play();
+        .size(2.5, {gridUnits: true}).fadeIn(500).fadeOut(500).play();
     }
 
     // SPOTLIGHT.
@@ -253,7 +253,7 @@ export class ZHELL_ANIMATIONS {
       if (!token) return;
       const file = "jb2a.smoke.puff.centered.dark_green.1";
       return new Sequence().effect().file(file).atLocation(token, {
-        offset: { x: canvas.grid.size / 3, y: -canvas.grid.size / 4 }
+        offset: {x: canvas.grid.size / 3, y: -canvas.grid.size / 4}
       }).size(canvas.grid.size).play();
     }
 
@@ -271,8 +271,8 @@ export class ZHELL_ANIMATIONS {
       if (!token) return;
       const name = `paladin-aura-${token.document.id}`;
       const file = "jb2a.extras.tmfx.border.circle.outpulse.01.normal";
-      const has = !!Sequencer.EffectManager.getEffects({ name }).length;
-      if (has) return Sequencer.EffectManager.endEffects({ name });
+      const has = !!Sequencer.EffectManager.getEffects({name}).length;
+      if (has) return Sequencer.EffectManager.endEffects({name});
       return new Sequence().effect().attachTo(token).file(file).persist().name(name).tint("#ff7300").play();
     }
   }
@@ -300,7 +300,7 @@ export function _setupCollapsibles() {
 
 // ADD DICE.
 export function _initD20(dice3d) {
-  dice3d.addSystem({ id: "zhell-custom-stuff", name: "The Rollsmith - Package Jam 2022" }, false);
+  dice3d.addSystem({id: "zhell-custom-stuff", name: "The Rollsmith - Package Jam 2022"}, false);
   dice3d.addDicePreset({
     type: "d20",
     labels: "",
@@ -318,36 +318,37 @@ export function _sequencerSetup() {
 export function _classesPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Available Classes") return;
   html[0].querySelectorAll("a.content-link[data-pack='zhell-catalogs.spells']").forEach(s => {
-    const A = document.createElement("A");
-    A.classList.add("spell-desc-toggle");
-    A.setAttribute("data-action", "toggleDescription");
-    A.setAttribute("data-uuid", s.dataset.uuid);
-    A.setAttribute("data-tooltip", "Toggle Details");
-    A.innerHTML = "<i class='fa-solid fa-plus'></i>";
-    s.after(A);
+    const a = document.createElement("A");
+    a.classList.add("spell-desc-toggle");
+    a.setAttribute("data-action", "toggleDescription");
+    a.setAttribute("data-uuid", s.dataset.uuid);
+    a.setAttribute("data-tooltip", "Toggle Details");
+    a.innerHTML = "<i class='fa-solid fa-plus'></i>";
+    a.addEventListener("click", toggleDescription);
+    s.after(a);
   });
 
-  html[0].querySelectorAll("[data-action=toggleDescription]").forEach(a => {
-    a.addEventListener("click", async () => {
-      const uuid = a.dataset.uuid;
-      const shown = html[0].querySelector(`.spell-description[data-uuid='${uuid}']`);
-      if (shown) return shown.remove();
-      const spell = await fromUuid(uuid);
-      const desc = spell.system.description.value;
-      const DIV = document.createElement("DIV");
-      DIV.innerHTML = desc;
-      DIV.classList.add("spell-description");
-      DIV.setAttribute("data-uuid", uuid);
-      a.after(DIV);
-    });
-  });
+  async function toggleDescription(event) {
+    // If found, remove it.
+    const shown = event.currentTarget.parentElement.querySelector(".spell-description");
+    if (shown) return shown.remove();
+    // If not found, create it.
+    const target = event.currentTarget;
+    const uuid = target.dataset.uuid
+    const spell = await fromUuid(uuid);
+    const DIV = document.createElement("DIV");
+    DIV.innerHTML = spell.system.description.value;
+    DIV.classList.add("spell-description");
+    DIV.setAttribute("data-uuid", uuid);
+    target.after(DIV);
+  }
 }
 
 export function _equipmentPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Table Rules") return;
   if (app.object.name !== "Equipment") return;
-  html[0].addEventListener("click", (event) => {
-    event.target.closest(".zhell-equipment-tables :is(h1, h2, h3)")?.classList.toggle("collapsed");
+  html[0].querySelectorAll(".zhell-equipment-tables :is(h1, h2, h3)").forEach(n => {
+    n.addEventListener("click", e => e.currentTarget.classList.toggle("collapsed"));
   });
 }
 
@@ -355,13 +356,13 @@ export function _equipmentPageListeners(app, html) {
 export function _rotateTokensOnMovement(doc, update, options) {
   if (doc.lockRotation || (options.animate === false)) return;
   if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
-  const ray = new Ray(doc, { x: update.x ?? doc.x, y: update.y ?? doc.y });
+  const ray = new Ray(doc, {x: update.x ?? doc.x, y: update.y ?? doc.y});
   update.rotation = ray.angle * 180 / Math.PI - 90;
 }
 
 // draw a circle around a token placeable.
 export function drawCircle(token, radius) {
-  const { x, y } = token.center;
+  const {x, y} = token.center;
   const tokenRadius = Math.abs(token.document.x - x);
   const pixels = radius / canvas.scene.grid.distance * canvas.scene.grid.size + tokenRadius;
   const color = game.user.color.replace("#", "0x");

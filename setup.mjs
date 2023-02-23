@@ -1,11 +1,11 @@
-import { registerSettings } from "./scripts/settings.mjs";
-import { api } from "./scripts/api.mjs";
-import { ZHELL_SOCKETS } from "./scripts/modules/sockets.mjs";
-import { refreshColors, ZHELL_SHEET } from "./scripts/modules/sheet_edits.mjs";
+import {registerSettings} from "./scripts/settings.mjs";
+import {api} from "./scripts/api.mjs";
+import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
+import {refreshColors, ZHELL_SHEET} from "./scripts/modules/sheet_edits.mjs";
 import {
   ZHELL_COMBAT,
   _replaceTokenHUD,
-  _setupCustomButtons,
+  _renderVisualActiveEffects,
   _setupGroupSaves
 } from "./scripts/modules/combatHelpers.mjs";
 import {
@@ -17,7 +17,7 @@ import {
   _sequencerSetup,
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
-import { _craftingCharacterFlag } from "./scripts/modules/crafting.mjs";
+import {_craftingCharacterFlag} from "./scripts/modules/crafting.mjs";
 import {
   _addContextMenuOptions,
   _dropActorFolder,
@@ -39,7 +39,7 @@ import {
   MODULE,
   TRACK_REACTIONS
 } from "./scripts/const.mjs";
-import { EXHAUSTION } from "./scripts/modules/zhell_functions.mjs";
+import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -57,7 +57,7 @@ Hooks.once("ready", ZHELL_SOCKETS.updateTokensSocketOn);
 Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
 Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
-Hooks.once("ready", _setupCustomButtons);
+
 
 Hooks.on("renderItemSheet", _itemStatusCondition);
 Hooks.on("renderActorSheet", ZHELL_SHEET);
@@ -88,6 +88,10 @@ Hooks.once("ready", function() {
     Hooks.on("renderChatMessage", _setupGroupSaves);
     Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
     Hooks.on("dropCanvasData", _dropActorFolder);
+  }
+
+  if (game.modules.get(DEPEND.VAE)?.active) {
+    Hooks.on("renderVisualActiveEffects", _renderVisualActiveEffects);
   }
 
   // hook for various actions are performed to display animations.

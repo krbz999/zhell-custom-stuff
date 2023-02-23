@@ -1,7 +1,7 @@
-import { drawCircle } from "./modules/animations.mjs";
-import { applyDamageToTokens, DM_TOOL } from "./modules/dm_tool.mjs";
-import { ITEMACRO } from "./modules/itemMacros.mjs";
-import { ZHELL_SOCKETS } from "./modules/sockets.mjs";
+import {drawCircle} from "./modules/animations.mjs";
+import {applyDamageToTokens, DM_TOOL} from "./modules/dm_tool.mjs";
+import {ITEMACRO} from "./modules/itemMacros.mjs";
+import {ZHELL_SOCKETS} from "./modules/sockets.mjs";
 import {
   _checkTokenInTemplate,
   _getDocumentFromCompendium,

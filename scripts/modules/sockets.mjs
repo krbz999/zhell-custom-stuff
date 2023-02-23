@@ -1,4 +1,4 @@
-import { imageAnchorDialog } from "./customDialogs.mjs";
+import {imageAnchorDialog} from "./customDialogs.mjs";
 
 export class ZHELL_SOCKETS {
 
@@ -15,7 +15,7 @@ export class ZHELL_SOCKETS {
     if (push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "loadTextureForAll",
-        data: { src }
+        data: {src}
       });
     }
     return loadTexture(src);
@@ -34,7 +34,7 @@ export class ZHELL_SOCKETS {
     if (push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "createTiles",
-        data: { tileData }
+        data: {tileData}
       });
     }
     if (game.user.isGM) {
@@ -55,7 +55,7 @@ export class ZHELL_SOCKETS {
     if (push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "awardLoot",
-        data: { backpackUuid }
+        data: {backpackUuid}
       });
     }
     const a = game.user.character;
@@ -80,7 +80,7 @@ export class ZHELL_SOCKETS {
     if (!game.user.isGM && push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "updateToken",
-        data: { updates }
+        data: {updates}
       });
     }
     else if (game.user.isGM) {
@@ -105,7 +105,7 @@ export class ZHELL_SOCKETS {
     if ((game.user.id !== userId) && push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "grantItems",
-        data: { itemData, tokenId, userId }
+        data: {itemData, tokenId, userId}
       });
     } else {
       return canvas.scene.tokens.get(tokenId).actor.createEmbeddedDocuments("Item", itemData);
@@ -149,7 +149,7 @@ function _getTargetUser(tokenId) {
 
 // select a token from a selection of tokens.
 async function _pickTokenTarget(tokens, itemData) {
-  const top = tokens.map(t => ({ name: t.document.id, src: t.document.texture.src }));
+  const top = tokens.map(t => ({name: t.document.id, src: t.document.texture.src}));
   const title = `Pick Target for ${itemData.name}`;
   const callback = async function(html) {
     const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
@@ -157,5 +157,5 @@ async function _pickTokenTarget(tokens, itemData) {
     ui.notifications.info(`Adding item to ${target.name}!`);
     return ZHELL_SOCKETS.grantItems([itemData], tokenId);
   }
-  return imageAnchorDialog({ top, title, callback });
+  return imageAnchorDialog({top, title, callback});
 }

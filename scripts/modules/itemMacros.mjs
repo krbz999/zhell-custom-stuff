@@ -1,9 +1,9 @@
-import { DEPEND, MODULE } from "../const.mjs";
-import { drawCircle } from "./animations.mjs";
-import { ITEMACRO_BOONS } from "./itemacros/boons.mjs";
-import { ITEMACRO_FEATURES } from "./itemacros/features.mjs";
-import { ITEMACRO_ITEMS } from "./itemacros/items.mjs";
-import { ITEMACRO_SPELLS } from "./itemacros/spells.mjs";
+import {DEPEND, MODULE} from "../const.mjs";
+import {drawCircle} from "./animations.mjs";
+import {ITEMACRO_BOONS} from "./itemacros/boons.mjs";
+import {ITEMACRO_FEATURES} from "./itemacros/features.mjs";
+import {ITEMACRO_ITEMS} from "./itemacros/items.mjs";
+import {ITEMACRO_SPELLS} from "./itemacros/spells.mjs";
 
 // item, speaker, actor, token, character, event, args
 export const ITEMACRO = {
@@ -37,7 +37,7 @@ export function _getDependencies(...moduleIds) {
  * Optionally with a maximum level.
  * Returns a string (possibly of length 0).
  */
-export function _constructSpellSlotOptions(actor, { missing = false, maxLevel = Infinity } = {}) {
+export function _constructSpellSlotOptions(actor, {missing = false, maxLevel = Infinity} = {}) {
   return Object.entries(actor.system.spells).reduce((acc, [key, data]) => {
     if ((missing && (data.value >= data.max)) || (!missing && (data.value <= 0))) return acc;
     if ((data.level > maxLevel) || (key.at(-1) > maxLevel)) return acc;
@@ -54,12 +54,12 @@ export function _constructSpellSlotOptions(actor, { missing = false, maxLevel = 
  * and reverts the light when the effect is deleted or disabled (deleting the effect on disable, too).
  * Returns an array of effect data.
  */
-export function _constructLightEffectData({ item, lightData, intro, flags }) {
-  const config = lightData ?? { dim: 40, bright: 20 };
+export function _constructLightEffectData({item, lightData, intro, flags}) {
+  const config = lightData ?? {dim: 40, bright: 20};
 
   const onCreate = async function() {
     const config = effect.flags.effectmacro?.lightConfig ?? {};
-    return token?.document.update({ light: config });
+    return token?.document.update({light: config});
   }
 
   const onDelete = async function() {
@@ -71,7 +71,7 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
         delete protoData[key];
       }
     }
-    return token?.document.update({ light: protoData });
+    return token?.document.update({light: protoData});
   }
 
   const onDisable = async function() {
@@ -79,13 +79,13 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
     return effect.delete();
   }
 
-  const { value, units } = item.system.duration ?? {};
+  const {value, units} = item.system.duration ?? {};
 
   return [{
     icon: item.img,
     label: item.name,
     origin: item.uuid,
-    duration: { seconds: (value ? value : 1) * (units === "minute" ? 60 : units === "hour" ? 3600 : 1) },
+    duration: {seconds: (value ? value : 1) * (units === "minute" ? 60 : units === "hour" ? 3600 : 1)},
     flags: foundry.utils.mergeObject({
       "visual-active-effects.data": {
         intro: intro ?? "<p>You are lit up!</p>",
@@ -94,11 +94,11 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
       },
       effectmacro: {
         lightConfig: config,
-        onCreate: { script: `(${onCreate.toString()})()` },
-        onDelete: { script: `(${onDelete.toString()})()` },
-        onDisable: { script: `(${onDisable.toString()})()` }
+        onCreate: {script: `(${onCreate.toString()})()`},
+        onDelete: {script: `(${onDelete.toString()})()`},
+        onDisable: {script: `(${onDisable.toString()})()`}
       },
-      core: { statusId: item.name.slugify({ strict: true }) }
+      core: {statusId: item.name.slugify({strict: true})}
     }, flags ?? {})
   }];
 }
@@ -108,18 +108,18 @@ export function _constructLightEffectData({ item, lightData, intro, flags }) {
  * Reverts the array by deleting only what was added, when the effect is deleted.
  * Returns the array of effect data.
  */
-export function _constructDetectionModeEffectData({ modes = [], item }) {
+export function _constructDetectionModeEffectData({modes = [], item}) {
   const onCreate = async function() {
     const modes = effect.flags.effectmacro.data.modes;
     const previousModes = foundry.utils.duplicate(token.document.detectionModes);
     const ids = previousModes.map(m => m.id);
     previousModes.push(...modes.filter(m => !ids.includes(m.id)));
-    return token.document.update({ detectionModes: previousModes.filter(m => m.id !== "basicSight") });
+    return token.document.update({detectionModes: previousModes.filter(m => m.id !== "basicSight")});
   }
 
   const onDelete = async function() {
-    const { detectionModes } = await actor.getTokenDocument();
-    return token.document.update({ detectionModes });
+    const {detectionModes} = await actor.getTokenDocument();
+    return token.document.update({detectionModes});
   }
 
   return [{
@@ -127,7 +127,7 @@ export function _constructDetectionModeEffectData({ modes = [], item }) {
     label: item.name,
     origin: item.uuid,
     duration: _getItemDuration(item),
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.effectmacro": {
       "onCreate.script": `(${onCreate.toString()})()`,
       "onEnable.script": `(${onCreate.toString()})()`,
@@ -143,18 +143,18 @@ export function _constructDetectionModeEffectData({ modes = [], item }) {
  * which does not require concentration.
  * Returns an array of effect data.
  */
-export function _constructGenericEffectData({ item, level = null }) {
+export function _constructGenericEffectData({item, level = null}) {
   const dataLevel = level ? `data-level="${level}"` : "";
   return [{
     label: item.name,
     icon: item.img,
     duration: _getItemDuration(item),
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
       intro: `<p class="zhell-custom-buttons"><a data-type="redisplay" ${dataLevel}>${item.name}</a></p>`,
       content: item.system.description.value
     },
-    [`flags.${MODULE}.itemData`]: item.clone({ "system.level": level }).toObject()
+    [`flags.${MODULE}.itemData`]: item.clone({"system.level": level}).toObject()
   }];
 }
 
@@ -170,14 +170,14 @@ export async function _addTokenDismissalToEffect(effect, tokenId) {
  * Helper function for any teleportation scripts, requiring two jb2a
  * effects (for vanishing and appearing), and the maximum radius.
  */
-export async function _teleportationHelper({ item, actor, token, vanish, appear, distance }) {
+export async function _teleportationHelper({item, actor, token, vanish, appear, distance}) {
   let cachedDistance = 0;
   const checkDistance = async (crosshairs) => {
     while (crosshairs.inFlight) {
       //wait for initial render
       await warpgate.wait(100);
       const ray = new Ray(token.center, crosshairs);
-      const [d] = canvas.grid.measureDistances([{ ray }], { gridSpaces: false });
+      const [d] = canvas.grid.measureDistances([{ray}], {gridSpaces: false});
       const dist = Math.round(d / 5) * 5;
       cachedDistance = dist;
       if (dist > distance) crosshairs.icon = "icons/svg/hazard.svg";
@@ -196,7 +196,7 @@ export async function _teleportationHelper({ item, actor, token, vanish, appear,
       icon: token.document.texture.src,
       label: "0 ft.",
       interval: -1
-    }, { show: checkDistance });
+    }, {show: checkDistance});
     if (pos.cancelled) return pos;
     if (cachedDistance > distance) {
       ui.notifications.error(`${item.name} has a maximum range of ${distance} feet.`);
@@ -205,7 +205,7 @@ export async function _teleportationHelper({ item, actor, token, vanish, appear,
     return pos;
   }
 
-  const { x, y, cancelled } = await _pickTargetLocation();
+  const {x, y, cancelled} = await _pickTargetLocation();
   canvas.app.stage.removeChild(p);
   if (cancelled) return actor.sheet?.maximize();
 
@@ -215,7 +215,7 @@ export async function _teleportationHelper({ item, actor, token, vanish, appear,
     .animation().on(token).opacity(0.0).waitUntilFinished()
     .play();
 
-  await token.document.update({ x: x - canvas.grid.size / 2, y: y - canvas.grid.size / 2 }, { animate: false });
+  await token.document.update({x: x - canvas.grid.size / 2, y: y - canvas.grid.size / 2}, {animate: false});
 
   await new Sequence()
     .effect().file(appear).atLocation(token).randomRotation().scaleToObject(2)
@@ -250,7 +250,7 @@ export function _getSpellLevel(use) {
  * Helper function to create very basic form for a Dialog.
  * Returns a string (the content).
  */
-export function _basicFormContent({ label = "", type = "text", options = "" }) {
+export function _basicFormContent({label = "", type = "text", options = ""}) {
   const lab = label.length ? `<label>${label}</label>` : "";
   const inp = {
     "select": `<select autofocus>${options}</select>`,
@@ -273,24 +273,24 @@ export function _getItemDuration(item) {
   const duration = item.system.duration;
 
   if (!duration?.value) return {};
-  let { value, units } = duration;
+  let {value, units} = duration;
 
   // do not bother for these duration types:
   if (["inst", "perm", "spec"].includes(units)) return {};
 
   // cases for the remaining units of time:
-  if (units === "round") return { rounds: value };
-  if (units === "turn") return { turns: value };
+  if (units === "round") return {rounds: value};
+  if (units === "turn") return {turns: value};
   value *= 60;
-  if (units === "minute") return { seconds: value };
+  if (units === "minute") return {seconds: value};
   value *= 60;
-  if (units === "hour") return { seconds: value };
+  if (units === "hour") return {seconds: value};
   value *= 24;
-  if (units === "day") return { seconds: value };
+  if (units === "day") return {seconds: value};
   value *= 30;
-  if (units === "month") return { seconds: value };
+  if (units === "month") return {seconds: value};
   value *= 12;
-  if (units === "year") return { seconds: value };
+  if (units === "year") return {seconds: value};
 
   return {};
 }
@@ -302,6 +302,6 @@ export function _bladeCantripDamageBonus(item) {
   const [part, type] = item.system.damage.parts[0];
   const level = item.parent.system.details.level ?? Math.floor(item.parent.system.details.cr);
   const add = Math.floor((level + 1) / 6);
-  const { formula } = new Roll(part).alter(0, add);
-  return { formula, type };
+  const {formula} = new Roll(part).alter(0, add);
+  return {formula, type};
 }

@@ -10,7 +10,7 @@ import {
   TRACK_REACTIONS,
   WORLD_DEFAULTS
 } from "./const.mjs";
-import { refreshColors } from "./modules/sheet_edits.mjs";
+import {refreshColors} from "./modules/sheet_edits.mjs";
 
 export function registerSettings() {
   _registerSettings();
@@ -71,7 +71,7 @@ function _registerSettingsMenus() {
     config: false,
     type: Object,
     default: WORLD_DEFAULTS,
-    onChange: () => SettingsConfig.reloadConfirm({ world: true })
+    onChange: () => SettingsConfig.reloadConfirm({world: true})
   });
 
   game.settings.registerMenu(MODULE, "worldSettings", {
@@ -135,14 +135,14 @@ class SettingsSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    return game.settings.set(MODULE, "worldSettings", formData, { diff: false });
+    return game.settings.set(MODULE, "worldSettings", formData, {diff: false});
   }
 
   async getData() {
     const data = foundry.utils.mergeObject(
       WORLD_DEFAULTS,
       game.settings.get(MODULE, "worldSettings"),
-      { insertKeys: false }
+      {insertKeys: false}
     );
     const settings = Object.entries(data).map(s => {
       return {
@@ -152,7 +152,7 @@ class SettingsSubmenu extends FormApplication {
         hint: `ZHELL.SettingsWorld${s[0].capitalize()}Hint`
       }
     });
-    return { settings };
+    return {settings};
   }
 }
 
@@ -171,14 +171,14 @@ class ColorPickerSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    return game.settings.set(MODULE, COLOR, formData, { diff: false });
+    return game.settings.set(MODULE, COLOR, formData, {diff: false});
   }
 
   async getData() {
     const data = foundry.utils.mergeObject(
       foundry.utils.duplicate(COLOR_DEFAULTS),
       game.settings.get(MODULE, COLOR),
-      { insertKeys: false }
+      {insertKeys: false}
     );
     const checks = Object.entries({
       showLimitedUses: data.showLimitedUses,
@@ -202,7 +202,7 @@ class ColorPickerSubmenu extends FormApplication {
         hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
       }
     });
-    return { checks, colors };
+    return {checks, colors};
   }
 }
 
@@ -221,7 +221,7 @@ class RarityColorsSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, RARITY, formData, { diff: false });
+    const set = await game.settings.set(MODULE, RARITY, formData, {diff: false});
     refreshColors();
     return set;
   }
@@ -231,12 +231,12 @@ class RarityColorsSubmenu extends FormApplication {
       settings: Object.entries(foundry.utils.mergeObject(
         RARITY_DEFAULTS,
         game.settings.get(MODULE, RARITY),
-        { insertKeys: false }
+        {insertKeys: false}
       )).map(d => {
         const label = CONFIG.DND5E.itemRarity[d[0]].titleCase();
         const name = d[0];
         const color = d[1];
-        return { label, name, color };
+        return {label, name, color};
       })
     };
   }

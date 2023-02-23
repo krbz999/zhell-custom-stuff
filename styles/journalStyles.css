@@ -83,7 +83,8 @@ img.zhell-holy-symbol {
 img.zhell-holy-symbol:hover {
   transform: scale(1.3);
   transition: 0.3s;
-  filter: drop-shadow(0 0 10px red) !important; /* for unchosen gods */
+  filter: drop-shadow(0 0 10px red) !important;
+  /* for unchosen gods */
 }
 
 img.zhell-holy-symbol.draconiz:hover {

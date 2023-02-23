@@ -1,5 +1,5 @@
-import { MODULE } from "../const.mjs";
-import { SPELL_EFFECTS, STATUS_EFFECTS } from "../../sources/conditions.mjs";
+import {MODULE} from "../const.mjs";
+import {SPELL_EFFECTS, STATUS_EFFECTS} from "../../sources/conditions.mjs";
 
 // hooks on setup.
 export function _setUpGameChanges() {
@@ -16,25 +16,25 @@ export function _setUpGameChanges() {
 }
 
 function _addEquipment() {
-  const toAdd = { wand: "Wand" };
+  const toAdd = {wand: "Wand"};
   foundry.utils.mergeObject(CONFIG.DND5E.equipmentTypes, toAdd);
   foundry.utils.mergeObject(CONFIG.DND5E.miscEquipmentTypes, toAdd);
 }
 
 function _addDivine() {
-  const toAdd = { divine: "Divine" };
+  const toAdd = {divine: "Divine"};
   foundry.utils.mergeObject(CONFIG.DND5E.spellSchools, toAdd);
 }
 
 function _addConditions() {
-  const toAdd = { turned: "Turned" };
+  const toAdd = {turned: "Turned"};
   foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, toAdd);
 }
 
 function _addPiety() {
   CONFIG.DND5E.abilities["pty"] = "Piety";
   CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
-  CONFIG.DND5E.featureTypes.boon = { label: "Divine Boon" };
+  CONFIG.DND5E.featureTypes.boon = {label: "Divine Boon"};
 }
 
 function _consumables() {
@@ -219,14 +219,14 @@ export function _visionModes() {
     label: "VISION.ModeDarkvision",
     canvas: {
       shader: ColorAdjustmentsSamplerShader,
-      uniforms: { enable: true, contrast: 0, saturation: -1.0, brightness: 0 },
+      uniforms: {enable: true, contrast: 0, saturation: -1.0, brightness: 0},
     },
     lighting: {
-      background: { visibility: VisionMode.LIGHTING_VISIBILITY.REQUIRED },
+      background: {visibility: VisionMode.LIGHTING_VISIBILITY.REQUIRED},
     },
     vision: {
-      darkness: { adaptive: true },
-      defaults: { contrast: 0, saturation: -1.0, brightness: 0.65 },
+      darkness: {adaptive: true},
+      defaults: {contrast: 0, saturation: -1.0, brightness: 0.65},
     },
   });
 }
@@ -241,7 +241,7 @@ export async function _restItemDeletion(actor, data) {
   await actor.deleteEmbeddedDocuments("Item", ids);
   return ChatMessage.create({
     content: `${actor.name}'s experimental elixirs evaporated.`,
-    speaker: ChatMessage.getSpeaker({ actor })
+    speaker: ChatMessage.getSpeaker({actor})
   });
 }
 
@@ -262,7 +262,7 @@ export async function _dropActorFolder(canvas, data) {
   if (data.type !== "Folder" || data.documentName !== "Actor") return;
   const folder = await fromUuid(data.uuid);
   const [x, y] = canvas.grid.getTopLeft(data.x, data.y);
-  const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({ x, y })));
+  const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
   return canvas.scene.createEmbeddedDocuments("Token", tokenData);
 }
 
@@ -278,7 +278,7 @@ function _moveItemToSharedInventory(item, array) {
   const inventory = game.actors.filter(a => {
     return a.isOwner && a.type === "group" && a !== item.actor;
   });
-  for(const inv of inventory){
+  for (const inv of inventory) {
     array.push({
       icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
       name: `Move to ${inv.name}`,
@@ -347,7 +347,7 @@ export async function _itemStatusCondition(sheet, html) {
         }
       },
       default: "ok"
-    }, { id });
+    }, {id});
     if (!effId) return;
     const eff = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === effId));
     const data = foundry.utils.mergeObject(eff, {

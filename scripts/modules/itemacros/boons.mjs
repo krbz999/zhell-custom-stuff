@@ -1,5 +1,5 @@
-import { DEPEND, MODULE } from "../../const.mjs";
-import { imageAnchorDialog } from "../customDialogs.mjs";
+import {DEPEND, MODULE} from "../../const.mjs";
+import {imageAnchorDialog} from "../customDialogs.mjs";
 import {
   _basicFormContent,
   _getDependencies
@@ -42,11 +42,11 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
   }).render(true);
 
   async function extend(_, event) {
-    const test = await actor.rollAbilityTest("con", { event, targetValue: currentDC });
+    const test = await actor.rollAbilityTest("con", {event, targetValue: currentDC});
     if (!test) return;
     if (test.total < currentDC) return isConc.delete();
     else {
-      await ChatMessage.create({ speaker, content: `${actor.name} extends ${item.name} by another round.` });
+      await ChatMessage.create({speaker, content: `${actor.name} extends ${item.name} by another round.`});
       return isConc.update({
         "duration.rounds": isConc.duration.rounds + 1,
         "flags.world.goodhunter": currentDC + 1
@@ -75,14 +75,14 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
             const value = html[0].querySelector("#goodhunter-damage-taken").valueAsNumber;
             await isConc.delete();
             await actor.applyDamage(value);
-            return ChatMessage.create({ speaker, content: `${actor.name} took the ${value} damage.` });
+            return ChatMessage.create({speaker, content: `${actor.name} took the ${value} damage.`});
           }
         }
       },
       render: (html) => {
         const hdBtn = html[0].querySelector("#goodhunter-hit-die");
         hdBtn.addEventListener("click", async () => {
-          await actor.rollHitDie(undefined, { dialog: false });
+          await actor.rollHitDie(undefined, {dialog: false});
           hdBtn.disabled = true;
         });
       }
@@ -103,7 +103,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
   }).reduce((acc, spell) => {
     return acc + `<option value="${spell.id}">[${spell.system.level}] ${spell.name}</option>`;
   }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
-  const template = _basicFormContent({ label: "Spell:", type: "select", options });
+  const template = _basicFormContent({label: "Spell:", type: "select", options});
 
   const dialog = new Dialog({
     content: `
@@ -127,7 +127,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
           const scrollData = [];
           const path = "flags.concentrationnotifier.data.requiresConcentration";
 
-          for (const { value } of html[0].querySelectorAll("select")) {
+          for (const {value} of html[0].querySelectorAll("select")) {
             if (!value) continue;
             const spell = actor.items.get(value);
             if (!spell) continue;
@@ -139,23 +139,20 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
             scrollData.push(itemData);
           }
 
-          const use = await item.use({}, { configureDialog: false });
+          const use = await item.use({}, {configureDialog: false});
           if (!use) return;
           const add = await actor.createEmbeddedDocuments("Item", scrollData);
-          return ChatMessage.create({ speaker, content: `Created ${add.length} scrolls of Murk.` });
+          return ChatMessage.create({speaker, content: `Created ${add.length} scrolls of Murk.`});
         }
       }
     },
     render: async (html) => {
       const tracker = html[0].querySelector("#levelTrack");
       const form = html[0].querySelector("[name='murk-scroll-boon']");
-
-      html[0].addEventListener("click", (event) => {
-        const button = event.target.closest("button");
-        if (button?.name !== "add-new-row") return;
+      html[0].querySelector("button[name='add-new-row']").addEventListener("click", function() {
         const div = document.createElement("DIV");
         div.innerHTML = template;
-        form.appendChild(div.children[0]);
+        form.append(...div.children);
         dialog.setPosition();
       });
 
@@ -171,7 +168,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
         tracker.setAttribute("data-total", total);
       });
     }
-  }).render(true, { height: "auto" });
+  }).render(true, {height: "auto"});
 }
 
 async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args) {
@@ -181,7 +178,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   if (!use) return;
 
   const onCreate = async function() {
-    const easing = function(pt) { return 1 - cos((pt * Math.PI) / 2); }
+    const easing = function(pt) {return 1 - cos((pt * Math.PI) / 2);}
     await Sequencer.Preloader.preload([
       "jb2a.token_border.circle.static.blue.004",
       "jb2a.lightning_strike.blue.5"
@@ -194,7 +191,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
       .wait(1000)
       .play();
 
-    await token.document.update({ width: 2, height: 2 }, { animation: { duration: 500, easing } });
+    await token.document.update({width: 2, height: 2}, {animation: {duration: 500, easing}});
 
     return new Sequence()
       .wait(500)
@@ -204,9 +201,9 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   }
 
   const onDelete = async function() {
-    const easing = function(pt) { return 1 - cos((pt * Math.PI) / 2); }
-    await Sequencer.EffectManager.endEffects({ name: "Show of Force" });
-    await token.document.update({ height: 1, width: 1 }, { animation: { duration: 500, easing } });
+    const easing = function(pt) {return 1 - cos((pt * Math.PI) / 2);}
+    await Sequencer.EffectManager.endEffects({name: "Show of Force"});
+    await token.document.update({height: 1, width: 1}, {animation: {duration: 500, easing}});
   }
 
   const onDisable = async function() {
@@ -218,24 +215,24 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   const effectData = [{
     icon: item.img,
     label: item.name,
-    duration: { seconds: 60 },
+    duration: {seconds: 60},
     origin: item.uuid,
     flags: {
-      "core.statusId": item.name.slugify({ strict: true }),
+      "core.statusId": item.name.slugify({strict: true}),
       "visual-active-effects.data": {
         intro: "<p>Your size is increased to Large, your movement speed increases by 10 feet, you deal an additional <strong>1d4</strong> damage with melee weapons, and your melee weapon attacks are critical hits on a roll of 19 or 20.</p>"
       },
       effectmacro: {
-        onCreate: { script: `(${onCreate.toString()})()` },
-        onDelete: { script: `(${onDelete.toString()})()` },
-        onDisable: { script: `(${onDisable.toString()})()` }
+        onCreate: {script: `(${onCreate.toString()})()`},
+        onDelete: {script: `(${onDelete.toString()})()`},
+        onDisable: {script: `(${onDisable.toString()})()`}
       }
     },
     changes: [
-      { key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10 },
-      { key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" },
-      { key: "flags.dnd5e.weaponCriticalThreshold", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: 19 },
-      { key: "system.traits.size", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "lg" },
+      {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10},
+      {key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"},
+      {key: "flags.dnd5e.weaponCriticalThreshold", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: 19},
+      {key: "system.traits.size", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "lg"},
     ]
   }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
@@ -262,7 +259,7 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
     else content += `<p>Their ${name} score is highest.</p>`;
   }
   const whisper = ChatMessage.getWhisperRecipients("GM");
-  return ChatMessage.create({ content, speaker, whisper });
+  return ChatMessage.create({content, speaker, whisper});
 }
 
 async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event, args) {
@@ -294,7 +291,7 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
   async function startEffect() {
     const use = await item.use();
     if (!use) return;
-    const effect = await CN.waitForConcentrationStart(actor, { item, max_wait: 1000 });
+    const effect = await CN.waitForConcentrationStart(actor, {item, max_wait: 1000});
     if (!effect) return;
     await Sequencer.Preloader.preload([file1, file2]);
 
@@ -334,7 +331,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       "dog",
       "octopus",
       "raccoon"
-    ].map(n => ({ name: n, src: `${prefix}${n}.webp` })),
+    ].map(n => ({name: n, src: `${prefix}${n}.webp`})),
     bottom: [
       "crow",
       "frog",
@@ -342,49 +339,49 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       "rat",
       "sandpiper",
       "seagull"
-    ].map(n => ({ name: n, src: `${prefix}${n}.webp` }))
+    ].map(n => ({name: n, src: `${prefix}${n}.webp`}))
   }
 
   // get whether the actor has a mutation.
   const hasMutation = await warpgate.mutationStack(token.document).getName(item.name);
   if (hasMutation) return ui.notifications.info("You are already transformed.");
 
-  await Promise.all([...data.top, ...data.bottom].map(({ src }) => loadTexture(src)));
+  await Promise.all([...data.top, ...data.bottom].map(({src}) => loadTexture(src)));
   const use = await item.use();
   if (!use) return;
-  return imageAnchorDialog({ title: item.name, ...data, label: "Show us the meaning of haste!", callback: _onMutate });
+  return imageAnchorDialog({title: item.name, ...data, label: "Show us the meaning of haste!", callback: _onMutate});
 
   function _generateUpdateObjects(nameSteed, nameShape) {
     // movement speeds.
     const shapeMovement = {
-      crow: { walk: 10, fly: 50, swim: 0, climb: 0 },
-      frog: { walk: 20, fly: 0, swim: 20, climb: 0 },
-      lizard: { walk: 20, fly: 0, swim: 0, climb: 20 },
-      rat: { walk: 20, fly: 0, swim: 0, climb: 0 },
-      sandpiper: { walk: 40, fly: 30, swim: 10, climb: 0 },
-      seagull: { walk: 10, fly: 30, swim: 20, climb: 0 }
+      crow: {walk: 10, fly: 50, swim: 0, climb: 0},
+      frog: {walk: 20, fly: 0, swim: 20, climb: 0},
+      lizard: {walk: 20, fly: 0, swim: 0, climb: 20},
+      rat: {walk: 20, fly: 0, swim: 0, climb: 0},
+      sandpiper: {walk: 40, fly: 30, swim: 10, climb: 0},
+      seagull: {walk: 10, fly: 30, swim: 20, climb: 0}
     }
     const steedMovement = {
-      dog: { walk: 60, fly: 0, swim: 0, climb: 0 },
-      octopus: { walk: 5, fly: 0, swim: 30, climb: 5 },
-      raccoon: { walk: 30, fly: 0, swim: 0, climb: 20 }
+      dog: {walk: 60, fly: 0, swim: 0, climb: 0},
+      octopus: {walk: 5, fly: 0, swim: 30, climb: 5},
+      raccoon: {walk: 30, fly: 0, swim: 0, climb: 20}
     }
     // updates to the shape and steed that are constant no matter the choice.
     const constantShape = {
       actor: {
-        "system.attributes.hp": { value: 4, max: 4 },
-        "system.attributes.ac": { calc: "natural", flat: 12 },
+        "system.attributes.hp": {value: 4, max: 4},
+        "system.attributes.ac": {calc: "natural", flat: 12},
         "system.traits.size": "tiny",
-        "system.abilities": { "str.value": 2, "dex.value": 14, "con.value": 10 }
+        "system.abilities": {"str.value": 2, "dex.value": 14, "con.value": 10}
       },
-      token: { width: 0.5, height: 0.5 }
+      token: {width: 0.5, height: 0.5}
     }
     const constantSteed = {
       token: {
         alpha: 0,
         displayName: CONST.TOKEN_DISPLAY_MODES.NONE,
         displayBars: CONST.TOKEN_DISPLAY_MODES.NONE,
-        flags: { world: { findFriend: actor.id } }
+        flags: {world: {findFriend: actor.id}}
       }
     }
     // the items that the steed should NOT have.
@@ -428,7 +425,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       "actor.img": prefix + nameShape + ".webp"
     }, constantShape);
 
-    return { updatesSteed, updatesShape };
+    return {updatesSteed, updatesShape};
   }
 
   async function _onMutate(html) {
@@ -436,46 +433,46 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     const steedA = html[0].querySelector(".image-selector .top-selection a.active");
     const shapeA = html[0].querySelector(".image-selector .bottom-selection a.active");
 
-    const { name: nameSteed } = steedA.dataset;
-    const { name: nameShape } = shapeA.dataset;
+    const {name: nameSteed} = steedA.dataset;
+    const {name: nameShape} = shapeA.dataset;
 
     // pick position.
     await actor.sheet?.minimize();
-    const { x, y, cancelled } = await warpgate.crosshairs.show({ drawIcon: false });
+    const {x, y, cancelled} = await warpgate.crosshairs.show({drawIcon: false});
     if (cancelled) return actor.sheet?.maximize();
 
     // construct updates.
-    const { updatesShape, updatesSteed } = _generateUpdateObjects(nameSteed, nameShape);
+    const {updatesShape, updatesSteed} = _generateUpdateObjects(nameSteed, nameShape);
 
     // spawn steed at:
-    const location = { x, y: y - canvas.grid.size }
+    const location = {x, y: y - canvas.grid.size}
     const [steedId] = await warpgate.spawnAt(location, "Find Friend", updatesSteed);
 
     // steed effects
     await new Sequence()
       .effect()
       .file(assets[0]).atLocation(location).duration(3000).elevation(-1).snapToGrid().scale(0)
-      .animateProperty("sprite", "scale.x", { from: 0, to: 1, delay: 200, duration: 500, ease: "easeInOutCubic" })
-      .animateProperty("sprite", "scale.y", { from: 0, to: 1, duration: 700, ease: "easeInOutCubic" })
-      .animateProperty("sprite", "scale.x", { from: 1, to: 0, delay: 2500, duration: 500, ease: "easeInElastic" })
-      .animateProperty("sprite", "scale.y", { from: 1, to: 0, delay: 2300, duration: 700, ease: "easeInElastic" })
+      .animateProperty("sprite", "scale.x", {from: 0, to: 1, delay: 200, duration: 500, ease: "easeInOutCubic"})
+      .animateProperty("sprite", "scale.y", {from: 0, to: 1, duration: 700, ease: "easeInOutCubic"})
+      .animateProperty("sprite", "scale.x", {from: 1, to: 0, delay: 2500, duration: 500, ease: "easeInElastic"})
+      .animateProperty("sprite", "scale.y", {from: 1, to: 0, delay: 2300, duration: 700, ease: "easeInElastic"})
       .effect()
-      .delay(3000).file(assets[1]).atLocation(location).snapToGrid().scale({ x: 0.2, y: 0.2 })
+      .delay(3000).file(assets[1]).atLocation(location).snapToGrid().scale({x: 0.2, y: 0.2})
       .animation()
-      .delay(1000).on(steedId).opacity(1.0).fadeIn(200).moveTowards({ x, y }).duration(200).snapToGrid().waitUntilFinished()
+      .delay(1000).on(steedId).opacity(1.0).fadeIn(200).moveTowards({x, y}).duration(200).snapToGrid().waitUntilFinished()
       .effect()
       .attachTo(steedId).file(assets[2]).scale(0.5)
       .effect()
       .file(assets[3]).attachTo(token).size(canvas.grid.size).waitUntilFinished(-2000)
       .play();
-    await warpgate.mutate(token.document, updatesShape, {}, { name: item.name });
+    await warpgate.mutate(token.document, updatesShape, {}, {name: item.name});
     await actor.sheet?.maximize();
     return actor.createEmbeddedDocuments("ActiveEffect", [{
       icon: item.img,
       label: item.name,
       origin: actor.uuid,
-      duration: { seconds: actor.system.attributes.prof * 60 * 60 },
-      "flags.core.statusId": item.name.slugify({ strict: true }),
+      duration: {seconds: actor.system.attributes.prof * 60 * 60},
+      "flags.core.statusId": item.name.slugify({strict: true}),
       "flags.visual-active-effects.data": {
         intro: "<p>You are transformed using Find Friend.</p>",
         content: item.system.description.value
@@ -525,10 +522,10 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
       label: item.name,
       icon: item.img,
       origin: item.uuid,
-      duration: { seconds: 60 },
-      changes: [{ key: "flags.dnd5e.concentrationBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+2" }],
+      duration: {seconds: 60},
+      changes: [{key: "flags.dnd5e.concentrationBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+2"}],
       flags: {
-        core: { statusId: item.name.slugify({ strict: true }) },
+        core: {statusId: item.name.slugify({strict: true})},
         "visual-active-effects.data": {
           forceInclude: true,
           intro: `<p>You have assumed the form of Yebraztos the Scrollkeeper.</p>${buttons}`,
@@ -540,21 +537,21 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
             type: "feat",
             img: "icons/magic/fire/beam-jet-stream-embers.webp",
             system: {
-              description: { value: item.system.description.value },
-              activation: { type: "bonus", cost: 1 },
-              duration: { units: "inst" },
-              target: { value: 1, type: "creature" },
-              range: { value: 60, units: "ft" },
+              description: {value: item.system.description.value},
+              activation: {type: "bonus", cost: 1},
+              duration: {units: "inst"},
+              target: {value: 1, type: "creature"},
+              range: {value: 60, units: "ft"},
               ability: "wis",
               actionType: "rsak",
-              damage: { parts: [["2d8 + @mod", type]] }
+              damage: {parts: [["2d8 + @mod", type]]}
             }
           }
         }
       }
     }];
     const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
-    const color = { necrotic: "purple", fire: "orange" }[type];
+    const color = {necrotic: "purple", fire: "orange"}[type];
     const file = `jb2a.token_border.circle.spinning.${color}.006`;
     return new Sequence().effect().file(file).attachTo(token).scaleToObject(2).tieToDocuments(effect).persist().fadeIn(500).fadeOut(500).play();
   }

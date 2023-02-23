@@ -1,7 +1,7 @@
-import { DEPEND, MODULE } from "../../const.mjs";
-import { drawCircle } from "../animations.mjs";
-import { _redisplayItem } from "../combatHelpers.mjs";
-import { elementalDialog, imageAnchorDialog } from "../customDialogs.mjs";
+import {DEPEND, MODULE} from "../../const.mjs";
+import {drawCircle} from "../animations.mjs";
+import {_redisplayItem} from "../combatHelpers.mjs";
+import {elementalDialog, imageAnchorDialog} from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
   _basicFormContent,
@@ -53,8 +53,8 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
   const use = await item.use();
   if (!use) return;
 
-  const updates = { token: { name: `${actor.name.split(" ")[0]}'s Flaming Sphere` } }
-  const options = { crosshairs: { drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1 } };
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Flaming Sphere`}}
+  const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
   await actor.sheet?.minimize();
@@ -68,7 +68,7 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
 async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify({ strict: true });
+    return e.flags.core?.statusId === item.name.slugify({strict: true});
   });
   if (isActive) {
     const level = isActive.flags[MODULE].spellLevel;
@@ -78,11 +78,11 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
   const use = await item.use();
   if (!use) return;
   const level = _getSpellLevel(use);
-  const effectData = _constructGenericEffectData({ item, level });
+  const effectData = _constructGenericEffectData({item, level});
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
 
-  const updates = { token: { name: `${actor.name.split(" ")[0]}'s Spiritual Weapon` } }
-  const options = { crosshairs: { drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1 } };
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Spiritual Weapon`}}
+  const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
   await actor.sheet?.minimize();
@@ -101,7 +101,7 @@ async function MISTY_STEP(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
 
-  return _teleportationHelper({ item, actor, token, vanish, appear, distance });
+  return _teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function THUNDER_STEP(item, speaker, actor, token, character, event, args) {
@@ -113,7 +113,7 @@ async function THUNDER_STEP(item, speaker, actor, token, character, event, args)
   const use = await item.use();
   if (!use) return;
 
-  return _teleportationHelper({ item, actor, token, vanish, appear, distance });
+  return _teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function FAR_STEP(item, speaker, actor, token, character, event, args) {
@@ -129,7 +129,7 @@ async function FAR_STEP(item, speaker, actor, token, character, event, args) {
     if (!use) return;
   }
 
-  return _teleportationHelper({ item, actor, token, vanish, appear, distance });
+  return _teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args) {
@@ -166,10 +166,10 @@ async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args
     const value = `+${Math.ceil(level / 2) - 1}d8[${type}]`;
     const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
     const changes = [
-      { key: "system.bonuses.mwak.damage", mode, value },
-      { key: "system.bonuses.msak.damage", mode, value }
+      {key: "system.bonuses.mwak.damage", mode, value},
+      {key: "system.bonuses.msak.damage", mode, value}
     ];
-    return effect.update({ changes });
+    return effect.update({changes});
   }
 }
 
@@ -200,15 +200,15 @@ async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, ar
     const value = `+${level}d6[${s}]`;
     const effectData = [{
       changes: [
-        { key: "system.traits.dr.value", mode, value: s },
-        { key: "system.bonuses.mwak.damage", mode, value },
-        { key: "system.bonuses.msak.damage", mode, value }
+        {key: "system.traits.dr.value", mode, value: s},
+        {key: "system.bonuses.mwak.damage", mode, value},
+        {key: "system.bonuses.msak.damage", mode, value}
       ],
       icon: item.img,
       label: item.name,
       origin: item.uuid,
-      duration: { rounds: 1 },
-      "flags.core.statusId": item.name.slugify({ strict: true }),
+      duration: {rounds: 1},
+      "flags.core.statusId": item.name.slugify({strict: true}),
       "flags.visual-active-effects.data": {
         intro: `<p>You have ${s} resistance and deal ${level}d6 additional ${s} damage on your first melee attack before this effect expires.</p>`,
         content: item.system.description.value
@@ -229,7 +229,7 @@ async function CALL_LIGHTNING(item, speaker, actor, token, character, event, arg
 
   async function lightningStrike() {
     const template = dnd5e.canvas.AbilityTemplate.fromItem(item);
-    template.document.updateSource({ distance: 5 });
+    template.document.updateSource({distance: 5});
     return template.drawPreview();
   }
 }
@@ -238,7 +238,7 @@ async function BREATH_WEAPON(item, speaker, actor, token, character, event, args
   const options = [["cone", "Cone (30ft)"], ["line", "Line (60ft)"]].reduce((acc, e) => {
     return acc + `<option value="${e[0]}">${e[1]}</option>`;
   }, "");
-  const content = _basicFormContent({ label: "Template Type:", type: "select", options });
+  const content = _basicFormContent({label: "Template Type:", type: "select", options});
 
   const template = await Dialog.prompt({
     title: item.name,
@@ -274,11 +274,11 @@ async function BREATH_WEAPON(item, speaker, actor, token, character, event, args
   if (!type) return;
 
   const file = breaths[template][type];
-  await item.setFlag(MODULE, "breathWeapon", { type: file, template });
-  const target = template === "line" ? { value: 60, units: "ft", type: template, width: 5 } : { value: 30, units: "ft", type: template, width: "" };
-  const clone = item.clone({ "system.target": target }, { keepId: true });
+  await item.setFlag(MODULE, "breathWeapon", {type: file, template});
+  const target = template === "line" ? {value: 60, units: "ft", type: template, width: 5} : {value: 30, units: "ft", type: template, width: ""};
+  const clone = item.clone({"system.target": target}, {keepId: true});
   clone.prepareFinalAttributes();
-  return clone.use({}, { "flags.dnd5e.itemData": clone.toObject() });
+  return clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
 }
 
 async function FATHOMLESS_EVARDS_BLACK_TENTACLES(item, speaker, actor, token, character, event, args) {
@@ -296,8 +296,8 @@ async function MOONBEAM(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
 
-  const updates = { token: { name: `${actor.name.split(" ")[0]}'s Moonbeam` } }
-  const options = { crosshairs: { drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1 } };
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Moonbeam`}}
+  const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
   await actor.sheet?.minimize();
@@ -358,17 +358,17 @@ async function SHIELD(item, speaker, actor, token, character, event, args) {
   if (!use) return;
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
-    changes: [{ key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 }],
+    changes: [{key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5}],
     icon: item.img,
     label: item.name,
     origin: item.uuid,
-    duration: { rounds: 1 },
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    duration: {rounds: 1},
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
       intro: "<p>You have a +5 bonus to your AC and immunity to damage from the Magic Missile spell.</p>",
       content: item.system.description.value
     },
-    "flags.effectmacro.onTurnStart.script": `(${function() { return effect.delete(); }})()`
+    "flags.effectmacro.onTurnStart.script": `(${function() {return effect.delete();}})()`
   }]);
 }
 
@@ -378,20 +378,20 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
   let effect = CN.isActorConcentratingOnItem(actor, item);
 
   const colors = [
-    { color: "red", text: "The target takes an additional 3d8 fire damage." },
-    { color: "orange", text: "The target takes an additional 3d8 acid damage." },
-    { color: "yellow", text: "The target takes an additional 3d8 lightning damage." },
-    { color: "green", text: "The target takes an additional 3d8 poison damage." },
-    { color: "blue", text: "The target takes an additional 3d8 cold damage." },
-    { color: "indigo", text: "The target is paralyzed. It can make a Constitution saving throw at the end of each of its turns, ending the paralyzed condition on a success." },
-    { color: "violet", text: "The target is blinded. It must then make a Wisdom saving throw at the start of your next turn. A successful save ends the blinded condition. If it fails that save, the creature is transported to another plane of existence of the GM's choosing and is no longer blinded. (Typically, a creature that is on a plane that is not its home plane is banished home, while other creatures are usually cast into the Astral or Ethereal Planes.)" }
+    {color: "red", text: "The target takes an additional 3d8 fire damage."},
+    {color: "orange", text: "The target takes an additional 3d8 acid damage."},
+    {color: "yellow", text: "The target takes an additional 3d8 lightning damage."},
+    {color: "green", text: "The target takes an additional 3d8 poison damage."},
+    {color: "blue", text: "The target takes an additional 3d8 cold damage."},
+    {color: "indigo", text: "The target is paralyzed. It can make a Constitution saving throw at the end of each of its turns, ending the paralyzed condition on a success."},
+    {color: "violet", text: "The target is blinded. It must then make a Wisdom saving throw at the start of your next turn. A successful save ends the blinded condition. If it fails that save, the creature is transported to another plane of existence of the GM's choosing and is no longer blinded. (Typically, a creature that is on a plane that is not its home plane is banished home, while other creatures are usually cast into the Astral or Ethereal Planes.)"}
   ];
 
   // if not concentrating, cast the spell.
   if (!effect) {
-    const use = await item.use({}, { createMessage: false });
+    const use = await item.use({}, {createMessage: false});
     if (!use) return;
-    effect = await CN.waitForConcentrationStart(actor, { item, max_wait: 1000 });
+    effect = await CN.waitForConcentrationStart(actor, {item, max_wait: 1000});
     if (!effect) return;
   }
   return chooseArrow();
@@ -417,20 +417,18 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 
     return Dialog.prompt({
       title: item.name,
-      content: _basicFormContent({ label: "Select arrow:", type: "select", options }) + "<p id='arrow-desc'></p>",
+      content: _basicFormContent({label: "Select arrow:", type: "select", options}) + "<p id='arrow-desc'></p>",
       rejectClose: false,
       label: "Shoot!",
       callback: async (html) => {
         const arrow = html[0].querySelector("select").value;
         return shootArrow(arrow);
       },
-      options: { classes: ["dialog", "auto-height-dialog"] },
+      options: {classes: ["dialog", "auto-height-dialog"]},
       render: (html) => {
-        const s = html[0].querySelector("select");
         const p = html[0].querySelector("#arrow-desc");
-        s.addEventListener("change", function() {
-          const d = colors.find(c => c.color === s.value);
-          p.innerText = d.text;
+        html[0].querySelector("select").addEventListener("change", function(event) {
+          p.innerText = colors.find(c => c.color === event.currentTarget.value).text;
         });
       }
     });
@@ -438,18 +436,18 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 
   // create item clone.
   async function shootArrow(arrow) {
-    const groups = [{ label: "Force", parts: [0] }];
+    const groups = [{label: "Force", parts: [0]}];
 
     const addGroup = {
-      red: { label: "Fire", parts: [1] },
-      orange: { label: "Acid", parts: [2] },
-      yellow: { label: "Lightning", parts: [3] },
-      green: { label: "Poison", parts: [4] },
-      blue: { label: "Cold", parts: [5] }
+      red: {label: "Fire", parts: [1]},
+      orange: {label: "Acid", parts: [2]},
+      yellow: {label: "Lightning", parts: [3]},
+      green: {label: "Poison", parts: [4]},
+      blue: {label: "Cold", parts: [5]}
     }[arrow] ?? false;
     if (addGroup) groups.push(addGroup);
 
-    const addSave = { indigo: "con", violet: "wis" }[arrow] ?? false;
+    const addSave = {indigo: "con", violet: "wis"}[arrow] ?? false;
 
     await effect.setFlag(DEPEND.CN, "data", {
       "itemData.flags.rollgroups.config.groups": groups
@@ -468,9 +466,9 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
       const newSaveButton = document.createElement("button");
       newSaveButton.setAttribute("data-action", "save");
       newSaveButton.setAttribute("data-ability", addSave);
-      newSaveButton.innerHTML = game.i18n.format("CN.CARD.PROMPT.SAVE", { dc, saveType });
+      newSaveButton.innerHTML = game.i18n.format("CN.CARD.PROMPT.SAVE", {dc, saveType});
       oldSave.after(newSaveButton);
-      await card.update({ content: div.innerHTML });
+      await card.update({content: div.innerHTML});
     }
     await effect.setFlag(MODULE, `arrowFired.${arrow}`, true);
     return _checkForRemainingArrows();
@@ -483,7 +481,7 @@ async function CROWN_OF_STARS(item, speaker, actor, token, character, event, arg
   if (!isConc) {
     const use = await item.use();
     if (!use) return;
-    const conc = await CN.waitForConcentrationStart(actor, { item });
+    const conc = await CN.waitForConcentrationStart(actor, {item});
     if (!conc) return;
     const level = _getSpellLevel(use);
     const motes = 2 * level - 7;
@@ -529,9 +527,9 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
 
   const offset = (target.document.height * canvas.scene.grid.size) / 2;
 
-  const update = { token: { x: pos.x - offset, y: pos.y - offset, alpha: 0 } };
+  const update = {token: {x: pos.x - offset, y: pos.y - offset, alpha: 0}};
   const options = {
-    updateOpts: { token: { animate: false } },
+    updateOpts: {token: {animate: false}},
     name: item.name,
     permanent: true,
     description: `${token.document.name} is attempting to move ${target.document.name} out of the way using ${item.name}. You can choose to fail the saving throw.`
@@ -568,7 +566,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
     }, "") ?? "";
   }
   const options = getWeaponOptions(actor) + getWeaponOptions(target?.actor);
-  const content = _basicFormContent({ type: "select", options, label: "Choose weapon:" });
+  const content = _basicFormContent({type: "select", options, label: "Choose weapon:"});
 
   const uuid = await Dialog.prompt({
     title: item.name,
@@ -595,10 +593,10 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
     return actor.effects.get(id)?.delete();
   });
 
-  const [{ id }] = await actor.createEmbeddedDocuments("ActiveEffect", [{
+  const [{id}] = await actor.createEmbeddedDocuments("ActiveEffect", [{
     icon: itemData.img,
     label: `${itemData.name} (${item.name})`,
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    "flags.core.statusId": item.name.slugify({strict: true}),
     origin: actor.uuid,
     duration: foundry.utils.duplicate(conc.duration),
     "flags.visual-active-effects.data": {
@@ -615,7 +613,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.WG)) return item.use();
 
   const mutName = `${item.name} (${actor.name})`;
-  const statusId = `${item.name.slugify({ strict: true })}-${actor.name.slugify({ strict: true })}`;
+  const statusId = `${item.name.slugify({strict: true})}-${actor.name.slugify({strict: true})}`;
 
   const hasArmor = canvas.scene.tokens.filter(token => {
     return token.actor.effects.find(e => {
@@ -633,11 +631,11 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
 
   const top = canvas.scene.tokens.reduce((acc, t) => {
     if (t.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE) return acc;
-    acc.push({ name: t.id, src: t.texture.src });
+    acc.push({name: t.id, src: t.texture.src});
     return acc;
   }, []);
 
-  return imageAnchorDialog({ label: "Cast!", title: item.name, callback: _mageArmor, top });
+  return imageAnchorDialog({label: "Cast!", title: item.name, callback: _mageArmor, top});
 
   async function _mageArmor(html) {
     const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
@@ -651,7 +649,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
             icon: item.img,
             origin: actor.uuid,
             duration: _getItemDuration(item),
-            changes: [{ key: "system.attributes.ac.calc", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "mage" }],
+            changes: [{key: "system.attributes.ac.calc", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "mage"}],
             "flags.core.statusId": statusId,
             "flags.visual-active-effects.data": {
               intro: "<p>Your AC is increased by Mage Armor.</p>",
@@ -660,7 +658,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
           }
         }
       }
-    }, {}, { name: mutName, comparisonKeys: { ActiveEffect: "flags.core.statusId" } });
+    }, {}, {name: mutName, comparisonKeys: {ActiveEffect: "flags.core.statusId"}});
   }
 }
 
@@ -677,13 +675,13 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
   const use = await item.use();
   if (!use) return;
 
-  const options = Object.entries(actor.system.skills).reduce((acc, [id, { value }]) => {
+  const options = Object.entries(actor.system.skills).reduce((acc, [id, {value}]) => {
     if (value > 0) return acc;
     const name = CONFIG.DND5E.skills[id].label;
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
 
-  const content = _basicFormContent({ label: "Choose a skill:", type: "select", options });
+  const content = _basicFormContent({label: "Choose a skill:", type: "select", options});
   const skl = await Dialog.prompt({
     title: item.name,
     rejectClose: false,
@@ -693,15 +691,15 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
   });
   if (!skl) return;
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) await has.delete();
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
     label: item.name,
     icon: item.img,
     duration: _getItemDuration(item),
-    changes: [{ key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1 }],
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    changes: [{key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1}],
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
       intro: `<p>You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.</p>`,
       content: item.system.description.value
@@ -733,18 +731,18 @@ async function AID(item, speaker, actor, token, character, event, args) {
     label: item.name,
     icon: item.img,
     duration: _getItemDuration(item),
-    changes: [{ key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1) }],
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    changes: [{key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1)}],
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data.intro": `<p>Your hit point maximum is increased by ${5 * (spellLevel - 1)}.</p>`,
     "flags.effectmacro.data.spellLevel": spellLevel,
     "flags.effectmacro.onCreate.script": `(${onCreate.toString()})()`
   }
 
-  const updates = { embedded: { ActiveEffect: { [effectData.label]: effectData } } };
+  const updates = {embedded: {ActiveEffect: {[effectData.label]: effectData}}};
   const options = {
     permanent: true,
     description: `${actor.name} is casting ${item.name} on you.`,
-    comparisonKeys: { ActiveEffect: "label" }
+    comparisonKeys: {ActiveEffect: "label"}
   }
 
   ui.notifications.info("Granting hit points to your targets!");
@@ -754,7 +752,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
 async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) {
     await CN.isActorConcentratingOnItem(actor, item)?.delete();
     return has.delete();
@@ -766,12 +764,12 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
   const bonus = Math.min(3, Math.floor((level - 1) / 2));
   const dice = `${bonus}d4`;
 
-  const type = await elementalDialog({ types: ["acid", "cold", "fire", "lightning", "thunder"], title: item.name });
+  const type = await elementalDialog({types: ["acid", "cold", "fire", "lightning", "thunder"], title: item.name});
 
   const options = actor.itemTypes.weapon.reduce((acc, e) => {
     return acc + `<option value="${e.id}">${e.name}</option>`;
   }, "");
-  const content = _basicFormContent({ label: "Choose Weapon:", options, type: "select" });
+  const content = _basicFormContent({label: "Choose Weapon:", options, type: "select"});
   const weaponId = await Dialog.prompt({
     content,
     rejectClose: false,
@@ -782,12 +780,12 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
   const weapon = actor.items.get(weaponId);
 
   const atk = babonus.createBabonus({
-    type: "attack", name: "atk", bonuses: { bonus }, description: item.system.description.value,
-    filters: { customScripts: `return item.id === "${weaponId}";` }
+    type: "attack", name: "atk", bonuses: {bonus}, description: item.system.description.value,
+    filters: {customScripts: `return item.id === "${weaponId}";`}
   }).toObject();
   const dmg = api.createBabonus({
-    type: "damage", name: "dmg", bonuses: { bonus: `${dice}[${type}]` }, description: item.system.description.value,
-    filters: { customScripts: `return item.id === "${weaponId}";` }
+    type: "damage", name: "dmg", bonuses: {bonus: `${dice}[${type}]`}, description: item.system.description.value,
+    filters: {customScripts: `return item.id === "${weaponId}";`}
   }).toObject();
 
   const conc = CN.isActorConcentratingOnItem(actor, item);
@@ -796,8 +794,8 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
     icon: item.img,
     label: `${item.name} (${weapon.name})`,
     duration: foundry.utils.duplicate(conc.duration),
-    "flags.core.statusId": item.name.slugify({ strict: true }),
-    "flags.babonus.bonuses": { [atk.id]: atk, [dmg.id]: dmg },
+    "flags.core.statusId": item.name.slugify({strict: true}),
+    "flags.babonus.bonuses": {[atk.id]: atk, [dmg.id]: dmg},
     "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`
   }];
 
@@ -814,13 +812,13 @@ async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args
     return effect.delete();
   }
 
-  const { formula, type } = _bladeCantripDamageBonus(item);
+  const {formula, type} = _bladeCantripDamageBonus(item);
 
   const effectData = [{
     icon: item.img,
     label: item.name,
-    changes: [{ key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: `+${formula}[${type}]` }],
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    changes: [{key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: `+${formula}[${type}]`}],
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
       intro: `<p>You deal ${formula} additional ${type} damage on your next damage roll.</p>`,
       content: item.system.description.value
@@ -856,8 +854,8 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
   const castOrAttack = await Dialog.wait({
     title: "Is this a casting, or a reroll of an attack?",
     buttons: {
-      cast: { icon: '<i class="fas fa-check"></i>', label: "Cast", callback: () => "cast" },
-      attack: { icon: '<i class="fas fa-times"></i>', label: "Reroll", callback: () => "reroll" }
+      cast: {icon: '<i class="fas fa-check"></i>', label: "Cast", callback: () => "cast"},
+      attack: {icon: '<i class="fas fa-times"></i>', label: "Reroll", callback: () => "reroll"}
     }
   });
 
@@ -882,7 +880,7 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
     if (!attack) return;
 
     const spellLevel = item._recentLevel ?? 1;
-    const damage = await item.rollDamage({ spellLevel });
+    const damage = await item.rollDamage({spellLevel});
     if (!damage) return;
 
     const isChaining = await decideDamage(damage);
@@ -904,18 +902,18 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
     /* Async dialog */
     const buttons = {}
     const entries = damageTypes.map(type => [type, CONFIG.DND5E.damageTypes[type]]);
-    for (const { result } of damage.dice[0].results) {
+    for (const {result} of damage.dice[0].results) {
       buttons[entries[result - 1][0]] = {
         label: entries[result - 1][1],
         callback: () => entries[result - 1]
       }
     }
-    const dmgType = await Dialog.wait({ title: "Choose damage type.", buttons });
+    const dmgType = await Dialog.wait({title: "Choose damage type.", buttons});
     let flavor = "<p><strong>Chaos Bolt</strong></p>";
     flavor += `<p>Damage type: ${dmgType[1]}</p>`;
     const chain = totals.length > new Set(totals).size;
     if (chain) flavor += '<p style="text-align: center;"><strong><em>Chaining!</em></strong></p>';
-    await ChatMessage.create({ content: flavor, speaker });
+    await ChatMessage.create({content: flavor, speaker});
     return chain;
   }
 }

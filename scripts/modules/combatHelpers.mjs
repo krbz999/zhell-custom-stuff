@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import {MODULE} from "../const.mjs";
 
 export class ZHELL_COMBAT {
 
@@ -9,8 +9,8 @@ export class ZHELL_COMBAT {
     const hpUpdate = foundry.utils.getProperty(updates, "actorData.system.attributes.hp.value");
     if (hpUpdate === undefined || hpUpdate > 0) return;
     const effect = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED);
-    await tokenDoc.object.toggleEffect(effect, { overlay: true });
-    return tokenDoc.combatant.update({ defeated: true });
+    await tokenDoc.object.toggleEffect(effect, {overlay: true});
+    return tokenDoc.combatant.update({defeated: true});
   }
 
   // hooks on dnd5e.rollAttack
@@ -32,10 +32,10 @@ export class ZHELL_COMBAT {
     if (!combatant) return;
     const reaction = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === "reaction"));
     reaction["flags.visual-active-effects.data"] = {
-      intro: "<p>" + game.i18n.format("ZHELL.StatusConditionReactionDescription", { name: item.name }) + "</p>",
+      intro: "<p>" + game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name}) + "</p>",
       content: item.system.description.value
     };
-    return combatant.token.toggleActiveEffect(reaction, { active: true });
+    return combatant.token.toggleActiveEffect(reaction, {active: true});
   }
 }
 
@@ -80,36 +80,36 @@ async function rollSaves(abilityId, targetValue) {
   if (!tokens.length) return;
   const failed = [];
   for (const token of tokens) {
-    const roll = await token.actor.rollAbilitySave(abilityId, { targetValue });
+    const roll = await token.actor.rollAbilitySave(abilityId, {targetValue});
     if (!roll) continue;
     if (roll.total < targetValue) failed.push(token);
   }
   canvas.tokens.releaseAll();
-  failed.forEach(t => t.control({ releaseOthers: false }));
+  failed.forEach(t => t.control({releaseOthers: false}));
   return game.user.updateTokenTargets(failed.map(t => t.id));
 }
 
-export function _setupCustomButtons() {
-  document.addEventListener("click", async function(event) {
-    const button = event.target.closest(".zhell-custom-buttons a");
-    if (!button) return;
-    const uuid = button.closest("[data-effect-uuid")?.dataset.effectUuid;
-    if (!uuid) return;
-    const effect = await fromUuid(uuid);
-    const itemData = effect.flags[MODULE]?.itemData;
-    if (!itemData) return;
-    const item = new Item.implementation(itemData, { parent: effect.parent });
-    if (button.dataset.type === "use") return item.use({}, { "flags.dnd5e.itemData": itemData });
-    if (button.dataset.type === "redisplay") return _redisplayItem(item, button.dataset.level, itemData);
-    else if (button.dataset.type === "attack") return item.rollAttack({ event });
-    else if (button.dataset.type === "damage") return item.rollDamage({ event });
-    else if (button.dataset.type === "template") return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
+// When rendering VAE.
+export function _renderVisualActiveEffects(app, html, data) {
+  html[0].querySelectorAll(".zhell-custom-buttons a").forEach(n => {
+    n.addEventListener("click", async function(event) {
+      const target = event.currentTarget;
+      const uuid = target.closest("[data-effect-uuid").dataset.effectUuid;
+      const effect = await fromUuid(uuid);
+      const itemData = effect.flags[MODULE].itemData;
+      const item = new Item.implementation(itemData, {parent: effect.parent});
+      if (target.dataset.type === "use") return item.use({}, {"flags.dnd5e.itemData": itemData});
+      if (target.dataset.type === "redisplay") return _redisplayItem(item, target.dataset.level, itemData);
+      else if (target.dataset.type === "attack") return item.rollAttack({event});
+      else if (target.dataset.type === "damage") return item.rollDamage({event});
+      else if (target.dataset.type === "template") return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
+    });
   });
 }
 
 // display (use) an item at a given level. For spells only.
 export function _redisplayItem(item, level, itemData = {}) {
-  const clone = item.clone({ "system.level": level }, { keepId: true });
+  const clone = item.clone({"system.level": level}, {keepId: true});
   clone.prepareFinalAttributes();
   return clone.use({
     createMeasuredTemplate: false,

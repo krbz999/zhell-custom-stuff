@@ -1,5 +1,5 @@
-import { DEPEND, MODULE } from "../../const.mjs";
-import { columnDialog } from "../customDialogs.mjs";
+import {DEPEND, MODULE} from "../../const.mjs";
+import {columnDialog} from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
   _basicFormContent,
@@ -39,8 +39,8 @@ async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args
 
   const name = `Darkvision (${range}ft)`;
   const updates = {
-    actor: { "system.attributes.senses.darkvision": range },
-    token: { sight: { visionMode: "darkvision", range } }
+    actor: {"system.attributes.senses.darkvision": range},
+    token: {sight: {visionMode: "darkvision", range}}
   }
   const options = {
     name,
@@ -65,9 +65,9 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
       mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
       value: actor.system.attributes.movement.walk
     }],
-    duration: { seconds: 60 },
+    duration: {seconds: 60},
     icon: item.img,
-    "flags.core.statusId": item.name.slugify({ strict: true }),
+    "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
       intro: "<p>You have a flying speed equal to your walking speed.</p>",
       content: item.system.description.value
@@ -79,7 +79,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
 
   // CONSTS
-  const id = item.name.slugify({ strict: true });
+  const id = item.name.slugify({strict: true});
   const file = "jb2a.markers.circle_of_stars.orangepurple";
   const error = "Please target a token.";
   const target = game.user.targets.first();
@@ -105,8 +105,8 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
 
     return new Sequence()
       .effect().attachTo(token).persist().name(item.name).file(file).size(canvas.grid.size * 8)
-      .scaleIn(0, 800, { ease: "easeOutCubic" }).rotateIn(180, 1200, { ease: "easeOutCubic" })
-      .scaleOut(0, 500, { ease: "easeOutCubic" }).fadeOut(500, { ease: "easeOutCubic" })
+      .scaleIn(0, 800, {ease: "easeOutCubic"}).rotateIn(180, 1200, {ease: "easeOutCubic"})
+      .scaleOut(0, 500, {ease: "easeOutCubic"}).fadeOut(500, {ease: "easeOutCubic"})
       .tieToDocuments(eff).play();
   }
 
@@ -130,10 +130,10 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
 
   async function grantTempHP() {
     if (!target) return ui.notifications.error(error);
-    const { total } = await item.rollDamage({ options: { fastForward: true } }) ?? {};
+    const {total} = await item.rollDamage({options: {fastForward: true}}) ?? {};
     if (!total) return;
     const temp = target.actor.system.attributes.hp.temp ?? 0;
-    const updates = { actor: { "system.attributes.hp.temp": total } }
+    const updates = {actor: {"system.attributes.hp.temp": total}}
     const options = {
       permanent: true,
       description: `${actor.name} is granting you ${total} temporary hit points.`
@@ -147,7 +147,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   async function removeEffect() {
     if (!target) return ui.notifications.error(error);
     const content = `${actor.name} ends the charmed or frightened condition on ${target.name}.`;
-    return ChatMessage.create({ speaker, content });
+    return ChatMessage.create({speaker, content});
   }
 }
 
@@ -191,11 +191,11 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
     const roll = await new Item.implementation({
       type: "feat",
       name: item.name,
-      system: { damage: { parts: [[formula, "radiant"]] } }
-    }, { parent: actor }).rollDamage({ event });
+      system: {damage: {parts: [[formula, "radiant"]]}}
+    }, {parent: actor}).rollDamage({event});
     if (!roll) return;
     const value = actor.system.spells[slot].value - 1;
-    return actor.update({ [`system.spells.${slot}.value`]: value });
+    return actor.update({[`system.spells.${slot}.value`]: value});
   }
 }
 
@@ -203,7 +203,7 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
   const data = actor.getRollData();
   const maxLevel = Math.ceil(data.attributes.prof / 2);
 
-  const options = _constructSpellSlotOptions(actor, { missing: true, maxLevel });
+  const options = _constructSpellSlotOptions(actor, {missing: true, maxLevel});
 
   if (!options.length) {
     ui.notifications.warn("You are not missing any valid spell slots.");
@@ -223,7 +223,7 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
     return;
   }
 
-  const content = _basicFormContent({ label: "Spell Slot:", type: "select", options });
+  const content = _basicFormContent({label: "Spell Slot:", type: "select", options});
 
   return new Dialog({
     title: item.name,
@@ -241,12 +241,12 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
     const key = html[0].querySelector("select").value;
     const path = `system.spells.${key}.value`;
     const newValue = foundry.utils.getProperty(actor, path) + 1;
-    await actor.update({ [path]: newValue });
+    await actor.update({[path]: newValue});
     await actor.updateEmbeddedDocuments("Item", [
-      { _id: resourceItem.id, "system.uses.value": resource - 1 },
-      { _id: item.id, "system.uses.value": uses - 1 }
+      {_id: resourceItem.id, "system.uses.value": resource - 1},
+      {_id: item.id, "system.uses.value": uses - 1}
     ]);
-    return ChatMessage.create({ speaker, content: `${actor.name} recovered a spell slot using ${item.name}.` });
+    return ChatMessage.create({speaker, content: `${actor.name} recovered a spell slot using ${item.name}.`});
   }
 }
 
@@ -257,7 +257,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
     return;
   }
 
-  const range = HandlebarsHelpers.rangePicker({ hash: { min: 1, max: value, value: 1, step: 1, name: item.name.slugify({ strict: true }) } });
+  const range = HandlebarsHelpers.rangePicker({hash: {min: 1, max: value, value: 1, step: 1, name: item.name.slugify({strict: true})}});
 
   const content = `
   ${item.system.description.value}
@@ -288,29 +288,28 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
     buttons,
     render: (html) => {
       const target = html[0].querySelector(".range-value");
-      const source = html[0].querySelector("input")
-      source.addEventListener("change", function() {
-        target.innerText = source.value;
+      html[0].querySelector("input").addEventListener("change", function(event) {
+        target.innerText = event.currentTarget.value;
       });
     }
   }).render(true);
 
   async function heal(html, event) {
     const number = Number(html[0].querySelector("input").value);
-    await new Roll(`${number}`).toMessage({ speaker, flavor: item.name });
-    return item.update({ "system.uses.value": value - number });
+    await new Roll(`${number}`).toMessage({speaker, flavor: item.name});
+    return item.update({"system.uses.value": value - number});
   }
 
   async function cure(html, event) {
-    await ChatMessage.create({ speaker, content: `${actor.name} cures a disease or poison.` });
-    return item.update({ "system.uses.value": value - 5 });
+    await ChatMessage.create({speaker, content: `${actor.name} cures a disease or poison.`});
+    return item.update({"system.uses.value": value - 5});
   }
 }
 
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
-  const effect = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({ strict: true }));
+  const effect = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({strict: true}));
   if (effect) return effect.delete();
 
   const weapons = actor.itemTypes.weapon.filter(i => i.system.equipped);
@@ -333,10 +332,10 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
   if (weapons.length === 1) return createEffect(weapons[0].id);
 
   // multiple weapons
-  const weaponSelect = weapons.reduce((acc, { id, name }) => {
+  const weaponSelect = weapons.reduce((acc, {id, name}) => {
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
-  const content = _basicFormContent({ label: "Weapon:", type: "select", options: weaponSelect });
+  const content = _basicFormContent({label: "Weapon:", type: "select", options: weaponSelect});
 
   return new Dialog({
     title: item.name,
@@ -365,14 +364,14 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       type: "damage",
       name: item.name,
       description: item.system.description.value,
-      bonuses: { bonus: `@abilities.cha.mod[fire]` },
-      filters: { customScripts: `return item.id === "${id}";` }
+      bonuses: {bonus: `@abilities.cha.mod[fire]`},
+      filters: {customScripts: `return item.id === "${id}";`}
     }).toObject();
     const flags = {
       [`babonus.bonuses.${babonusData.id}`]: babonusData,
-      "flags.core.statusId": item.name.slugify({ strict: true })
+      "flags.core.statusId": item.name.slugify({strict: true})
     };
-    const effectData = _constructLightEffectData({ item, lightData, flags });
+    const effectData = _constructLightEffectData({item, lightData, flags});
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }
 }
@@ -390,7 +389,7 @@ async function WARMING_RESPITE(item, speaker, actor, token, character, event, ar
   if (!use) return;
 
   const levels = actor.getRollData().classes.paladin.levels;
-  const updates = { actor: { "system.attributes.hp.temp": levels } }
+  const updates = {actor: {"system.attributes.hp.temp": levels}}
   const options = {
     permanent: true,
     description: `${actor.name} is granting you ${levels} temporary hit points.`
@@ -411,7 +410,7 @@ async function RELENTLESS_ENDURANCE(item, speaker, actor, token, character, even
   }
   const use = await item.use();
   if (!use) return;
-  return actor.update({ "system.attributes.hp.value": 1 });
+  return actor.update({"system.attributes.hp.value": 1});
 }
 
 async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, args) {
@@ -420,7 +419,7 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
   // bail out if you can't use this item again.
   const available = item.system.uses.value > 0;
   if (!available) {
-    ui.notifications.warn("DND5E.AbilityUseUnavailableHint", { localize: true });
+    ui.notifications.warn("DND5E.AbilityUseUnavailableHint", {localize: true});
     return;
   }
 
@@ -463,38 +462,39 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
 
   async function listeners(html) {
     const head = html[0].querySelector("[name=header]");
-    html[0].addEventListener("change", function(event) {
-      const input = event.target;
-      spent = input.checked ? spent + input.dataset.level : spent - dataset.level;
+    html[0].querySelectorAll("[type=checkbox]").forEach(n => n.addEventListener("change", function(event) {
+      const {checked, dataset} = event.currentTarget;
+      spent = checked ? (spent + Number(dataset.level)) : spent - Number(dataset.level);
       const hint = `Recovering spell slots: <strong>${spent}</strong> / ${maxSum}`;
-      head.innerText = hint;
-    });
+      head.innerHTML = hint;
+    }));
   }
 
   async function recover(html, event) {
     if (!spent.between(1, maxSum)) {
       ui.notifications.warn("Invalid number of slots to recover.");
+      spent = 0;
       return dialog.render(true);
     }
 
     const inputs = html[0].querySelectorAll("input:not(:disabled):checked");
     const update = actor.toObject().system.spells;
     for (const input of inputs) update[input.dataset.key].value++;
-    await actor.update({ "system.spells": update });
-    return ChatMessage.create({ speaker, content: `${actor.name} recovered spell slots using ${item.name}` });
+    await actor.update({"system.spells": update});
+    return ChatMessage.create({speaker, content: `${actor.name} recovered spell slots using ${item.name}`});
   }
 }
 
 async function DWARVEN_FORTITUDE(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
-  return actor.rollHitDie(undefined, { dialog: false });
+  return actor.rollHitDie(undefined, {dialog: false});
 }
 
 async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.ET, DEPEND.RG)) return item.use();
   const rollData = actor.getRollData();
-  const { files } = await FilePicker.browse("public", "icons/consumables/potions");
+  const {files} = await FilePicker.browse("public", "icons/consumables/potions");
   const randomName = [
     "Daily Pick-Me-Up",
     "Rainbow Elixir",
@@ -523,8 +523,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     alacrity: {
       name: "Alacrity",
       data: {
-        changes: [{ key: "system.attributes.init.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8" }],
-        duration: { seconds: 60 },
+        changes: [{key: "system.attributes.init.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8"}],
+        duration: {seconds: 60},
         icon: "icons/magic/movement/trail-streak-zigzag-yellow.webp",
         "flags.visual-active-effects.data.intro": "<p>You add a <strong>1d8</strong> bonus to initiative rolls for 1 minute.</p>"
       }
@@ -533,9 +533,9 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       name: "Boldness",
       data: {
         changes: ["mwak.attack", "rwak.attack", "msak.attack", "rsak.attack", "abilities.save"].map(prop => {
-          return { key: `system.bonuses.${prop}`, mode: COSNT.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" };
+          return {key: `system.bonuses.${prop}`, mode: COSNT.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"};
         }),
-        duration: { seconds: 60 },
+        duration: {seconds: 60},
         icon: "icons/magic/movement/trail-streak-pink.webp",
         "flags.visual-active-effects.data.intro": "<p>You add a <strong>1d4</strong> bonus to attack rolls and saving throws for 1 minute.</p>"
       }
@@ -543,8 +543,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     flight: {
       name: "Flight",
       data: {
-        changes: [{ key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 10 }],
-        duration: { seconds: 600 },
+        changes: [{key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 10}],
+        duration: {seconds: 600},
         icon: "icons/magic/movement/trail-streak-impact-blue.webp",
         "flags.visual-active-effects.data.intro": "<p>You have a flying speed of 10 feet for 10 minutes.</p>"
       }
@@ -558,8 +558,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     resilience: {
       name: "Resilience",
       data: {
-        changes: [{ key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1" }],
-        duration: { seconds: 600 },
+        changes: [{key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1"}],
+        duration: {seconds: 600},
         icon: "icons/magic/defensive/shield-barrier-blue.webp",
         "flags.visual-active-effects.data.intro": "<p>You add a <strong>+1</strong> bonus to AC for 10 minutes.</p>"
       }
@@ -567,8 +567,8 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     swiftness: {
       name: "Swiftness",
       data: {
-        changes: [{ key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10 }],
-        duration: { seconds: 3600 },
+        changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10}],
+        duration: {seconds: 3600},
         icon: "icons/magic/movement/pinwheel-turning-blue.webp",
         "flags.visual-active-effects.data.intro": "<p>Your walking speed increases by 10 feet for 1 hour.</p>"
       }
@@ -577,7 +577,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       name: "Transformation",
       data: {
         changes: [],
-        duration: { seconds: 600 },
+        duration: {seconds: 600},
         icon: "icons/magic/movement/abstract-ribbons-red-orange.webp",
         "flags.visual-active-effects.data.intro": "<p>The drinker's body is transformed as if by the @UUID[Compendium.zhell-catalogs.spells.DRN4UHvQDhzHZ1vD] spell. The drinker determines the transformation caused by the spell, the effects of which last for 10 minutes.</p>"
       }
@@ -587,9 +587,9 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     transfer: false,
     flags: {
       [DEPEND.ET]: {
-        transferBlock: { button: true, chat: true, displayCard: true }
+        transferBlock: {button: true, chat: true, displayCard: true}
       },
-      [MODULE]: { experimentalElixir: true }
+      [MODULE]: {experimentalElixir: true}
     }
   }
 
@@ -609,7 +609,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
             return acc;
           }, []);
           await actor.createEmbeddedDocuments("Item", itemData);
-          return ChatMessage.create({ speaker, content: `${actor.name} created ${keys.length} random single-effect elixirs.` });
+          return ChatMessage.create({speaker, content: `${actor.name} created ${keys.length} random single-effect elixirs.`});
         }
       },
       build: {
@@ -620,10 +620,10 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
         }
       }
     }
-  }, { classes: ["dialog", "elixir"], height: "auto" }).render(true);
+  }, {classes: ["dialog", "elixir"], height: "auto"}).render(true);
 
   // BUILD DIALOG
-  const content = await TextEditor.enrichHTML(Object.entries(elixirTypes).reduce((acc, [key, { name, data }]) => {
+  const content = await TextEditor.enrichHTML(Object.entries(elixirTypes).reduce((acc, [key, {name, data}]) => {
     const text = foundry.utils.getProperty(data, "flags.visual-active-effects.data.intro");
     return acc + `
     <div class="form-group">
@@ -632,7 +632,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
         <input type="checkbox" data-key="${key}" id="elixir-${key}">
       </div>
     </div>`;
-  }, "<form>") + "</form>", { async: true });
+  }, "<form>") + "</form>", {async: true});
 
   const buildDialog = new Dialog({
     title: "Experimental Elixir",
@@ -663,19 +663,19 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
           await actor.createEmbeddedDocuments("Item", itemData);
 
           // remove a spell slot.
-          await actor.update({ [path]: value - 1 });
-          return ChatMessage.create({ speaker, content: `${actor.name} expended a ${keys.length.ordinalString()} level spell slot and created an elixir.` });
+          await actor.update({[path]: value - 1});
+          return ChatMessage.create({speaker, content: `${actor.name} expended a ${keys.length.ordinalString()} level spell slot and created an elixir.`});
         }
       }
     }
-  }, { classes: ["dialog", "elixir-builder"] });
+  }, {classes: ["dialog", "elixir-builder"]});
 
   // function to take keys and create experimental elixirs.
   function elixirBuilder(keys = []) {
 
     // create description.
     let description = keys.reduce((acc, e) => {
-      const { name, data } = elixirTypes[e];
+      const {name, data} = elixirTypes[e];
       const intro = foundry.utils.getProperty(data, "flags.visual-active-effects.data.intro");
       const text = intro.replaceAll("<p>", "").replaceAll("</p>", "");
       return acc + `<p><strong><em>${name}.</em></strong> ${text}</p>`;
@@ -684,7 +684,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       description += `<p><strong><em>Restorative Reagents.</em></strong> The drinker gains <strong>2d6 + ${rollData.abilities.int.mod}</strong> temporary hit points.</p>`;
     }
     // construct damage.parts and rollgroups flags.
-    const { parts, flags } = createDamageParts(keys);
+    const {parts, flags} = createDamageParts(keys);
 
     // pick random stuff.
     const name = randomName[Math.floor(Math.random() * randomName.length)];
@@ -700,13 +700,13 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       type: "consumable",
       img,
       system: {
-        description: { value: `<p><em>${flavor}</em></p> <hr> ${description}` },
+        description: {value: `<p><em>${flavor}</em></p> <hr> ${description}`},
         weight: 0.5,
         rarity: "common",
-        activation: { type: "action", cost: 1 },
-        uses: { value: 1, max: 1, per: "charges", autoDestroy: true },
+        activation: {type: "action", cost: 1},
+        uses: {value: 1, max: 1, per: "charges", autoDestroy: true},
         consumableType: "elixir",
-        damage: { parts },
+        damage: {parts},
         actionType: parts.length > 0 ? "heal" : ""
       },
       effects,
@@ -721,11 +721,11 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
     if (rollData.classes.artificer.levels >= 9) parts.push([`2d6 + ${rollData.abilities.int.mod}`, "temphp"]);
     const flags = (parts.length > 1) ? foundry.utils.expandObject({
       "rollgroups.config.groups": [
-        { parts: [0], label: "Healing" },
-        { parts: [1], label: "Temporary HP" }
+        {parts: [0], label: "Healing"},
+        {parts: [1], label: "Temporary HP"}
       ]
     }) : {};
-    return { parts, flags };
+    return {parts, flags};
   }
 
   // function to turn key into effect data.
@@ -747,7 +747,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 
     // roll a number of d8s, and for each 8 roll once more (rerolling 8s).
     const elixRoll = new Roll("(@scale.alchemist.elixirs)d8x8rr8", rollData);
-    const { rolls } = await elixRoll.toMessage({ speaker, flavor: `${actor.name} rolls random elixirs` });
+    const {rolls} = await elixRoll.toMessage({speaker, flavor: `${actor.name} rolls random elixirs`});
 
     // for each active die, map to an elixir type.
     const elixirKeys = Object.keys(elixirTypes);
@@ -758,17 +758,17 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
   const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify({ strict: true });
+    return e.flags.core?.statusId === item.name.slugify({strict: true});
   });
   if (isActive) return item.displayCard();
 
   const use = await item.use();
   if (!use) return;
-  const effectData = _constructGenericEffectData({ item });
+  const effectData = _constructGenericEffectData({item});
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
 
-  const updates = { token: { name: `${actor.name.split(" ")[0]}'s Fathomless Tentacle` } }
-  const options = { crosshairs: { drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1 } };
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Fathomless Tentacle`}}
+  const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
   await actor.sheet?.minimize();
@@ -781,7 +781,7 @@ async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, eve
 async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
-  const has = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags?.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
 
   const use = await item.use();
@@ -789,7 +789,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
 
   const [effectData] = _constructLightEffectData({
     item,
-    lightData: { dim: 20, bright: 10 },
+    lightData: {dim: 20, bright: 10},
     intro: "",
     flags: {}
   });
@@ -832,22 +832,22 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
 
   // @scale.stars.starry-form-die
 
-  const form = await columnDialog({ title, content, buttons, render });
+  const form = await columnDialog({title, content, buttons, render});
   if (form === "archer") {
     const itemData = {
       name: "Starry Form (Archer)",
       type: "feat",
       img: "icons/weapons/bows/shortbow-recurve-yellow.webp",
       system: {
-        description: { value: intro[form] },
-        activation: { type: "bonus", cost: 1 },
-        duration: { units: "inst" },
-        target: { value: 1, type: "creature" },
-        range: { value: 60, units: "ft" },
+        description: {value: intro[form]},
+        activation: {type: "bonus", cost: 1},
+        duration: {units: "inst"},
+        target: {value: 1, type: "creature"},
+        range: {value: 60, units: "ft"},
         ability: "wis",
         actionType: "rsak",
         attackBonus: "",
-        damage: { parts: [["@scale.stars.starry-form-die + @mod", "radiant"]] }
+        damage: {parts: [["@scale.stars.starry-form-die + @mod", "radiant"]]}
       }
     }
     const effectButtons = ["use", "attack", "damage"].reduce((acc, e) => {
@@ -861,11 +861,11 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
       type: "feat",
       img: "icons/magic/holy/chalice-glowing-gold-water.webp",
       system: {
-        target: { value: 1, type: "creature" },
-        range: { value: 30, units: "ft" },
+        target: {value: 1, type: "creature"},
+        range: {value: 30, units: "ft"},
         ability: "wis",
         actionType: "heal",
-        damage: { parts: [["@scale.stars.starry-form-die + @mod", "healing"]] }
+        damage: {parts: [["@scale.stars.starry-form-die + @mod", "healing"]]}
       }
     }
     const effectButtons = '<p class="zhell-custom-buttons"><a data-type="damage">Healing</a></p>';
@@ -873,9 +873,9 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
     foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
   } else if (form === "dragon") {
     foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
-    effectData.changes = [{ key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true }];
+    effectData.changes = [{key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true}];
   } else return;
-  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }))?.delete();
+  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}))?.delete();
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
   const file = "jb2a.markers.circle_of_stars.blue";
@@ -883,7 +883,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
 }
 
 async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args) {
-  const conversionMap = { 1: 2, 2: 3, 3: 5, 4: 6, 5: 7 };
+  const conversionMap = {1: 2, 2: 3, 3: 5, 4: 6, 5: 7};
   const style = `
   <style>
   .font-of-magic .dialog-buttons {
@@ -933,7 +933,7 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
     label: "Convert sorcery points to a spell slot",
     callback: pointsToSlot
   }
-  new Dialog({ title: item.name, buttons }).render(true);
+  new Dialog({title: item.name, buttons}).render(true);
 
   // Convert spell slot to sorcery points.
   async function slotToPoints() {
@@ -962,10 +962,10 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
     });
     if (!retKey) return null;
 
-    await actor.update({ [`system.spells.${retKey}.value`]: spellSlots[retKey].value - 1 });
+    await actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value - 1});
     const level = retKey === "pact" ? spellSlots["pact"].level : retKey.at(-1);
     const newPointsValue = Math.clamped(spellPoints.value + Number(level), 0, spellPoints.max);
-    await item.update({ "system.uses.value": newPointsValue });
+    await item.update({"system.uses.value": newPointsValue});
     return ChatMessage.create({
       speaker,
       content: `${actor.name} regained ${newPointsValue - spellPoints.value} sorcery points.`
@@ -997,9 +997,9 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
     });
     if (!retKey) return null;
 
-    await actor.update({ [`system.spells.${retKey}.value`]: spellSlots[retKey].value + 1 });
+    await actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value + 1});
     const level = retKey === "pact" ? spellSlots["pact"].level : retKey.at(-1);
-    await item.update({ "system.uses.value": Math.clamped(spellPoints.value - conversionMap[level], 0, spellPoints.max) });
+    await item.update({"system.uses.value": Math.clamped(spellPoints.value - conversionMap[level], 0, spellPoints.max)});
     const str = retKey === "pact" ? "Pact Slot" : `${CONFIG.DND5E.spellLevels[level]} spell slot`;
     return ChatMessage.create({
       speaker,

@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import {MODULE} from "../const.mjs";
 /** COMBINED GM TOOL FOR NPC UTILITY
  * A tool for prompting selected (not player owned) tokens for either (or all):
  *
@@ -44,17 +44,17 @@ export class DM_TOOL {
   }
 
   // takes time and a unit and convers it to seconds.
-  static convertDurationToSeconds({ time, unit }) {
+  static convertDurationToSeconds({time, unit}) {
     let seconds = Number(time);
     if (!time || !unit) return;
-    if (unit === "seconds") return { seconds };
+    if (unit === "seconds") return {seconds};
     else if (unit === "minutes") seconds *= 60;
     else if (unit === "hours") seconds *= 60 * 60;
     else if (unit === "days") seconds *= 60 * 60 * 24;
     else if (unit === "weeks") seconds *= 60 * 60 * 24 * 9;
     else if (unit === "months") seconds *= 60 * 60 * 24 * 9 * 3;
     else if (unit === "years") seconds *= 60 * 60 * 24 * 9 * 3 * 12;
-    return { seconds };
+    return {seconds};
   }
 
   // remove conditions from token, given a list of status ids.
@@ -74,23 +74,23 @@ export class DM_TOOL {
   }
 
   // request saving throws from tokens, and returns an array with whether they saved or not
-  static async requestSavingThrowsFromTokens(tokens, { ability, targetValue, event }) {
+  static async requestSavingThrowsFromTokens(tokens, {ability, targetValue, event}) {
     const results = [];
     for (const token of tokens) {
-      const save = await token.actor.rollAbilitySave(ability, { event, targetValue });
+      const save = await token.actor.rollAbilitySave(ability, {event, targetValue});
       if (!save) continue;
       const success = save.total >= targetValue;
-      results.push({ success, token });
+      results.push({success, token});
     }
     return results;
   }
 
-  static async MAIN_FUNCTION({ statusCondition = {}, damage = {}, savingThrow = {} }) {
+  static async MAIN_FUNCTION({statusCondition = {}, damage = {}, savingThrow = {}}) {
     const tokens = canvas.tokens.controlled.filter(i => !i.actor.hasPlayerOwner);
 
-    const { resistEffect, effectData } = statusCondition;
-    const { ability, targetValue, targetFailures } = savingThrow;
-    const { resistDamage, noDamage, parts, options } = damage;
+    const {resistEffect, effectData} = statusCondition;
+    const {ability, targetValue, targetFailures} = savingThrow;
+    const {resistDamage, noDamage, parts, options} = damage;
 
     // is there a valid saving throw set up
     const saveNeeded = ability && targetValue;
@@ -144,7 +144,7 @@ export class DM_TOOL {
       const has = [...container.querySelectorAll("[name='status-effects']")].map(n => n.value);
       const effectOptions = CONFIG.statusEffects.sort((a, b) => {
         return a.label.localeCompare(b.label);
-      }).reduce((acc, { id, label }) => {
+      }).reduce((acc, {id, label}) => {
         if (has.includes(id)) return acc;
         return acc + `<option value="${id}">${game.i18n.localize(label)}</option>`;
       }, "");
@@ -187,7 +187,7 @@ export class DM_TOOL {
       return acc + `<option value="${key}">${label}</option>`;
     }, "<option value=''>&mdash;</option>");
     const template = "modules/zhell-custom-stuff/templates/dm_tool.hbs";
-    const content = await renderTemplate(template, { abilityOptions });
+    const content = await renderTemplate(template, {abilityOptions});
 
     const d = new Dialog({
       title: "Dungeon Master Tool",
@@ -201,7 +201,7 @@ export class DM_TOOL {
             const savingThrow = DM_TOOL.gatherSavingThrowInputs(html);
             savingThrow.event = event;
 
-            DM_TOOL.MAIN_FUNCTION({ statusCondition, damage, savingThrow });
+            DM_TOOL.MAIN_FUNCTION({statusCondition, damage, savingThrow});
           }
         },
         remove: {
@@ -250,7 +250,7 @@ export class DM_TOOL {
       const type = damage.querySelector("[name='damage-type']").value;
       parts.push([Number(value), type]);
     }
-    return { resistDamage, noDamage, parts, options: { properties } };
+    return {resistDamage, noDamage, parts, options: {properties}};
   }
 
   static gatherEffectInputs(html) {
@@ -263,11 +263,11 @@ export class DM_TOOL {
       const statusId = effect.querySelector("[name='status-effects']").value;
       const time = effect.querySelector("[name='status-time']").value;
       const unit = effect.querySelector("[name='status-units']").value;
-      const duration = (time && unit) ? { time, unit } : undefined;
+      const duration = (time && unit) ? {time, unit} : undefined;
       const data = this.createConditionData(statusId, duration);
       effectData.push(data);
     }
-    return { resistEffect, effectData };
+    return {resistEffect, effectData};
   }
 
   static gatherSavingThrowInputs(html) {
@@ -275,7 +275,7 @@ export class DM_TOOL {
     const targetValue = Number(html[0].querySelector("#save-dc").value);
     const targetFailures = html[0].querySelector("#save-target").checked;
 
-    return { ability, targetValue, targetFailures };
+    return {ability, targetValue, targetFailures};
   }
 }
 
@@ -322,17 +322,17 @@ export function _addFlavorListenerToDamageRolls(message, html) {
     const parts = foundry.utils.duplicate(totals);
     const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
     const properties = message.flags[MODULE]?.properties ?? [];
-    return ZHELL.token.applyDamage(tokens, parts, { global, properties });
+    return ZHELL.token.applyDamage(tokens, parts, {global, properties});
   });
 }
 
 export function _gatherTokenDamageTraits(token) {
-  const { dr, di, dv } = token.actor.system.traits;
+  const {dr, di, dv} = token.actor.system.traits;
 
-  return { dr: _mapToTypes(dr), di: _mapToTypes(di), dv: _mapToTypes(dv) };
+  return {dr: _mapToTypes(dr), di: _mapToTypes(di), dv: _mapToTypes(dv)};
 
   // get all resistances from a token's actor
-  function _mapToTypes({ value, custom, bypasses }) {
+  function _mapToTypes({value, custom, bypasses}) {
     const types = new Set(value);
     if (custom) {
       for (const val of custom.split(";")) {
@@ -345,8 +345,8 @@ export function _gatherTokenDamageTraits(token) {
 }
 
 // takes an array of parts and returns the damage the token's actor should take
-export function calculateDamageTakenForToken(token, parts, { global = 1, properties = [] } = {}) {
-  const { dr, di, dv } = _gatherTokenDamageTraits(token);
+export function calculateDamageTakenForToken(token, parts, {global = 1, properties = []} = {}) {
+  const {dr, di, dv} = _gatherTokenDamageTraits(token);
 
   const props = CONFIG.DND5E.physicalWeaponProperties; // ada, sil, mgc
   const phys = CONFIG.DND5E.physicalDamageTypes; // piercing, bludgeoning, slashing

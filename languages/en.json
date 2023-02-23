@@ -15,6 +15,7 @@
   "ZHELL.CraftingDescriptionPotions": "Select a type of potion to create.",
   "ZHELL.CraftingMissingMaterials": "You need at least {cost} foraged materials to create this item.",
   "ZHELL.CraftingMustRollOnce": "You must roll at least once.",
+  "ZHELL.CraftingMustSelectScale": "You must select a valid scale for the item.",
   "ZHELL.CraftingTypeContact": "This poison can be smeared on an object and remains potent until it is touched or washed off.",
   "ZHELL.CraftingTypeIngested": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
   "ZHELL.CraftingTypeInhaled": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",

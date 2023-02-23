@@ -1,4 +1,4 @@
-import { MODULE } from "../const.mjs";
+import {MODULE} from "../const.mjs";
 
 export class MoneySpender extends Application {
   constructor(options = {}, actor) {
@@ -37,7 +37,7 @@ export class MoneySpender extends Application {
   async getData() {
     const data = await super.getData();
     data.currencies = Object.entries(this.actor.system.currency).map(([label, value]) => {
-      return { value, label };
+      return {value, label};
     });
     return data;
   }
@@ -96,13 +96,13 @@ export class MoneySpender extends Application {
         acc[denom] = currency[denom] - spend;
         return acc;
       }, {});
-      await this.actor.update({ "system.currency": update });
+      await this.actor.update({"system.currency": update});
       this.close();
       if (!foundry.utils.isEmpty(diffs)) {
         const content = Object.entries(diffs).reduce((acc, [denom, spent]) => {
           return acc + `<br>${denom.toUpperCase()}: ${spent}`;
         }, `Spent some money:`);
-        return ChatMessage.create({ content, speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+        return ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor: this.actor})});
       }
     });
 

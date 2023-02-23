@@ -1,5 +1,5 @@
-import { DEPEND } from "../../const.mjs";
-import { _basicFormContent, _constructLightEffectData, _getDependencies } from "../itemMacros.mjs";
+import {DEPEND} from "../../const.mjs";
+import {_basicFormContent, _constructLightEffectData, _getDependencies} from "../itemMacros.mjs";
 
 export const ITEMACRO_ITEMS = {
   AMULET_OF_EQUILLIBRIUM,
@@ -13,7 +13,7 @@ export const ITEMACRO_ITEMS = {
 };
 
 async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, event, args) {
-  const { value } = item.system.uses;
+  const {value} = item.system.uses;
   if (!value) {
     ui.notifications.warn("You have no uses remaining on the amulet.");
     return;
@@ -43,8 +43,8 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
       const a = html[0].querySelector("#amulet-a").value;
       const b = html[0].querySelector("#amulet-b").value;
       const c = html[0].querySelector("#amulet-c").value;
-      await item.update({ "system.uses.value": value - Number(a) });
-      return item.clone({ "system.damage.parts": [[`${a}${b}`, c]] }, { keepId: true }).rollDamage({ event });
+      await item.update({"system.uses.value": value - Number(a)});
+      return item.clone({"system.damage.parts": [[`${a}${b}`, c]]}, {keepId: true}).rollDamage({event});
     }
   });
 }
@@ -52,45 +52,45 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
 async function HIT_DIE_APPLY(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
-  return actor.rollHitDie(undefined, { dialog: false });
+  return actor.rollHitDie(undefined, {dialog: false});
 }
 
 async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
 
   const use = await item.use();
   if (!use) return;
 
-  const lightData = { bright: 30, dim: 60 };
-  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({ item, lightData }));
+  const lightData = {bright: 30, dim: 60};
+  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
 }
 
 async function TORCH(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
 
   const use = await item.use();
   if (!use) return;
 
   const lightData = {
-    alpha: 0.05, angle: 360, animation: { type: "flame", speed: 2, intensity: 4 },
+    alpha: 0.05, angle: 360, animation: {type: "flame", speed: 2, intensity: 4},
     attenuation: 0.5, color: "#ff4d00", bright: 20, dim: 40, coloration: 1, contrast: 0,
-    darkness: { min: 0, max: 1 }, luminosity: 0.5, saturation: 0, shadows: 0
+    darkness: {min: 0, max: 1}, luminosity: 0.5, saturation: 0, shadows: 0
   };
-  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({ item, lightData }));
+  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
 }
 
 async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.RG)) return item.use();
 
   const servings = [
-    { id: foundry.utils.randomID(), uses: 1, label: "Quiant Serving (1 use)" },
-    { id: foundry.utils.randomID(), uses: 2, label: "Psychedelic Serving (2 uses)" }
+    {id: foundry.utils.randomID(), uses: 1, label: "Quiant Serving (1 use)"},
+    {id: foundry.utils.randomID(), uses: 2, label: "Psychedelic Serving (2 uses)"}
   ];
 
   // get current limited uses and bail out if not enough.
@@ -98,18 +98,18 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
   const minimum = Math.min(...servings.map(i => i.uses));
 
   if (value < minimum) {
-    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
+    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name}));
     return;
   }
 
   // construct selection options.
-  const options = servings.filter(({ uses }) => {
+  const options = servings.filter(({uses}) => {
     return uses <= value;
-  }).reduce((acc, { id, label }) => {
+  }).reduce((acc, {id, label}) => {
     return acc + `<option value="${id}">${label}</option>`;
   }, "");
 
-  const content = _basicFormContent({ label: "Serving Type", type: "select", options });
+  const content = _basicFormContent({label: "Serving Type", type: "select", options});
 
   new Dialog({
     title: item.name,
@@ -122,32 +122,32 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
           const id = html[0].querySelector("select").value;
           const uses = servings.find(i => i.id === id).uses;
           const clone = createClone(uses);
-          await clone.use({}, { "flags.dnd5e.itemData": clone.toObject() });
-          return item.update({ "system.uses.value": value - uses });
+          await clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
+          return item.update({"system.uses.value": value - uses});
         }
       }
     }
   }).render(true);
 
   function createClone(uses) {
-    const itemData = { "system.uses.per": "" };
+    const itemData = {"system.uses.per": ""};
 
     if (uses === 2) {
       itemData["system.damage.parts"] = [["1d6", "healing"], ["1d6", "temphp"]];
       itemData["system.actionType.actionType"] = "heal";
       itemData["flags.rollgroups.config.groups"] = [
-        { label: "Healing", parts: [0] },
-        { label: "Temp HP", parts: [1] }
+        {label: "Healing", parts: [0]},
+        {label: "Temp HP", parts: [1]}
       ]
     }
-    return item.clone(itemData, { keepId: true });
+    return item.clone(itemData, {keepId: true});
   }
 }
 
 async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({ strict: true }));
+  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
 
   const oilFlask = actor.items.getName("Oil Flask");
@@ -161,11 +161,11 @@ async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event
   const lightData = {
     alpha: 0.05, angle: 360, bright: 30, coloration: 1, dim: 60,
     luminosity: 0.5, saturation: 0, contrast: 0, shadows: 0,
-    animation: { speed: 2, intensity: 4, reverse: false, type: "flame" },
-    darkness: { min: 0, max: 1 }, color: "#ff4d00", attenuation: 0.5
+    animation: {speed: 2, intensity: 4, reverse: false, type: "flame"},
+    darkness: {min: 0, max: 1}, color: "#ff4d00", attenuation: 0.5
   };
-  await actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({ item, lightData }));
-  return oilFlask.update({ "system.quantity": quantity - 1 });
+  await actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
+  return oilFlask.update({"system.quantity": quantity - 1});
 }
 
 async function FREE_USE(item, speaker, actor, token, character, event, args) {
@@ -177,7 +177,7 @@ async function FREE_USE(item, speaker, actor, token, character, event, args) {
     consumeSpellLevel: false,
     consumeSpellSlot: false,
     consumeUsage: false
-  }, { configureDialog: false });
+  }, {configureDialog: false});
 }
 
 async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
@@ -188,7 +188,7 @@ async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, 
   const value = weapon.system.uses.value;
 
   if (value < 3) {
-    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
+    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name}));
     return;
   }
 
@@ -197,7 +197,7 @@ async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, 
     return acc + `<option value="${e}">${e} charges</option>`;
   }, "");
 
-  const content = _basicFormContent({ label: "Expend Charges:", type: "select", options });
+  const content = _basicFormContent({label: "Expend Charges:", type: "select", options});
 
   const expend = await Dialog.prompt({
     title: weapon.name,
@@ -212,8 +212,8 @@ async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, 
   const bonus = (val === 0 && expend >= 4) ? 3 : 0;
   const parts = [[`${expend + bonus}d6`, "fire"]];
 
-  await weapon.update({ "system.uses.value": val });
-  const clone = item.clone({ "system.damage.parts": parts }, { keepId: true });
+  await weapon.update({"system.uses.value": val});
+  const clone = item.clone({"system.damage.parts": parts}, {keepId: true});
   clone.prepareFinalAttributes();
-  return clone.use({}, { "flags.dnd5e.itemData": clone.toObject() });
+  return clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
 }

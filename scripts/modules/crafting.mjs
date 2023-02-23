@@ -1,4 +1,4 @@
-import { FORAGING, MODULE } from "../const.mjs";
+import {FORAGING, MODULE} from "../const.mjs";
 
 export function _craftingCharacterFlag() {
   CONFIG.DND5E.characterFlags.speedCrafting = {
@@ -18,7 +18,7 @@ function _getScalingHealing(materials, speedCrafting = false) {
   while (2 ** power <= upperBound) {
     scalingHeal += `<option value="${2 ** power}">${roll.formula}</option>`;
     power++;
-    roll = roll.alter(2, 0, { multiplyNumeric: true });
+    roll = roll.alter(2, 0, {multiplyNumeric: true});
   }
   return scalingHeal;
 }
@@ -30,7 +30,7 @@ function _getScalingDamage(materials) {
   while (2 * mult <= materials) {
     scalingDamage += `<option value="${2 * mult}">${roll.formula}</option>`;
     mult++;
-    roll = new Roll("2d6 + 2").alter(mult, 0, { multiplyNumeric: true });
+    roll = new Roll("2d6 + 2").alter(mult, 0, {multiplyNumeric: true});
   }
   return scalingDamage;
 }
@@ -49,7 +49,7 @@ export class MateriaMedica extends Application {
       classes: ["materia-medica-crafting"],
       resizable: true,
       scrollY: [],
-      tabs: [{ navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage" }],
+      tabs: [{navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage"}],
       dragDrop: [],
       closeOnSubmit: false,
       template: `modules/${MODULE}/templates/materiaMedica.hbs`
@@ -95,7 +95,7 @@ export class MateriaMedica extends Application {
   }
 
   getCost(uuid) {
-    const { potions, poisons, misc } = this.uuids;
+    const {potions, poisons, misc} = this.uuids;
     const [cost] = [
       ...Object.entries(potions),
       ...Object.entries(poisons),
@@ -138,27 +138,27 @@ export class MateriaMedica extends Application {
     const potionItems = [];
     const poisonItems = [];
     const miscItems = [];
-    const { potions, poisons, misc } = this.uuids;
+    const {potions, poisons, misc} = this.uuids;
     for (const n of [2, 4, 6, 8, 10]) {
       const [itemA, itemB, itemC] = await Promise.all([fromUuid(potions[n]), fromUuid(poisons[n]), fromUuid(misc[n])]);
       const scalingH = n === 2 ? _getScalingHealing(materials, this.speedCrafting) : null;
       const scalingD = n === 2 ? _getScalingDamage(materials) : null;
       const costA = n === 2 ? "varies" : n;
       const costB = `${n === 2 ? "varies" : n} + method`;
-      potionItems.push({ button: itemA.name, uuid: potions[n], scaling: scalingH, description: itemA.system.description.value, cost: costA });
-      poisonItems.push({ button: itemB.name, uuid: poisons[n], scaling: scalingD, description: itemB.system.description.value, cost: costB });
-      miscItems.push({ button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n });
+      potionItems.push({button: itemA.name, uuid: potions[n], scaling: scalingH, description: itemA.system.description.value, cost: costA});
+      poisonItems.push({button: itemB.name, uuid: poisons[n], scaling: scalingD, description: itemB.system.description.value, cost: costB});
+      miscItems.push({button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n});
     }
 
 
     /* POISONS */
-    const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({ value: cost, label: `${label} (${cost})` }));
+    const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({value: cost, label: `${label} (${cost})`}));
 
     /* FORAGING */
     const forageOptions = this.actor.items.filter(item => {
       return (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
-    }).map(tool => ({ id: tool.id, label: tool.name })).concat([
-      { id: "nat", label: "Nature" }, { id: "sur", label: "Survival" }
+    }).map(tool => ({id: tool.id, label: tool.name})).concat([
+      {id: "nat", label: "Nature"}, {id: "sur", label: "Survival"}
     ]);
 
     return foundry.utils.mergeObject(data, {
@@ -174,31 +174,29 @@ export class MateriaMedica extends Application {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelector("#forage-initiate").addEventListener("click", (event) => this._onForage(event, html));
-    html[0].addEventListener("click", (event) => this._onToggleForageResult(event));
-    html[0].querySelector("#forage-accept").addEventListener("click", (event) => this._onAcceptForage(event, html));
-    html[0].addEventListener("click", (event) => this._onCraftingButton(event, html));
-    html[0].querySelector("#poison-delivery-method").addEventListener("change", (event) => this._onDeliveryMethodChange(event, html));
+    html[0].querySelector("#forage-initiate").addEventListener("click", this._onForage.bind(this));
+    html[0].querySelector("#forage-accept").addEventListener("click", this._onAcceptForage.bind(this));
+    html[0].querySelectorAll("button[data-uuid]").forEach(n => n.addEventListener("click", this._onCraftingButton.bind(this)));
+    html[0].querySelector("#poison-delivery-method").addEventListener("change", this._onDeliveryMethodChange.bind(this));
+    html[0].querySelector("#poison-delivery-method").dispatchEvent(new Event("change"));
   }
 
-  async _onForage(event, html) {
-    event.target.closest("#forage-initiate").disabled = true;
-    const forageResults = html[0].querySelector("[data-tab=forage] .results");
-    const canAddMore = forageResults.childElementCount < this.maxRolls;
+  async _onForage(event) {
+    const target = event.currentTarget;
+    target.disabled = true;
+    const canAddMore = target.closest(".foraging").querySelectorAll(".results .result").length < this.maxRolls;
     if (!canAddMore) {
-      ui.notifications.warn("ZHELL.CraftingCannotRollMore", { localize: true });
+      ui.notifications.warn("ZHELL.CraftingCannotRollMore", {localize: true});
       return;
     }
-    const type = html[0].querySelector("#forage-tool").value;
+    const type = target.closest(".tab").querySelector("#forage-tool").value;
     const fumble = null;
     const critical = null;
     const tool = this.actor.items.get(type);
 
     const rollConfig = {
       targetValue: this.targetValue,
-      fumble,
-      critical,
-      event,
+      fumble, critical, event,
       dialogOptions: {
         left: event.clientX - 200,
         top: event.clientY - 180
@@ -212,7 +210,7 @@ export class MateriaMedica extends Application {
       roll = await this.actor.rollSkill(type, rollConfig);
     }
     if (!roll) {
-      event.target.closest("#forage-initiate").disabled = false;
+      target.disabled = false;
       return;
     }
     const data = {
@@ -225,60 +223,57 @@ export class MateriaMedica extends Application {
     };
     const DIV = document.createElement("DIV");
     DIV.innerHTML = await renderTemplate(`modules/${MODULE}/templates/materiaMedicaForageResult.hbs`, data);
-    forageResults.appendChild(DIV.firstChild);
-    event.target.closest("#forage-initiate").disabled = false;
+    DIV.querySelector(".add-forageables").addEventListener("click", this._onToggleForageResult.bind(this));
+    target.closest(".foraging").querySelector(".results").appendChild(DIV.firstChild);
+    target.disabled = false;
   }
 
   _onToggleForageResult(event) {
-    const a = event.target.closest(".add-forageables");
-    if (!a) return;
-    a.classList.toggle("active");
+    event.currentTarget.classList.toggle("active");
   }
 
-  async _onAcceptForage(event, html) {
-    const attempts = html[0].querySelectorAll(".result").length;
-    const foraged = html[0].querySelectorAll(".result .active").length;
+  async _onAcceptForage(event) {
+    const target = event.currentTarget;
+    const results = target.closest(".foraging").querySelector(".results");
+    const attempts = results.querySelectorAll(".result").length;
     if (!attempts) {
-      ui.notifications.warn("ZHELL.CraftingMustRollOnce", { localize: true });
+      ui.notifications.warn("ZHELL.CraftingMustRollOnce", {localize: true});
       return;
     }
+    const foraged = results.querySelectorAll(".result .active").length;
     await ChatMessage.create({
       content: game.i18n.format("ZHELL.CraftingWentForaging", {
         name: this.actor.name, hours: attempts, amount: foraged
       }),
-      speaker: ChatMessage.getSpeaker({ actor: this.actor })
+      speaker: ChatMessage.getSpeaker({actor: this.actor})
     });
-    html[0].querySelector(".results").innerHTML = "";
-    html[0].querySelector("#forage-initiate").disabled = false;
+    results.innerHTML = "";
+    target.closest(".foraging").querySelector("#forage-initiate").disabled = false;
     await this.actor.setFlag(MODULE, "materia-medica.value", this.materials + foraged);
     return this._refreshDropdowns();
   }
 
-  _onCraftingButton(event, html) {
-    const uuid = event.target.closest("button")?.dataset.uuid;
-    if (!uuid) return;
-    const tab = event.target.closest(".tab.active").dataset.tab;
+  _onCraftingButton(event) {
+    const uuid = event.currentTarget.dataset.uuid;
+    const tab = event.currentTarget.closest(".tab.active").dataset.tab;
     const baseCost = this.getCost(uuid);
-    const itemScales = baseCost === 2 && ["potion", "poison"].includes(tab);
-    const scale = !itemScales ? null : Number(html[0].querySelector(`#scale-${tab}`).value);
-    if (!scale && scale !== null) {
-      ui.notifications.warn("You must select a valid scale for the item.");
+    const itemScales = (baseCost === 2) && ["potion", "poison"].includes(tab);
+    const scale = !itemScales ? null : Number(event.currentTarget.closest(".item").querySelector("select").value);
+    if (!scale && (scale !== null)) {
+      ui.notifications.warn("ZHELL.CraftingMustSelectScale", {localize: true});
       return;
     }
-    const method = html[0].querySelector("#poison-delivery-method").value;
     if (tab === "potion") return this._createPotion(uuid, baseCost, scale);
-    else if (tab === "poison") return this._createPoison(uuid, baseCost, scale, Number(method));
+    else if (tab === "poison") {
+      const method = event.currentTarget.closest(".tab").querySelector("#poison-delivery-method").value;
+      return this._createPoison(uuid, baseCost, scale, Number(method));
+    }
     else if (tab === "misc") return this._createMisc(uuid, baseCost);
   }
 
-  async _render(...T) {
-    await super._render(...T);
-    this._onDeliveryMethodChange({}, this.element);
-  }
-
-  _onDeliveryMethodChange(event, html) {
-    const c = html[0].querySelector("#poison-delivery-method").value;
-    html[0].querySelector(".method-description").innerText = this.descriptionAppend[c];
+  _onDeliveryMethodChange(event) {
+    const c = event.currentTarget.value;
+    event.currentTarget.closest("form").querySelector(".method-description").innerText = this.descriptionAppend[c];
   }
 
   async _createPotion(uuid, baseCost, scale = false) {
@@ -286,7 +281,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = (scale ? scale : baseCost) * (this.speedCrafting ? 0.5 : 1);
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
       return;
     }
 
@@ -303,7 +298,7 @@ export class MateriaMedica extends Application {
     const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
     if (found) {
       const quantity = found.system.quantity;
-      const created = await found.update({ "system.quantity": quantity + 1 });
+      const created = await found.update({"system.quantity": quantity + 1});
       return this._finalize(created, cost);
     }
 
@@ -316,34 +311,34 @@ export class MateriaMedica extends Application {
     const deliveryMethod = {
       0: {
         system: {
-          activation: { condition: "", cost: null, type: "special" },
+          activation: {condition: "", cost: null, type: "special"},
           consumableType: "poison",
-          range: { value: null, long: null, units: "" },
-          target: { value: 1, width: null, units: "", type: "creature" }
+          range: {value: null, long: null, units: ""},
+          target: {value: 1, width: null, units: "", type: "creature"}
         }
       },
       1: {
         system: {
-          activation: { condition: "", cost: 1, type: "action" },
+          activation: {condition: "", cost: 1, type: "action"},
           consumableType: "poison",
-          range: { value: null, long: null, units: "" },
-          target: { value: 1, width: null, units: "", type: "object" }
+          range: {value: null, long: null, units: ""},
+          target: {value: 1, width: null, units: "", type: "object"}
         }
       },
       2: {
         system: {
-          activation: { condition: "", cost: 1, type: "action" },
+          activation: {condition: "", cost: 1, type: "action"},
           consumableType: "poison",
-          range: { value: null, long: null, units: "" },
-          target: { value: 1, width: null, units: "", type: "object" }
+          range: {value: null, long: null, units: ""},
+          target: {value: 1, width: null, units: "", type: "object"}
         }
       },
       3: {
         system: {
-          activation: { condition: "", cost: 1, type: "action" },
+          activation: {condition: "", cost: 1, type: "action"},
           consumableType: "poison",
-          range: { value: null, long: null, units: "self" },
-          target: { value: 5, width: null, units: "ft", type: "cube" }
+          range: {value: null, long: null, units: "self"},
+          target: {value: 5, width: null, units: "ft", type: "cube"}
         }
       }
     }[method];
@@ -354,11 +349,11 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = method + (scale ? scale : baseCost);
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
       return;
     }
     itemData.system.description.value += `<p>${append}</p>`;
-    foundry.utils.mergeObject(itemData, { ...deliveryMethod, [`flags.${MODULE}.poisonType`]: method });
+    foundry.utils.mergeObject(itemData, {...deliveryMethod, [`flags.${MODULE}.poisonType`]: method});
     itemData.name = `${itemData.name} (${this.methods[method]})`;
 
     // if scaling item, handle individually. Does not stack.
@@ -376,7 +371,7 @@ export class MateriaMedica extends Application {
     });
     if (found) {
       const quantity = found.system.quantity;
-      const created = await found.update({ "system.quantity": quantity + 1 });
+      const created = await found.update({"system.quantity": quantity + 1});
       return this._finalize(created, cost);
     }
     // create new item if no existing item is found.
@@ -389,7 +384,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(item);
     const cost = baseCost;
     if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost }));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
       return;
     }
 
@@ -397,7 +392,7 @@ export class MateriaMedica extends Application {
     const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
     if (found) {
       const quantity = found.system.quantity;
-      const created = await found.update({ "system.quantity": quantity + 1 });
+      const created = await found.update({"system.quantity": quantity + 1});
       return this._finalize(created, cost);
     }
     // create new item if no existing item is found.
@@ -409,8 +404,8 @@ export class MateriaMedica extends Application {
     const content = game.i18n.format("ZHELL.CraftingComplete", {
       name: this.actor.name, amount: cost, link: item.link
     });
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    await ChatMessage.create({ content, speaker });
+    const speaker = ChatMessage.getSpeaker({actor: this.actor});
+    await ChatMessage.create({content, speaker});
     await this.actor.setFlag(MODULE, "materia-medica.value", this.materials - cost);
     return this._refreshDropdowns();
   }

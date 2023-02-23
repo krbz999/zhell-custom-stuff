@@ -1,4 +1,4 @@
-import { FORAGING, MODULE } from "../const.mjs";
+import {FORAGING, MODULE} from "../const.mjs";
 
 /**
  * Get a document from a compendium.
@@ -66,7 +66,7 @@ export async function _teleportTokens(crosshairsConfig = {}, fade = true, fadeDu
       y: tokenDoc.y - origin.y + target.y
     };
   });
-  const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, { animate: false });
+  const update = await canvas.scene.updateEmbeddedDocuments("Token", updates, {animate: false});
 
   if (fade) {
     await warpgate.wait(fadeDuration);
@@ -129,9 +129,9 @@ export async function _whisperPlayers() {
     const selected = (user.character && isControlled) ? "selected" : "";
     const id = user.id;
     const name = user.name;
-    return { selected, id, name };
+    return {selected, id, name};
   });
-  const content = await renderTemplate(template, { characters });
+  const content = await renderTemplate(template, {characters});
 
   return new Dialog({
     title: "Whisper",
@@ -148,20 +148,20 @@ export async function _whisperPlayers() {
             return acc + `<p>${e.trim()}</p>`;
           }, "");
           const whisperIds = new Set();
-          for (const { id } of users) {
+          for (const {id} of users) {
             if (html[0].querySelector(`span[id="${id}"].selected`)) whisperIds.add(id);
           }
           const whisper = whisperIds.size ? Array.from(whisperIds) : [game.user.id];
-          return ChatMessage.create({ content, whisper });
+          return ChatMessage.create({content, whisper});
         }
       }
     },
     render: (html) => {
-      html[0].addEventListener("click", (event) => {
-        event.target.closest(".whisper-dialog-player-name")?.classList.toggle("selected");
+      html[0].querySelectorAll(".whisper-dialog-player-name").forEach(n => {
+        n.addEventListener("click", (event) => event.currentTarget.classList.toggle("selected"));
       });
     },
-  }).render(true, { height: "auto" });
+  }).render(true, {height: "auto"});
 }
 
 /**
@@ -272,18 +272,18 @@ export class EXHAUSTION {
     const data = {
       label: game.i18n.localize("ZHELL.StatusConditionExhaustion"),
       "flags.core.statusId": "exhaustion",
-      "flags.visual-active-effects.data.intro": `<p>${game.i18n.format("ZHELL.StatusConditionExhaustionDescription", { level: num })}</p>`,
+      "flags.visual-active-effects.data.intro": `<p>${game.i18n.format("ZHELL.StatusConditionExhaustionDescription", {level: num})}</p>`,
       "flags.zhell-custom-stuff.exhaustion": num,
       icon: "icons/skills/wounds/injury-body-pain-gray.webp",
       changes: [
-        { key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.abilities.check", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.mwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.rwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.rsak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.bonuses.spell.dc", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion" },
-        { key: "system.attributes.exhaustion", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: num },
+        {key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.abilities.check", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.mwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.rwak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.rsak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.bonuses.spell.dc", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-@attributes.exhaustion"},
+        {key: "system.attributes.exhaustion", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: num},
       ]
     };
 
@@ -329,7 +329,7 @@ export async function _titleCard(text, fontSize = 80) {
   const sequence = new Sequence().effect()
     .text(text, textStyle)
     .screenSpace()
-    .screenSpaceAnchor({ x: 0.5, y: 0.34 })
+    .screenSpaceAnchor({x: 0.5, y: 0.34})
     .duration(12000)
     .fadeIn(2000)
     .fadeOut(2000);
@@ -342,9 +342,9 @@ export async function _titleCard(text, fontSize = 80) {
  * @param {MeasuredTemplateDocument} tempDoc  The template document.
  */
 export function _checkTokenInTemplate(token, tempDoc) {
-  const { size } = canvas.scene.grid;
-  const { width, height, x: tokx, y: toky } = token.document;
-  const { x: tempx, y: tempy, object } = tempDoc;
+  const {size} = canvas.scene.grid;
+  const {width, height, x: tokx, y: toky} = token.document;
+  const {x: tempx, y: tempy, object} = tempDoc;
   const startX = width >= 1 ? 0.5 : width / 2;
   const startY = height >= 1 ? 0.5 : height / 2;
   for (let x = startX; x < width; x++) {
@@ -369,5 +369,5 @@ export function _selectContained(tempDoc) {
     return _checkTokenInTemplate(token, tempDoc);
   });
   canvas.tokens.releaseAll();
-  tokens.forEach(token => token.control({ releaseOthers: false }));
+  tokens.forEach(token => token.control({releaseOthers: false}));
 }

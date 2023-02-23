@@ -1,7 +1,7 @@
-import { COLOR, MODULE, RARITY } from "../const.mjs";
-import { MateriaMedica } from "./crafting.mjs";
-import { MoneySpender } from "./moneySpender.mjs";
-import { EXHAUSTION } from "./zhell_functions.mjs";
+import {COLOR, MODULE, RARITY} from "../const.mjs";
+import {MateriaMedica} from "./crafting.mjs";
+import {MoneySpender} from "./moneySpender.mjs";
+import {EXHAUSTION} from "./zhell_functions.mjs";
 
 // hooks on renderActorSheet
 export async function ZHELL_SHEET(sheet, html, sheetData) {
@@ -149,7 +149,7 @@ async function _createForaging(sheet, html) {
   html[0].querySelector("div.counter.flexrow.exhaustion").after(DIV.firstChild);
   const input = html[0].querySelector(`[name="${`flags.${MODULE}.materia-medica.value`}"]`);
   input.addEventListener("focus", e => e.currentTarget.select());
-  input.addEventListener("change", e => _onChangeInputDeltaCustom(sheet, e, { min: 0, max: 999 }));
+  input.addEventListener("change", e => _onChangeInputDeltaCustom(sheet, e, {min: 0, max: 999}));
 }
 
 function _createExhaustion(sheet, html) {
@@ -176,10 +176,10 @@ function _createSpendMoney(sheet, html) {
   converter.after(...DIV.children);
 }
 
-function _createDots(sheet, html, { showSpellSlots, showLimitedUses }) {
+function _createDots(sheet, html, {showSpellSlots, showLimitedUses}) {
 
   if (showSpellSlots) {
-    Object.entries(sheet.object.system.spells ?? {}).forEach(([key, { value, max }]) => {
+    Object.entries(sheet.object.system.spells ?? {}).forEach(([key, {value, max}]) => {
       const _max = html[0].querySelector(`.spell-max[data-level=${key}]`);
       const dotContainer = document.createElement("DIV");
       dotContainer.classList.add("zhell-dots", "flexrow");
@@ -201,7 +201,7 @@ function _createDots(sheet, html, { showSpellSlots, showLimitedUses }) {
 
   if (showLimitedUses) {
     sheet.object.items.filter(i => !!i.hasLimitedUses).forEach(o => {
-      const { value, max } = o.system.uses;
+      const {value, max} = o.system.uses;
       if (!max) return;
       const itemHTML = html[0].querySelector(`.item[data-item-id='${o.id}']`);
       // skip if item is hidden via filter.
@@ -245,7 +245,7 @@ function _createDots(sheet, html, { showSpellSlots, showLimitedUses }) {
       const DIV = document.createElement("DIV");
       DIV.classList.add("zhell-dots", "flexrow");
       const q = 5;
-      const { value, max } = i.system.uses;
+      const {value, max} = i.system.uses;
       DIV.innerHTML = Array.fromRange(Math.min(q, max)).reduce((acc, e) => {
         const le = e < (q - 1) || max <= q;
         const cls = le ? (e < value ? "dot" : "dot empty") : (value < max ? "dot empty has-more" : "dot has-more");
@@ -307,21 +307,21 @@ function _onClickSpendMoney() {
 }
 
 async function _onClickDot(dot) {
-  const { itemId, spellLevel } = dot.dataset;
+  const {itemId, spellLevel} = dot.dataset;
   const diff = dot.classList.contains("empty") ? 1 : -1;
 
   if (spellLevel) {
     const path = `system.spells.${spellLevel}.value`;
     const value = foundry.utils.getProperty(this, path);
-    return this.update({ [path]: value + diff });
+    return this.update({[path]: value + diff});
   } else if (itemId) {
     const item = this.items.get(itemId);
     const value = item.system.uses.value;
-    return item.update({ "system.uses.value": value + diff });
+    return item.update({"system.uses.value": value + diff});
   }
 }
 
-function _onChangeInputDeltaCustom(sheet, event, { min = null, max = null } = {}) {
+function _onChangeInputDeltaCustom(sheet, event, {min = null, max = null} = {}) {
   const input = event.target;
   const value = input.value;
   if (["+", "-"].includes(value[0])) {
