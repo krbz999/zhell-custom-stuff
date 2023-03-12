@@ -229,7 +229,11 @@ export async function _teleportationHelper({item, actor, token, vanish, appear, 
 
 /**
  * Small spawn helper to preload token images for warpgate.
- * Returns an array.
+ * @param {string} name               Name of the actor to spawn.
+ * @param {object} [updates={}]       An object of updates to the spawned token, actor, and embedded.
+ * @param {object} [callbacks={}]     An object of callback functions.
+ * @param {object} [options={}]       An object of additional options for the spawning.
+ * @returns {string[]}                The ids of spawned tokens.
  */
 export async function _spawnHelper(name, updates = {}, callbacks = {}, options = {}) {
   const images = await game.actors.getName(name).getTokenImages();
