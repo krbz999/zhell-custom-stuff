@@ -40,7 +40,7 @@ async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args
   const name = `Darkvision (${range}ft)`;
   const updates = {
     actor: {"system.attributes.senses.darkvision": range},
-    token: {sight: {visionMode: "darkvision", range}}
+    token: {sight: {visionMode: "darkvision", range, ...CONFIG.Canvas.visionModes.darkvision.vision.defaults}}
   }
   const options = {
     name,
@@ -533,7 +533,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
       name: "Boldness",
       data: {
         changes: ["mwak.attack", "rwak.attack", "msak.attack", "rsak.attack", "abilities.save"].map(prop => {
-          return {key: `system.bonuses.${prop}`, mode: COSNT.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"};
+          return {key: `system.bonuses.${prop}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"};
         }),
         duration: {seconds: 60},
         icon: "icons/magic/movement/trail-streak-pink.webp",
@@ -586,9 +586,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
   const universal = {
     transfer: false,
     flags: {
-      [DEPEND.ET]: {
-        transferBlock: {button: true, chat: true, displayCard: true}
-      },
+      [DEPEND.ET]: {transferBlock: {button: true, chat: true, displayCard: true}},
       [MODULE]: {experimentalElixir: true}
     }
   }
