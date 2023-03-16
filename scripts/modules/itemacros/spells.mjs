@@ -1,6 +1,5 @@
 import {DEPEND, MODULE} from "../../const.mjs";
 import {drawCircle} from "../animations.mjs";
-import {_redisplayItem} from "../combatHelpers.mjs";
 import {elementalDialog, imageAnchorDialog} from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
@@ -19,6 +18,7 @@ export const ITEMACRO_SPELLS = {
   ABSORB_ELEMENTS,
   AID,
   ARMOR_OF_AGATHYS,
+  ASHARDALONS_STRIDE,
   BLADE_CANTRIP,
   BORROWED_KNOWLEDGE,
   BREATH_WEAPON,
@@ -73,7 +73,11 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
   });
   if (isActive) {
     const level = isActive.flags[MODULE].spellLevel;
-    return _redisplayItem(item, level);
+    const data = item.toObject();
+    data.system.level = level;
+    const clone = new Item.implementation(data, {keepId: true});
+    clone.prepareFinalAttributes();
+    return clone.displayCard();
   }
 
   const use = await item.use();
@@ -601,10 +605,10 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
     origin: actor.uuid,
     duration: foundry.utils.duplicate(conc.duration),
     "flags.visual-active-effects.data": {
-      intro: `<p>You are in control of ${itemData.name}.</p><p class="zhell-custom-buttons"><a data-type="use">${itemData.name}</a></p>`,
+      intro: `<p>You are in control of ${itemData.name}.</p>`,
       content: itemData.system.description.value
     },
-    [`flags.${MODULE}.itemData`]: itemData
+    [`flags.${MODULE}`]: {itemData, types: ["use"]}
   }]);
 
   return conc.setFlag("world", "storedFlag", id);
@@ -947,4 +951,25 @@ async function FIND_STEED(item, speaker, actor, token, character, event, args) {
     await _spawnHelper("Dreg", update, {}, options);
     await actor.sheet?.maximize();
   }
+}
+
+/**
+ * Item Macro for the 'Ashardalon's Stride' spell. Simply updates the concentration effect
+ * to grant the movement speed increase to any movement values that are already greater than 0ft.
+ */
+async function ASHARDALONS_STRIDE(item, speaker, actor, token, character, event, args) {
+  if (!_getDependencies(DEPEND.VAE, DEPEND.CN)) return item.use();
+  const use = await item.use();
+  if (!use) return;
+  const conc = await CN.waitForConcentrationStart(actor, {item});
+
+  const value = conc.flags.concentrationnotifier.data.castData.castLevel * 5 + 5
+  const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
+
+  const changes = Object.keys(CONFIG.DND5E.movementTypes).reduce((acc, type) => {
+    const feet = actor.system.attributes.movement[type];
+    if (feet > 0) acc.push({key: `system.attributes.movement.${type}`, mode, value});
+    return acc;
+  }, []);
+  return conc.update({changes});
 }
