@@ -39,6 +39,13 @@ export class ZHELL_COMBAT {
   }
 }
 
+/**
+ * Hook function to replace the token HUD condition selector with a new one
+ * that has images and labels, as well as tooltips.
+ * @param {TokenHUD} hud          The token HUD.
+ * @param {HTML} html             The element of the HUD.
+ * @param {object} tokenData      The data of the token related to the HUD.
+ */
 export function _replaceTokenHUD(hud, html, tokenData) {
   const sorting = CONFIG.statusEffects.reduce((acc, e) => {
     acc[e.id] = e.sort;
@@ -89,38 +96,81 @@ async function rollSaves(abilityId, targetValue) {
   return game.user.updateTokenTargets(failed.map(t => t.id));
 }
 
-// When rendering VAE.
-export function _renderVisualActiveEffects(app, html, data) {
-  html[0].querySelectorAll(".zhell-custom-buttons a").forEach(n => {
-    n.addEventListener("click", async function(event) {
-      const target = event.currentTarget;
-      const uuid = target.closest("[data-effect-uuid").dataset.effectUuid;
-      const effect = await fromUuid(uuid);
-      const itemData = effect.flags[MODULE].itemData;
-      const item = new Item.implementation(itemData, {parent: effect.parent});
-      if (target.dataset.type === "use") return item.use({}, {"flags.dnd5e.itemData": itemData});
-      if (target.dataset.type === "redisplay") return _redisplayItem(item, target.dataset.level, itemData);
-      else if (target.dataset.type === "attack") return item.rollAttack({event});
-      else if (target.dataset.type === "damage") return item.rollDamage({event});
-      else if (target.dataset.type === "template") return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
-    });
-  });
-}
+/**
+ * Inject buttons into VAE effects.
+ * @param {ActiveEffect} effect     The active effect being rendered.
+ * @param {object[]} buttons        The array of buttons on this effect.
+ */
+export function _visualActiveEffectsCreateEffectButtons(effect, buttons) {
+  // Item data and type must be added in the effect by this module.
+  const {itemData, types} = effect.flags[MODULE] ?? {};
+  if (!itemData || !types) return;
 
-// display (use) an item at a given level. For spells only.
-export function _redisplayItem(item, level, itemData = {}) {
-  const clone = item.clone({"system.level": level}, {keepId: true});
-  clone.prepareFinalAttributes();
-  return clone.use({
-    createMeasuredTemplate: false,
-    consumeQuantity: false,
-    consumeRecharge: false,
-    consumeResource: false,
-    consumeSpellLevel: false,
-    consumeSpellSlot: false,
-    consumeUsage: false
-  }, {
-    configureDialog: false,
-    "flags.dnd5e.itemData": itemData
-  });
+  // Use the item embedded.
+  if (types.includes("use")) {
+    buttons.push({
+      label: `${itemData.name} (Use)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        item.prepareFinalAttributes();
+        return item.use({}, {"flags.dnd5e.itemData": itemData});
+      }
+    });
+  }
+
+  // Redisplay the item embedded.
+  if (types.includes("redisplay")) {
+    buttons.push({
+      label: `${itemData.name} (Chat)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        item.prepareFinalAttributes();
+        return item.displayCard();
+      }
+    });
+  }
+
+  // Make an attack roll with the item embedded.
+  if (types.includes("attack")) {
+    buttons.push({
+      label: `${itemData.name} (Attack)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollAttack({event});
+      }
+    });
+  }
+
+  // Make a damage roll with the item embedded.
+  if (types.includes("damage")) {
+    buttons.push({
+      label: `${itemData.name} (Damage)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollDamage({event});
+      }
+    });
+  }
+
+  // Make a healing roll with the item embedded.
+  if (types.includes("healing")) {
+    buttons.push({
+      label: `${itemData.name} (Healing)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollDamage({event});
+      }
+    });
+  }
+
+  // Create a measured template from the item embedded.
+  if (types.includes("template")) {
+    buttons.push({
+      label: `${itemData.name} (Template)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
+      }
+    });
+  }
 }

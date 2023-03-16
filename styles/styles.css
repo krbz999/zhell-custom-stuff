@@ -251,32 +251,6 @@ span.flavor-text.zhell-apply-damage-flavor {
   line-height: 28px;
 }
 
-/* CUSTOM VAE BUTTONS, COPYING CN */
-.zhell-custom-buttons a:hover {
-  text-shadow: 0 0 8px white;
-  background: brown;
-  color: black;
-}
-
-.zhell-custom-buttons a {
-  font-size: 14px;
-  height: 30px;
-  line-height: 26px;
-  margin: 2px 0;
-  background: #6f2f31ad;
-  border: 2px groove #9e6161;
-  width: 100%;
-  border-radius: 6px;
-  text-align: center;
-  padding: 1px 6px;
-}
-
-.zhell-custom-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 /* Elemental dialog coloring */
 .dialog.elemental {
   height: auto;

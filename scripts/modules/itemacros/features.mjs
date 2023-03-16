@@ -848,11 +848,8 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "radiant"]]}
       }
     }
-    const effectButtons = ["use", "attack", "damage"].reduce((acc, e) => {
-      return acc + `<a data-type="${e}">${e.titleCase()}</a>`;
-    }, "<p class='zhell-custom-buttons'>") + "</p>";
-    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form] + effectButtons);
-    foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
+    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["use", "attack", "damage"]});
   } else if (form === "chalice") {
     const itemData = {
       name: "Starry Form (Chalice)",
@@ -866,9 +863,8 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "healing"]]}
       }
     }
-    const effectButtons = '<p class="zhell-custom-buttons"><a data-type="damage">Healing</a></p>';
-    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form] + effectButtons);
-    foundry.utils.setProperty(effectData, `flags.${MODULE}.itemData`, itemData);
+    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["healing"]});
   } else if (form === "dragon") {
     foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
     effectData.changes = [{key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true}];

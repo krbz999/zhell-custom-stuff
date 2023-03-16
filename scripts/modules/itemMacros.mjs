@@ -144,17 +144,18 @@ export function _constructDetectionModeEffectData({modes = [], item}) {
  * Returns an array of effect data.
  */
 export function _constructGenericEffectData({item, level = null}) {
-  const dataLevel = level ? `data-level="${level}"` : "";
   return [{
     label: item.name,
     icon: item.img,
     duration: _getItemDuration(item),
     "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
-      intro: `<p class="zhell-custom-buttons"><a data-type="redisplay" ${dataLevel}>${item.name}</a></p>`,
       content: item.system.description.value
     },
-    [`flags.${MODULE}.itemData`]: item.clone({"system.level": level}).toObject()
+    [`flags.${MODULE}`]: {
+      itemData: item.clone({"system.level": level}).toObject(),
+      types: ["redisplay"]
+    }
   }];
 }
 

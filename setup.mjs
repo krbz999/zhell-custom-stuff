@@ -5,8 +5,8 @@ import {refreshColors, ZHELL_SHEET} from "./scripts/modules/sheet_edits.mjs";
 import {
   ZHELL_COMBAT,
   _replaceTokenHUD,
-  _renderVisualActiveEffects,
-  _setupGroupSaves
+  _setupGroupSaves,
+  _visualActiveEffectsCreateEffectButtons
 } from "./scripts/modules/combatHelpers.mjs";
 import {
   ZHELL_ANIMATIONS,
@@ -23,6 +23,7 @@ import {
   _dropActorFolder,
   _itemStatusCondition,
   _miscAdjustments,
+  _preCreateScene,
   _restItemDeletion,
   _sceneHeaderView,
   _setUpGameChanges,
@@ -58,7 +59,6 @@ Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
 Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 
-
 Hooks.on("renderItemSheet", _itemStatusCondition);
 Hooks.on("renderActorSheet", ZHELL_SHEET);
 Hooks.on("renderJournalPageSheet", _classesPageListeners);
@@ -88,10 +88,11 @@ Hooks.once("ready", function() {
     Hooks.on("renderChatMessage", _setupGroupSaves);
     Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
     Hooks.on("dropCanvasData", _dropActorFolder);
+    Hooks.on("preCreateScene", _preCreateScene);
   }
 
   if (game.modules.get(DEPEND.VAE)?.active) {
-    Hooks.on("renderVisualActiveEffects", _renderVisualActiveEffects);
+    Hooks.on("visual-active-effects.createEffectButtons", _visualActiveEffectsCreateEffectButtons);
   }
 
   // hook for various actions are performed to display animations.

@@ -514,10 +514,6 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
   });
 
   async function _createEffectData(type) {
-    const buttons = ["use", "attack", "damage"].reduce((acc, e, i) => {
-      const append = !i ? "" : ` (${e.titleCase()} Roll)`
-      return acc + `<a data-type="${e}">Energy Burst${append}</a>`;
-    }, "<p class='zhell-custom-buttons'>") + "</p>";
     const effectData = [{
       label: item.name,
       icon: item.img,
@@ -528,7 +524,7 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
         core: {statusId: item.name.slugify({strict: true})},
         "visual-active-effects.data": {
           forceInclude: true,
-          intro: `<p>You have assumed the form of Yebraztos the Scrollkeeper.</p>${buttons}`,
+          intro: "<p>You have assumed the form of Yebraztos the Scrollkeeper.</p>",
           content: item.system.description.value
         },
         [MODULE]: {
@@ -546,7 +542,8 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
               actionType: "rsak",
               damage: {parts: [["2d8 + @mod", type]]}
             }
-          }
+          },
+          types: ["use", "attack", "damage"]
         }
       }
     }];
