@@ -361,3 +361,18 @@ export async function _itemStatusCondition(sheet, html) {
     return sheet.document.createEmbeddedDocuments("ActiveEffect", [data]);
   });
 }
+
+/**
+ * Change the defaults of newly created scenes.
+ * @param {Scene} scene           The scene document to be created.
+ * @param {object} sceneData      The data object used to create the scene.
+ */
+export function _preCreateScene(scene, sceneData) {
+  const data = foundry.utils.mergeObject({
+    grid: {type: 2, alpha: 0.1},
+    padding: 0.05,
+    fogExploration: false,
+    globalLight: true,
+  }, sceneData);
+  scene.updateSource(data);
+}
