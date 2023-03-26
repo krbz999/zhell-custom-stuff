@@ -1,7 +1,6 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {api} from "./scripts/api.mjs";
 import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
-import {refreshColors, _performSheetEdits} from "./scripts/modules/sheet_edits.mjs";
 import {
   ZHELL_COMBAT,
   _replaceTokenHUD,
@@ -36,6 +35,7 @@ import {
 import {DEPEND, MODULE} from "./scripts/const.mjs";
 import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
 import {_craftingCharacterFlag} from "./scripts/modules/applications/materiaMedica.mjs";
+import {refreshColors, _performSheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);

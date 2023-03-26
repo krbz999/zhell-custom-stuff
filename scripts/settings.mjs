@@ -4,7 +4,7 @@ import {
   RARITY_DEFAULTS,
   WORLD_DEFAULTS
 } from "./const.mjs";
-import {refreshColors} from "./modules/sheet_edits.mjs";
+import {refreshColors} from "./modules/applications/sheetEdits.mjs";
 
 export function registerSettings() {
   _registerSettings();
