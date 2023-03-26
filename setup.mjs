@@ -1,7 +1,7 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {api} from "./scripts/api.mjs";
 import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
-import {refreshColors, ZHELL_SHEET} from "./scripts/modules/sheet_edits.mjs";
+import {refreshColors, _performSheetEdits} from "./scripts/modules/sheet_edits.mjs";
 import {
   ZHELL_COMBAT,
   _replaceTokenHUD,
@@ -33,13 +33,7 @@ import {
   _addFlavorListenerToDamageRolls,
   _appendDataToDamageRolls
 } from "./scripts/modules/dm_tool.mjs";
-import {
-  DEFEATED,
-  DEPEND,
-  DISPLAY_AMMO,
-  MODULE,
-  TRACK_REACTIONS
-} from "./scripts/const.mjs";
+import {DEPEND, MODULE} from "./scripts/const.mjs";
 import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
 import {_craftingCharacterFlag} from "./scripts/modules/applications/materiaMedica.mjs";
 
@@ -61,7 +55,7 @@ Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 
 Hooks.on("renderItemSheet", _itemStatusCondition);
-Hooks.on("renderActorSheet", ZHELL_SHEET);
+Hooks.on("renderActorSheet", _performSheetEdits);
 Hooks.on("renderJournalPageSheet", _classesPageListeners);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", _rotateTokensOnMovement);
@@ -73,17 +67,17 @@ Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
 
 Hooks.once("ready", function() {
-  const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);
-  if ((reactionSetting === "gm" && game.user.isGM) || reactionSetting === "all") {
+  const reactionSetting = game.settings.get(MODULE, "trackReactions");
+  if (((reactionSetting === "gm") && game.user.isGM) || (reactionSetting === "all")) {
     Hooks.on("dnd5e.useItem", ZHELL_COMBAT.spendReaction);
   }
 
-  if (game.settings.get(MODULE, DISPLAY_AMMO)) {
+  if (game.settings.get(MODULE, "displaySavingThrowAmmo")) {
     Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
   }
 
   if (game.user.isGM) {
-    if (game.settings.get(MODULE, DEFEATED)) {
+    if (game.settings.get(MODULE, "markDefeatedCombatants")) {
       Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
     }
     Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);

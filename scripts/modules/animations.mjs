@@ -300,12 +300,12 @@ export function _setupCollapsibles() {
 
 // ADD DICE.
 export function _initD20(dice3d) {
-  dice3d.addSystem({id: "zhell-custom-stuff", name: "The Rollsmith - Package Jam 2022"}, false);
+  dice3d.addSystem({id: MODULE, name: "The Rollsmith - Package Jam 2022"}, false);
   dice3d.addDicePreset({
     type: "d20",
     labels: "",
     modelFile: "assets/animations/dice/dice_20.gltf",
-    system: "zhell-custom-stuff"
+    system: MODULE
   });
 }
 

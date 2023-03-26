@@ -1,4 +1,4 @@
-import {FORAGING, MODULE} from "../../const.mjs";
+import {MODULE} from "../../const.mjs";
 
 export function _craftingCharacterFlag() {
   CONFIG.DND5E.characterFlags.speedCrafting = {
@@ -39,7 +39,7 @@ export class MateriaMedica extends Application {
   }
 
   get targetValue() {
-    return game.settings.get(MODULE, FORAGING);
+    return game.settings.get(MODULE, "foragingDC");
   }
 
   get uuids() {

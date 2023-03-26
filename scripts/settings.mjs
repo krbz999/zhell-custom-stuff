@@ -1,13 +1,7 @@
 import {
-  COLOR,
   COLOR_DEFAULTS,
-  DEFEATED,
-  DISPLAY_AMMO,
-  FORAGING,
   MODULE,
-  RARITY,
   RARITY_DEFAULTS,
-  TRACK_REACTIONS,
   WORLD_DEFAULTS
 } from "./const.mjs";
 import {refreshColors} from "./modules/sheet_edits.mjs";
@@ -18,7 +12,7 @@ export function registerSettings() {
 }
 
 function _registerSettings() {
-  game.settings.register(MODULE, FORAGING, {
+  game.settings.register(MODULE, "foragingDC", {
     name: "ZHELL.SettingsForagingDifficultyName",
     hint: "ZHELL.SettingsForagingDifficultyHint",
     scope: "world",
@@ -28,7 +22,7 @@ function _registerSettings() {
     requiresReload: false
   });
 
-  game.settings.register(MODULE, DEFEATED, {
+  game.settings.register(MODULE, "markDefeatedCombatants", {
     name: "ZHELL.SettingsCombatantDefeatedName",
     hint: "ZHELL.SettingsCombatantDefeatedHint",
     scope: "world",
@@ -38,7 +32,7 @@ function _registerSettings() {
     requiresReload: true
   });
 
-  game.settings.register(MODULE, DISPLAY_AMMO, {
+  game.settings.register(MODULE, "displaySavingThrowAmmo", {
     name: "ZHELL.SettingsDisplayAmmoName",
     hint: "ZHELL.SettingsDisplayAmmoHint",
     scope: "world",
@@ -48,7 +42,7 @@ function _registerSettings() {
     requiresReload: true
   });
 
-  game.settings.register(MODULE, TRACK_REACTIONS, {
+  game.settings.register(MODULE, "trackReactions", {
     name: "ZHELL.SettingsTrackReactionsName",
     hint: "ZHELL.SettingsTrackReactionsHint",
     scope: "world",
@@ -84,7 +78,7 @@ function _registerSettingsMenus() {
   });
 
   // sheet color settings.
-  game.settings.register(MODULE, COLOR, {
+  game.settings.register(MODULE, "colorSettings", {
     scope: "client",
     config: false,
     type: Object,
@@ -92,7 +86,7 @@ function _registerSettingsMenus() {
     onChange: refreshColors
   });
 
-  game.settings.registerMenu(MODULE, COLOR, {
+  game.settings.registerMenu(MODULE, "colorSettings", {
     name: "ZHELL.SettingsMenuColorSettingsName",
     hint: "ZHELL.SettingsMenuColorSettingsHint",
     label: "Sheet Color Settings",
@@ -102,7 +96,7 @@ function _registerSettingsMenus() {
   });
 
   // item rarity color settings.
-  game.settings.register(MODULE, RARITY, {
+  game.settings.register(MODULE, "rarityColorSettings", {
     scope: "client",
     config: false,
     type: Object,
@@ -110,7 +104,7 @@ function _registerSettingsMenus() {
     onChange: refreshColors
   });
 
-  game.settings.registerMenu(MODULE, RARITY, {
+  game.settings.registerMenu(MODULE, "rarityColorSettings", {
     name: "ZHELL.SettingsMenuRarityColorsName",
     hint: "ZHELL.SettingsMenuRarityColorsHint",
     label: "Item Rarity Color Settings",
@@ -171,13 +165,13 @@ class ColorPickerSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    return game.settings.set(MODULE, COLOR, formData, {diff: false});
+    return game.settings.set(MODULE, "colorSettings", formData, {diff: false});
   }
 
   async getData() {
     const data = foundry.utils.mergeObject(
       foundry.utils.duplicate(COLOR_DEFAULTS),
-      game.settings.get(MODULE, COLOR),
+      game.settings.get(MODULE, "colorSettings"),
       {insertKeys: false}
     );
     const checks = Object.entries({
@@ -221,7 +215,7 @@ class RarityColorsSubmenu extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, RARITY, formData, {diff: false});
+    const set = await game.settings.set(MODULE, "rarityColorSettings", formData, {diff: false});
     refreshColors();
     return set;
   }
@@ -230,7 +224,7 @@ class RarityColorsSubmenu extends FormApplication {
     return {
       settings: Object.entries(foundry.utils.mergeObject(
         RARITY_DEFAULTS,
-        game.settings.get(MODULE, RARITY),
+        game.settings.get(MODULE, "rarityColorSettings"),
         {insertKeys: false}
       )).map(d => {
         const label = CONFIG.DND5E.itemRarity[d[0]].titleCase();

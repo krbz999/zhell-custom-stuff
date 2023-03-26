@@ -1,10 +1,4 @@
 export const MODULE = "zhell-custom-stuff";
-export const COLOR = "colorSettings";
-export const DEFEATED = "markDefeatedCombatants";
-export const DISPLAY_AMMO = "displaySavingThrowAmmo";
-export const FORAGING = "foragingDC";
-export const RARITY = "rarityColorSettings";
-export const TRACK_REACTIONS = "trackReactions";
 export const DEPEND = {
   BAB: "babonus",
   CN: "concentrationnotifier",

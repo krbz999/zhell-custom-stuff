@@ -1,4 +1,4 @@
-import {FORAGING, MODULE} from "../const.mjs";
+import {MODULE} from "../const.mjs";
 
 /**
  * Get a document from a compendium.
@@ -20,7 +20,7 @@ export async function _getDocumentFromCompendium(documentName, catalog) {
  */
 export async function _setForageDC(number) {
   if (!game.user.isGM) return ui.notifications.warn("Excuse me?");
-  return game.settings.set(MODULE, FORAGING, number);
+  return game.settings.set(MODULE, "foragingDC", number);
 }
 
 /**
