@@ -1,4 +1,4 @@
-import {MODULE} from "../const.mjs";
+import {MODULE} from "../../const.mjs";
 
 export class MoneySpender extends Application {
   constructor(options = {}, actor) {
@@ -10,7 +10,7 @@ export class MoneySpender extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       width: 450,
       height: 300,
-      classes: ["money-spender"],
+      classes: [MODULE, "money-spender"],
       resizable: false,
       template: `modules/${MODULE}/templates/moneySpender.hbs`
     });

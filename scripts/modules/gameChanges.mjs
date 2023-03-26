@@ -266,13 +266,21 @@ export async function _dropActorFolder(canvas, data) {
   return canvas.scene.createEmbeddedDocuments("Token", tokenData);
 }
 
-// Add item context menu options.
+/**
+ * Add a context menu options for when an actor item is right-clicked.
+ * @param {Item5e} item         The item that is the target of the context menu.
+ * @param {object[]} array      The array of context menu options.
+ */
 export function _addContextMenuOptions(item, array) {
   _moveItemToSharedInventory(item, array);
   _createScrollFromOwnedSpell(item, array);
 }
 
-// Context menu option to move an item into a shared inventory (an owned Group actor).
+/**
+ * Add a context menu option to move an item into a shared inventory (an owned Group actor).
+ * @param {Item5e} item         The item that is the target of the context menu.
+ * @param {object[]} array      The array of context menu options.
+ */
 function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
   const inventory = game.actors.filter(a => {
@@ -290,7 +298,11 @@ function _moveItemToSharedInventory(item, array) {
   }
 }
 
-// Context menu option to create a scroll from a spell in an actor's spellbook.
+/**
+ * Add a context menu option to create a scroll from a spell in an actor's spellbook.
+ * @param {Item5e} spell        The spell that is the target of the context menu.
+ * @param {object[]} array      The array of context menu options.
+ */
 function _createScrollFromOwnedSpell(spell, array) {
   if (spell.type !== "spell") return;
   array.push({
@@ -308,7 +320,11 @@ function _createScrollFromOwnedSpell(spell, array) {
   });
 }
 
-// Add dropdown to add status conditions in items.
+/**
+ * Add a dropdown in unowned items to add a status condition for ET purposes.
+ * @param {ItemSheet} sheet       The item sheet.
+ * @param {HTMLElement} html      The sheet's element.
+ */
 export async function _itemStatusCondition(sheet, html) {
   if (sheet.document.actor) return;
   const list = html[0].querySelector(".items-list.effects-list");
@@ -332,8 +348,9 @@ export async function _itemStatusCondition(sheet, html) {
     const effId = await Dialog.wait({
       title: "Add Status Condition",
       content: `
-      <form>
+      <form class="dnd5e">
         <div class="form-group">
+          <label>Status Condition:</label>
           <div class="form-fields">
             <select autofocus>${options}</select>
           </div>
@@ -375,4 +392,22 @@ export function _preCreateScene(scene, sceneData) {
     globalLight: true,
   }, sceneData);
   scene.updateSource(data);
+}
+
+/**
+ * When an effect is created in an item, set its icon and label to be the item's img
+ * and name unless a different and non-default icon and label are provided.
+ * @param {ActiveEffect} effect     The effect to be created.
+ * @param {object} effectData       The data object used to create the effect.
+ */
+export function _preCreateActiveEffect(effect, effectData) {
+  if (!(effect.parent instanceof Item)) return;
+  const data = {};
+  if ((effectData.icon === "icons/svg/aura.svg") || !effectData.icon) {
+    data.icon = effect.parent.img;
+  }
+  if ((effectData.label === "New Effect") || !effectData.label) {
+    data.label = effect.parent.name;
+  }
+  effect.updateSource(data);
 }

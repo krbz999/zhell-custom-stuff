@@ -311,38 +311,45 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* ANCHOR SELECTOR DIALOG */
-.image-selector .window-content {
-  overflow: visible;
+.zhell-custom-stuff.image-selector {
+  min-width: 400px;
+  height: auto !important;
 }
 
-.image-selector .selections {
+.zhell-custom-stuff.image-selector .selections {
   margin: 1em 0;
   gap: 1em;
-  display: grid;
+  display: flex;
+  flex-direction: column;
 }
 
-.image-selector img {
+.zhell-custom-stuff.image-selector img {
   opacity: 0.2;
   border: none;
   transition: 0.2s;
   width: 80%;
 }
 
-.image-selector img:hover {
+.zhell-custom-stuff.image-selector img:hover {
   opacity: 0.75;
 }
 
-.image-selector a {
-  text-align: center;
+.zhell-custom-stuff.image-selector .row a {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex: 1;
 }
 
-.image-selector .active img {
+.zhell-custom-stuff.image-selector .active img {
   opacity: 1;
   filter: drop-shadow(2px 4px 6px black);
 }
 
-.image-selector :is(.top-selection, .middle-selection, .bottom-selection) {
-  display: grid;
+.zhell-custom-stuff.image-selector .row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 /* EXPERIMENTAL ELIXIR */
@@ -382,28 +389,28 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* MATERIA MEDICA CRAFTING */
-.app.window-app.materia-medica-crafting {
+.zhell-custom-stuff.materia-medica {
   min-width: 340px;
   min-height: 430px;
 }
 
-section > .materia-medica-crafting {
+.zhell-custom-stuff.materia-medica .content {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.materia-medica-crafting button {
+.zhell-custom-stuff.materia-medica button {
   align-self: center;
 }
 
-.materia-medica-crafting [data-tab=forage] .results {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results {
   margin: 0.25em;
   overflow-y: auto;
   border: 2px inset;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result {
   display: grid;
   grid-template-columns: 7fr 3fr 0fr;
   align-items: center;
@@ -411,24 +418,24 @@ section > .materia-medica-crafting {
   min-height: 2.5em;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result:nth-child(odd) {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result:nth-child(odd) {
   background-color: #afc2ac;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result .type {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .type {
   font-weight: bold;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result .formula {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .formula {
   overflow: hidden;
   white-space: nowrap;
   padding: 5px;
   font-weight: bold;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables {
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
@@ -439,26 +446,26 @@ section > .materia-medica-crafting {
   min-height: 100%;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables.active {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active {
   background-color: darkseagreen;
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables i:before {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables i:before {
   content: "\f00d";
 }
 
-.materia-medica-crafting [data-tab=forage] .results .result a.add-forageables.active i:before {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active i:before {
   content: "\f00c";
 }
 
-.materia-medica-crafting [data-tab=forage] .foraging {
+.zhell-custom-stuff.materia-medica [data-tab=forage] .foraging {
   padding: 0.5em 1em;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
 
-.materia-medica-crafting nav.sheet-tabs.tabs {
+.zhell-custom-stuff.materia-medica nav.sheet-tabs.tabs {
   min-height: 1.5em;
   align-items: center;
   font-weight: bold;
@@ -467,60 +474,60 @@ section > .materia-medica-crafting {
   padding: 0.5em 0;
 }
 
-.materia-medica-crafting .description {
+.zhell-custom-stuff.materia-medica .description {
   padding: 1em;
 }
 
-.materia-medica-crafting .method-description {
+.zhell-custom-stuff.materia-medica .method-description {
   padding: 0.5em 0.3em 1em;
   font-style: italic;
 }
 
-.materia-medica-crafting .item-description {
+.zhell-custom-stuff.materia-medica .item-description {
   padding: 0 1em;
   font-style: italic;
 }
 
-.materia-medica-crafting .content-tabs {
+.zhell-custom-stuff.materia-medica .content-tabs {
   overflow: hidden;
   flex: 1;
 }
 
-.materia-medica-crafting .content-tabs .tab.active {
+.zhell-custom-stuff.materia-medica .content-tabs .tab.active {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.materia-medica-crafting .content-tabs .item {
+.zhell-custom-stuff.materia-medica .content-tabs .item {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 1em;
 }
 
-.materia-medica-crafting .content-tabs .item select {
+.zhell-custom-stuff.materia-medica .content-tabs .item select {
   min-width: fit-content;
 }
 
-.materia-medica-crafting .selections {
+.zhell-custom-stuff.materia-medica .selections {
   overflow-y: auto;
   border: 1px inset;
 }
 
-.materia-medica-crafting .selection:not(:first-child) {
+.zhell-custom-stuff.materia-medica .selection:not(:first-child) {
   border-top: 2px groove;
 }
 
-.materia-medica-crafting .selection:last-child {
+.zhell-custom-stuff.materia-medica .selection:last-child {
   border-bottom: 2px groove;
 }
 
-.materia-medica-crafting .selection {
+.zhell-custom-stuff.materia-medica .selection {
   padding: 1em 0;
 }
 
-.materia-medica-crafting form {
+.zhell-custom-stuff.materia-medica form {
   padding: 0 1em;
 }
 
@@ -556,13 +563,13 @@ section > .materia-medica-crafting {
 }
 
 /* MONEY SPENDER */
-.money-spender .form {
+.zhell-custom-stuff.money-spender .form {
   display: grid;
   grid-template-rows: 1fr 2fr 0fr;
   grid-template-columns: 1fr;
 }
 
-.money-spender .tally {
+.zhell-custom-stuff.money-spender .tally {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -570,38 +577,38 @@ section > .materia-medica-crafting {
   margin: 0 1em;
 }
 
-.money-spender .total[data-denom=pp]:after {
+.zhell-custom-stuff.money-spender .total[data-denom=pp]:after {
   content: " pp";
 }
 
-.money-spender .total[data-denom=gp]:after {
+.zhell-custom-stuff.money-spender .total[data-denom=gp]:after {
   content: " gp";
 }
 
-.money-spender .total[data-denom=ep]:after {
+.zhell-custom-stuff.money-spender .total[data-denom=ep]:after {
   content: " ep";
 }
 
-.money-spender .total[data-denom=sp]:after {
+.zhell-custom-stuff.money-spender .total[data-denom=sp]:after {
   content: " sp";
 }
 
-.money-spender .total[data-denom=cp]:after {
+.zhell-custom-stuff.money-spender .total[data-denom=cp]:after {
   content: " cp";
 }
 
-.money-spender .utils {
+.zhell-custom-stuff.money-spender .utils {
   display: flex;
   justify-content: space-evenly;
 }
 
-.money-spender .util {
+.zhell-custom-stuff.money-spender .util {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.money-spender .currency {
+.zhell-custom-stuff.money-spender .currency {
   border-left: 2px groove;
   width: 4em;
   max-width: 4em;
@@ -609,7 +616,7 @@ section > .materia-medica-crafting {
   text-align: center;
 }
 
-.money-spender .adjust {
+.zhell-custom-stuff.money-spender .adjust {
   width: 4em;
   max-width: 4em;
   text-align: center;
@@ -617,16 +624,16 @@ section > .materia-medica-crafting {
   background-color: cornsilk;
 }
 
-.money-spender .adjust:hover {
+.zhell-custom-stuff.money-spender .adjust:hover {
   text-shadow: none;
 }
 
-.money-spender .currency > * {
+.zhell-custom-stuff.money-spender .currency > * {
   margin: 0.5em 0;
   text-transform: uppercase;
 }
 
-.money-spender .current {
+.zhell-custom-stuff.money-spender .current {
   font-style: italic;
   width: 4em;
   text-align: center;

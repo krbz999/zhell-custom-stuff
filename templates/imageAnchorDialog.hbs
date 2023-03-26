@@ -1,25 +1,24 @@
-<div class="selections">
-  {{#if top.length}}
-  <div class="top-selection">
-    {{#each top as |selection|}}
-    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
-    {{/each}}
-  </div>
-  {{/if}}
+<div class="content">
+  <div class="selections">
+    {{#if rows.top.length}}
+    <div class="row top">
+      {{#each rows.top}}<a data-name="{{name}}"><img src="{{src}}"></a>{{/each}}
+    </div>
+    {{/if}}
 
-  {{#if middle.length}}
-  <div class="middle-selection">
-    {{#each middle as |selection|}}
-    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
-    {{/each}}
-  </div>
-  {{/if}}
+    {{#if rows.middle.length}}
+    <div class="row middle">
+      {{#each rows.middle}}<a data-name="{{name}}"><img src="{{src}}"></a>{{/each}}
+    </div>
+    {{/if}}
 
-  {{#if bottom.length}}
-  <div class="bottom-selection">
-    {{#each bottom as |selection|}}
-    <a data-name="{{selection.name}}"><img src="{{selection.src}}"></a>
-    {{/each}}
+    {{#if rows.bottom.length}}
+    <div class="row bottom">
+      {{#each rows.bottom}}<a data-name="{{name}}"><img src="{{src}}"></a>{{/each}}
+    </div>
+    {{/if}}
   </div>
-  {{/if}}
+  <div class="footer">
+    <button><i class="fa-solid fa-check"></i> {{label}}</button>
+  </div>
 </div>

@@ -1,6 +1,6 @@
 import {COLOR, MODULE, RARITY} from "../const.mjs";
-import {MateriaMedica} from "./crafting.mjs";
-import {MoneySpender} from "./moneySpender.mjs";
+import {MateriaMedica} from "./applications/materiaMedica.mjs";
+import {MoneySpender} from "./applications/moneySpender.mjs";
 import {EXHAUSTION} from "./zhell_functions.mjs";
 
 // hooks on renderActorSheet

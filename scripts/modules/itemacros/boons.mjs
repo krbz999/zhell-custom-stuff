@@ -1,5 +1,5 @@
 import {DEPEND, MODULE} from "../../const.mjs";
-import {imageAnchorDialog} from "../customDialogs.mjs";
+import {ImageAnchorPicker} from "../applications/imageAnchorPicker.mjs";
 import {
   _basicFormContent,
   _getDependencies
@@ -15,6 +15,11 @@ export const ITEMACRO_BOONS = {
   SPREAD_THE_KNOWLEDGE,
 };
 
+/**
+ * When concentrating on Hunter's Mark, display a dialog to use a reaction or attempt to extend
+ * the duration of the concentration. The DC for the check to extend it increases by 1 for each
+ * success. The reaction ends the concentration and allows the actor to take the damage instead.
+ */
 async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.CN)) return item.use();
 
@@ -90,10 +95,13 @@ async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
   }
 }
 
+/**
+ * Initiate a dialog that lets the user select any number of spells they have available. The
+ * spells must each be between level 1 and 5 and have a cast time of 1 action. The sum of the
+ * spell levels must not exceed half the character level (rounded up). Scrolls are then created
+ * from each of the selected spells and added to the actor's inventory.
+ */
 async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
-  // Create spell scrolls from spells of level 1-5 with a cast time of 1 action.
-  // The spells should have a combined spell level no higher than n = half character level rounded up.
-
   // CONSTANTS
   const maxCombinedSpellLevel = Math.min(10, Math.ceil(actor.system.details.level / 2));
   const options = actor.itemTypes.spell.filter(s => {
@@ -171,6 +179,10 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
   }).render(true, {height: "auto"});
 }
 
+/**
+ * Turn the token to Large with an animation, creating an effect on the actor with an
+ * attached Effect Macro to toggle the size and the other attributes.
+ */
 async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.EM, DEPEND.VAE)) return item.use();
 
@@ -203,12 +215,12 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   const onDelete = async function() {
     const easing = function(pt) {return 1 - cos((pt * Math.PI) / 2);}
     await Sequencer.EffectManager.endEffects({name: "Show of Force"});
-    await token.document.update({height: 1, width: 1}, {animation: {duration: 500, easing}});
+    return token.document.update({height: 1, width: 1}, {animation: {duration: 500, easing}});
   }
 
   const onDisable = async function() {
     await effect.callMacro("onDelete");
-    await effect.delete();
+    return effect.delete();
   }
 
   // when create effect, trigger sequence and mutation. When delete effect, remove mutation and end sequences.
@@ -238,12 +250,15 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
 }
 
+/**
+ * Display a message for the user comparing Strength and Constitution with their target.
+ */
 async function SIZE_UP(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
 
   const target = game.user.targets.first();
-  if (!target) {
+  if (!target?.actor) {
     ui.notifications.warn("If you had a target, you'd know immediately.");
     return;
   }
@@ -262,6 +277,10 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
   return ChatMessage.create({content, speaker, whisper});
 }
 
+/**
+ * Either use the item with an attached animation, or when concentrating on the item
+ * initiate a dialog to either erupt or dismiss the concentration.
+ */
 async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.EM, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
@@ -314,8 +333,13 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
   }
 }
 
+/**
+ * Initiate a dialog to choose a new form for the actor and the form the steed should
+ * take. Then summon the steed and change forms. When the associated effect is deleted
+ * the actor reverts, and the steed is dismissed.
+ */
 async function FIND_FRIEND(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A)) return item.use();
+  if (!_getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A, DEPEND.EM)) return item.use();
 
   // jb2a assets.
   const assets = [
@@ -349,7 +373,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
   await Promise.all([...data.top, ...data.bottom].map(({src}) => loadTexture(src)));
   const use = await item.use();
   if (!use) return;
-  return imageAnchorDialog({title: item.name, ...data, label: "Show us the meaning of haste!", callback: _onMutate});
+  return new ImageAnchorPicker({title: item.name, ...data, label: "Show us the meaning of haste!", callback: _onMutate}).render(true);
 
   function _generateUpdateObjects(nameSteed, nameShape) {
     // movement speeds.
@@ -428,13 +452,10 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     return {updatesSteed, updatesShape};
   }
 
-  async function _onMutate(html) {
+  async function _onMutate(event, {top, middle, bottom}) {
     // get the steed and shape from the dialog.
-    const steedA = html[0].querySelector(".image-selector .top-selection a.active");
-    const shapeA = html[0].querySelector(".image-selector .bottom-selection a.active");
-
-    const {name: nameSteed} = steedA.dataset;
-    const {name: nameShape} = shapeA.dataset;
+    const nameSteed = top[0];
+    const nameShape = bottom[0];
 
     // pick position.
     await actor.sheet?.minimize();
@@ -451,15 +472,15 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     // steed effects
     await new Sequence()
       .effect()
-      .file(assets[0]).atLocation(location).duration(3000).elevation(-1).snapToGrid().scale(0)
+      .file(assets[0]).atLocation(location).duration(3000).elevation(-1).scale(0)
       .animateProperty("sprite", "scale.x", {from: 0, to: 1, delay: 200, duration: 500, ease: "easeInOutCubic"})
       .animateProperty("sprite", "scale.y", {from: 0, to: 1, duration: 700, ease: "easeInOutCubic"})
       .animateProperty("sprite", "scale.x", {from: 1, to: 0, delay: 2500, duration: 500, ease: "easeInElastic"})
       .animateProperty("sprite", "scale.y", {from: 1, to: 0, delay: 2300, duration: 700, ease: "easeInElastic"})
       .effect()
-      .delay(3000).file(assets[1]).atLocation(location).snapToGrid().scale({x: 0.2, y: 0.2})
+      .delay(3000).file(assets[1]).atLocation(location).scale({x: 0.2, y: 0.2})
       .animation()
-      .delay(1000).on(steedId).opacity(1.0).fadeIn(200).moveTowards({x, y}).duration(200).snapToGrid().waitUntilFinished()
+      .delay(1000).on(steedId).opacity(1.0).fadeIn(200).moveTowards({x, y}).duration(200).waitUntilFinished()
       .effect()
       .attachTo(steedId).file(assets[2]).scale(0.5)
       .effect()
@@ -486,11 +507,15 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
         if (steedToken) sequence.effect().file("jb2a.explosion.greenorange.1").atLocation(steedToken.object.center).scale(0.5);
         await sequence.play();
         return warpgate.dismiss(steedToken?.id);
-      }})()`
+      }.toString()})()`
     }]);
   }
 }
 
+/**
+ * Initiate a dialog to choose between necrotic and fire, then create an effect on the actor
+ * with VAE buttons to utilize the temporary item added, allowing the actor to shot their beams.
+ */
 async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
   if (!_getDependencies(DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
   const use = await item.use();

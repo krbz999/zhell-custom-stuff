@@ -17,12 +17,12 @@ import {
   _sequencerSetup,
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
-import {_craftingCharacterFlag} from "./scripts/modules/crafting.mjs";
 import {
   _addContextMenuOptions,
   _dropActorFolder,
   _itemStatusCondition,
   _miscAdjustments,
+  _preCreateActiveEffect,
   _preCreateScene,
   _restItemDeletion,
   _sceneHeaderView,
@@ -41,6 +41,7 @@ import {
   TRACK_REACTIONS
 } from "./scripts/const.mjs";
 import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
+import {_craftingCharacterFlag} from "./scripts/modules/applications/materiaMedica.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -69,6 +70,7 @@ Hooks.on("dnd5e.preRollDamage", _appendDataToDamageRolls);
 Hooks.on("dnd5e.restCompleted", _restItemDeletion);
 Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
 Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
+Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, TRACK_REACTIONS);

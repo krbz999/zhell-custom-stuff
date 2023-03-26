@@ -415,39 +415,39 @@ h1.havilon-race-header {
 }
 
 /* MATERIA MEDICA */
-.materia-medica :is(h1, h2, h3) {
+.sheet.journal-entry .materia-medica :is(h1, h2, h3) {
   border: none;
   font-family: "Modesto Condensed";
   text-align: center;
 }
 
-.materia-medica p {
+.sheet.journal-entry .materia-medica p {
   text-align: justify;
 }
 
-.materia-medica h1 {
+.sheet.journal-entry .materia-medica h1 {
   font-size: 40px;
 }
 
-.materia-medica h2 {
+.sheet.journal-entry .materia-medica h2 {
   font-size: 30px;
 }
 
-.materia-medica h3 {
+.sheet.journal-entry .materia-medica h3 {
   font-size: 25px;
 }
 
-.materia-medica table th {
+.sheet.journal-entry .materia-medica table th {
   text-align: center;
   padding: 15px;
 }
 
-.materia-medica a.content-link {
+.sheet.journal-entry .materia-medica a.content-link {
   display: block;
   padding: 5px;
 }
 
-.materia-medica table td:nth-child(2) {
+.sheet.journal-entry .materia-medica table td:nth-child(2) {
   text-align: center;
 }
 

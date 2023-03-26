@@ -1,6 +1,7 @@
 import {DEPEND, MODULE} from "../../const.mjs";
 import {drawCircle} from "../animations.mjs";
-import {elementalDialog, imageAnchorDialog} from "../customDialogs.mjs";
+import {ImageAnchorPicker} from "../applications/imageAnchorPicker.mjs";
+import {elementalDialog} from "../customDialogs.mjs";
 import {
   _addTokenDismissalToEffect,
   _basicFormContent,
@@ -640,10 +641,10 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
     return acc;
   }, []);
 
-  return imageAnchorDialog({label: "Cast!", title: item.name, callback: _mageArmor, top});
+  return new ImageAnchorPicker({label: "Cast!", title: item.name, callback: _mageArmor, top}).render(true);
 
-  async function _mageArmor(html) {
-    const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
+  async function _mageArmor(event, {top}) {
+    const tokenId = top[0];
     const target = canvas.scene.tokens.get(tokenId);
     ui.notifications.info(`Applying Mage Armor to ${target.name}!`);
     return warpgate.mutate(target, {

@@ -1,4 +1,4 @@
-import {imageAnchorDialog} from "./customDialogs.mjs";
+import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 
 export class ZHELL_SOCKETS {
 
@@ -151,11 +151,11 @@ function _getTargetUser(tokenId) {
 async function _pickTokenTarget(tokens, itemData) {
   const top = tokens.map(t => ({name: t.document.id, src: t.document.texture.src}));
   const title = `Pick Target for ${itemData.name}`;
-  const callback = async function(html) {
-    const tokenId = html[0].querySelector(".image-selector .top-selection a.active").dataset.name;
+  const callback = async function(event, {top, middle, bottom}) {
+    const tokenId = top[0];
     const target = canvas.scene.tokens.get(tokenId);
     ui.notifications.info(`Adding item to ${target.name}!`);
     return ZHELL_SOCKETS.grantItems([itemData], tokenId);
   }
-  return imageAnchorDialog({top, title, callback});
+  return new ImageAnchorPicker({top, title, callback}).render(true);
 }
