@@ -1,4 +1,5 @@
 import {drawCircle} from "./modules/animations.mjs";
+import {renderClassPages} from "./modules/applications/classPages.mjs";
 import {applyDamageToTokens, DM_TOOL} from "./modules/dm_tool.mjs";
 import {ITEMACRO} from "./modules/itemMacros.mjs";
 import {ZHELL_SOCKETS} from "./modules/sockets.mjs";
@@ -39,7 +40,8 @@ export class api {
         createTiles: ZHELL_SOCKETS.createTiles,
         awardLoot: ZHELL_SOCKETS.awardLoot,
         updateToken: ZHELL_SOCKETS.updateTokens,
-        grantItems: ZHELL_SOCKETS.grantItems
+        grantItems: ZHELL_SOCKETS.grantItems,
+        showClassPages: renderClassPages
       },
       ITEMACRO
     }

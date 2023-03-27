@@ -1,0 +1,50 @@
+<div class="content">
+
+  <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
+    {{#each classes as |cls|}}
+    <a class="item" data-tab="{{cls.identifier}}">{{cls.label}}</a>
+    {{/each}}
+  </nav>
+
+  <div class="content-tabs">
+    {{#each classes as |cls|}}
+    <div class="tab" data-tab="{{cls.identifier}}">
+      <div class="class-section">
+        <img class="class-image" src="{{cls.img}}">
+        <div class="class-item">@UUID[{{cls.uuid}}]</div>
+      </div>
+      <div class="subclass-section">
+        <h2 class="subclass-header">{{cls.label}} Subclasses</h2>
+        <div class="subclass-list">
+          {{#each cls.subclassUuids}}
+          <div class="subclass-item">@UUID[{{this}}]</div>
+          {{/each}}
+        </div>
+      </div>
+      {{#if cls.hasSpells}}
+      <div class="spell-section">
+        <h2 class="spell-header">{{cls.label}} Spells</h2>
+        <div class="spell-lists">
+          {{#each cls.spellLists as |list|}}
+          {{#if list.uuids.length}}
+          <div class="spell-list">
+            <h3 class="spell-list-header">{{list.label}}</h3>
+            {{#each list.uuids}}
+            <div class="spell" data-uuid="{{this}}">
+              @UUID[{{this}}]
+              <a data-action="toggle-description" data-tooltip="Toggle Details">
+                <i class="fa-solid fa-plus"></i>
+              </a>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+
+</div>

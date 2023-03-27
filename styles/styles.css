@@ -640,3 +640,205 @@ span.flavor-text.zhell-apply-damage-flavor {
   max-width: 4em;
   padding-top: 0.5em;
 }
+
+/* PLAYABLE CLASSES LIST */
+.zhell-custom-stuff.class-page-renderer {
+  min-width: 800px;
+  min-height: 100%;
+}
+
+.zhell-custom-stuff.class-page-renderer .content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow-y: hidden;
+  height: 100%;
+}
+
+.zhell-custom-stuff.class-page-renderer .tabs {
+  font-size: 20px;
+  font-family: 'Modesto Condensed';
+  border-style: groove hidden;
+  padding: 0 1em;
+}
+
+.zhell-custom-stuff.class-page-renderer .content-tabs {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.zhell-custom-stuff.class-page-renderer .tab {
+  margin: 1em 1em 5em 1em;
+}
+
+.zhell-custom-stuff.class-page-renderer .class-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.zhell-custom-stuff.class-page-renderer .class-image {
+  border: none;
+  border-radius: 5px;
+  max-width: 100px;
+  min-width: 100px;
+  max-height: 100px;
+  min-height: 100px;
+  pointer-events: none;
+  position: absolute;
+  left: 25px;
+}
+
+/* the class item */
+.zhell-custom-stuff.class-page-renderer .class-item .content-link {
+  border: none;
+  background: none;
+  height: 100px;
+  font-size: 100px;
+  font-family: "Modesto Condensed";
+}
+
+.zhell-custom-stuff.class-page-renderer .class-item .content-link i {
+  display: none;
+}
+
+/* the subclass items */
+.zhell-custom-stuff.class-page-renderer .subclass-header {
+  text-align: center;
+  font-size: 30px;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 30px;
+  border-color: black;
+  margin: 20px auto;
+  padding: 5px 0;
+  font-family: "Modesto Condensed";
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.zhell-custom-stuff.class-page-renderer .subclass-list {
+  grid-template-columns: 1fr 1fr;
+  display: grid;
+  margin: 0 2em;
+  row-gap: 5px;
+  column-gap: 1em;
+}
+
+.zhell-custom-stuff.class-page-renderer .subclass-item .content-link {
+  display: block;
+  padding: 5px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.zhell-custom-stuff.class-page-renderer .subclass-item .content-link i {
+  display: none;
+}
+
+.zhell-custom-stuff.class-page-renderer .subclass-item .content-link:hover {
+  transform: scale(1.1);
+  background: darkgray;
+  box-shadow: 0 0 10px purple;
+  color: rebeccapurple;
+  text-shadow: none;
+}
+
+/* SPELL LISTS */
+/* main header of entire class spell list */
+.zhell-custom-stuff.class-page-renderer .spell-header {
+  text-align: center;
+  font-size: 30px;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 30px;
+  border-color: black;
+  margin: 20px auto;
+  padding: 5px 0;
+  font-family: "Modesto Condensed";
+  text-transform: uppercase;
+  width: 100%;
+}
+
+/* layout of spell list */
+.zhell-custom-stuff.class-page-renderer .spell-section {
+  padding-bottom: 5em;
+}
+
+.zhell-custom-stuff.class-page-renderer .spell-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em;
+  align-items: start;
+}
+
+.zhell-custom-stuff.class-page-renderer .spell-list {
+  display: grid;
+  gap: 0.2em;
+}
+
+.zhell-custom-stuff.class-page-renderer .spell {
+  display: grid;
+  grid-template-columns: calc(100% - var(--form-field-height)) var(--form-field-height);
+  grid-template-areas: "link toggle" "text text";
+}
+
+/* spell-level headers */
+.zhell-custom-stuff.class-page-renderer .spell-list-header {
+  text-align: center;
+  border: none;
+  font-weight: bold;
+}
+
+/* individual spells */
+.zhell-custom-stuff.class-page-renderer .spell .content-link {
+  display: flex;
+  font-size: 12px;
+  padding-left: 0.5em;
+  overflow-x: hidden;
+  height: var(--form-field-height);
+  align-items: center;
+  grid-area: link;
+  border-radius: 8px 0 0 0;
+}
+
+.zhell-custom-stuff.class-page-renderer .spell .content-link:first-child:nth-last-child(2) {
+  border-radius: 8px 0 0 8px;
+}
+
+.zhell-custom-stuff.class-page-renderer [data-action="toggle-description"] {
+  background: purple;
+  color: white;
+  height: var(--form-field-height);
+  width: var(--form-field-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: toggle;
+  border-radius: 0 8px 0 0;
+}
+
+.zhell-custom-stuff.class-page-renderer [data-action="toggle-description"]:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.zhell-custom-stuff.class-page-renderer [data-action="toggle-description"]:not(:last-child) i::before {
+  content: "\2d";
+}
+
+/* toggleable content */
+.zhell-custom-stuff.class-page-renderer .spell-description * {
+  user-select: none;
+  font-size: 11px;
+}
+
+.zhell-custom-stuff.class-page-renderer .spell-description {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px groove black;
+  border-top: none;
+  grid-area: text;
+  border-radius: 0 0 8px 8px;
+  padding: 0 0.5em;
+}

@@ -314,36 +314,6 @@ export function _sequencerSetup() {
   Sequencer.Database.registerEntries("zhell", database);
 }
 
-// CUSTOM JOURNAL PAGE STUFF.
-export function _classesPageListeners(app, html) {
-  if (app.object.parent.name !== "Index: Available Classes") return;
-  html[0].querySelectorAll("a.content-link[data-pack='zhell-catalogs.spells']").forEach(s => {
-    const a = document.createElement("A");
-    a.classList.add("spell-desc-toggle");
-    a.setAttribute("data-action", "toggleDescription");
-    a.setAttribute("data-uuid", s.dataset.uuid);
-    a.setAttribute("data-tooltip", "Toggle Details");
-    a.innerHTML = "<i class='fa-solid fa-plus'></i>";
-    a.addEventListener("click", toggleDescription);
-    s.after(a);
-  });
-
-  async function toggleDescription(event) {
-    // If found, remove it.
-    const shown = event.currentTarget.parentElement.querySelector(".spell-description");
-    if (shown) return shown.remove();
-    // If not found, create it.
-    const target = event.currentTarget;
-    const uuid = target.dataset.uuid
-    const spell = await fromUuid(uuid);
-    const DIV = document.createElement("DIV");
-    DIV.innerHTML = spell.system.description.value;
-    DIV.classList.add("spell-description");
-    DIV.setAttribute("data-uuid", uuid);
-    target.after(DIV);
-  }
-}
-
 export function _equipmentPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Table Rules") return;
   if (app.object.name !== "Equipment") return;

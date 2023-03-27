@@ -9,7 +9,6 @@ import {
 } from "./scripts/modules/combatHelpers.mjs";
 import {
   ZHELL_ANIMATIONS,
-  _classesPageListeners,
   _equipmentPageListeners,
   _initD20,
   _rotateTokensOnMovement,
@@ -56,7 +55,6 @@ Hooks.once("ready", _setupCollapsibles);
 
 Hooks.on("renderItemSheet", _itemStatusCondition);
 Hooks.on("renderActorSheet", _performSheetEdits);
-Hooks.on("renderJournalPageSheet", _classesPageListeners);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", _rotateTokensOnMovement);
 Hooks.on("renderTokenHUD", _replaceTokenHUD);
