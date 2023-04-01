@@ -155,7 +155,7 @@ export class SheetEdits {
         const u = i.hasLimitedUses;
         return f && u;
       }).forEach(item => {
-        const header = [...html[0].querySelectorAll(".items-header.spellbook-header > .item-name > h3")].find(h => {
+        const header = [...this.html[0].querySelectorAll(".items-header.spellbook-header > .item-name > h3")].find(h => {
           return (h.innerText.trim() === item.name) && !h.dataset.itemId;
         });
         if (!header) return;
