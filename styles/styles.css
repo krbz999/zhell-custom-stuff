@@ -698,10 +698,6 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-family: "Modesto Condensed";
 }
 
-.zhell-custom-stuff.class-page-renderer .class-item .content-link i {
-  display: none;
-}
-
 /* the subclass items */
 .zhell-custom-stuff.class-page-renderer .subclass-header {
   text-align: center;
@@ -730,10 +726,8 @@ span.flavor-text.zhell-apply-damage-flavor {
   padding: 5px;
   text-align: center;
   transition: 0.3s;
-}
-
-.zhell-custom-stuff.class-page-renderer .subclass-item .content-link i {
-  display: none;
+  font-family: 'Modesto Condensed';
+  font-size: 30px;
 }
 
 .zhell-custom-stuff.class-page-renderer .subclass-item .content-link:hover {

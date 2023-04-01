@@ -1925,29 +1925,31 @@ class ClassPageRenderer extends Application {
 
   /** @override */
   async getData() {
-    const classes = await game.packs.get("zhell-catalogs.classes").getDocuments();
+    const classes = Array.from(game.packs.get("zhell-catalogs.classes").index);
     classes.sort((a, b) => a.name.localeCompare(b.name));
     const spells = await game.packs.get("zhell-catalogs.spells").getIndex({fields: ["system.level"]});
-    const subclasses = await game.packs.get("zhell-catalogs.subclasses").getIndex();
+    const subclasses = game.packs.get("zhell-catalogs.subclasses").index;
 
     const data = await super.getData();
     data.classes = [];
 
     for (const c of classes) {
-      const _spells = spells.filter(s => this.spellIds[c.identifier].includes(s._id)).sort((a, b) => a.name.localeCompare(b.name));
-      const _subclasses = subclasses.filter(s => this.subclassIds[c.identifier].includes(s._id)).sort((a, b) => a.name.localeCompare(b.name));
+      const identifier = c.name.slugify();
+      const _spells = this.spellIds[identifier].map(id => spells.get(id)).sort((a, b) => a.name.localeCompare(b.name));
+      const _subclasses = this.subclassIds[identifier].map(id => subclasses.get(id)).sort((a, b) => a.name.localeCompare(b.name));
 
       const _data = {};
-      _data.identifier = c.identifier;
-      _data.label = c.name;
+      _data.identifier = identifier;
+      _data.name = c.name;
+      _data.pack = "zhell-catalogs.classes";
       _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
-      _data.uuid = c.uuid;
-      _data.subclassUuids = _subclasses.map(s => `Compendium.zhell-catalogs.subclasses.${s._id}`);
+      _data.id = c._id;
+      _data.subclassIds = _subclasses.map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.subclasses", img: s.img}));
       _data.spellLists = Array.fromRange(10).map(n => ({
         label: CONFIG.DND5E.spellLevels[n],
-        uuids: _spells.filter(s => (s.system.level === n)).map(s => `Compendium.zhell-catalogs.spells.${s._id}`)
+        spells: _spells.filter(s => (s.system.level === n)).map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.spells"}))
       }));
-      _data.hasSpells = _data.spellLists.some(list => list.uuids.length > 0);
+      _data.hasSpells = _data.spellLists.some(list => list.spells.length > 0);
       data.classes.push(_data);
     }
 
@@ -1957,9 +1959,7 @@ class ClassPageRenderer extends Application {
   /** @override */
   async _renderInner(data) {
     if (this.initial) this._tabs[0].active = this.initial;
-    let html = await renderTemplate(this.template, data);
-    html = await TextEditor.enrichHTML(html, {async: true});
-    return $(html);
+    return super._renderInner(data);
   }
 }
 
