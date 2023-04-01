@@ -57,8 +57,7 @@
 }
 
 /* collapsible items and effect headers */
-.dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover,
-.dnd5e.sheet.actor .characteristics label:hover {
+.dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover {
   text-shadow: 0 0 8px var(--color-shadow-primary) !important;
   cursor: pointer;
 }
