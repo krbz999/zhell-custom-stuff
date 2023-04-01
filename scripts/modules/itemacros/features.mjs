@@ -586,7 +586,7 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
   const universal = {
     transfer: false,
     flags: {
-      [DEPEND.ET]: {transferBlock: {button: true, chat: true, displayCard: true}},
+      [DEPEND.ET]: {transferBlock: {button: false, chat: false, displayCard: false}},
       [MODULE]: {experimentalElixir: true}
     }
   }
