@@ -27,7 +27,7 @@ export class SheetEdits {
 
   /** @override */
   async render() {
-    if (this.settings.removeAlignment) this._removeAlignment();
+    if (this.settings.removeAlignment && (this.sheet.document.type === "character")) this._removeAlignment();
     this._setMagicItemsColor();
     if (this.sheet.document.type !== "group") this._setHealthColor();
     if (this.settings.collapsibleHeaders) this._collapsibleHeaders();
