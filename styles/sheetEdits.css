@@ -134,3 +134,18 @@ body :root {
 .dnd5e.sheet.actor .sheet-header .summary li {
   padding-right: 0.5em;
 }
+
+/* Rest buttons and 'new day' button */
+.dnd5e.sheet.actor.character .attributes .attribute.hit-dice .attribute-footer {
+  display: flex;
+  line-height: 15px;
+  gap: 2px;
+  margin: 0 2px;
+}
+
+.dnd5e.sheet.actor.character .attributes .attribute.hit-dice a.rest {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+}
