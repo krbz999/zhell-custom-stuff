@@ -35,6 +35,7 @@ export class SheetEdits {
     if ((this.sheet.document.type === "character") && this.settings.createForaging) await this._createForaging();
     if (this.sheet.document.type === "character") this._createExhaustion();
     if ((this.sheet.document.type === "character") && this.settings.createMoneySpender) this._createMoneySpender();
+    if (this.sheet.document.type === "character") this._createNewDay();
   }
 
   /** Remove the 'alignment' input. */
@@ -303,6 +304,38 @@ export class SheetEdits {
       input.value = Number(foundry.utils.getProperty(this.document, input.name)) + delta;
     } else if (value[0] === "=") input.value = value.slice(1);
     input.value = Math.clamped(input.value, 0, 999);
+  }
+
+  /**
+   * Create 'New Day' button after Short and Long rest buttons.
+   */
+  _createNewDay() {
+    const lr = this.html[0].querySelector(".rest.long-rest");
+    const div = document.createElement("DIV");
+    div.innerHTML = "<a class='rest new-day' data-tooltip='DND5E.NewDay'>Day</a>";
+    div.querySelector(".new-day").addEventListener("click", this._onClickNewDay.bind(this.sheet));
+    lr.after(div.firstChild);
+  }
+
+  /**
+   * Roll limited uses recharge of all items that recharge on a new day.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {Item5e[]}              The array of updated items.
+   */
+  async _onClickNewDay(event) {
+    const conf = await Dialog.confirm({
+      title: "New Day",
+      content: "Would you like to recharge all items that regain charges on a new day?",
+      options: {id: `${this.document.uuid.replaceAll(".", "-")}-new-day-confirm`}
+    });
+    if (!conf) return;
+    const updates = await this.document._getRestItemUsesRecovery({
+      recoverShortRestUses: false,
+      recoverLongRestUses: false,
+      recoverDailyUses: true,
+      rolls: []
+    });
+    return this.document.updateEmbeddedDocuments("Item", updates);
   }
 }
 
