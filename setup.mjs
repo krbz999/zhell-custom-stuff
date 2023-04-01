@@ -3,6 +3,7 @@ import {api} from "./scripts/api.mjs";
 import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
 import {
   ZHELL_COMBAT,
+  _rechargeMonsterFeatures,
   _replaceTokenHUD,
   _setupGroupSaves,
   _visualActiveEffectsCreateEffectButtons
@@ -63,6 +64,7 @@ Hooks.on("dnd5e.restCompleted", _restItemDeletion);
 Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
 Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
+Hooks.on("updateCombat", _rechargeMonsterFeatures);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");

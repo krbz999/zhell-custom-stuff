@@ -174,3 +174,29 @@ export function _visualActiveEffectsCreateEffectButtons(effect, buttons) {
     });
   }
 }
+
+/**
+ * Recharge monster features with a d6 during combat. The script is only executed
+ * if the combat is advanced forward in the turns or rounds.
+ * @param {Combat} combat       The combat document being updated.
+ * @param {object} update       The update object used to update the combat document.
+ * @param {object} context      Object of update options.
+ * @param {string} userId       The id of the user performing the update.
+ */
+export async function _rechargeMonsterFeatures(combat, update, context, userId) {
+  if (!game.user.isGM || (context.direction !== 1)) return;
+  const actor = combat.combatant.actor;
+  for (const item of actor.items) {
+    const recharge = item.system.recharge;
+    if (!recharge?.value || recharge?.charged) continue;
+    await item.rollRecharge();
+  }
+  const max = actor.system.resources.legact.max;
+  if (max > 0) {
+    await actor.update({"system.resources.legact.value": max});
+    await ChatMessage.create({
+      content: `${actor.name}'s legendary actions were reset`,
+      whisper: [game.user.id]
+    });
+  }
+}
