@@ -326,7 +326,7 @@ function _createScrollFromOwnedSpell(spell, array) {
  * @param {HTMLElement} html      The sheet's element.
  */
 export async function _itemStatusCondition(sheet, html) {
-  if (sheet.document.actor) return;
+  if (sheet.document.actor || !sheet.isEditable) return;
   const list = html[0].querySelector(".items-list.effects-list");
   if (!list) return;
 
