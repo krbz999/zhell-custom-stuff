@@ -1,7 +1,7 @@
 import {DEPEND} from "../../const.mjs";
 import {_basicFormContent, _constructLightEffectData, _getDependencies} from "../itemMacros.mjs";
 
-export const ITEMACRO_ITEMS = {
+export const items = {
   AMULET_OF_EQUILLIBRIUM,
   FREE_USE,
   HIT_DIE_APPLY,

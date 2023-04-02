@@ -1,16 +1,44 @@
 import {DEPEND, MODULE} from "../const.mjs";
 import {drawCircle} from "./animations.mjs";
-import {ITEMACRO_BOONS} from "./itemacros/boons.mjs";
-import {ITEMACRO_FEATURES} from "./itemacros/features.mjs";
-import {ITEMACRO_ITEMS} from "./itemacros/items.mjs";
-import {ITEMACRO_SPELLS} from "./itemacros/spells.mjs";
+import {arepo} from "./itemacros/boons/arepo.mjs";
+import {draconiz} from "./itemacros/boons/draconiz.mjs";
+import {murk} from "./itemacros/boons/murk.mjs";
+import {thrizur} from "./itemacros/boons/thrizur.mjs";
+import {alchemist} from "./itemacros/features/artificer-alchemist.mjs";
+import {twilight} from "./itemacros/features/cleric-twilight.mjs";
+import {stars} from "./itemacros/features/druid-stars.mjs";
+import {misc} from "./itemacros/features/misc.mjs";
+import {hearth} from "./itemacros/features/paladin-hearth.mjs";
+import {paladin} from "./itemacros/features/paladin.mjs";
+import {races} from "./itemacros/features/races.mjs";
+import {sorcerer} from "./itemacros/features/sorcerer.mjs";
+import {fathomless} from "./itemacros/features/warlock-fathomless.mjs";
+import {wizard} from "./itemacros/features/wizard.mjs";
+import {items} from "./itemacros/items.mjs";
+import {spells} from "./itemacros/spells.mjs";
 
 // item, speaker, actor, token, character, event, args
 export const ITEMACRO = {
-  ...ITEMACRO_ITEMS,
-  ...ITEMACRO_BOONS,
-  ...ITEMACRO_FEATURES,
-  ...ITEMACRO_SPELLS
+  // class, subclass, and race features
+  ...alchemist,
+  ...twilight,
+  ...stars,
+  ...misc,
+  ...hearth,
+  ...paladin,
+  ...races,
+  ...sorcerer,
+  ...fathomless,
+  ...wizard,
+  // boons
+  ...arepo,
+  ...draconiz,
+  ...murk,
+  ...thrizur,
+  // items
+  ...items,
+  // spells
+  ...spells,
 };
 
 /**

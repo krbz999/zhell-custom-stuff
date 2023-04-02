@@ -1,6 +1,8 @@
 import {ExperimentalElixir} from "../../applications/experimentalElixirs.mjs";
 
-export async function macro(item, speaker, actor, token, character, event, args) {
+export const alchemist = {EXPERIMENTAL_ELIXIR};
+
+async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event, args) {
   const app = new ExperimentalElixir({item, speaker, actor});
   return new Dialog({
     title: "Experimental Elixir",

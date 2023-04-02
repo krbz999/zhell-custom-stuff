@@ -15,7 +15,7 @@ import {
   _teleportationHelper
 } from "../itemMacros.mjs";
 
-export const ITEMACRO_SPELLS = {
+export const spells = {
   ABSORB_ELEMENTS,
   AID,
   ARMOR_OF_AGATHYS,
