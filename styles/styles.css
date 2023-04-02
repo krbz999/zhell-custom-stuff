@@ -352,39 +352,60 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* EXPERIMENTAL ELIXIR */
-.dialog.elixir .dialog-buttons {
+.zhell-custom-stuff.experimental-elixir {
+  width: 400px !important;
+  height: auto !important;
+}
+
+.zhell-custom-stuff.experimental-elixir .dialog-buttons {
+  display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.dialog.elixir .dialog-button:hover,
-.dialog.elixir-builder .dialog-button:hover {
+.zhell-custom-stuff.experimental-elixir .dialog-button {
+  display: flex;
+  padding: 0.5em 0;
+}
+
+.zhell-custom-stuff.experimental-elixir .dialog-button:hover {
   color: purple;
 }
 
-.dialog.elixir .dialog-button {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-}
-
-.dialog.elixir .dialog-button i {
+.zhell-custom-stuff.experimental-elixir .dialog-button i {
   font-size: 40px;
   align-self: center;
   transition: 0.2s;
+  flex: 1;
 }
 
-.dialog.elixir .dialog-button:hover i {
+.zhell-custom-stuff.experimental-elixir .dialog-button .label {
+  flex: 2;
+}
+
+.zhell-custom-stuff.experimental-elixir .dialog-button:hover i {
   transform: scale(1.5);
 }
 
-.dialog.elixir-builder div.form-fields {
-  flex: 1;
+.zhell-custom-stuff.experimental-elixir .form-group {
+  gap: 1em;
+  margin: 0 1em;
+}
+
+.zhell-custom-stuff.experimental-elixir label {
+  line-height: var(--line-height-16);
+  margin: 0.5em 0;
+}
+
+.zhell-custom-stuff.experimental-elixir .form-fields {
+  flex: 0;
   justify-content: center;
 }
 
-.elixir-builder .form-group label {
-  line-height: var(--line-height-16);
-  margin: 0.5em 0;
+.zhell-custom-stuff.experimental-elixir button:disabled {
+  text-decoration: line-through;
+  color: darkgray;
+  cursor: default;
 }
 
 /* MATERIA MEDICA CRAFTING */

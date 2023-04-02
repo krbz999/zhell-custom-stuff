@@ -235,7 +235,7 @@ export function _visionModes() {
 export async function _restItemDeletion(actor, data) {
   if (!data.longRest) return;
   const ids = actor.items.filter(item => {
-    return !!item.flags[MODULE]?.experimentalElixir;
+    return item.flags[MODULE]?.longRestDestroy;
   }).map(i => i.id);
   if (!ids.length) return;
   await actor.deleteEmbeddedDocuments("Item", ids);

@@ -1,0 +1,15 @@
+<div class="content">
+  <form class="dnd5e">
+    {{#each elixirs}}
+    <div class="form-group">
+      <label for="elixir-{{key}}">{{{localize intro mod=../mod}}}</label>
+      <div class="form-fields">
+        <input type="checkbox" id="elixir-{{key}}" value="{{key}}">
+      </div>
+    </div>
+    {{/each}}
+  </form>
+  <button data-action="submit" data-tooltip="ZHELL.ExperimentalElixirPickAtLeastOne" disabled>
+    <i class="fa-solid fa-flask"></i> Create Elixir
+  </button>
+</div>
