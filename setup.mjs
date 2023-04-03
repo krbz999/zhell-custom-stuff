@@ -46,11 +46,7 @@ Hooks.once("setup", _miscAdjustments);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);
 Hooks.once("ready", refreshColors);
-Hooks.once("ready", ZHELL_SOCKETS.loadTextureForAllSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.createTilesSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.awardLootSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.updateTokensSocketOn);
-Hooks.once("ready", ZHELL_SOCKETS.grantItemsSocketOn);
+Hooks.once("ready", ZHELL_SOCKETS.socketsOn);
 Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 

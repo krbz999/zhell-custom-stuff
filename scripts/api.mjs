@@ -41,7 +41,8 @@ export class api {
         awardLoot: ZHELL_SOCKETS.awardLoot,
         updateToken: ZHELL_SOCKETS.updateTokens,
         grantItems: ZHELL_SOCKETS.grantItems,
-        showClassPages: renderClassPages
+        showClassPages: renderClassPages,
+        healToken: ZHELL_SOCKETS.healToken
       },
       ITEMACRO
     }

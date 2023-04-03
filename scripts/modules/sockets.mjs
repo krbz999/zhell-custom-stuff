@@ -1,17 +1,17 @@
 import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 
 export class ZHELL_SOCKETS {
-
-  /* LOAD TEXTURES FOR ALL CLIENTS. */
-  static loadTextureForAllSocketOn() {
-    game.socket.on(`world.${game.world.id}`, (request) => {
-      if (request.action === "loadTextureForAll") {
-        ZHELL_SOCKETS.loadTextureForAll(request.data.src, false);
-      }
+  static socketsOn() {
+    game.socket.on(`world.${game.world.id}`, function(request) {
+      return ZHELL_SOCKETS[request.action](request.data, false);
     });
   }
 
-  static async loadTextureForAll(src, push = true) {
+  /**
+   * Load texture for all clients.
+   * @param {string} src      The texture to load.
+   */
+  static async loadTextureForAll({src}, push = true) {
     if (push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "loadTextureForAll",
@@ -21,37 +21,28 @@ export class ZHELL_SOCKETS {
     return loadTexture(src);
   }
 
-  /* ROUTE TILE CREATION TO THE GM */
-  static createTilesSocketOn() {
-    game.socket.on(`world.${game.world.id}`, (request) => {
-      if (request.action === "createTiles") {
-        ZHELL_SOCKETS.createTiles(request.data.tileData, false);
-      }
-    });
-  }
-
-  static async createTiles(tileData, push = true) {
-    if (push) {
+  /**
+   * Route tile creation to the GM.
+   * @param {object} tileData     The data to create on the scene.
+   */
+  static async createTiles({userId, tileData}, push = true) {
+    userId ??= _getFirstGM();
+    if (!userId) return ui.notifications.warn("No user was found able to create the tiles.");
+    if ((game.user.id !== userId) && push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "createTiles",
-        data: {tileData}
+        data: {userId, tileData}
       });
-    }
-    if (game.user.isGM) {
+    } else {
       return canvas.scene.createEmbeddedDocuments("Tile", tileData);
     }
   }
 
-  /* AWARD LOOT USING BACKPACK-MANAGER */
-  static awardLootSocketOn() {
-    game.socket.on(`world.${game.world.id}`, (request) => {
-      if (request.action === "awardLoot") {
-        ZHELL_SOCKETS.awardLoot(request.data.backpackUuid, false);
-      }
-    });
-  }
-
-  static async awardLoot(backpackUuid, push = true) {
+  /**
+   * Award loot using Backpack Manager.
+   * @param {string} backpackUuid     The uuid of the backpack actor.
+   */
+  static async awardLoot({backpackUuid}, push = true) {
     if (push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "awardLoot",
@@ -60,55 +51,72 @@ export class ZHELL_SOCKETS {
     }
     const a = game.user.character;
     const b = fromUuidSync(backpackUuid);
-    if (!!a && b instanceof Actor) {
+    if (a && (b instanceof Actor)) {
       return game.modules.get("backpack-manager").api.renderManager(a, b, {
         title: "Awarded Loot", hideOwnInventory: true
       });
     } else return null;
   }
 
-  /* UPDATE OTHER TOKENS */
-  static updateTokensSocketOn() {
-    game.socket.on(`world.${game.world.id}`, (request) => {
-      if (request.action === "updateToken") {
-        ZHELL_SOCKETS.updateTokens(request.data.updates, false);
-      }
-    });
-  }
-
-  static async updateTokens(updates = [], push = true) {
-    if (!game.user.isGM && push) {
+  /**
+   * Update other tokens.
+   * @param {object[]} updates      The array of update data.
+   * @param {object} options        The update options.
+   */
+  static async updateTokens({userId, updates = [], options = {}}, push = true) {
+    userId ??= _getFirstGM();
+    if (!userId) return ui.notifications.warn("No user was found able to update the tokens.");
+    if ((game.user.id !== userId) && push) {
       game.socket.emit(`world.${game.world.id}`, {
-        action: "updateToken",
-        data: {updates}
+        action: "updateTokens",
+        data: {userId, updates, options}
       });
-    }
-    else if (game.user.isGM) {
-      return canvas.scene.updateEmbeddedDocuments("Token", updates);
+    } else {
+      return canvas.scene.updateEmbeddedDocuments("Token", updates, options);
     }
   }
 
-  /* GRANT ITEMS TO TOKEN */
-  static grantItemsSocketOn() {
-    game.socket.on(`world.${game.world.id}`, (request) => {
-      if (request.action === "grantItems" && request.data.userId === game.user.id) {
-        const token = canvas.scene.tokens.get(request.data.tokenId);
-        return token.actor.createEmbeddedDocuments("Item", request.data.itemData);
-      }
-    });
+  /**
+   * Grant healing or temporary hit points to a targeted token you do not own.
+   * @param {string} tokenId      The id of a token, or the placeable or document itself.
+   * @param {number} amount       The amount of healing or temp hp to grant.
+   * @param {boolean} temp        Whether the healing is temporary hit points.
+   */
+  static async healToken({tokenId, userId = null, amount = 0, temp = false}, push = true) {
+    if ((tokenId instanceof Token) || (tokenId instanceof TokenDocument)) tokenId = tokenId.id;
+    userId ??= _getTargetUser(tokenId);
+    if (!userId) return ui.notifications.warn("No user was found able to heal the target.");
+    if ((game.user.id !== userId) && push) {
+      game.socket.emit(`world.${game.world.id}`, {
+        action: "healToken",
+        data: {tokenId, amount, temp, userId}
+      });
+    } else {
+      const func = temp ? "applyTempHP" : "applyDamage";
+      const heal = temp ? Math.abs(amount) : -Math.abs(amount);
+      return canvas.scene.tokens.get(tokenId).actor[func](heal);
+    }
   }
 
-  static async grantItems(itemData = [], tokenId, push = true) {
-    const userId = _getTargetUser(tokenId);
-
+  /**
+   * Grant items to a token.
+   * @param {object[]} itemData     The array of item data objects.
+   * @param {string} tokenId        The id of the token whose actor receives the items.
+   */
+  static async grantItems({userId, itemData = [], tokenId}, push = true) {
+    userId ??= _getTargetUser(tokenId);
     if (!userId) return ui.notifications.warn("No user was found able to create the item on the target.");
     if ((game.user.id !== userId) && push) {
       game.socket.emit(`world.${game.world.id}`, {
         action: "grantItems",
-        data: {itemData, tokenId, userId}
+        data: {userId, itemData, tokenId}
       });
     } else {
-      return canvas.scene.tokens.get(tokenId).actor.createEmbeddedDocuments("Item", itemData);
+      const names = itemData.map(i => i.name).join(", ");
+      const actor = canvas.scene.tokens.get(tokenId).actor;
+      const content = `${names} ${itemData.length > 1 ? "were" : "was"} added to ${actor.name}'s inventory.`;
+      await ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor}), whisper: [userId]});
+      return actor.createEmbeddedDocuments("Item", itemData);
     }
   }
 
@@ -120,7 +128,7 @@ export class ZHELL_SOCKETS {
     const tokens = canvas.tokens.placeables.filter(t => {
       const tb = t.bounds.contains(data.x, data.y) && (t.actor !== item.actor);
       if (game.user.isGM) return tb;
-      return tb && t.document.disposition !== CONST.TOKEN_DISPOSITIONS.HOSTILE;
+      return tb && (t.document.disposition !== CONST.TOKEN_DISPOSITIONS.HOSTILE);
     });
     if (!tokens.length) return;
     if (tokens.length > 1) return _pickTokenTarget(tokens, itemData);
@@ -131,23 +139,37 @@ export class ZHELL_SOCKETS {
     if (!grant) return;
     ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
     await tokens[0].actor.sheet._onDropSingleItem(itemData);
-    return ZHELL_SOCKETS.grantItems([itemData], tokens[0].id);
+    return ZHELL_SOCKETS.grantItems({itemData: [itemData], tokenId: tokens[0].id});
   }
 }
 
-// find an active user who is the owner of the token, defaulting to an active GM.
-// returns found user's id.
+/**
+ * Find a user who is active and owns a token, preferring players.
+ * @param {string} tokenId      The id of a token.
+ * @returns {string|null}       The id of the found user, if any.
+ */
 function _getTargetUser(tokenId) {
   if (game.user.isGM) return game.user.id;
   const user = game.users.find(u => {
-    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.isOwner;
-  }) ?? game.users.find(u => {
-    return u.active && u.isGM;
+    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.testUserPermission(u, "OWNER");
   });
-  return user?.id ?? null;
+  if (user) return user.id;
+  return _getFirstGM();
 }
 
-// select a token from a selection of tokens.
+/**
+ * Find a user who is active and a GM.
+ * @returns {string}      The id of the first active gm found.
+ */
+function _getFirstGM() {
+  return game.users.find(u => u.active && u.isGM)?.id;
+}
+
+/**
+ * Select a token from a selection of tokens.
+ * @param {Token[]} tokens      An array of token placeables.
+ * @param {object} itemData     An object of item data to create.
+ */
 async function _pickTokenTarget(tokens, itemData) {
   const top = tokens.map(t => ({name: t.document.id, src: t.document.texture.src}));
   const title = `Pick Target for ${itemData.name}`;
@@ -155,7 +177,7 @@ async function _pickTokenTarget(tokens, itemData) {
     const tokenId = top[0];
     const target = canvas.scene.tokens.get(tokenId);
     ui.notifications.info(`Adding item to ${target.name}!`);
-    return ZHELL_SOCKETS.grantItems([itemData], tokenId);
+    return ZHELL_SOCKETS.grantItems({itemData: [itemData], tokenId});
   }
   return new ImageAnchorPicker({top, title, callback}).render(true);
 }
