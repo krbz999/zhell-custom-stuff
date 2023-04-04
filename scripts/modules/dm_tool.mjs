@@ -296,6 +296,7 @@ export function _appendDataToDamageRolls(item, config) {
  * will treat the '1d4' as the second damage type instead of the first.
  */
 export function _addFlavorListenerToDamageRolls(message, html) {
+  if (!game.user.isGM) return;
   const isDamage = message.flags.dnd5e?.roll?.type === "damage";
   if (!isDamage) return;
   const flavor = html[0].querySelector(".flavor-text");
@@ -304,17 +305,24 @@ export function _addFlavorListenerToDamageRolls(message, html) {
   const types = message.flags[MODULE]?.damageTypes ?? [];
   const total = message.rolls.reduce((acc, roll) => acc += roll.total, 0);
 
-  const totals = [[]];
+  let totals = {[types[0]]: 0};
   let otherSum = 0;
-  for (let i = 1; i < message.rolls[0].dice.length; i++) {
-    const die = message.rolls[0].dice[i];
-    const tot = die.total;
-    const flavor = CONFIG.DND5E.damageTypes[die.options.flavor];
-    const type = flavor ? die.options.flavor : (types[i] || types[0]);
-    totals.push([tot, type]);
-    otherSum += tot;
+  let currentType = "";
+  for (let i = 1; i < message.rolls[0].terms.length; i++) {
+    const term = message.rolls[0].terms[i];
+    const tot = term.total;
+    const flavor = CONFIG.DND5E.damageTypes[term.options.flavor];
+    currentType = flavor ? term.options.flavor : (currentType || types[i] || types[0]);
+    if (Number.isNumeric(tot)) {
+      totals[currentType] = (totals[currentType] ?? 0) + tot;
+      otherSum += tot;
+    }
   }
-  totals[0] = [total - otherSum, types[0]];
+  totals = Object.entries(totals).map(([key, value]) => {
+    if (key === types[0]) return [totals[types[0]] + (total - otherSum), types[0]];
+    return [value, key];
+  });
+  console.log({totals});
 
   flavor.classList.add("zhell-apply-damage-flavor");
   flavor.addEventListener("click", function(event) {

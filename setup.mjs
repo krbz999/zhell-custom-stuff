@@ -61,6 +61,8 @@ Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
 Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
 Hooks.on("updateCombat", _rechargeMonsterFeatures);
+Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
+Hooks.on("renderChatMessage", _setupGroupSaves);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
@@ -77,8 +79,6 @@ Hooks.once("ready", function() {
       Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
     }
     Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
-    Hooks.on("renderChatMessage", _setupGroupSaves);
-    Hooks.on("renderChatMessage", _addFlavorListenerToDamageRolls);
     Hooks.on("dropCanvasData", _dropActorFolder);
     Hooks.on("preCreateScene", _preCreateScene);
   }
@@ -88,9 +88,7 @@ Hooks.once("ready", function() {
   }
 
   // hook for various actions are performed to display animations.
-  const canAnimate = [
-    DEPEND.SEQ, DEPEND.JB2A
-  ].every(id => !!game.modules.get(id)?.active);
+  const canAnimate = [DEPEND.SEQ, DEPEND.JB2A].every(id => !!game.modules.get(id)?.active);
   if (canAnimate) {
     Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);
     Hooks.on("dnd5e.useItem", ZHELL_ANIMATIONS.onItemUse);
