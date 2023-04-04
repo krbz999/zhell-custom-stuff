@@ -330,6 +330,17 @@ export class MateriaMedica extends Application {
     foundry.utils.mergeObject(itemData, {...deliveryMethod, [`flags.${MODULE}.poisonType`]: method});
     itemData.name = `${itemData.name} (${this.methods[method]})`;
 
+    // Setup itemacro for injury poisons.
+    if (method === 2) {
+      itemData.flags.itemacro = {
+        macro: {
+          type: "script",
+          command: "ZHELL.ITEMACRO.INJURY_POISON(...arguments);",
+          name: itemData.name
+        }
+      }
+    }
+
     // if scaling item, handle individually. Does not stack.
     if (scale) {
       const formula = `${scale}d6 + ${scale}`;
