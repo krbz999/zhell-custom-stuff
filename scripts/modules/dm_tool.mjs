@@ -279,61 +279,6 @@ export class DM_TOOL {
   }
 }
 
-// dnd5e.preRollDamage.
-export function _appendDataToDamageRolls(item, config) {
-  const types = item.getDerivedDamageLabel().map(d => d.damageType);
-  config.messageData[`flags.${MODULE}.damageTypes`] = types;
-  config.messageData[`flags.${MODULE}.properties`] = Object.entries(item.system.properties ?? {}).reduce((acc, [key, bool]) => {
-    if (bool) acc.push(key);
-    return acc;
-  }, []);
-}
-
-/**
- * TODO:
- * Somehow append damage type to each die or formula instead.
- * Currently "1d6 + 1d4" + "1d8" with two different damage types
- * will treat the '1d4' as the second damage type instead of the first.
- */
-export function _addFlavorListenerToDamageRolls(message, html) {
-  if (!game.user.isGM) return;
-  const isDamage = message.flags.dnd5e?.roll?.type === "damage";
-  if (!isDamage) return;
-  const flavor = html[0].querySelector(".flavor-text");
-  if (!flavor) return;
-
-  const types = message.flags[MODULE]?.damageTypes ?? [];
-  const total = message.rolls.reduce((acc, roll) => acc += roll.total, 0);
-
-  let totals = {[types[0]]: 0};
-  let otherSum = 0;
-  let currentType = "";
-  for (let i = 1; i < message.rolls[0].terms.length; i++) {
-    const term = message.rolls[0].terms[i];
-    const tot = term.total;
-    const flavor = CONFIG.DND5E.damageTypes[term.options.flavor];
-    currentType = flavor ? term.options.flavor : (currentType || types[i] || types[0]);
-    if (Number.isNumeric(tot)) {
-      totals[currentType] = (totals[currentType] ?? 0) + tot;
-      otherSum += tot;
-    }
-  }
-  totals = Object.entries(totals).map(([key, value]) => {
-    if (key === types[0]) return [totals[types[0]] + (total - otherSum), types[0]];
-    return [value, key];
-  });
-  console.log({totals});
-
-  flavor.classList.add("zhell-apply-damage-flavor");
-  flavor.addEventListener("click", function(event) {
-    const tokens = canvas.tokens.controlled;
-    const parts = foundry.utils.duplicate(totals);
-    const global = event.ctrlKey ? -1 : event.shiftKey ? 0.5 : 1;
-    const properties = message.flags[MODULE]?.properties ?? [];
-    return ZHELL.token.applyDamage(tokens, parts, {global, properties});
-  });
-}
-
 export function _gatherTokenDamageTraits(token) {
   const {dr, di, dv} = token.actor.system.traits;
 

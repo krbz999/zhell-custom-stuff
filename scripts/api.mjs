@@ -1,6 +1,6 @@
 import {drawCircle} from "./modules/animations.mjs";
 import {renderClassPages} from "./modules/applications/classPages.mjs";
-import {applyDamageToTokens, DM_TOOL} from "./modules/dm_tool.mjs";
+import {DM_TOOL} from "./modules/dm_tool.mjs";
 import {ITEMACRO} from "./modules/itemMacros.mjs";
 import {ZHELL_SOCKETS} from "./modules/sockets.mjs";
 import {
@@ -26,8 +26,7 @@ export class api {
         getOwnerIds: _getTokenOwnerIds,
         multiTool: DM_TOOL.RENDER,
         contained: _checkTokenInTemplate,
-        selectContained: _selectContained,
-        applyDamage: applyDamageToTokens
+        selectContained: _selectContained
       },
       utils: {
         setForageDC: _setForageDC,

@@ -67,36 +67,6 @@ export function _replaceTokenHUD(hud, html, tokenData) {
   html[0].querySelector(".status-effects").innerHTML = innerHTML;
 }
 
-export function _setupGroupSaves(message, html) {
-  if (!game.user.isGM) return;
-  html[0].querySelectorAll("button[data-action='save']").forEach(saveButton => {
-    const [_, __, ___, tar] = saveButton.innerText.trim().split(" ");
-    const abilityId = saveButton.dataset.ability;
-    if (!tar || !abilityId) return;
-
-    saveButton.addEventListener("click", (e) => {
-      const alt = e.ctrlKey && e.shiftKey;
-      if (!alt) return;
-      e.stopPropagation();
-      return rollSaves(abilityId, Number(tar));
-    });
-  });
-}
-
-async function rollSaves(abilityId, targetValue) {
-  const tokens = canvas.tokens.controlled;
-  if (!tokens.length) return;
-  const failed = [];
-  for (const token of tokens) {
-    const roll = await token.actor.rollAbilitySave(abilityId, {targetValue});
-    if (!roll) continue;
-    if (roll.total < targetValue) failed.push(token);
-  }
-  canvas.tokens.releaseAll();
-  failed.forEach(t => t.control({releaseOthers: false}));
-  return game.user.updateTokenTargets(failed.map(t => t.id));
-}
-
 /**
  * Inject buttons into VAE effects.
  * @param {ActiveEffect} effect     The active effect being rendered.

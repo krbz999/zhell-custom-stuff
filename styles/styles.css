@@ -856,3 +856,147 @@ span.flavor-text.zhell-apply-damage-flavor {
   border-radius: 0 0 8px 8px;
   padding: 0 0.5em;
 }
+
+/* DAMAGE APPLICATION */
+.zhell-custom-stuff.damage-applicator.app {
+  max-width: fit-content !important;
+  min-width: 350px;
+  min-height: 300px;
+  opacity: 1;
+  transition: opacity 500ms;
+}
+
+.zhell-custom-stuff.damage-applicator.fade {
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Message section */
+.zhell-custom-stuff.damage-applicator .message-section {
+  margin-bottom: 1em;
+}
+
+.zhell-custom-stuff.damage-applicator .damage-types {
+  display: flex;
+  border-top: 1px groove;
+  border-bottom: 1px groove;
+  margin: 0.5em 0;
+  font-size: 1.25em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.zhell-custom-stuff.damage-applicator .damage-types .type {
+  padding: 0 1em;
+}
+
+.zhell-custom-stuff.damage-applicator .buttons {
+  display: flex;
+  gap: 0.5em;
+}
+
+/* Actor section */
+.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"].enabled i:before {
+  content: "\f205";
+}
+
+.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"]:not(.enabled) i:before {
+  content: "\f204";
+}
+
+.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"]:not(.enabled) .trait-label {
+  text-decoration: line-through;
+}
+
+.zhell-custom-stuff.damage-applicator .actor-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  row-gap: 2em;
+}
+
+.zhell-custom-stuff.damage-applicator .actor {
+  overflow: hidden;
+  position: relative;
+}
+
+.zhell-custom-stuff.damage-applicator .actor .label {
+  font-family: 'Modesto Condensed';
+  font-size: 1.5em;
+  border-bottom: 1px groove red;
+  margin: 0.5em 0 0.25em 0;
+}
+
+.zhell-custom-stuff.damage-applicator .actor .header {
+  text-align: center;
+  min-width: 100px;
+  max-width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.zhell-custom-stuff.damage-applicator .actor .header .name {
+  font-family: 'Modesto Condensed';
+  font-size: 2em;
+  white-space: nowrap;
+}
+
+.zhell-custom-stuff.damage-applicator .actor .header img {
+  border: none;
+  padding: 1em;
+}
+
+.zhell-custom-stuff.damage-applicator .actor .header .hasPlayer {
+  font-style: italic;
+}
+
+.zhell-custom-stuff.damage-applicator [data-action="remove-actor"] {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  display: none;
+}
+
+.zhell-custom-stuff.damage-applicator .actor:hover [data-action="remove-actor"] {
+  display: block;
+}
+
+.zhell-custom-stuff.damage-applicator :is(.trait-section, .functions) {
+  padding: 0 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+
+.zhell-custom-stuff.damage-applicator .trait-section [data-action="toggle-trait"] {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.zhell-custom-stuff.damage-applicator .util {
+  display: flex;
+  align-items: center;
+}
+
+.zhell-custom-stuff.damage-applicator [data-action="toggle-throw"] {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  border: 1px groove;
+  border-radius: 3px;
+  background-color: indianred;
+  align-items: center;
+  min-height: 100%;
+  padding: 0.25em;
+}
+
+.zhell-custom-stuff.damage-applicator [data-action="toggle-throw"].success {
+  background-color: darkseagreen;
+}
+
+/* Chatlog buttons */
+.zhell-custom-stuff.damage-applicator .damage-roll-buttons {
+  display: flex;
+  margin: 0.5em 0 0.25em 0;
+  gap: 0.5em;
+}

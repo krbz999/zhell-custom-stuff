@@ -1,0 +1,17 @@
+<div class="zhell-custom-stuff damage-applicator">
+  <div class="damage-roll-buttons">
+    <button data-action="render" data-tooltip="Render Damage Application">
+      <i class="fa-solid fa-hand-sparkles"></i>
+    </button>
+
+    <button data-action="quick-apply" data-tooltip="Apply Damage">
+      <i class="fa-solid fa-bolt"></i>
+    </button>
+
+    {{#if save}}
+    <button data-action="save-and-apply" data-tooltip="Save and Apply Damage">
+      <i class="fa-solid fa-person-falling-burst"></i>
+    </button>
+    {{/if}}
+  </div>
+</div>

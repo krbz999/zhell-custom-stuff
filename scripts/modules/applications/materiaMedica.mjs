@@ -78,6 +78,10 @@ export class MateriaMedica extends Application {
     return Number(cost);
   }
 
+  /**
+   * Get the type of poison from the cost of the application method.
+   * @returns {object}      A mapping of cost-to-method.
+   */
   get methods() {
     return {
       0: "Ingested",
