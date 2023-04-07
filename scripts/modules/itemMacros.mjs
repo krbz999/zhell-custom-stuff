@@ -283,17 +283,19 @@ export function _getSpellLevel(use) {
 
 /**
  * Helper function to create very basic form for a Dialog.
- * @param {string} [label=""]         The label before the select/input.
- * @param {string} [type="text"]      The type of input ('text', 'number', 'select').
- * @param {string} [options=""]       The string of options in case of a select input.
- * @returns {string}                  The dialog content.
+ * @param {string} [label=""]             The label before the select/input.
+ * @param {string} [type="text"]          The type of input ('text', 'number', 'select').
+ * @param {string} [options=""]           The string of options in case of a select input.
+ * @param {boolean} [autofocus=true]      Whether to add autofocus to the created input.
+ * @returns {string}                      The dialog content.
  */
-export function _basicFormContent({label = "", type = "text", options = ""}) {
+export function _basicFormContent({label = "", type = "text", options = "", autofocus=true}) {
   const lab = label.length ? `<label>${label}</label>` : "";
+  const auto = autofocus ? "autofocus" : "";
   const inp = {
-    "select": `<select autofocus>${options}</select>`,
-    "number": '<input type="number" autofocus>'
-  }[type] ?? '<input type="text" autofocus>';
+    "select": `<select ${auto}>${options}</select>`,
+    "number": `<input type="number" ${auto}>`
+  }[type] ?? `<input type="text" ${auto}>`;
   return `
   <form class="dnd5e">
     <div class="form-group">
