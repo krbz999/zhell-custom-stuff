@@ -670,14 +670,22 @@ span.flavor-text.zhell-apply-damage-flavor {
 .zhell-custom-stuff.class-page-renderer {
   min-width: 800px;
   min-height: 100%;
+  margin: 0;
+}
+
+.zhell-custom-stuff.class-page-renderer .window-content {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 0.5em 0.5em;
 }
 
 .zhell-custom-stuff.class-page-renderer .content {
   position: absolute;
   left: 0;
   right: 0;
+  bottom: 0;
+  top: 0;
   overflow-y: hidden;
-  height: 100%;
 }
 
 .zhell-custom-stuff.class-page-renderer .tabs {
@@ -685,15 +693,16 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-family: 'Modesto Condensed';
   border-style: groove hidden;
   padding: 0 1em;
+  height: 30px;
 }
 
 .zhell-custom-stuff.class-page-renderer .content-tabs {
   overflow-y: auto;
-  height: 100%;
+  height: calc(100% - 30px);
 }
 
 .zhell-custom-stuff.class-page-renderer .tab {
-  margin: 1em 1em 5em 1em;
+  margin: 1em;
 }
 
 .zhell-custom-stuff.class-page-renderer .class-section {
@@ -782,7 +791,7 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 /* layout of spell list */
 .zhell-custom-stuff.class-page-renderer .spell-section {
-  padding-bottom: 5em;
+  padding-bottom: 1em;
 }
 
 .zhell-custom-stuff.class-page-renderer .spell-lists {
