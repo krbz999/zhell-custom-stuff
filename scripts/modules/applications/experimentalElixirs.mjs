@@ -98,14 +98,20 @@ export class ExperimentalElixir extends Application {
    */
   _getRandomName() {
     const randomName = [
-      "Daily Pick-Me-Up",
-      "Rainbow Elixir",
-      "The Arepoan Picnic Drink",
+      "Arepoan Picnic Drink",
       "Arkonade",
+      "Arkorow's Party Mix",
+      "Cantina d'Capitol Special",
+      "Daily Pick-Me-Up",
+      "Dockyard Iced Tea",
+      "Everything but Jungle Juice",
+      "Fiendbolt Cola",
+      "Green Tree's Mix",
+      "Murharbor Special",
+      "Rainbow Elixir",
+      "Rumble Refreshment",
       "Something-ade",
-      "The Murharbor Special",
-      "The Sunny Capital",
-      "Green Tree's Mix"
+      "Sunny Capital"
     ];
     return `Experimental Elixir: ${randomName[Math.floor(Math.random() * randomName.length)]}`;
   }
@@ -116,18 +122,25 @@ export class ExperimentalElixir extends Application {
    */
   _getRandomFlavor() {
     const randomFlavor = [
-      "This one's grape flavored!",
-      "This one's strawberry!",
-      "This one's Pina Colada.",
-      "Oh hey! This one could be a pretty good Margherita!",
-      "This one's blue-raspberry. Not sure what the 'blue' flavor is caused by but it's DEFINITELY blue.",
+      "Apples and oranges really are basically the same when juiced, right?",
+      "Boss taught me how to make this one.",
       "Err... this one came out kind of thick, sorry.",
-      "Oh yikes! I'm pretty sure this one can double as a rubbing alcohol.",
-      "Ignore the odd smokey flavor to this one; not sure how that happened.",
-      "Oooo, this one's glowing!",
       "I added some extra ice to this one.",
       "I found a way to boil it like a tea!",
-      "This one kind of tastes like a good night's sleep. Super confused on how that worked out."
+      "I'll be honest, I don't really remember what's in this one.",
+      "Ignore the odd smokey flavor to this one; not sure how that happened.",
+      "Now pulp free!",
+      "Now with double pulp!",
+      "Oh hey! This one could be a pretty good Margherita!",
+      "Oh yikes! I'm pretty sure this one can double as a rubbing alcohol.",
+      "Okay, YES, the rats refused to drink this one but I'm sure it's fine!",
+      "Oooo, this one's glowing!",
+      "This one has... a lot of sugar in it, sorry.",
+      "This one kind of tastes like a good night's sleep. Super confused on how that worked out.",
+      "This one's blue-raspberry. Not sure what the 'blue' flavor is caused by but it's DEFINITELY blue.",
+      "This one's grape flavored!",
+      "This one's Pina Colada.",
+      "This one's strawberry!"
     ];
     return randomFlavor[Math.floor(Math.random() * randomFlavor.length)];
   }
