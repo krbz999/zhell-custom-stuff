@@ -162,12 +162,14 @@ export async function _rechargeMonsterFeatures(combat, update, context, userId) 
     if (!recharge?.value || recharge?.charged) continue;
     await item.rollRecharge();
   }
-  const max = actor.system.resources.legact.max;
-  if (max > 0) {
-    await actor.update({"system.resources.legact.value": max});
-    await ChatMessage.create({
-      content: `${actor.name}'s legendary actions were reset`,
-      whisper: [game.user.id]
-    });
+  if (actor.type === "npc") {
+    const max = actor.system.resources.legact.max;
+    if (max > 0) {
+      await actor.update({"system.resources.legact.value": max});
+      await ChatMessage.create({
+        content: `${actor.name}'s legendary actions were reset`,
+        whisper: [game.user.id]
+      });
+    }
   }
 }
