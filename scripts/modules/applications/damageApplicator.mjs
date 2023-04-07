@@ -160,7 +160,7 @@ export class DamageApplicator extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   async _onApplyDamageAll(event) {
-    this.element[0].querySelectorAll(".actor [data-action='apply-damage']").forEach(n => n.dispatchEvent(new Event("click")));
+    this.element[0].querySelectorAll(".actor [data-action='apply-damage']").forEach(n => n.dispatchEvent(new PointerEvent("click", event)));
   }
 
   /**
@@ -169,7 +169,7 @@ export class DamageApplicator extends Application {
    */
   async _onRollSaveAll(event) {
     this.element[0].querySelectorAll(".actor [data-action='saving-throw']").forEach(n => {
-      if (n.style.pointerEvents !== "none") n.dispatchEvent(new Event("click"));
+      if (n.style.pointerEvents !== "none") n.dispatchEvent(new PointerEvent("click", event));
     });
   }
 
