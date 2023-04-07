@@ -749,11 +749,14 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 .zhell-custom-stuff.class-page-renderer .subclass-list {
-  grid-template-columns: 1fr 1fr;
-  display: grid;
-  margin: 0 2em;
-  row-gap: 5px;
-  column-gap: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+}
+
+.zhell-custom-stuff.class-page-renderer .subclass-item {
+  width: 45%;
 }
 
 .zhell-custom-stuff.class-page-renderer .subclass-item .content-link {
