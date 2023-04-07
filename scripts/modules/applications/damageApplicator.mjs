@@ -21,14 +21,16 @@ export class DamageApplicator extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       width: 500,
-      height: 800,
+      height: "100%",
       classes: [MODULE, "damage-applicator"],
       resizable: true,
       scrollY: [],
-      tabs: [/*{navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage"}*/],
+      tabs: [],
       dragDrop: [],
       closeOnSubmit: false,
-      template: `modules/${MODULE}/templates/damageApplicator.hbs`
+      template: `modules/${MODULE}/templates/damageApplicator.hbs`,
+      top: 0,
+      left: 0
     });
   }
 

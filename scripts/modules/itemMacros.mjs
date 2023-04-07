@@ -289,7 +289,7 @@ export function _getSpellLevel(use) {
  * @param {boolean} [autofocus=true]      Whether to add autofocus to the created input.
  * @returns {string}                      The dialog content.
  */
-export function _basicFormContent({label = "", type = "text", options = "", autofocus=true}) {
+export function _basicFormContent({label = "", type = "text", options = "", autofocus = true}) {
   const lab = label.length ? `<label>${label}</label>` : "";
   const auto = autofocus ? "autofocus" : "";
   const inp = {
