@@ -40,7 +40,8 @@ export class SheetEdits {
 
   /** Remove the 'alignment' input. */
   _removeAlignment() {
-    this.html[0].querySelector("[name='system.details.alignment']")?.parentElement?.remove();
+    const par = this.html[0].querySelector("[name='system.details.alignment']")?.parentElement;
+    if (par) par.style.display = "none";
   }
 
   /** Set the color of magic items by adding css classes to them. */

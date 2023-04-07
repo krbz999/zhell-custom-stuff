@@ -257,8 +257,8 @@ export class EXHAUSTION {
     // if num===11, remove it and apply dead.
     if (num === 11) {
       await exhaustion?.delete();
-      const dead = foundry.utils.duplicate(CONFIG.statusEffects.find(i => {
-        return i.id === CONFIG.specialStatusEffects.DEFEATED;
+      const dead = foundry.utils.deepClone(CONFIG.statusEffects.find(i => {
+        return (i.id === CONFIG.specialStatusEffects.DEFEATED);
       }));
       foundry.utils.mergeObject(dead, {
         "flags.core.statusId": dead.id,

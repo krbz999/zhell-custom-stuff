@@ -141,7 +141,7 @@ export function _constructLightEffectData({item, lightData, intro, flags}) {
 export function _constructDetectionModeEffectData({modes = [], item}) {
   const onCreate = async function() {
     const modes = effect.flags.effectmacro.data.modes;
-    const previousModes = foundry.utils.duplicate(token.document.detectionModes);
+    const previousModes = foundry.utils.deepClone(token.document.detectionModes);
     const ids = previousModes.map(m => m.id);
     previousModes.push(...modes.filter(m => !ids.includes(m.id)));
     return token.document.update({detectionModes: previousModes.filter(m => m.id !== "basicSight")});

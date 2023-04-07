@@ -170,7 +170,7 @@ class ColorPickerSubmenu extends FormApplication {
 
   async getData() {
     const data = foundry.utils.mergeObject(
-      foundry.utils.duplicate(COLOR_DEFAULTS),
+      foundry.utils.deepClone(COLOR_DEFAULTS),
       game.settings.get(MODULE, "colorSettings"),
       {insertKeys: false}
     );

@@ -24,7 +24,7 @@ export class DM_TOOL {
 
   // create effect data from status id, optionally change duration.
   static createConditionData(statusId, duration) {
-    const data = foundry.utils.duplicate(CONFIG.statusEffects.find(eff => eff.id === statusId));
+    const data = foundry.utils.deepClone(CONFIG.statusEffects.find(eff => eff.id === statusId));
     delete data.id;
     delete data.sort;
     if (duration) data.duration = this.convertDurationToSeconds(duration);

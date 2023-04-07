@@ -48,7 +48,7 @@ function _consumables() {
 
   // delete unwanted consumable types.
   const deletedConsumableTypes = ["rod", "wand"];
-  const oldObject = foundry.utils.duplicate(CONFIG.DND5E.consumableTypes);
+  const oldObject = foundry.utils.deepClone(CONFIG.DND5E.consumableTypes);
   for (const del of deletedConsumableTypes) delete oldObject[del];
 
   // merge remaining with new types to add.
@@ -366,7 +366,7 @@ export async function _itemStatusCondition(sheet, html) {
       default: "ok"
     }, {id});
     if (!effId) return;
-    const eff = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === effId));
+    const eff = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === effId));
     const data = foundry.utils.mergeObject(eff, {
       "flags.core.statusId": eff.id,
       transfer: false,

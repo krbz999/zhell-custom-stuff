@@ -604,7 +604,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
     label: `${itemData.name} (${item.name})`,
     "flags.core.statusId": item.name.slugify({strict: true}),
     origin: actor.uuid,
-    duration: foundry.utils.duplicate(conc.duration),
+    duration: foundry.utils.deepClone(conc.duration),
     "flags.visual-active-effects.data": {
       intro: `<p>You are in control of ${itemData.name}.</p>`,
       content: itemData.system.description.value
@@ -810,7 +810,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
   const effectData = [{
     icon: item.img,
     label: `${item.name} (${weapon.name})`,
-    duration: foundry.utils.duplicate(conc.duration),
+    duration: foundry.utils.deepClone(conc.duration),
     "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.babonus.bonuses": {[atk.id]: atk, [dmg.id]: dmg},
     "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`

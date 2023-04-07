@@ -30,7 +30,7 @@ export class ZHELL_COMBAT {
     if (has) return;
     const combatant = item.parent.token?.combatant ?? item.parent.getActiveTokens()[0]?.combatant;
     if (!combatant) return;
-    const reaction = foundry.utils.duplicate(CONFIG.statusEffects.find(e => e.id === "reaction"));
+    const reaction = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === "reaction"));
     reaction["flags.visual-active-effects.data"] = {
       intro: "<p>" + game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name}) + "</p>",
       content: item.system.description.value
