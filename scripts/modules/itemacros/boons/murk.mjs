@@ -1,4 +1,5 @@
 import {DEPEND, MODULE} from "../../../const.mjs";
+import {MurkScroller} from "../../applications/murkScroller.mjs";
 import {_basicFormContent, _getDependencies} from "../../itemMacros.mjs";
 
 export const murk = {SPREAD_THE_KNOWLEDGE, PAST_KNOWLEDGE};
@@ -10,81 +11,7 @@ export const murk = {SPREAD_THE_KNOWLEDGE, PAST_KNOWLEDGE};
  * from each of the selected spells and added to the actor's inventory.
  */
 async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
-  // CONSTANTS
-  const maxCombinedSpellLevel = Math.min(10, Math.ceil(actor.system.details.level / 2));
-  const options = actor.itemTypes.spell.filter(s => {
-    return Number(s.system.level).between(1, 5) && (s.system.activation?.type === "action");
-  }).sort((a, b) => {
-    return b.name.localeCompare(a.name);
-  }).reduce((acc, spell) => {
-    return acc + `<option value="${spell.id}">[${spell.system.level}] ${spell.name}</option>`;
-  }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
-  const template = _basicFormContent({label: "Spell:", type: "select", options});
-
-  const dialog = new Dialog({
-    content: `
-    <p style="text-align: center;" data-total="0" id="levelTrack">Total level: <strong>0 / ${maxCombinedSpellLevel}</strong></p>
-    <button style="margin: 0;" name="add-new-row"><i class="fa-solid fa-plus"></i> Pick one more</button>
-    <hr>
-    <div name="murk-scroll-boon">${template}</div>`,
-    title: "Murk Scrolls",
-    buttons: {
-      create: {
-        icon: "<i class='fa-solid fa-scroll'></i>",
-        label: "Create Scrolls",
-        callback: async (html) => {
-          const tracker = html[0].querySelector("#levelTrack");
-          const total = Number(tracker.dataset.total);
-          if (!total || total > maxCombinedSpellLevel) {
-            ui.notifications.error("Invalid selection.");
-            return dialog.render();
-          }
-
-          const scrollData = [];
-          const path = "flags.concentrationnotifier.data.requiresConcentration";
-
-          for (const {value} of html[0].querySelectorAll("select")) {
-            if (!value) continue;
-            const spell = actor.items.get(value);
-            if (!spell) continue;
-            const scroll = await Item.implementation.createScrollFromSpell(spell);
-            const itemData = game.items.fromCompendium(scroll);
-            foundry.utils.mergeObject(itemData.flags, spell.flags);
-            if (spell.system.components.concentration) foundry.utils.setProperty(itemData, path, true);
-            itemData.name = itemData.name.replace("Spell Scroll:", "Murk Scroll:");
-            scrollData.push(itemData);
-          }
-
-          const use = await item.use({}, {configureDialog: false});
-          if (!use) return;
-          const add = await actor.createEmbeddedDocuments("Item", scrollData);
-          return ChatMessage.create({speaker, content: `Created ${add.length} scrolls of Murk.`});
-        }
-      }
-    },
-    render: async (html) => {
-      const tracker = html[0].querySelector("#levelTrack");
-      const form = html[0].querySelector("[name='murk-scroll-boon']");
-      html[0].querySelector("button[name='add-new-row']").addEventListener("click", function() {
-        const div = document.createElement("DIV");
-        div.innerHTML = template;
-        form.append(...div.children);
-        dialog.setPosition();
-      });
-
-      form.addEventListener("change", function() {
-        const selects = html[0].querySelectorAll("select");
-        const ids = Array.from(selects).map(i => i.value);
-        const spells = ids.map(id => actor.items.get(id));
-        const total = spells.reduce((acc, s) => {
-          const level = s?.system.level ?? 0;
-          return acc + Number(level);
-        }, 0);
-        tracker.innerHTML = `Total level: <strong>${total} / ${maxCombinedSpellLevel}</strong>`;
-        tracker.setAttribute("data-total", total);
-      });
-    }
-  }).render(true, {height: "auto"});
+  return new MurkScroller({item, speaker, actor}).render(true);
 }
 
 /**
@@ -96,24 +23,25 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
   const use = await item.use();
   if (!use) return;
 
-  return Dialog.wait({
+  return new Dialog({
     title: item.name,
     content: "<p>Choose the damage type of the energy bursts.</p>",
     buttons: {
       necrotic: {
         label: "Necrotic",
         icon: '<i class="fa-solid fa-skull"></i>',
-        callback: () => _createEffectData("necrotic")
+        callback: _createEffectData
       },
       fire: {
         label: "Fire",
         icon: '<i class="fa-solid fa-fire"></i>',
-        callback: () => _createEffectData("fire")
+        callback: _createEffectData
       }
     }
-  });
+  }).render(true);
 
-  async function _createEffectData(type) {
+  async function _createEffectData(html, event) {
+    const type = event.currentTarget.dataset.button;
     const effectData = [{
       label: item.name,
       icon: item.img,

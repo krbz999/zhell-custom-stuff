@@ -12,13 +12,12 @@ export async function mayhem() {
   const value = game.user.flags.world?.mayhem?.value ?? 0;
   const max = 5;
 
-  new Dialog({
+  return new Dialog({
     title: "Mayhem!",
     content: `
     <p>When a player is reduced to zero hit points, or killed outright, the DM earns one point of inspiration.
     The points stack to a maximum of <strong>${max}</strong> points.</p>
-    <p style="text-align:center">You currently have <strong>${value}</strong> points.</p>
-    <hr>`,
+    <p style="text-align:center">You currently have <strong>${value}</strong> points.</p>`,
     buttons: ["earn", "spend"].reduce((acc, key) => {
       acc[key] = {
         label: `${key.capitalize()} a point`,
@@ -32,7 +31,7 @@ export async function mayhem() {
 
 
   async function message(html, event) {
-    const btn = event.target.dataset.button;
+    const btn = event.currentTarget.dataset.button;
 
     const add = {earn: 1, spend: -1}[btn];
     const newValue = Math.clamped(value + add, 0, max);
@@ -48,15 +47,12 @@ export async function mayhem() {
       earn: "The GM has gained one point of inspiration.",
       spend: "The GM has spent one point of inspiration."
     }[btn];
-    const style0 = "text-align: center; border-radius: 20px;";
-    const style1 = `font-size: 60px; padding: 20px 0 0 0; ${style0} margin: 10px 0 0 0; border-top: solid;`;
-    const style2 = `font-size: 80px; padding: 0 0 20px 0; ${style0} margin: 0 0 10px 0; border-bottom: solid; font-family: 'Modesto Condensed';`;
     const content = `
-    <p style="${style1}"><i class="fa-solid fa-bolt"></i></p>
-    <p style="${style2}">Mayhem!</p>
-    <hr>
+    <div class="zhell-custom-stuff mayhem">
+      <i class="fa-solid fa-bolt"></i> Mayhem!
+    </div>
     <p>${blurb}</p>
-    <p>Current stack: <strong>${newValue}</strong></p>`;
+    <p style="text-align: center;">Current stack: <strong>${newValue}</strong></p>`;
     await ChatMessage.create({content});
     return game.user.setFlag("world", "mayhem.value", newValue);
   }

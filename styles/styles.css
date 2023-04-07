@@ -1007,3 +1007,37 @@ span.flavor-text.zhell-apply-damage-flavor {
   margin: 0.5em 0 0.25em 0;
   gap: 0.5em;
 }
+
+/* MURK SCROLLER */
+.zhell-custom-stuff.murk-scroller {
+  width: 350px !important;
+  height: auto !important;
+}
+
+.zhell-custom-stuff.murk-scroller .level-track {
+  font-size: 1.5em;
+  text-align: center;
+  padding: 0.25em 0 0.5em 0;
+}
+
+.zhell-custom-stuff.murk-scroller .level-track span {
+  font-weight: bold;
+}
+
+.zhell-custom-stuff.murk-scroller .spells {
+  margin: 0 1em;
+}
+
+/* MAYHEM */
+.zhell-custom-stuff.mayhem {
+  padding: 0.25em 0;
+  margin: 0.5em 0;
+  border-top: solid;
+  border-bottom: solid;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2em;
+  font-size: 2em;
+  font-family: 'Modesto Condensed';
+  align-items: center;
+}
