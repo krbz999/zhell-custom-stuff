@@ -8,6 +8,9 @@
       </div>
       {{/each}}
     </div>
+    <div class="damage-total">
+      Total: {{total}}
+    </div>
     <div class="buttons">
       <button data-action="apply-damage-all">
         <i class="fa-solid fa-burst"></i> Apply Damage to All
@@ -24,13 +27,15 @@
     {{#each actors}}
     <div class="actor" data-token-id="{{id}}">
       <div class="header">
-        <div class="name">{{name}}</div>
-        <img src="{{img}}" data-tooltip="{{name}}">
+        <a class="name" data-tooltip="{{actorName}}" data-action="render-actor">{{name}}</a>
+        <img src="{{img}}" data-tooltip="{{name}}" data-action="render-actor">
         <div class="hp-section">
           <span data-attr="hp-value">{{hp.value}}</span> / <span data-attr="hp-max">{{hp.max}}</span>
         </div>
         {{#if hasPlayer}}<div class="hasPlayer">(Player-owned)</div>{{/if}}
-        <a data-action="remove-actor"><i class="fa-solid fa-trash"></i></a>
+        <a data-action="remove-actor" data-tooltip="Remove Actor">
+          <i class="fa-solid fa-trash"></i>
+          </a>
       </div>
 
       <div class="functions">

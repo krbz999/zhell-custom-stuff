@@ -9,8 +9,6 @@ export class DamageApplicator extends Application {
     super(data);
     // The initiating damage roll.
     this.message = data.message;
-    // The rolling item. (TODO: temp items?)
-    this.item = fromUuidSync(this.message.flags.dnd5e.roll.itemUuid);
     this.tokens = canvas.tokens.controlled;
     // The damage types and the bypasses (mgc, ada, sil);
     this.values = this.message.flags[MODULE].damage.values; // object of damage type to damage value
@@ -69,6 +67,7 @@ export class DamageApplicator extends Application {
         hasVulnerability: dv.length > 0,
         img: token.document.texture.src,
         name: token.actor.name.split(" ")[0].trim(),
+        actorName: token.actor.name,
         hasPlayer: this._getActorHasActivePlayerOwner(token.actor),
         hp: token.actor.system.attributes.hp,
         dr, di, dv
@@ -81,6 +80,7 @@ export class DamageApplicator extends Application {
       value,
       label: CONFIG.DND5E.damageTypes[type] ?? type
     }));
+    data.total = Object.values(this.values).reduce((acc, v) => acc + v, 0);
 
     // Item data.
     data.hasSave = this.hasSave;
@@ -105,8 +105,27 @@ export class DamageApplicator extends Application {
     html[0].querySelectorAll("[data-action='remove-actor']").forEach(n => n.addEventListener("click", this._onRemoveActor.bind(this)));
     html[0].querySelectorAll("[data-action='pan-to-token']").forEach(n => n.addEventListener("click", this._onPanToken.bind(this)));
     html[0].querySelectorAll("[data-action='apply-damage']").forEach(n => n.addEventListener("click", this._onApplyDamage.bind(this)));
+    html[0].querySelectorAll("[data-action='render-actor']").forEach(n => n.addEventListener("click", this._onRenderActor.bind(this)));
     html[0].querySelector("[data-action='apply-damage-all']").addEventListener("click", this._onApplyDamageAll.bind(this));
-    html[0].querySelector("[data-action='saving-throw-all']").addEventListener("click", this._onRollSaveAll.bind(this));
+    html[0].querySelector("[data-action='saving-throw-all']")?.addEventListener("click", this._onRollSaveAll.bind(this));
+  }
+
+  /** @override */
+  async render(force = false, options = {}) {
+    if (!this.targets.length) {
+      ui.notifications.warn("You have no valid tokens.");
+      return null;
+    }
+    return super.render(force, options);
+  }
+
+  /**
+   * Render the sheet of the token's associated actor.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {ActorSheet}            The rendered actor sheet.
+   */
+  _onRenderActor(event) {
+    return canvas.scene.tokens.get(event.currentTarget.closest(".actor").dataset.tokenId).actor.sheet.render(true);
   }
 
   /**
@@ -293,14 +312,14 @@ export class DamageApplicator extends Application {
    * @param {HTMLElement} html        The rendered html element.
    */
   static async _appendToDamageRolls(message, [html]) {
-    if(!game.user.isGM) return;
+    if (!game.user.isGM) return;
     if (message.flags.dnd5e?.roll?.type !== "damage") return;
     const roll = html.querySelector(".dice-roll");
     const div = document.createElement("DIV");
     div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/damageRollButtons.hbs", {save: message.flags[MODULE].damage.hasSave});
     div.querySelector("[data-action='render']").addEventListener("click", (event) => new DamageApplicator({message}).render(true));
     div.querySelector("[data-action='quick-apply']").addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
-    div.querySelector("[data-action='save-and-apply']").addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
+    div.querySelector("[data-action='save-and-apply']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
     roll.after(div.firstElementChild);
   }
 

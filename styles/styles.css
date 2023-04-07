@@ -878,12 +878,19 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 .zhell-custom-stuff.damage-applicator .damage-types {
   display: flex;
-  border-top: 1px groove;
-  border-bottom: 1px groove;
-  margin: 0.5em 0;
-  font-size: 1.25em;
-  flex-wrap: wrap;
   justify-content: center;
+  border-top: 1px groove;
+  margin: 0.5em 0 0 0;
+  flex-wrap: wrap;
+  font-size: 1.25em;
+}
+
+.zhell-custom-stuff.damage-applicator .damage-total {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px groove;
+  margin: 0 0 0.5em 0;
+  font-size: 1.4em;
 }
 
 .zhell-custom-stuff.damage-applicator .damage-types .type {
