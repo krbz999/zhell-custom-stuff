@@ -597,24 +597,29 @@ span.flavor-text.zhell-apply-damage-flavor {
   margin: 0 1em;
 }
 
-.zhell-custom-stuff.money-spender .total[data-denom=pp]:after {
-  content: " pp";
+.zhell-custom-stuff.money-spender [data-denom]{
+  display: flex;
+  gap: 0.25em;
 }
 
-.zhell-custom-stuff.money-spender .total[data-denom=gp]:after {
-  content: " gp";
+.zhell-custom-stuff.money-spender [data-denom=pp]:after {
+  content: "pp";
 }
 
-.zhell-custom-stuff.money-spender .total[data-denom=ep]:after {
-  content: " ep";
+.zhell-custom-stuff.money-spender [data-denom=gp]:after {
+  content: "gp";
 }
 
-.zhell-custom-stuff.money-spender .total[data-denom=sp]:after {
-  content: " sp";
+.zhell-custom-stuff.money-spender [data-denom=ep]:after {
+  content: "ep";
 }
 
-.zhell-custom-stuff.money-spender .total[data-denom=cp]:after {
-  content: " cp";
+.zhell-custom-stuff.money-spender [data-denom=sp]:after {
+  content: "sp";
+}
+
+.zhell-custom-stuff.money-spender [data-denom=cp]:after {
+  content: "cp";
 }
 
 .zhell-custom-stuff.money-spender .utils {
@@ -636,7 +641,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   text-align: center;
 }
 
-.zhell-custom-stuff.money-spender .adjust {
+.zhell-custom-stuff.money-spender [data-action^="adjust"] {
   width: 4em;
   max-width: 4em;
   text-align: center;
@@ -644,7 +649,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   background-color: cornsilk;
 }
 
-.zhell-custom-stuff.money-spender .adjust:hover {
+.zhell-custom-stuff.money-spender [data-action^="adjust"]:hover {
   text-shadow: none;
 }
 
