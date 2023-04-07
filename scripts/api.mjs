@@ -1,6 +1,5 @@
 import {drawCircle} from "./modules/animations.mjs";
 import {renderClassPages} from "./modules/applications/classPages.mjs";
-import {DM_TOOL} from "./modules/dm_tool.mjs";
 import {gameTools} from "./modules/gameTools/_gameTools.mjs";
 import {ITEMACRO} from "./modules/itemMacros.mjs";
 import {ZHELL_SOCKETS} from "./modules/sockets.mjs";
@@ -25,7 +24,6 @@ export class api {
         teleport: _teleportTokens,
         target: _targetTokens,
         getOwnerIds: _getTokenOwnerIds,
-        multiTool: DM_TOOL.RENDER,
         contained: _checkTokenInTemplate,
         selectContained: _selectContained
       },
