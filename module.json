@@ -21,8 +21,7 @@
   "styles": [
     "./styles/styles.css",
     "./styles/sheetEdits.css",
-    "./styles/journalStyles.css",
-    "./styles/dm_tool.css"
+    "./styles/journalStyles.css"
   ],
   "languages": [
     {
