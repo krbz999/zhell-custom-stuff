@@ -28,6 +28,15 @@ class ClassPageRenderer extends Application {
   activateListeners(html) {
     super.activateListeners(html);
     html[0].querySelectorAll("[data-action='toggle-description']").forEach(n => n.addEventListener("click", this._onToggleDescription.bind(this)));
+    html[0].querySelectorAll("[data-action='toggle-collapse']").forEach(n => n.addEventListener("click", this._onToggleCollapse.bind(this)));
+  }
+
+  /**
+   * Toggle the collapsed state of a section.
+   * @param {PointerEvent} event      The initiating click event.
+   */
+  _onToggleCollapse(event){
+    event.currentTarget.closest("section").classList.toggle("active");
   }
 
   /**

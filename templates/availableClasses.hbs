@@ -10,17 +10,17 @@
     {{#each classes}}
 
     <div class="tab" data-tab="{{identifier}}">
-      <div class="class-section">
+      <section class="class-section">
         <img class="class-image" src="{{img}}">
         <div class="class-item">
           <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
             {{name}}
           </a>
         </div>
-      </div>
+      </section>
 
-      <div class="subclass-section">
-        <h2 class="subclass-header">{{name}} Subclasses</h2>
+      <section class="subclass-section active">
+        <h2 data-action="toggle-collapse" class="subclass-header">{{name}} Subclasses</h2>
         <div class="subclass-list">
           {{#each subclassIds}}
           <div class="subclass-item">
@@ -30,10 +30,10 @@
           </div>
           {{/each}}
         </div>
-      </div>
+      </section>
 
       {{#if hasSpells}}
-      <div class="spell-section">
+      <section class="spell-section active">
         <h2 class="spell-header">{{name}} Spells</h2>
         <div class="spell-lists">
           {{#each spellLists}}
@@ -54,7 +54,7 @@
           {{/if}}
           {{/each}}
         </div>
-      </div>
+      </section>
       {{/if}}
     </div>
     {{/each}}
