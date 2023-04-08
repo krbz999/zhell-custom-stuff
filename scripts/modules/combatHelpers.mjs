@@ -156,20 +156,17 @@ export function _visualActiveEffectsCreateEffectButtons(effect, buttons) {
  */
 export async function _rechargeMonsterFeatures(combat, update, context, userId) {
   if (!game.user.isGM || (context.direction !== 1)) return;
-  const actor = combat.combatant.actor;
+  const actor = combat.combatant?.actor;
+  if (!actor) return;
   for (const item of actor.items) {
     const recharge = item.system.recharge;
     if (!recharge?.value || recharge?.charged) continue;
     await item.rollRecharge();
   }
-  if (actor.type === "npc") {
-    const max = actor.system.resources.legact.max;
-    if (max > 0) {
-      await actor.update({"system.resources.legact.value": max});
-      await ChatMessage.create({
-        content: `${actor.name}'s legendary actions were reset`,
-        whisper: [game.user.id]
-      });
-    }
-  }
+  if ((actor.type !== "npc") || !(actor.system.resources.legact.max > 0)) return;
+  await actor.update({"system.resources.legact.value": actor.system.resources.legact.max});
+  await ChatMessage.create({
+    content: `${actor.name}'s legendary actions were reset.`,
+    whisper: [game.user.id]
+  });
 }
