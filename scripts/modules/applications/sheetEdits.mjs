@@ -196,6 +196,7 @@ export class SheetEdits {
     }
 
     this.html[0].querySelectorAll("[data-action='toggleDot']").forEach(n => n.addEventListener("click", this._onClickDot.bind(this.sheet)));
+    this.html[0].querySelectorAll(".dot.has-more").forEach(n => n.addEventListener("wheel", this._onWheelDot.bind(this.sheet)));
   }
 
   /**
@@ -214,6 +215,20 @@ export class SheetEdits {
     else value = Number(data.idx) + (list.contains("empty") ? 1 : 0);
 
     return target.update({[path]: value});
+  }
+
+  /**
+   * Handle using the mouse wheel when hovering over the "has more" dot.
+   * @param {WheelEvent} event      The initiating mouse wheel event.
+   * @returns {Actor|Item}          The updated actor or item.
+   */
+  async _onWheelDot(event) {
+    const data = event.currentTarget.dataset;
+    const target = this.document.items.get(data.itemId) ?? this.document;
+    const path = data.spellLevel ? `system.spells.${data.spellLevel}` : "system.uses";
+    const current = foundry.utils.getProperty(target, path);
+    const value = Math.clamped(current.value + Math.round(event.deltaY / (-100)), 0, current.max);
+    return target.update({[`${path}.value`]: value});
   }
 
   /** Create the foraging button and foraged materials input. */
