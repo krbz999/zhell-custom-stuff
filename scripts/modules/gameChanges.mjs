@@ -390,6 +390,7 @@ export function _preCreateScene(scene, sceneData) {
     padding: 0.05,
     fogExploration: false,
     globalLight: true,
+    backgroundColor: "#000000"
   }, sceneData);
   scene.updateSource(data);
 }
