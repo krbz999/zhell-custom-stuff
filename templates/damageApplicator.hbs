@@ -13,7 +13,13 @@
     </div>
     <div class="buttons">
       <button data-action="apply-damage-all">
+        {{#if isDamage}}
         <i class="fa-solid fa-burst"></i> Apply Damage to All
+        {{else if isHealing}}
+        <i class="fa-solid fa-heart-pulse"></i> Apply Healing to All
+        {{else if isTempHP}}
+        <i class="fa-solid fa-heart-circle-plus"></i> Apply Temp HP to All
+        {{/if}}
       </button>
       {{#if hasSave}}
       <button data-action="saving-throw-all">
@@ -30,12 +36,16 @@
         <a class="name" data-tooltip="{{actorName}}" data-action="render-actor">{{name}}</a>
         <img src="{{img}}" data-tooltip="{{name}}" data-action="render-actor">
         <div class="hp-section">
-          <span data-attr="hp-value">{{hp.value}}</span> / <span data-attr="hp-max">{{hp.max}}</span>
+          <span data-attr="hp-value">{{hp.value}}</span>
+          <span data-attr="hp-temp">{{#if hp.temp}}(+{{hp.temp}}){{/if}}</span>
+          /
+          <span data-attr="hp-max">{{hp.max}}</span>
+          <span data-attr="hp-tempmax">{{#if hp.tempmax}}(+{{hp.tempmax}}){{/if}}</span>
         </div>
         {{#if hasPlayer}}<div class="hasPlayer">(Player-owned)</div>{{/if}}
         <a data-action="remove-actor" data-tooltip="Remove Actor">
           <i class="fa-solid fa-trash"></i>
-          </a>
+        </a>
       </div>
 
       <div class="functions">
@@ -64,6 +74,7 @@
 
       </div>
 
+      {{#if isDamage}}
       <div class="trait-section">
         {{#if hasResistance}}
         <label class="label">Resistant</label>
@@ -99,6 +110,7 @@
         {{/each}}
         {{/if}}
       </div>
+      {{/if}}
 
     </div>
     {{/each}}

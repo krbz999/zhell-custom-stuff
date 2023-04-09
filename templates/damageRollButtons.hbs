@@ -4,9 +4,19 @@
       <i class="fa-solid fa-hand-sparkles"></i>
     </button>
 
-    <button data-action="quick-apply" data-tooltip="Apply Damage">
-      <i class="fa-solid fa-bolt"></i>
+    {{#if isTempHP}}
+    <button data-action="quick-apply" data-tooltip="Apply Temp HP">
+      <i class="fa-solid fa-heart-circle-plus"></i>
     </button>
+    {{else if isHealing}}
+    <button data-action="quick-apply" data-tooltip="Apply Healing">
+      <i class="fa-solid fa-heart-pulse"></i>
+    </button>
+    {{else if isDamage}}
+    <button data-action="quick-apply" data-tooltip="Apply Damage">
+      <i class="fa-solid fa-burst"></i>
+    </button>
+    {{/if}}
 
     {{#if save}}
     <button data-action="save-and-apply" data-tooltip="Save and Apply Damage">

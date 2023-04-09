@@ -16,6 +16,10 @@ export class DamageApplicator extends Application {
     this.types = Object.keys(this.values);
     this.hasSave = this.message.flags[MODULE].damage.hasSave;
     this.saveData = this.message.flags[MODULE].damage.saveData;
+
+    this.isTempHP = this.types.includes("temphp");
+    this.isHealing = !this.isTempHP && this.types.includes("healing");
+    this.isDamage = !this.isTempHP && !this.isHealing;
   }
 
   static get defaultOptions() {
@@ -80,18 +84,20 @@ export class DamageApplicator extends Application {
     data.types = Object.entries(this.values).map(([type, value]) => ({
       type,
       value,
-      label: CONFIG.DND5E.damageTypes[type] ?? type
+      label: CONFIG.DND5E.damageTypes[type] ?? CONFIG.DND5E.healingTypes[type] ?? type
     }));
     data.total = Object.values(this.values).reduce((acc, v) => acc + v, 0);
+    data.isDamage = this.isDamage;
+    data.isHealing = this.isHealing;
+    data.isTempHP = this.isTempHP;
 
     // Item data.
-    data.hasSave = this.hasSave;
+    data.hasSave = this.hasSave && this.isDamage;
     if (data.hasSave) {
-      const save = this.saveData;
       data.save = {
-        ability: save.ability,
-        dc: save.dc, // todo: babonus bonus to save dc?
-        label: CONFIG.DND5E.abilities[save.ability]
+        ability: this.saveData.ability,
+        dc: this.saveData.dc, // todo: babonus bonus to save dc?
+        label: CONFIG.DND5E.abilities[this.saveData.ability]
       }
     }
 
@@ -131,7 +137,7 @@ export class DamageApplicator extends Application {
   }
 
   /**
-   * Apply damage to a single token's actor.
+   * Apply damage, healing, or temphp to a single token's actor.
    * @param {PointerEvent} event      The initiating click event.
    */
   async _onApplyDamage(event) {
@@ -140,25 +146,42 @@ export class DamageApplicator extends Application {
     const values = foundry.utils.deepClone(this.values);
 
     const modifiers = actorEl.querySelectorAll(".trait-section .enabled");
-    for (const mod of modifiers) {
-      const data = mod.closest(".type").dataset;
-      values[data.key] *= {dr: 0.5, di: 0, dv: 2}[data.trait];
+
+    // If this is damage, apply resistances, immunities, vulnerabilities.
+    if (this.isDamage) {
+      for (const mod of modifiers) {
+        const data = mod.closest(".type").dataset;
+        values[data.key] *= {dr: 0.5, di: 0, dv: 2}[data.trait];
+      }
     }
     const total = Object.values(values).reduce((acc, v) => acc + v, 0);
 
     // Did the actor save?
-    let multiplier = 1;
-    if (actorEl.querySelector("[data-action='toggle-throw'].success")) multiplier = 0.5;
+    let multiplier = this.isHealing ? -1 : 1;
+    const madeSave = actorEl.querySelector("[data-action='toggle-throw'].success");
+    if (this.isDamage && madeSave) multiplier = 0.5;
     if (event.shiftKey) multiplier *= -1;
 
-    await actor.applyDamage(total, multiplier);
-    const [val, max] = actorEl.querySelectorAll("[data-attr^='hp-']");
-    val.innerText = actor.system.attributes.hp.value;
-    max.innerText = actor.system.attributes.hp.max;
+    if (!this.isTempHP) await actor.applyDamage(total, multiplier);
+    else await actor.applyTempHP(total);
+    this._updateHitPointValues(actorEl);
   }
 
   /**
-   * Apply damage to all tokens' actors.
+   * Update the displayed hp values of an actor.
+   * @param {HTMLElement} actor     The actor element in the application.
+   */
+  _updateHitPointValues(actor){
+    const hp = canvas.scene.tokens.get(actor.dataset.tokenId).actor.system.attributes.hp;
+    const [value, temp, max, tempmax] = actor.querySelectorAll("[data-attr^='hp-']");
+    value.innerText = hp.value;
+    max.innerText = hp.max;
+    if(hp.temp) temp.innerText = `(+${hp.temp})`;
+    if(hp.tempmax) tempmax.innerText = `(+${hp.tempmax})`;
+  }
+
+  /**
+   * Apply damage, healing, or temphp to all tokens' actors.
    * @param {PointerEvent} event      The initiating click event.
    */
   async _onApplyDamageAll(event) {
@@ -184,20 +207,23 @@ export class DamageApplicator extends Application {
     const heal = event.shiftKey && !save;
     for (const token of this.targets) {
       const values = foundry.utils.deepClone(this.values);
-      const {dr, di, dv} = this._getActorDamageTraits(token.actor);
-      for (const d of dr) if (!d.bypass) values[d.key] *= 0.5;
-      for (const d of di) if (!d.bypass) values[d.key] *= 0;
-      for (const d of dv) if (!d.bypass) values[d.key] *= 2;
-      let modifier = 1;
-      if (this.hasSave && save) {
+      if (this.isDamage) {
+        const {dr, di, dv} = this._getActorDamageTraits(token.actor);
+        for (const d of dr) if (!d.bypass) values[d.key] *= 0.5;
+        for (const d of di) if (!d.bypass) values[d.key] *= 0;
+        for (const d of dv) if (!d.bypass) values[d.key] *= 2;
+      }
+      let modifier = this.isHealing ? -1 : 1;
+      if (this.hasSave && save && this.isDamage) {
         const roll = await token.actor.rollAbilitySave(this.saveData.ability, {
           fastForward: true, targetValue: this.saveData.dc, chatMessage: false
         });
         if (roll.total >= this.saveData.dc) modifier = 0.5;
       }
       const total = Object.values(values).reduce((acc, v) => acc + v, 0);
-      if (heal) modifier *= -1;
-      await token.actor.applyDamage(total, modifier);
+      if (heal && !this.isTempHP) modifier *= -1;
+      if (!this.isTempHP) await token.actor.applyDamage(total, modifier);
+      else await token.actor.applyTempHP(total);
     }
   }
 
@@ -318,7 +344,15 @@ export class DamageApplicator extends Application {
     if (message.flags.dnd5e?.roll?.type !== "damage") return;
     const roll = html.querySelector(".dice-roll");
     const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/damageRollButtons.hbs", {save: message.flags[MODULE].damage.hasSave});
+
+    const types = Object.keys(message.flags[MODULE].damage.values);
+    const data = {
+      isTempHP: types.includes("temphp"),
+      isHealing: !types.includes("temphp") && types.includes("healing"),
+      isDamage: !types.includes("temphp") && !types.includes("healing"),
+      save: message.flags[MODULE].damage.hasSave
+    };
+    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/damageRollButtons.hbs", data);
     div.querySelector("[data-action='render']").addEventListener("click", (event) => new DamageApplicator({message}).render(true));
     div.querySelector("[data-action='quick-apply']").addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
     div.querySelector("[data-action='save-and-apply']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
