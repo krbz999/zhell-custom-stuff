@@ -14,7 +14,7 @@ body :root {
 }
 
 /* Style of the dots */
-.dnd5e .items-list .zhell-dots .dot {
+.zhell-custom-stuff.dot-container .dot {
   height: 15px;
   width: 15px;
   max-height: 15px;
@@ -25,21 +25,28 @@ body :root {
   box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
 }
 
-.dnd5e .items-list .zhell-dots .dot:hover {
+/*
+ * Scale up any dot you hover over.
+ * Scale up all following full dots when hovering over a full dot.
+ * Scale up all preceding empty dots when hovering over an empty dot.
+ */
+.zhell-custom-stuff.dot-container .dot:hover,
+.zhell-custom-stuff.dot-container .dot:not(.empty):hover ~ .dot:not(.empty),
+.zhell-custom-stuff.dot-container:hover .dot.empty:not(.dot:hover ~ .dot.empty) {
   transform: scale(1.2);
 }
 
 /* Style of the expended dots */
-.dnd5e .items-list .zhell-dots .dot.empty {
+.zhell-custom-stuff.dot-container .dot.empty {
   background-color: lightgray;
 }
 
 /* style of the 'not all dots shown' dot */
-.dnd5e .items-list .zhell-dots .dot.empty.has-more {
+.zhell-custom-stuff.dot-container .dot.empty.has-more {
   mix-blend-mode: color-burn;
 }
 
-.dnd5e .items-list .zhell-dots .dot.has-more {
+.zhell-custom-stuff.dot-container .dot.has-more {
   mix-blend-mode: inherit;
 }
 
@@ -48,11 +55,11 @@ body :root {
 }
 
 /* dot container */
-.dnd5e .items-list .zhell-dots {
+.zhell-custom-stuff.dot-container {
   flex-direction: row-reverse;
-  max-width: fit-content;
+  min-width: 168px;
   gap: 2px;
-  flex: 2;
+  display: flex;
 }
 
 /* show shadow overflow */

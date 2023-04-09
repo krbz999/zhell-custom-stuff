@@ -120,7 +120,7 @@ export class SheetEdits {
       Object.entries(actor.system.spells).forEach(([key, {value, max}]) => {
         const _max = this.html[0].querySelector(`.spell-max[data-level=${key}]`);
         const dotContainer = document.createElement("DIV");
-        dotContainer.classList.add("zhell-dots", "flexrow");
+        dotContainer.classList.add(MODULE, "dot-container");
         if (!max || !_max) return;
         const beforeThis = _max.closest(".spell-slots");
         beforeThis.before(dotContainer);
@@ -132,6 +132,7 @@ export class SheetEdits {
           const cls = le ? (i < value ? ["dot"] : ["dot", "empty"]) : (value < max ? ["dot", "empty", "has-more"] : ["dot", "has-more"]);
           span.classList.add(...cls);
           span.setAttribute("data-action", "toggleDot");
+          span.setAttribute("data-idx", i);
           span.setAttribute("data-spell-level", key);
         }
       });
@@ -149,22 +150,23 @@ export class SheetEdits {
 
         if (item.type !== "spell") {
           const dotContainer = document.createElement("DIV");
-          dotContainer.classList.add("zhell-dots", "flexrow");
+          dotContainer.classList.add(MODULE, "dot-container");
           const q = 10;
-          dotContainer.innerHTML = Array.fromRange(Math.min(q, uses.max)).reduce((acc, e) => {
+          const max = Math.min(q, uses.max);
+          dotContainer.innerHTML = Array.fromRange(max).reduce((acc, e, i) => {
             const le = e < (q - 1) || uses.max <= q;
             const cls = le ? (e < uses.value ? "dot" : "dot empty") : (uses.value < uses.max ? "dot empty has-more" : "dot has-more");
-            return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${item.id}"></span>`;
+            return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${item.id}" data-idx="${i}"></span>`;
           }, "");
           adjacent.insertAdjacentElement(position, dotContainer);
         } else {
           const dotContainer = document.createElement("DIV");
-          dotContainer.classList.add("zhell-dots", "flexrow");
+          dotContainer.classList.add(MODULE, "dot-container");
           const q = 5;
-          dotContainer.innerHTML = Array.fromRange(Math.min(q, uses.max)).reduce((acc, e) => {
+          dotContainer.innerHTML = Array.fromRange(Math.min(q, uses.max)).reduce((acc, e, i) => {
             const le = e < (q - 1) || uses.max <= q;
             const cls = le ? (e < uses.value ? "dot" : "dot empty") : (uses.value < uses.max ? "dot empty has-more" : "dot has-more");
-            return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${uses.id}"></span>`;
+            return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${item.id}" data-idx="${i}"></span>`;
           }, "");
           adjacent.insertAdjacentElement(position, dotContainer);
         }
@@ -181,13 +183,13 @@ export class SheetEdits {
         if (!header) return;
         header.setAttribute("data-item-id", item.id);
         const div = document.createElement("DIV");
-        div.classList.add("zhell-dots", "flexrow");
-        const q = 5;
+        div.classList.add(MODULE, "dot-container");
+        const q = 10;
         const uses = item.system.uses;
-        div.innerHTML = Array.fromRange(Math.min(q, uses.max)).reduce((acc, e) => {
+        div.innerHTML = Array.fromRange(Math.min(q, uses.max)).reduce((acc, e, i) => {
           const le = e < (q - 1) || uses.max <= q;
           const cls = le ? (e < uses.value ? "dot" : "dot empty") : (uses.value < uses.max ? "dot empty has-more" : "dot has-more");
-          return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${item.id}"></span>`;
+          return acc + `<span class="${cls}" data-action="toggleDot" data-item-id="${item.id}" data-idx="${i}"></span>`;
         }, "");
         header.after(div);
       });
@@ -202,18 +204,16 @@ export class SheetEdits {
    * @returns {Actor5e|Item5e}        The updated actor or item.
    */
   async _onClickDot(event) {
-    const data = event.currentTarget.dataset;
-    const diff = event.currentTarget.classList.contains("empty") ? 1 : -1;
+    const {dataset: data, classList: list} = event.currentTarget;
+    const target = this.document.items.get(data.itemId) ?? this.document;
+    const path = data.spellLevel ? `system.spells.${data.spellLevel}.value` : "system.uses.value";
+    const current = foundry.utils.getProperty(target, path);
 
-    if (data.spellLevel) {
-      const path = `system.spells.${data.spellLevel}.value`;
-      const value = foundry.utils.getProperty(this.document, path);
-      return this.document.update({[path]: value + diff});
-    } else if (data.itemId) {
-      const item = this.document.items.get(data.itemId);
-      const value = item.system.uses.value;
-      return item.update({"system.uses.value": value + diff});
-    }
+    let value;
+    if (list.contains("has-more")) value = current + (list.contains("empty") ? 1 : -1);
+    else value = Number(data.idx) + (list.contains("empty") ? 1 : 0);
+
+    return target.update({[path]: value});
   }
 
   /** Create the foraging button and foraged materials input. */
