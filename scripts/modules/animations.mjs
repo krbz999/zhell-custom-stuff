@@ -247,16 +247,6 @@ export class ZHELL_ANIMATIONS {
       return new Sequence().effect().file(file).atLocation(token).scale(0.75).play();
     }
 
-    // PIPE (Drazvik).
-    check = name.includes("Pipe") && actor.name.includes("Drazvik");
-    if (check) {
-      if (!token) return;
-      const file = "jb2a.smoke.puff.centered.dark_green.1";
-      return new Sequence().effect().file(file).atLocation(token, {
-        offset: {x: canvas.grid.size / 3, y: -canvas.grid.size / 4}
-      }).size(canvas.grid.size).play();
-    }
-
     // TOLL THE DEAD.
     check = name.includes("Toll the Dead");
     if (check) {

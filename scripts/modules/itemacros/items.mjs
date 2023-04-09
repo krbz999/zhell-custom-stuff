@@ -1,5 +1,6 @@
 import {DEPEND} from "../../const.mjs";
 import {_basicFormContent, _constructLightEffectData, _getDependencies} from "../itemMacros.mjs";
+import {PIPE} from "./items/drazPipe.mjs";
 
 export const items = {
   AMULET_OF_EQUILLIBRIUM,
@@ -10,6 +11,7 @@ export const items = {
   SCORCHING_CLEAVER,
   TORCH,
   WHITEHARBOUR_TEA_SET,
+  PIPE
 };
 
 async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, event, args) {
