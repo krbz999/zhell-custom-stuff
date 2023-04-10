@@ -21,13 +21,13 @@ export async function mayhem() {
     buttons: ["earn", "spend"].reduce((acc, key) => {
       acc[key] = {
         label: `${key.capitalize()} a point`,
-        icon: `<i class="fa-solid fa-arrow-${key === "earn" ? "up" : "down"}"></i>`,
+        icon: `<i class="fa-solid fa-arrow-${(key === "earn") ? "up" : "down"}"></i>`,
         callback: message
       };
       return acc;
     }, {}),
     default: value < max ? "earn" : "spend"
-  }).render(true);
+  }, {id: "mayhem-dialog"}).render(true);
 
 
   async function message(html, event) {
