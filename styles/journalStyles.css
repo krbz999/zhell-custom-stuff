@@ -31,7 +31,6 @@
   text-shadow: 1px 1px var(--color-shadow-dark);
 }
 
-
 /* pantheon half header */
 h1.zhell-pantheon {
   font-size: 40px;
@@ -223,35 +222,35 @@ h1.havilon-race-header {
 }
 
 /* PARTY FEATURES */
-.party-features {
+.sheet.journal-entry .journal-entry-page .party-features {
   display: grid;
   gap: 1em;
 }
 
-.party-feature {
+.sheet.journal-entry .journal-entry-page .party-feature {
   display: inherit;
   grid-template-columns: 1fr 3fr;
   gap: inherit;
 }
 
-.party-feature-image {
+.sheet.journal-entry .journal-entry-page .party-feature-image {
   display: flex;
   align-items: center;
 }
 
-.party-feature-image img {
+.sheet.journal-entry .journal-entry-page .party-feature-image img {
   border: none;
   border-radius: 1em;
 }
 
-.party-feature-details h1 {
+.sheet.journal-entry .journal-entry-page .party-feature-details h1 {
   font-size: 35px;
   text-align: center;
   border: none;
   font-family: "Modesto Condensed";
 }
 
-.party-feature-details p {
+.sheet.journal-entry .journal-entry-page .party-feature-details p {
   text-align: justify;
   font-size: 15px;
 }

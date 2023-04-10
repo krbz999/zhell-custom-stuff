@@ -1,0 +1,19 @@
+<div class="content">
+  <button data-action="intervention">
+    <i class="fa-solid fa-ankh"></i> Intervention
+  </button>
+  <button data-action="inspiration">
+    <i class="fa-solid fa-star-half-alt"></i> Inspiration
+  </button>
+  <button data-action="fragment">
+    <i class="fa-solid fa-hourglass-start"></i> Fragment
+  </button>
+  {{#if isGM}}
+  <button data-action="reset">
+    <i class="fa-solid fa-undo"></i> Reset
+  </button>
+  {{/if}}
+  <button data-action="close">
+    <i class="fa-solid fa-times"></i> Close
+  </button>
+</div>
