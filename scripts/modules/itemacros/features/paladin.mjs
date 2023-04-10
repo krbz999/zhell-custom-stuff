@@ -58,9 +58,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
   }
 
   const range = HandlebarsHelpers.rangePicker({
-    hash: {
-      min: 1, max: value, value: 1, step: 1, name: item.name.slugify({strict: true})
-    }
+    hash: {min: 1, max: value, value: 1, step: 1, name: item.name.slugify({strict: true})}
   });
 
   const content = `
@@ -75,7 +73,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
   const buttons = {
     heal: {
       icon: "<i class='fa-solid fa-hand-holding-heart'></i>",
-      label: "Heal! (1+)",
+      label: "Heal! (<span data-attr='lay'>1+</span>)",
       callback: heal
     },
     cure: {
@@ -91,9 +89,12 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
     content,
     buttons,
     render: (html) => {
+      const range = html[0].querySelector("input");
       const target = html[0].querySelector(".range-value");
-      html[0].querySelector("input").addEventListener("change", function(event) {
+      const button = range.closest(".window-content").querySelector("[data-attr='lay']");
+      range.addEventListener("change", function(event) {
         target.innerText = event.currentTarget.value;
+        button.innerText = event.currentTarget.value;
       });
     }
   }).render(true);
