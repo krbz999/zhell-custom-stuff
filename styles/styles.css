@@ -1143,3 +1143,14 @@ span.flavor-text.zhell-apply-damage-flavor {
 .zhell-custom-stuff.party-features [data-action]:hover > * {
   transform: scale(1.25);
 }
+
+/* Font of Magic */
+.zhell-custom-stuff.font-of-magic .dialog-buttons {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.zhell-custom-stuff.font-of-magic .dialog-buttons button {
+  display: flex;
+  justify-content: space-around;
+}
