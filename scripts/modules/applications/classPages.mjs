@@ -35,8 +35,8 @@ class ClassPageRenderer extends Application {
    * Toggle the collapsed state of a section.
    * @param {PointerEvent} event      The initiating click event.
    */
-  _onToggleCollapse(event){
-    event.currentTarget.closest("section").classList.toggle("active");
+  _onToggleCollapse(event) {
+    event.currentTarget.closest(".collapsible").classList.toggle("active");
   }
 
   /**
@@ -1932,6 +1932,24 @@ class ClassPageRenderer extends Application {
     };
   }
 
+  get subclassLabel(){
+    return {
+      artificer: "Artificer Specialists",
+      barbarian: "Primal Paths",
+      bard: "Bard Colleges",
+      cleric: "Divine Domains",
+      druid: "Druid Circles",
+      fighter: "Martial Archetypes",
+      monk: "Monastic Traditions",
+      paladin: "Sacred Oaths",
+      ranger: "Ranger Archetypes",
+      rogue: "Roguish Archetypes",
+      sorcerer: "Sorcerous Origins",
+      warlock: "Otherworldly Patrons",
+      wizard: "Arcane Traditions"
+    };
+  }
+
   /** @override */
   async getData() {
     const classes = Array.from(game.packs.get("zhell-catalogs.classes").index);
@@ -1953,9 +1971,10 @@ class ClassPageRenderer extends Application {
       _data.pack = "zhell-catalogs.classes";
       _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
       _data.id = c._id;
+      _data.subclassLabel = this.subclassLabel[_data.identifier];
       _data.subclassIds = _subclasses.map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.subclasses", img: s.img}));
       _data.spellLists = Array.fromRange(10).map(n => ({
-        label: CONFIG.DND5E.spellLevels[n],
+        label: (n === 0) ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`,
         spells: _spells.filter(s => (s.system.level === n)).map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.spells"}))
       }));
       _data.hasSpells = _data.spellLists.some(list => list.spells.length > 0);

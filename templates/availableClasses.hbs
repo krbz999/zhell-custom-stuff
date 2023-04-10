@@ -19,9 +19,9 @@
         </div>
       </section>
 
-      <section class="subclass-section active">
-        <h2 data-action="toggle-collapse" class="subclass-header">{{name}} Subclasses</h2>
-        <div class="subclass-list">
+      <section class="subclass-section collapsible active">
+        <h2 data-action="toggle-collapse">{{subclassLabel}}</h2>
+        <div class="subclass-list collapsible-content">
           {{#each subclassIds}}
           <div class="subclass-item">
             <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
@@ -33,13 +33,13 @@
       </section>
 
       {{#if hasSpells}}
-      <section class="spell-section active">
-        <h2 class="spell-header">{{name}} Spells</h2>
+      <section class="spell-section">
         <div class="spell-lists">
           {{#each spellLists}}
           {{#if spells.length}}
-          <div class="spell-list">
-            <h3 class="spell-list-header">{{label}}</h3>
+          <section class="spell-list collapsible active">
+            <h3 data-action="toggle-collapse">{{label}}</h3>
+            <div class="collapsible-content">
             {{#each spells}}
             <div class="spell" data-uuid="Compendium.{{pack}}.{{id}}">
               <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
@@ -50,7 +50,8 @@
               </a>
             </div>
             {{/each}}
-          </div>
+            </div>
+          </section>
           {{/if}}
           {{/each}}
         </div>

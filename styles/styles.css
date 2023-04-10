@@ -708,6 +708,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   margin: 1em;
 }
 
+/* the class item */
 .zhell-custom-stuff.class-page-renderer .class-section {
   display: flex;
   justify-content: center;
@@ -727,7 +728,6 @@ span.flavor-text.zhell-apply-damage-flavor {
   left: 25px;
 }
 
-/* the class item */
 .zhell-custom-stuff.class-page-renderer .class-item .content-link {
   border: none;
   background: none;
@@ -736,14 +736,8 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-family: "Modesto Condensed";
 }
 
-/* the subclass items */
-.zhell-custom-stuff.class-page-renderer .subclass-section {
-  width: 100%;
-  margin: 0.5rem 0;
-  cursor: pointer;
-}
-
-.zhell-custom-stuff.class-page-renderer .subclass-header {
+/* Collapsible styles */
+.zhell-custom-stuff.class-page-renderer [data-action="toggle-collapse"] {
   cursor: pointer;
   padding: 0.5rem 1rem;
   background-color: #411a13;
@@ -757,7 +751,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   align-items: center;
 }
 
-.zhell-custom-stuff.class-page-renderer .subclass-header:after {
+.zhell-custom-stuff.class-page-renderer [data-action="toggle-collapse"]:after {
   content: "\02795";
   font-size: 13px;
   float: right;
@@ -766,26 +760,33 @@ span.flavor-text.zhell-apply-damage-flavor {
   font-family: 'Font Awesome 5 Free';
 }
 
-.zhell-custom-stuff.class-page-renderer .subclass-section.active .subclass-header:after {
+.zhell-custom-stuff.class-page-renderer .collapsible.active [data-action="toggle-collapse"]:after {
   content: "\2796";
 }
 
-.zhell-custom-stuff.class-page-renderer .subclass-list {
+.zhell-custom-stuff.class-page-renderer .collapsible-content {
   max-height: 0;
-  padding: 0.5rem 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out, padding 500ms;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 1em;
+  pointer-events: none;
 }
 
-.zhell-custom-stuff.class-page-renderer .subclass-section.active .subclass-list {
+.zhell-custom-stuff.class-page-renderer .collapsible.active .collapsible-content {
   opacity: 1;
-  max-height: 600px;
-  overflow-y: scroll;
+  max-height: 3000px;
+  padding: 0.5rem 0;
+  pointer-events: all;
+}
+
+/* Subclasses */
+.zhell-custom-stuff.class-page-renderer .subclass-section {
+  width: 100%;
+  margin: 0.5rem 0;
 }
 
 .zhell-custom-stuff.class-page-renderer .subclass-item {
@@ -809,23 +810,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   text-shadow: none;
 }
 
-/* SPELL LISTS */
-/* main header of entire class spell list */
-.zhell-custom-stuff.class-page-renderer .spell-header {
-  text-align: center;
-  font-size: 30px;
-  border-style: solid;
-  border-width: 2px;
-  border-radius: 30px;
-  border-color: black;
-  margin: 20px auto;
-  padding: 5px 0;
-  font-family: "Modesto Condensed";
-  text-transform: uppercase;
-  width: 100%;
-}
-
-/* layout of spell list */
+/* Spell lists */
 .zhell-custom-stuff.class-page-renderer .spell-section {
   padding-bottom: 1em;
 }
@@ -837,8 +822,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   align-items: start;
 }
 
-.zhell-custom-stuff.class-page-renderer .spell-list {
-  display: grid;
+.zhell-custom-stuff.class-page-renderer .spell-list .collapsible-content {
   gap: 0.2em;
 }
 
@@ -846,13 +830,12 @@ span.flavor-text.zhell-apply-damage-flavor {
   display: grid;
   grid-template-columns: calc(100% - var(--form-field-height)) var(--form-field-height);
   grid-template-areas: "link toggle" "text text";
+  width: 100%;
+  transition: padding 200ms;
 }
 
-/* spell-level headers */
-.zhell-custom-stuff.class-page-renderer .spell-list-header {
-  text-align: center;
-  border: none;
-  font-weight: bold;
+.zhell-custom-stuff.class-page-renderer .spell:hover {
+  padding: 0.1rem 0 0.5rem 0;
 }
 
 /* individual spells */
