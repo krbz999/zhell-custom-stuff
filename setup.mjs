@@ -32,6 +32,7 @@ import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
 import {_craftingCharacterFlag} from "./scripts/modules/applications/materiaMedica.mjs";
 import {refreshColors, _performSheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
+import {sceneControls} from "./scripts/modules/sceneControls.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
@@ -59,6 +60,7 @@ Hooks.on("updateCombat", _rechargeMonsterFeatures);
 Hooks.on("renderChatMessage", DamageApplicator._appendToDamageRolls);
 Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
 Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
+Hooks.on("getSceneControlButtons", sceneControls);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
