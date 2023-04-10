@@ -412,3 +412,110 @@ export function _preCreateActiveEffect(effect, effectData) {
   }
   effect.updateSource(data);
 }
+
+/**
+ * Hook function to replace the token HUD condition selector with a new one
+ * that has images and labels, as well as tooltips.
+ * @param {TokenHUD} hud          The token HUD.
+ * @param {HTML} html             The element of the HUD.
+ * @param {object} tokenData      The data of the token related to the HUD.
+ */
+export function _replaceTokenHUD(hud, html, tokenData) {
+  const sorting = CONFIG.statusEffects.reduce((acc, e) => {
+    acc[e.id] = e.sort;
+    return acc;
+  }, {});
+  const innerHTML = Object.values(tokenData.statusEffects).sort((a, b) => {
+    return sorting[a.id] - sorting[b.id];
+  }).reduce((acc, eff) => {
+    const condition = CONFIG.statusEffects.find(e => e.id === eff.id) ?? {};
+    const clss = "status-effect effect-control";
+    const atts = (eff.isActive ? "active" : "") + " " + (eff.isOverlay ? "overlay" : "");
+    const tooltip = foundry.utils.getProperty(condition, "flags.visual-active-effects.data.intro") ?? "";
+    return acc + `
+    <div src="${eff.src}" class="${clss} ${atts}" data-status-id="${eff.id}" data-tooltip="${tooltip}">
+      <img class="status-effect-img" src="${eff.src}">
+      <div class="status-effect-label">${eff.title}</div>
+    </div>`;
+  }, "");
+  html[0].querySelector(".status-effects").innerHTML = innerHTML;
+}
+
+/**
+ * Inject buttons into VAE effects.
+ * @param {ActiveEffect} effect     The active effect being rendered.
+ * @param {object[]} buttons        The array of buttons on this effect.
+ */
+export function _visualActiveEffectsCreateEffectButtons(effect, buttons) {
+  // Item data and type must be added in the effect by this module.
+  const {itemData, types} = effect.flags[MODULE] ?? {};
+  if (!itemData || !types) return;
+
+  // Use the item embedded.
+  if (types.includes("use")) {
+    buttons.push({
+      label: `${itemData.name} (Use)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        item.prepareFinalAttributes();
+        return item.use({}, {"flags.dnd5e.itemData": itemData});
+      }
+    });
+  }
+
+  // Redisplay the item embedded.
+  if (types.includes("redisplay")) {
+    buttons.push({
+      label: `${itemData.name} (Chat)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        item.prepareFinalAttributes();
+        return item.displayCard();
+      }
+    });
+  }
+
+  // Make an attack roll with the item embedded.
+  if (types.includes("attack")) {
+    buttons.push({
+      label: `${itemData.name} (Attack)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollAttack({event});
+      }
+    });
+  }
+
+  // Make a damage roll with the item embedded.
+  if (types.includes("damage")) {
+    buttons.push({
+      label: `${itemData.name} (Damage)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollDamage({event});
+      }
+    });
+  }
+
+  // Make a healing roll with the item embedded.
+  if (types.includes("healing")) {
+    buttons.push({
+      label: `${itemData.name} (Healing)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return item.rollDamage({event});
+      }
+    });
+  }
+
+  // Create a measured template from the item embedded.
+  if (types.includes("template")) {
+    buttons.push({
+      label: `${itemData.name} (Template)`,
+      callback: () => {
+        const item = new Item.implementation(itemData, {parent: effect.parent});
+        return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
+      }
+    });
+  }
+}

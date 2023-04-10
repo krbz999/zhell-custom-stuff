@@ -1,12 +1,7 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {api} from "./scripts/api.mjs";
 import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
-import {
-  ZHELL_COMBAT,
-  _rechargeMonsterFeatures,
-  _replaceTokenHUD,
-  _visualActiveEffectsCreateEffectButtons
-} from "./scripts/modules/combatHelpers.mjs";
+import {COMBAT} from "./scripts/modules/combatHelpers.mjs";
 import {
   ZHELL_ANIMATIONS,
   _equipmentPageListeners,
@@ -22,10 +17,12 @@ import {
   _miscAdjustments,
   _preCreateActiveEffect,
   _preCreateScene,
+  _replaceTokenHUD,
   _restItemDeletion,
   _sceneHeaderView,
   _setUpGameChanges,
-  _visionModes
+  _visionModes,
+  _visualActiveEffectsCreateEffectButtons
 } from "./scripts/modules/gameChanges.mjs";
 import {DEPEND, MODULE} from "./scripts/const.mjs";
 import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
@@ -56,7 +53,7 @@ Hooks.on("dnd5e.restCompleted", _restItemDeletion);
 Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
 Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
 Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
-Hooks.on("updateCombat", _rechargeMonsterFeatures);
+Hooks.on("updateCombat", COMBAT._rechargeMonsterFeatures);
 Hooks.on("renderChatMessage", DamageApplicator._appendToDamageRolls);
 Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
 Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
@@ -65,16 +62,16 @@ Hooks.on("getSceneControlButtons", sceneControls);
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
   if (((reactionSetting === "gm") && game.user.isGM) || (reactionSetting === "all")) {
-    Hooks.on("dnd5e.useItem", ZHELL_COMBAT.spendReaction);
+    Hooks.on("dnd5e.useItem", COMBAT._spendReaction);
   }
 
   if (game.settings.get(MODULE, "displaySavingThrowAmmo")) {
-    Hooks.on("dnd5e.rollAttack", ZHELL_COMBAT.displaySavingThrowAmmo);
+    Hooks.on("dnd5e.rollAttack", COMBAT._displaySavingThrowAmmo);
   }
 
   if (game.user.isGM) {
     if (game.settings.get(MODULE, "markDefeatedCombatants")) {
-      Hooks.on("updateToken", ZHELL_COMBAT.markDefeatedCombatant);
+      Hooks.on("updateToken", COMBAT._markDefeatedCombatant);
     }
     Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
     Hooks.on("dropCanvasData", _dropActorFolder);
