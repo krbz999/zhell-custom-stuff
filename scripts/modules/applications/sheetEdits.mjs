@@ -373,21 +373,26 @@ export class SheetEdits {
   }
 }
 
+/**
+ * Refreshes the style sheet when a user changes their color settings for various sheet colors
+ * such as limited uses, prepared spells, and the color of rarities on magic items.
+ */
 export function refreshColors() {
-  const style = document.documentElement.style;
   const colors = game.settings.get(MODULE, "colorSettings");
   const rarities = game.settings.get(MODULE, "rarityColorSettings");
 
-  style.setProperty("--usesUnexpended", colors.usesUnexpended);
-  style.setProperty("--itemAttuned", colors.itemAttuned);
-  style.setProperty("--itemNotAttuned", colors.itemNotAttuned);
-  style.setProperty("--spellPrepared", colors.spellPrepared);
-  style.setProperty("--spellNotPrepared", colors.spellNotPrepared);
-  style.setProperty("--spellAlwaysPrepared", colors.spellAlwaysPrepared);
+  const root = document.querySelector(":root")
+  const cssSheet = Object.values(root.parentNode.styleSheets).find(s => {
+    return s.href.includes("zhell-custom-stuff/styles/sheetEdits.css");
+  });
 
-  style.setProperty("--rarityUncommon", rarities.uncommon);
-  style.setProperty("--rarityRare", rarities.rare);
-  style.setProperty("--rarityVeryRare", rarities.veryRare);
-  style.setProperty("--rarityLegendary", rarities.legendary);
-  style.setProperty("--rarityArtifact", rarities.artifact);
+  const map = Object.values(cssSheet.rules).find(r => r.selectorText === ":root").styleMap;
+
+  for (const key of Object.keys(colors)) {
+    if (typeof colors[key] === "string") map.set(`--${key}`, colors[key]);
+  }
+
+  for (const key of Object.keys(rarities)) {
+    if (typeof rarities[key] === "string") map.set(`--rarity${key.capitalize()}`, rarities[key]);
+  }
 }
