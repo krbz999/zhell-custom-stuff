@@ -12,7 +12,7 @@ async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, eve
 
   const use = await item.use();
   if (!use) return;
-  const effectData = _constructGenericEffectData({item});
+  const effectData = _constructGenericEffectData({item, types: ["redisplay", "attack", "damage"]});
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
   const updates = {token: {name: `${actor.name.split(" ")[0]}'s Fathomless Tentacle`}};
   const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};

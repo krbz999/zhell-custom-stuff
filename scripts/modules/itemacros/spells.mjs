@@ -73,18 +73,14 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
     return e.flags.core?.statusId === item.name.slugify({strict: true});
   });
   if (isActive) {
-    const level = isActive.flags[MODULE].spellLevel;
-    const data = item.toObject();
-    data.system.level = level;
-    const clone = new Item.implementation(data, {keepId: true});
-    clone.prepareFinalAttributes();
-    return clone.displayCard();
+    ui.notifications.warn("You already have a weapon summoned!");
+    return null;
   }
 
   const use = await item.use();
   if (!use) return;
   const level = _getSpellLevel(use);
-  const effectData = _constructGenericEffectData({item, level});
+  const effectData = _constructGenericEffectData({item, level, types: ["redisplay", "attack", "damage"]});
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
 
   const updates = {token: {name: `${actor.name.split(" ")[0]}'s Spiritual Weapon`}}
