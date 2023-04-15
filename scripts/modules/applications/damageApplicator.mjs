@@ -171,13 +171,13 @@ export class DamageApplicator extends Application {
    * Update the displayed hp values of an actor.
    * @param {HTMLElement} actor     The actor element in the application.
    */
-  _updateHitPointValues(actor){
+  _updateHitPointValues(actor) {
     const hp = canvas.scene.tokens.get(actor.dataset.tokenId).actor.system.attributes.hp;
     const [value, temp, max, tempmax] = actor.querySelectorAll("[data-attr^='hp-']");
     value.innerText = hp.value;
     max.innerText = hp.max;
-    if(hp.temp) temp.innerText = `(+${hp.temp})`;
-    if(hp.tempmax) tempmax.innerText = `(+${hp.tempmax})`;
+    if (hp.temp) temp.innerText = `(+${hp.temp})`;
+    if (hp.tempmax) tempmax.innerText = `(+${hp.tempmax})`;
   }
 
   /**
@@ -402,7 +402,6 @@ export class DamageApplicator extends Application {
     let idx = 0;
 
     const roll = message.rolls[0];
-
     const values = {};
     for (const term of roll.terms) {
       if (!(term instanceof Die) && !(term instanceof NumericTerm)) continue;
@@ -430,6 +429,11 @@ export class DamageApplicator extends Application {
       values[type] = (values[type] ?? 0) + term.total;
       idx++;
     }
+
+    // If the derived total is less than the actual total, add the remainder onto the first type.
+    const valueTotal = Object.values(values).reduce((acc, v) => acc + v, 0);
+    if (valueTotal < roll.total) values[indices[0]] += (roll.total - valueTotal);
+
     message.updateSource({[`flags.${MODULE}.damage`]: {values}, "flags.core.canPopout": true});
   }
 }
