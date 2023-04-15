@@ -5,7 +5,7 @@ class PartyFeatures extends Application {
     super();
 
     // The group actor with the party in it.
-    this.groupActor = fromUuidSync("Actor.YZI1wsS64lScoYZh");
+    this.groupActor = fromUuidSync("Actor.VRA6OxigX4V5GYn7");
 
     this.features = ["intervention", "inspiration", "fragment"];
   }
