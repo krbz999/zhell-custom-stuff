@@ -2,18 +2,7 @@ import {DEPEND, MODULE} from "../../const.mjs";
 import {drawCircle} from "../animations.mjs";
 import {ImageAnchorPicker} from "../applications/imageAnchorPicker.mjs";
 import {elementalDialog} from "../customDialogs.mjs";
-import {
-  _addTokenDismissalToEffect,
-  _basicFormContent,
-  _bladeCantripDamageBonus,
-  _constructDetectionModeEffectData,
-  _constructGenericEffectData,
-  _getDependencies,
-  _getItemDuration,
-  _getSpellLevel,
-  _spawnHelper,
-  _teleportationHelper
-} from "../itemMacros.mjs";
+import {ItemMacroHelpers} from "../itemMacros.mjs";
 
 export const spells = {
   ABSORB_ELEMENTS,
@@ -47,7 +36,7 @@ export const spells = {
 };
 
 async function FLAMING_SPHERE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return CN.redisplayCard(actor, item);
@@ -60,15 +49,16 @@ async function FLAMING_SPHERE(item, speaker, actor, token, character, event, arg
 
   // then spawn the actor:
   await actor.sheet?.minimize();
-  const [spawn] = await _spawnHelper("Flaming Sphere", updates, {}, options);
+  const [spawn] = await ItemMacroHelpers._spawnHelper("Flaming Sphere", updates, {}, options);
   await actor.sheet?.maximize();
   const effect = CN.isActorConcentratingOnItem(actor, item);
   if (!spawn) return effect.delete();
-  return _addTokenDismissalToEffect(effect, spawn);
+  return ItemMacroHelpers._addTokenDismissalToEffect(effect, spawn);
 }
 
 async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
+
   const isActive = actor.effects.find(e => {
     return e.flags.core?.statusId === item.name.slugify({strict: true});
   });
@@ -79,23 +69,26 @@ async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, a
 
   const use = await item.use();
   if (!use) return;
-  const level = _getSpellLevel(use);
-  const effectData = _constructGenericEffectData({item, level, types: ["redisplay", "attack", "damage"]});
-  const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
 
   const updates = {token: {name: `${actor.name.split(" ")[0]}'s Spiritual Weapon`}}
   const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
-  await actor.sheet?.minimize();
-  const [spawn] = await _spawnHelper("Spiritual Weapon", updates, {}, options);
-  await actor.sheet?.maximize();
-  if (!spawn) return effect.delete();
-  return _addTokenDismissalToEffect(effect, spawn);
+  await actor.sheet.minimize();
+  const p = drawCircle(token, item.system.range.value);
+  const [spawn] = await ItemMacroHelpers._spawnHelper("Spiritual Weapon", updates, {}, options);
+  await actor.sheet.maximize();
+  canvas.app.stage.removeChild(p);
+  if (!spawn) return;
+
+  const level = ItemMacroHelpers._getSpellLevel(use);
+  const effectData = ItemMacroHelpers._constructGenericEffectData({item, level, types: ["redisplay", "attack", "damage"]});
+  const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
+  return ItemMacroHelpers._addTokenDismissalToEffect(effect, spawn);
 }
 
 async function MISTY_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
   const vanish = "jb2a.misty_step.01.blue";
   const appear = "jb2a.misty_step.02.blue";
   const distance = 30;
@@ -103,11 +96,11 @@ async function MISTY_STEP(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
 
-  return _teleportationHelper({item, actor, token, vanish, appear, distance});
+  return ItemMacroHelpers._teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function THUNDER_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
   const vanish = "jb2a.thunderwave.center.blue";
   const appear = "jb2a.thunderwave.center.blue";
   const distance = 90;
@@ -115,11 +108,11 @@ async function THUNDER_STEP(item, speaker, actor, token, character, event, args)
   const use = await item.use();
   if (!use) return;
 
-  return _teleportationHelper({item, actor, token, vanish, appear, distance});
+  return ItemMacroHelpers._teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function FAR_STEP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG, DEPEND.CN)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG, DEPEND.CN)) return item.use();
   const vanish = "jb2a.misty_step.01.purple";
   const appear = "jb2a.misty_step.02.purple";
   const distance = 60;
@@ -131,11 +124,11 @@ async function FAR_STEP(item, speaker, actor, token, character, event, args) {
     if (!use) return;
   }
 
-  return _teleportationHelper({item, actor, token, vanish, appear, distance});
+  return ItemMacroHelpers._teleportationHelper({item, actor, token, vanish, appear, distance});
 }
 
 async function SPIRIT_SHROUD(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -179,7 +172,7 @@ async function ARMOR_OF_AGATHYS(item, speaker, actor, token, character, event, a
   const use = await item.use();
   if (!use) return;
 
-  const level = _getSpellLevel(use);
+  const level = ItemMacroHelpers._getSpellLevel(use);
   return actor.applyTempHP(5 * level);
 }
 
@@ -196,7 +189,7 @@ async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, ar
   async function resolve(s) {
     const use = await item.use();
     if (!use) return;
-    const level = _getSpellLevel(use);
+    const level = ItemMacroHelpers._getSpellLevel(use);
 
     const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
     const value = `+${level}d6[${s}]`;
@@ -221,7 +214,7 @@ async function ABSORB_ELEMENTS(item, speaker, actor, token, character, event, ar
 }
 
 async function CALL_LIGHTNING(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN, DEPEND.VAE)) return item.use();
   const concentrating = CN.isActorConcentratingOnItem(actor, item);
   if (!concentrating) {
     const use = await item.use();
@@ -240,7 +233,7 @@ async function BREATH_WEAPON(item, speaker, actor, token, character, event, args
   const options = [["cone", "Cone (30ft)"], ["line", "Line (60ft)"]].reduce((acc, e) => {
     return acc + `<option value="${e[0]}">${e[1]}</option>`;
   }, "");
-  const content = _basicFormContent({label: "Template Type:", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Template Type:", type: "select", options});
 
   const template = await Dialog.prompt({
     title: item.name,
@@ -290,7 +283,7 @@ async function FATHOMLESS_EVARDS_BLACK_TENTACLES(item, speaker, actor, token, ch
 }
 
 async function MOONBEAM(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG, DEPEND.CN, DEPEND.EM)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return CN.redisplayCard(actor, item);
@@ -303,11 +296,11 @@ async function MOONBEAM(item, speaker, actor, token, character, event, args) {
 
   // then spawn the actor:
   await actor.sheet?.minimize();
-  const [spawn] = await _spawnHelper("Moonbeam", updates, {}, options);
+  const [spawn] = await ItemMacroHelpers._spawnHelper("Moonbeam", updates, {}, options);
   await actor.sheet?.maximize();
   const effect = CN.isActorConcentratingOnItem(actor, item);
   if (!spawn) return effect.delete();
-  return _addTokenDismissalToEffect(effect, spawn);
+  return ItemMacroHelpers._addTokenDismissalToEffect(effect, spawn);
 }
 
 async function CREATE_OR_DESTROY_WATER(item, speaker, actor, token, character, event, args) {
@@ -347,7 +340,7 @@ async function CREATE_OR_DESTROY_WATER(item, speaker, actor, token, character, e
     clone.prepareFinalAttributes();
     const use = await clone.use();
     if (!use) return;
-    const level = _getSpellLevel(use);
+    const level = ItemMacroHelpers._getSpellLevel(use);
     const cube = 5 * level + 25;
     const template = dnd5e.canvas.AbilityTemplate.fromItem(item);
     template.document.updateSource({ t: "ray", distance: cube, width: cube });
@@ -375,7 +368,7 @@ async function SHIELD(item, speaker, actor, token, character, event, args) {
 }
 
 async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN, DEPEND.RG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN, DEPEND.RG)) return item.use();
 
   let effect = CN.isActorConcentratingOnItem(actor, item);
 
@@ -419,7 +412,7 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 
     return Dialog.prompt({
       title: item.name,
-      content: _basicFormContent({label: "Select arrow:", type: "select", options}) + "<p id='arrow-desc'></p>",
+      content: ItemMacroHelpers._basicFormContent({label: "Select arrow:", type: "select", options}) + "<p id='arrow-desc'></p>",
       rejectClose: false,
       label: "Shoot!",
       callback: async (html) => {
@@ -478,14 +471,14 @@ async function RAINBOW_RECURVE(item, speaker, actor, token, character, event, ar
 }
 
 async function CROWN_OF_STARS(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN)) return item.use();
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (!isConc) {
     const use = await item.use();
     if (!use) return;
     const conc = await CN.waitForConcentrationStart(actor, {item});
     if (!conc) return;
-    const level = _getSpellLevel(use);
+    const level = ItemMacroHelpers._getSpellLevel(use);
     const motes = 2 * level - 7;
     return conc.setFlag(MODULE, "crownStars", motes);
   }
@@ -497,7 +490,7 @@ async function CROWN_OF_STARS(item, speaker, actor, token, character, event, arg
 }
 
 async function VORTEX_WARP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const target = game.user.targets.first();
   if (!target) {
@@ -508,7 +501,7 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
   const use = await item.use();
   if (!use) return;
 
-  const level = _getSpellLevel(use);
+  const level = ItemMacroHelpers._getSpellLevel(use);
   const range = 30 * (level + 1);
 
   const p = drawCircle(token, range);
@@ -551,13 +544,13 @@ async function VORTEX_WARP(item, speaker, actor, token, character, event, args) 
 }
 
 async function WIELDING(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN, DEPEND.VAE, DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN, DEPEND.VAE, DEPEND.EM)) return item.use();
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return;
 
   const use = await item.use();
   if (!use) return;
-  const level = _getSpellLevel(use);
+  const level = ItemMacroHelpers._getSpellLevel(use);
 
   const target = game.user.targets.first();
 
@@ -568,7 +561,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
     }, "") ?? "";
   }
   const options = getWeaponOptions(actor) + getWeaponOptions(target?.actor);
-  const content = _basicFormContent({type: "select", options, label: "Choose weapon:"});
+  const content = ItemMacroHelpers._basicFormContent({type: "select", options, label: "Choose weapon:"});
 
   const uuid = await Dialog.prompt({
     title: item.name,
@@ -612,7 +605,7 @@ async function WIELDING(item, speaker, actor, token, character, event, args) {
 }
 
 async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
 
   const mutName = `${item.name} (${actor.name})`;
   const statusId = `${item.name.slugify({strict: true})}-${actor.name.slugify({strict: true})}`;
@@ -650,7 +643,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
             label: item.name,
             icon: item.img,
             origin: actor.uuid,
-            duration: _getItemDuration(item),
+            duration: ItemMacroHelpers._getItemDuration(item),
             changes: [{key: "system.attributes.ac.calc", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "mage"}],
             "flags.core.statusId": statusId,
             "flags.visual-active-effects.data": {
@@ -669,7 +662,7 @@ async function MAGE_ARMOR(item, speaker, actor, token, character, event, args) {
  * Currently supports only Devinn (Alyk) and Drazvik (Vrax).
  */
 async function FIND_FAMILIAR(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
   const isDevinn = actor.name.includes("Devinn") && "Alyk";
   const isDrazvik = actor.name.includes("Draz") && "Vrax";
   const isSpawned = canvas.scene.tokens.find(t => t.actor?.flags.world?.findFamiliar === actor.id);
@@ -680,7 +673,7 @@ async function FIND_FAMILIAR(item, speaker, actor, token, character, event, args
   const update = {actor: {"flags.world.findFamiliar": actor.id}};
   const options = {crosshairs: {interval: 1}};
   await actor.sheet?.minimize();
-  await _spawnHelper(name, update, {}, options);
+  await ItemMacroHelpers._spawnHelper(name, update, {}, options);
   await actor.sheet?.maximize();
 }
 
@@ -694,7 +687,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
 
-  const content = _basicFormContent({label: "Choose a skill:", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Choose a skill:", type: "select", options});
   const skl = await Dialog.prompt({
     title: item.name,
     rejectClose: false,
@@ -710,7 +703,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
   return actor.createEmbeddedDocuments("ActiveEffect", [{
     label: item.name,
     icon: item.img,
-    duration: _getItemDuration(item),
+    duration: ItemMacroHelpers._getItemDuration(item),
     changes: [{key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1}],
     "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data": {
@@ -721,7 +714,7 @@ async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event,
 }
 
 async function AID(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG, DEPEND.EM, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG, DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const targets = game.user.targets;
   if (!targets.size.between(1, 3)) {
@@ -732,7 +725,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
   const use = await item.use();
   if (!use) return;
 
-  const spellLevel = _getSpellLevel(use);
+  const spellLevel = ItemMacroHelpers._getSpellLevel(use);
 
   async function onCreate() {
     const level = effect.flags.effectmacro.data.spellLevel;
@@ -743,7 +736,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
   const effectData = {
     label: item.name,
     icon: item.img,
-    duration: _getItemDuration(item),
+    duration: ItemMacroHelpers._getItemDuration(item),
     changes: [{key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1)}],
     "flags.core.statusId": item.name.slugify({strict: true}),
     "flags.visual-active-effects.data.intro": `<p>Your hit point maximum is increased by ${5 * (spellLevel - 1)}.</p>`,
@@ -763,7 +756,7 @@ async function AID(item, speaker, actor, token, character, event, args) {
 }
 
 async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
   const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) {
@@ -773,7 +766,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
 
   const use = await item.use();
   if (!use) return;
-  const level = _getSpellLevel(use);
+  const level = ItemMacroHelpers._getSpellLevel(use);
   const bonus = Math.min(3, Math.floor((level - 1) / 2));
   const dice = `${bonus}d4`;
 
@@ -782,7 +775,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
   const options = actor.itemTypes.weapon.reduce((acc, e) => {
     return acc + `<option value="${e.id}">${e.name}</option>`;
   }, "");
-  const content = _basicFormContent({label: "Choose Weapon:", options, type: "select"});
+  const content = ItemMacroHelpers._basicFormContent({label: "Choose Weapon:", options, type: "select"});
   const weaponId = await Dialog.prompt({
     content,
     rejectClose: false,
@@ -816,7 +809,7 @@ async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, a
 }
 
 async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM)) return item.use();
 
   const use = await item.use();
   if (!use) return;
@@ -825,7 +818,7 @@ async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args
     return effect.delete();
   }
 
-  const {formula, type} = _bladeCantripDamageBonus(item);
+  const {formula, type} = ItemMacroHelpers._bladeCantripDamageBonus(item);
 
   const effectData = [{
     icon: item.img,
@@ -845,7 +838,7 @@ async function BLADE_CANTRIP(item, speaker, actor, token, character, event, args
 }
 
 async function SEE_INVISIBILITY(item, speaker, actor, token, character, event, args) {
-  const data = _constructDetectionModeEffectData({
+  const data = ItemMacroHelpers._constructDetectionModeEffectData({
     item,
     modes: [{
       id: "seeInvisibility",
@@ -935,7 +928,7 @@ async function CHAOS_BOLT(item, speaker, actor, token, character, event, args) {
  * Item Macro for the 'Find Steed' spell. Currently supports only Drazvik.
  */
 async function FIND_STEED(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
   const isDrazvik = actor.name.includes("Draz");
   if (isDrazvik) {
     const isSpawned = canvas.scene.tokens.find(t => t.actor?.flags.world?.findSteed === actor.id);
@@ -945,7 +938,7 @@ async function FIND_STEED(item, speaker, actor, token, character, event, args) {
     const update = {actor: {"flags.world.findSteed": actor.id}};
     const options = {crosshairs: {interval: 1}};
     await actor.sheet?.minimize();
-    await _spawnHelper("Dreg", update, {}, options);
+    await ItemMacroHelpers._spawnHelper("Dreg", update, {}, options);
     await actor.sheet?.maximize();
   }
 }
@@ -955,7 +948,7 @@ async function FIND_STEED(item, speaker, actor, token, character, event, args) {
  * to grant the movement speed increase to any movement values that are already greater than 0ft.
  */
 async function ASHARDALONS_STRIDE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.VAE, DEPEND.CN)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.VAE, DEPEND.CN)) return item.use();
   const use = await item.use();
   if (!use) return;
   const conc = await CN.waitForConcentrationStart(actor, {item});

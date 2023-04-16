@@ -1,11 +1,11 @@
 import {DEPEND, MODULE} from "../../../const.mjs";
 import {columnDialog} from "../../customDialogs.mjs";
-import {_constructLightEffectData, _getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const stars = {STARRY_FORM};
 
 async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
@@ -13,7 +13,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
   const use = await item.use();
   if (!use) return;
 
-  const [effectData] = _constructLightEffectData({
+  const [effectData] = ItemMacroHelpers._constructLightEffectData({
     item, lightData: {dim: 20, bright: 10}, intro: "", flags: {}
   });
 

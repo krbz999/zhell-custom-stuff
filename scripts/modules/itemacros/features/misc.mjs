@@ -1,10 +1,10 @@
-import {_basicFormContent, _constructSpellSlotOptions} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const misc = {HARNESS_DIVINE_POWER};
 
 async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, event, args) {
   const maxLevel = Math.ceil(actor.getRollData().attributes.prof / 2);
-  const options = _constructSpellSlotOptions(actor, {missing: true, maxLevel});
+  const options = ItemMacroHelpers._constructSpellSlotOptions(actor, {missing: true, maxLevel});
 
   if (!options.length) {
     ui.notifications.warn("You are not missing any valid spell slots.");
@@ -24,7 +24,7 @@ async function HARNESS_DIVINE_POWER(item, speaker, actor, token, character, even
     return;
   }
 
-  const content = _basicFormContent({label: "Spell Slot:", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Spell Slot:", type: "select", options});
 
   return new Dialog({
     title: item.name,

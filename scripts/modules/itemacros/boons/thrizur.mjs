@@ -1,5 +1,5 @@
 import {DEPEND} from "../../../const.mjs";
-import {_getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const thrizur = {GOODHUNTER};
 
@@ -9,7 +9,7 @@ export const thrizur = {GOODHUNTER};
  * success. The reaction ends the concentration and allows the actor to take the damage instead.
  */
 async function GOODHUNTER(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.CN)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.CN)) return item.use();
 
   const isConc = CN.isActorConcentratingOnItem(actor, item);
 

@@ -1,5 +1,4 @@
 import {MODULE} from "../../const.mjs";
-import {_basicFormContent} from "../itemMacros.mjs";
 
 export class MurkScroller extends Application {
   constructor(options = {}) {

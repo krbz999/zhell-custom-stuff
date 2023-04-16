@@ -1,6 +1,6 @@
 import {DEPEND} from "../../../const.mjs";
 import {ImageAnchorPicker} from "../../applications/imageAnchorPicker.mjs";
-import {_getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const arepo = {SONG_OF_WITHERTIDE, FIND_FRIEND};
 
@@ -9,7 +9,7 @@ export const arepo = {SONG_OF_WITHERTIDE, FIND_FRIEND};
  * initiate a dialog to either erupt or dismiss the concentration.
  */
 async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   const active = CN.isActorConcentratingOnItem(actor, item);
   const file1 = "jb2a.markers.music.blueyellow";
@@ -66,7 +66,7 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
  * the actor reverts, and the steed is dismissed.
  */
 async function FIND_FRIEND(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A, DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A, DEPEND.EM)) return item.use();
 
   // jb2a assets.
   const assets = [

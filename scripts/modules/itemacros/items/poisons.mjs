@@ -1,5 +1,5 @@
 import {DEPEND} from "../../../const.mjs";
-import {_basicFormContent, _getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const poisons = {INJURY_POISON};
 
@@ -9,7 +9,7 @@ export const poisons = {INJURY_POISON};
  * slashing damage, and it has to be an object.
  */
 async function INJURY_POISON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.BAB)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.BAB)) return item.use();
 
   const options = actor.items.reduce((acc, item) => {
     if (!["weapon", "equipment", "consumable"].includes(item.type)) return acc;
@@ -24,7 +24,7 @@ async function INJURY_POISON(item, speaker, actor, token, character, event, args
     return null;
   }
 
-  const content = _basicFormContent({label: "Item:", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Item:", type: "select", options});
 
   const id = await Dialog.prompt({
     title: item.name,

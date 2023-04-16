@@ -1,10 +1,10 @@
 import {DEPEND} from "../../../const.mjs";
-import {_basicFormContent, _constructLightEffectData, _getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const hearth = {BURNING_WEAPON, WARMING_RESPITE};
 
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
   const effect = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (effect) return effect.delete();
@@ -32,7 +32,7 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
   const weaponSelect = weapons.reduce((acc, {id, name}) => {
     return acc + `<option value="${id}">${name}</option>`;
   }, "");
-  const content = _basicFormContent({label: "Weapon:", type: "select", options: weaponSelect});
+  const content = ItemMacroHelpers._basicFormContent({label: "Weapon:", type: "select", options: weaponSelect});
 
   return new Dialog({
     title: item.name,
@@ -67,13 +67,13 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       [`babonus.bonuses.${babonusData.id}`]: babonusData,
       "flags.core.statusId": item.name.slugify({strict: true})
     };
-    const effectData = _constructLightEffectData({item, lightData, flags});
+    const effectData = ItemMacroHelpers._constructLightEffectData({item, lightData, flags});
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }
 }
 
 async function WARMING_RESPITE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
 
   const targets = game.user.targets;
   if (!targets.size) {

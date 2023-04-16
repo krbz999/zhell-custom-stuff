@@ -1,5 +1,5 @@
 import {DEPEND} from "../../../const.mjs";
-import {_getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const draconiz = {SHOW_OF_FORCE, SIZE_UP};
 
@@ -8,7 +8,7 @@ export const draconiz = {SHOW_OF_FORCE, SIZE_UP};
  * attached Effect Macro to toggle the size and the other attributes.
  */
 async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.EM, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const use = await item.use();
   if (!use) return;

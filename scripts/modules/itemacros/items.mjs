@@ -1,5 +1,5 @@
 import {DEPEND} from "../../const.mjs";
-import {_basicFormContent, _constructLightEffectData, _getDependencies} from "../itemMacros.mjs";
+import {ItemMacroHelpers} from "../itemMacros.mjs";
 import {PIPE} from "./items/drazPipe.mjs";
 
 export const items = {
@@ -58,7 +58,7 @@ async function HIT_DIE_APPLY(item, speaker, actor, token, character, event, args
 }
 
 async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
@@ -67,11 +67,11 @@ async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args
   if (!use) return;
 
   const lightData = {bright: 30, dim: 60};
-  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
+  return actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
 }
 
 async function TORCH(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
@@ -84,11 +84,11 @@ async function TORCH(item, speaker, actor, token, character, event, args) {
     attenuation: 0.5, color: "#ff4d00", bright: 20, dim: 40, coloration: 1, contrast: 0,
     darkness: {min: 0, max: 1}, luminosity: 0.5, saturation: 0, shadows: 0
   };
-  return actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
+  return actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
 }
 
 async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.RG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.RG)) return item.use();
 
   const servings = [
     {id: foundry.utils.randomID(), uses: 1, label: "Quiant Serving (1 use)"},
@@ -111,7 +111,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
     return acc + `<option value="${id}">${label}</option>`;
   }, "");
 
-  const content = _basicFormContent({label: "Serving Type", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Serving Type", type: "select", options});
 
   new Dialog({
     title: item.name,
@@ -147,7 +147,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
 }
 
 async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
   const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
   if (has) return has.delete();
@@ -166,7 +166,7 @@ async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event
     animation: {speed: 2, intensity: 4, reverse: false, type: "flame"},
     darkness: {min: 0, max: 1}, color: "#ff4d00", attenuation: 0.5
   };
-  await actor.createEmbeddedDocuments("ActiveEffect", _constructLightEffectData({item, lightData}));
+  await actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
   return oilFlask.update({"system.quantity": quantity - 1});
 }
 
@@ -183,7 +183,7 @@ async function FREE_USE(item, speaker, actor, token, character, event, args) {
 }
 
 async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.EM)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.EM)) return item.use();
 
   const effect = await fromUuid(item.flags[DEPEND.EM].effectUuid);
   const weapon = actor.items.find(i => i.uuid === effect.origin);
@@ -199,7 +199,7 @@ async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, 
     return acc + `<option value="${e}">${e} charges</option>`;
   }, "");
 
-  const content = _basicFormContent({label: "Expend Charges:", type: "select", options});
+  const content = ItemMacroHelpers._basicFormContent({label: "Expend Charges:", type: "select", options});
 
   const expend = await Dialog.prompt({
     title: weapon.name,

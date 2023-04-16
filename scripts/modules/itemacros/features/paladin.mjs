@@ -1,9 +1,9 @@
-import {_constructSpellSlotOptions} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const paladin = {DIVINE_SMITE, LAY_ON_HANDS};
 
 async function DIVINE_SMITE(item, speaker, actor, token, character, event, args) {
-  const options = _constructSpellSlotOptions(actor);
+  const options = ItemMacroHelpers._constructSpellSlotOptions(actor);
   if (!options.length) {
     ui.notifications.warn("You have no spell slots remaining.");
     return;

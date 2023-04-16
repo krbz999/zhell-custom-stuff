@@ -1,6 +1,6 @@
 import {DEPEND, MODULE} from "../../../const.mjs";
 import {MurkScroller} from "../../applications/murkScroller.mjs";
-import {_basicFormContent, _getDependencies} from "../../itemMacros.mjs";
+import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export const murk = {SPREAD_THE_KNOWLEDGE, PAST_KNOWLEDGE};
 
@@ -19,7 +19,7 @@ async function SPREAD_THE_KNOWLEDGE(item, speaker, actor, token, character, even
  * with VAE buttons to utilize the temporary item added, allowing the actor to shot their beams.
  */
 async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
-  if (!_getDependencies(DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
   const use = await item.use();
   if (!use) return;
 
