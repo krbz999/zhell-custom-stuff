@@ -1036,7 +1036,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   border-radius: 3px;
   background-color: indianred;
   align-items: center;
-  min-height: 100%;
+  min-height: var(--form-field-height);
   padding: 0.25em;
 }
 
