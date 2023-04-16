@@ -4,7 +4,7 @@
     <div class="damage-types">
       {{#each types}}
       <div class="type">
-        {{label}}: {{value}}
+        <label>{{label}}</label> <input type="Number" data-key="{{type}}" value="{{value}}">
       </div>
       {{/each}}
     </div>
@@ -74,7 +74,7 @@
 
       </div>
 
-      {{#if isDamage}}
+      {{#if ../isDamage}}
       <div class="trait-section">
         {{#if hasResistance}}
         <label class="label">Resistant</label>

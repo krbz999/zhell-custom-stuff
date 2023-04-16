@@ -143,11 +143,13 @@ export class DamageApplicator extends Application {
   async _onApplyDamage(event) {
     const actorEl = event.currentTarget.closest(".actor");
     const actor = canvas.scene.tokens.get(actorEl.dataset.tokenId).actor;
-    const values = foundry.utils.deepClone(this.values);
-
-    const modifiers = actorEl.querySelectorAll(".trait-section .enabled");
+    const values = {};
+    for (const input of this.element[0].querySelectorAll(".damage-types .type input")) {
+      values[input.dataset.key] = input.valueAsNumber || 0;
+    }
 
     // If this is damage, apply resistances, immunities, vulnerabilities.
+    const modifiers = actorEl.querySelectorAll(".trait-section .enabled");
     if (this.isDamage) {
       for (const mod of modifiers) {
         const data = mod.closest(".type").dataset;
@@ -205,6 +207,7 @@ export class DamageApplicator extends Application {
    */
   async damageAll(event, {save = false} = {}) {
     const heal = event.shiftKey && !save;
+    const half = event.currentTarget.dataset.action === "quick-apply-half";
     for (const token of this.targets) {
       const values = foundry.utils.deepClone(this.values);
       if (this.isDamage) {
@@ -216,12 +219,13 @@ export class DamageApplicator extends Application {
       let modifier = this.isHealing ? -1 : 1;
       if (this.hasSave && save && this.isDamage) {
         const roll = await token.actor.rollAbilitySave(this.saveData.ability, {
-          fastForward: true, targetValue: this.saveData.dc, chatMessage: false
+          fastForward: true, targetValue: this.saveData.dc
         });
         if (roll.total >= this.saveData.dc) modifier = 0.5;
       }
       const total = Object.values(values).reduce((acc, v) => acc + v, 0);
       if (heal && !this.isTempHP) modifier *= -1;
+      if (half) modifier *= 0.5;
       if (!this.isTempHP) await token.actor.applyDamage(total, modifier);
       else await token.actor.applyTempHP(total);
     }
@@ -356,6 +360,7 @@ export class DamageApplicator extends Application {
     div.querySelector("[data-action='render']").addEventListener("click", (event) => new DamageApplicator({message}).render(true));
     div.querySelector("[data-action='quick-apply']").addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
     div.querySelector("[data-action='save-and-apply']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
+    div.querySelector("[data-action='quick-apply-half']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
     roll.after(div.firstElementChild);
   }
 

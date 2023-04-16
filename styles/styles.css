@@ -911,11 +911,9 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 .zhell-custom-stuff.damage-applicator .damage-types {
   display: flex;
-  justify-content: center;
   border-top: 1px groove;
   margin: 0.5em 0 0 0;
-  flex-wrap: wrap;
-  font-size: 1.25em;
+  flex-direction: column;
 }
 
 .zhell-custom-stuff.damage-applicator .damage-total {
@@ -927,7 +925,17 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 .zhell-custom-stuff.damage-applicator .damage-types .type {
-  padding: 0 1em;
+  padding: 0.25em;
+  display: flex;
+  align-items: center;
+}
+
+.zhell-custom-stuff.damage-applicator .damage-types .type label {
+  flex: 2;
+}
+
+.zhell-custom-stuff.damage-applicator .damage-types .type input {
+  flex: 1;
 }
 
 .zhell-custom-stuff.damage-applicator .buttons {
@@ -984,6 +992,8 @@ span.flavor-text.zhell-apply-damage-flavor {
 .zhell-custom-stuff.damage-applicator .actor .header img {
   border: none;
   padding: 1em;
+  min-width: 100px;
+  min-height: 100px;
 }
 
 .zhell-custom-stuff.damage-applicator .actor .header .hasPlayer {
