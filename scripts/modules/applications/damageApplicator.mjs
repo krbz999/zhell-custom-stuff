@@ -219,8 +219,9 @@ export class DamageApplicator extends Application {
       let modifier = this.isHealing ? -1 : 1;
       if (this.hasSave && save && this.isDamage) {
         const roll = await token.actor.rollAbilitySave(this.saveData.ability, {
-          fastForward: true, targetValue: this.saveData.dc
+          event, targetValue: this.saveData.dc, fumble: null, critical: null
         });
+        if (!roll) continue;
         if (roll.total >= this.saveData.dc) modifier = 0.5;
       }
       const total = Object.values(values).reduce((acc, v) => acc + v, 0);
