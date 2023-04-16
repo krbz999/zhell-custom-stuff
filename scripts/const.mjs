@@ -26,19 +26,23 @@ export const WORLD_DEFAULTS = {
   replaceWeapons: true
 };
 export const COLOR_DEFAULTS = {
-  itemAttuned: "#21c050",
-  itemNotAttuned: "#c2c2c2",
-  showLimitedUses: true,
-  showSpellSlots: true,
-  spellAlwaysPrepared: "#ff0004",
-  spellNotPrepared: "#c2c2c2",
-  spellPrepared: "#0000ff",
-  usesUnexpended: "#ff2e2e"
-};
-export const RARITY_DEFAULTS = {
-  uncommon: "#008000",
-  rare: "#0000ff",
-  veryRare: "#800080",
-  legendary: "#ffa500",
-  artifact: "#d2691e"
+  sheetColors: {
+    itemAttuned: "#21c050",
+    itemNotAttuned: "#c2c2c2",
+    spellAlwaysPrepared: "#ff0004",
+    spellNotPrepared: "#c2c2c2",
+    spellPrepared: "#0000ff",
+    usesUnexpended: "#ff2e2e"
+  },
+  rarityColors: {
+    uncommon: "#008000",
+    rare: "#0000ff",
+    veryRare: "#800080",
+    legendary: "#ffa500",
+    artifact: "#d2691e"
+  },
+  checks: {
+    showLimitedUses: true,
+    showSpellSlots: true
+  }
 };

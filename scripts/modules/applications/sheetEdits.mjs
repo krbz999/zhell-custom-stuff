@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import {COLOR_DEFAULTS, MODULE} from "../../const.mjs";
 import {MateriaMedica} from "./materiaMedica.mjs";
 import {MoneySpender} from "./moneySpender.mjs";
 import {EXHAUSTION} from "../zhell_functions.mjs";
@@ -379,7 +379,6 @@ export class SheetEdits {
  */
 export function refreshColors() {
   const colors = game.settings.get(MODULE, "colorSettings");
-  const rarities = game.settings.get(MODULE, "rarityColorSettings");
 
   const root = document.querySelector(":root")
   const cssSheet = Object.values(root.parentNode.styleSheets).find(s => {
@@ -388,11 +387,11 @@ export function refreshColors() {
 
   const map = Object.values(cssSheet.rules).find(r => r.selectorText === ":root").styleMap;
 
-  for (const key of Object.keys(colors)) {
-    if (typeof colors[key] === "string") map.set(`--${key}`, colors[key]);
+  for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) {
+    map.set(`--${key}`, colors[key]);
   }
 
-  for (const key of Object.keys(rarities)) {
-    if (typeof rarities[key] === "string") map.set(`--rarity${key.capitalize()}`, rarities[key]);
+  for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) {
+    map.set(`--rarity${key.capitalize()}`, colors[key]);
   }
 }

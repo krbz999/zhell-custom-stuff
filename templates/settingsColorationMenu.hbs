@@ -1,0 +1,40 @@
+<form>
+  {{#each checks}}
+  <div class="form-group">
+    <label for="{{id}}">{{localize name}}</label>
+    <div class="form-fields">
+      <input type="checkbox" name="{{id}}" id="{{id}}" {{checked value}}>
+    </div>
+    <p class="notes">{{localize hint}}</p>
+  </div>
+  {{/each}}
+
+  <h2>{{localize "ZHELL.SettingsMenuColorSettingsName"}}</h2>
+  {{#each sheetColors}}
+  <div class="form-group">
+    <label>{{localize name}}</label>
+    <div class="form-fields">
+      <input type="color" value="{{value}}" data-edit="{{id}}">
+      <input type="text" name="{{id}}" value="{{value}}">
+    </div>
+    <p class="notes">{{localize hint}}</p>
+  </div>
+  {{/each}}
+
+  <h2>{{localize "ZHELL.SettingsMenuRarityColorsName"}}</h2>
+  {{#each rarityColors}}
+  <div class="form-group">
+    <label>{{localize name}}</label>
+    <div class="form-fields">
+      <input type="color" value="{{value}}" data-edit="{{id}}">
+      <input type="text" name="{{id}}" value="{{value}}">
+    </div>
+  </div>
+  {{/each}}
+
+  <header>
+    <button type="submit">
+      <i class="fa-solid fa-save"></i> {{localize "Save"}}
+    </button>
+  </header>
+</form>

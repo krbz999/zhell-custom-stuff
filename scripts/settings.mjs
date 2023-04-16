@@ -1,9 +1,9 @@
 import {
   COLOR_DEFAULTS,
   MODULE,
-  RARITY_DEFAULTS,
   WORLD_DEFAULTS
 } from "./const.mjs";
+import {ColorationMenu, GameChangesMenu} from "./modules/applications/settingsMenu.mjs";
 import {refreshColors} from "./modules/applications/sheetEdits.mjs";
 
 export function registerSettings() {
@@ -73,7 +73,7 @@ function _registerSettingsMenus() {
     hint: "ZHELL.SettingsMenuWorldSettingsHint",
     label: "Settings Menu",
     icon: "fa-solid fa-atlas",
-    type: SettingsSubmenu,
+    type: GameChangesMenu,
     restricted: true
   });
 
@@ -91,147 +91,7 @@ function _registerSettingsMenus() {
     hint: "ZHELL.SettingsMenuColorSettingsHint",
     label: "Sheet Color Settings",
     icon: "fa-solid fa-paint-roller",
-    type: ColorPickerSubmenu,
+    type: ColorationMenu,
     restricted: false
   });
-
-  // item rarity color settings.
-  game.settings.register(MODULE, "rarityColorSettings", {
-    scope: "client",
-    config: false,
-    type: Object,
-    default: RARITY_DEFAULTS,
-    onChange: refreshColors
-  });
-
-  game.settings.registerMenu(MODULE, "rarityColorSettings", {
-    name: "ZHELL.SettingsMenuRarityColorsName",
-    hint: "ZHELL.SettingsMenuRarityColorsHint",
-    label: "Item Rarity Color Settings",
-    icon: "fa-solid fa-paint-roller",
-    type: RarityColorsSubmenu,
-    restricted: false
-  });
-}
-
-class SettingsSubmenu extends FormApplication {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      popOut: true,
-      width: 550,
-      height: "auto",
-      template: `modules/${MODULE}/templates/settingsMenu.hbs`,
-      id: "zhell-settings-submenu-additions-and-replacements",
-      title: "Additions and Replacements",
-      resizable: false,
-      classes: [MODULE, "settings-menu"]
-    });
-  }
-
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, "worldSettings", formData, {diff: false});
-  }
-
-  async getData() {
-    const data = foundry.utils.mergeObject(
-      WORLD_DEFAULTS,
-      game.settings.get(MODULE, "worldSettings"),
-      {insertKeys: false}
-    );
-    const settings = Object.entries(data).map(s => {
-      return {
-        id: s[0],
-        checked: s[1],
-        name: `ZHELL.SettingsWorld${s[0].capitalize()}Name`,
-        hint: `ZHELL.SettingsWorld${s[0].capitalize()}Hint`
-      }
-    });
-    return {settings};
-  }
-}
-
-class ColorPickerSubmenu extends FormApplication {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: [MODULE, "settings-menu"],
-      popOut: true,
-      width: 550,
-      height: "auto",
-      template: `modules/${MODULE}/templates/settingsColorpickers.hbs`,
-      id: "zhell-settings-submenu-colorpickers",
-      title: "Character Sheet Color Adjustments",
-      resizable: false
-    });
-  }
-
-  async _updateObject(event, formData) {
-    return game.settings.set(MODULE, "colorSettings", formData, {diff: false});
-  }
-
-  async getData() {
-    const data = foundry.utils.mergeObject(
-      foundry.utils.deepClone(COLOR_DEFAULTS),
-      game.settings.get(MODULE, "colorSettings"),
-      {insertKeys: false}
-    );
-    const checks = Object.entries({
-      showLimitedUses: data.showLimitedUses,
-      showSpellSlots: data.showSpellSlots
-    }).map(s => {
-      return {
-        id: s[0],
-        checked: s[1],
-        name: `ZHELL.SettingsColor${s[0].capitalize()}Name`,
-        hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
-      };
-    });
-    delete data.showLimitedUses;
-    delete data.showSpellSlots;
-
-    const colors = Object.entries(data).map(s => {
-      return {
-        id: s[0],
-        value: s[1],
-        name: `ZHELL.SettingsColor${s[0].capitalize()}Name`,
-        hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
-      }
-    });
-    return {checks, colors};
-  }
-}
-
-class RarityColorsSubmenu extends FormApplication {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: [MODULE, "settings-menu"],
-      popOut: true,
-      width: 550,
-      height: "auto",
-      template: `modules/${MODULE}/templates/settingsRaritycolors.hbs`,
-      id: "zhell-settings-submenu-raritycolors",
-      title: "Item Rarity Color Adjustments",
-      resizable: false
-    });
-  }
-
-  async _updateObject(event, formData) {
-    const set = await game.settings.set(MODULE, "rarityColorSettings", formData, {diff: false});
-    refreshColors();
-    return set;
-  }
-
-  async getData() {
-    return {
-      settings: Object.entries(foundry.utils.mergeObject(
-        RARITY_DEFAULTS,
-        game.settings.get(MODULE, "rarityColorSettings"),
-        {insertKeys: false}
-      )).map(d => {
-        const label = CONFIG.DND5E.itemRarity[d[0]].titleCase();
-        const name = d[0];
-        const color = d[1];
-        return {label, name, color};
-      })
-    };
-  }
 }
