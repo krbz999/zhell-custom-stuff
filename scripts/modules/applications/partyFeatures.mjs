@@ -4,10 +4,10 @@ class PartyFeatures extends Application {
   constructor() {
     super();
 
-    // The group actor with the party in it.
-    this.groupActor = fromUuidSync("Actor.VRA6OxigX4V5GYn7");
-
+    // The group actor with the party in it (second uuid is for test world).
+    this.groupActor = fromUuidSync("Actor.VRA6OxigX4V5GYn7") ?? fromUuidSync("Actor.z23wHCaG0LYmaqKF");
     this.features = ["intervention", "inspiration", "fragment"];
+    this.maximums = {intervention: 1, inspiration: 7, fragment: 1};
   }
 
   static get defaultOptions() {
@@ -34,17 +34,17 @@ class PartyFeatures extends Application {
   }
 
   /** @override */
-  async close(...args){
+  async close(...args) {
     this.element[0].classList.toggle("closing", true);
     await new Promise(r => setTimeout(r, 1000));
     return super.close(...args);
   }
 
   /** @override */
-  async render(...args){
+  async render(...args) {
     await super.render(...args);
     let el = null;
-    while(!el){
+    while (!el) {
       el = this.element[0] ?? null;
       await new Promise(r => setTimeout(r, 100));
     }
@@ -103,6 +103,10 @@ class PartyFeatures extends Application {
     return true;
   }
 
+  /**
+   * Reset the remaining uses on the party features to their maximum.
+   * @returns {Actor}     The group actor having their flags updated.
+   */
   async resetFeatures() {
     await this.close();
     await ChatMessage.create({
@@ -110,9 +114,9 @@ class PartyFeatures extends Application {
       speaker: {alias: this.alias}
     });
     return this.groupActor.setFlag(MODULE, "partyFeatureUses", {
-      intervention: {value: 1, max: 1, label: "Divine Intervention"},
-      inspiration: {value: 6, max: 6, label: "Divine Inspiration"},
-      fragment: {value: 1, max: 1, label: "Time Fragment"}
+      intervention: {value: this.maximums.intervention, max: this.maximums.intervention, label: "Divine Intervention"},
+      inspiration: {value: this.maximums.inspiration, max: this.maximums.inspiration, label: "Divine Inspiration"},
+      fragment: {value: this.maximums.fragment, max: this.maximums.fragment, label: "Time Fragment"}
     });
   }
 
@@ -171,7 +175,7 @@ class PartyFeatures extends Application {
   }
 
   /**
-   * Perform Time Fragment
+   * Perform Time Fragment.
    * @returns {Actor}     The group actor having its flags altered.
    */
   async fragment() {
