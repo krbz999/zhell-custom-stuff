@@ -1,17 +1,11 @@
 import {MODULE} from "../../const.mjs";
 
-class ClassPageRenderer extends Application {
+export class ClassPageRenderer extends Application {
   /** @override */
   constructor(initial) {
     super();
     this.initial = initial;
   }
-
-  /*get tabs() {
-    const tab = {navSelector: ".tabs", contentSelector: ".content-tabs"};
-    if (this.initial) tab.initial = initial;
-    return [tab];
-  }*/
 
   /** @override */
   static get defaultOptions() {
@@ -1932,7 +1926,7 @@ class ClassPageRenderer extends Application {
     };
   }
 
-  get subclassLabel(){
+  get subclassLabel() {
     return {
       artificer: "Artificer Specialists",
       barbarian: "Primal Paths",
@@ -1989,8 +1983,13 @@ class ClassPageRenderer extends Application {
     if (this.initial) this._tabs[0].active = this.initial;
     return super._renderInner(data);
   }
-}
 
-export function renderClassPages(initial = null) {
-  return new ClassPageRenderer(initial).render(true);
+  /**
+   * Render this application.
+   * @param {string} [initial=null]     The initial tab to render.
+   * @returns {ClassPageRenderer}       The rendered application.
+   */
+  static renderClassPages(initial = null) {
+    return new ClassPageRenderer(initial).render(true);
+  }
 }

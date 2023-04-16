@@ -1,14 +1,5 @@
 import {MODULE} from "../../const.mjs";
 
-export function _craftingCharacterFlag() {
-  CONFIG.DND5E.characterFlags.speedCrafting = {
-    name: "Speed Crafting",
-    hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),
-    section: "Feats",
-    type: Boolean
-  }
-}
-
 export class MateriaMedica extends Application {
   constructor(actor, ...T) {
     super(actor, ...T);
@@ -435,5 +426,14 @@ export class MateriaMedica extends Application {
       roll = roll.alter(2, 0, {multiplyNumeric: true});
     }
     return scalingHeal;
+  }
+
+  static setUpCharacterFlag() {
+    CONFIG.DND5E.characterFlags.speedCrafting = {
+      name: "Speed Crafting",
+      hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),
+      section: "Feats",
+      type: Boolean
+    }
   }
 }

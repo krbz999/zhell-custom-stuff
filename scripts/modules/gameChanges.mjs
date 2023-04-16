@@ -207,7 +207,7 @@ export function _sceneHeaderView(app, array) {
     class: `${MODULE}-view-scene`,
     icon: "fa-solid fa-eye",
     label: "View Scene",
-    onclick: async () => await app.object.view()
+    onclick: () => app.document.view()
   }
   array.unshift(viewBtn);
 }
@@ -248,10 +248,14 @@ export async function _restItemDeletion(actor, data) {
 // Miscellaneous adjustments.
 export function _miscAdjustments() {
   // Add more feature types.
-  foundry.utils.mergeObject(CONFIG.DND5E.featureTypes.class.subtypes, {
-    arcaneArcherShot: "Arcane Archer Shot",
-    primordialEffect: "Primordial Effect"
-  });
+  const entries = Object.entries({
+    ...CONFIG.DND5E.featureTypes.class.subtypes,
+    ...{
+      arcaneArcherShot: "Arcane Archer Shot",
+      primordialEffect: "Primordial Effect"
+    }
+  }).sort((a, b) => a[1].localeCompare(b[1]));
+  CONFIG.DND5E.featureTypes.class.subtypes = Object.fromEntries(entries);
 
   // Adjust the time it takes for tooltips to fade in and out.
   TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
@@ -259,7 +263,7 @@ export function _miscAdjustments() {
 
 // Drop folder of actors.
 export async function _dropActorFolder(canvas, data) {
-  if (data.type !== "Folder" || data.documentName !== "Actor") return;
+  if ((data.type !== "Folder") || (data.documentName !== "Actor")) return;
   const folder = await fromUuid(data.uuid);
   const [x, y] = canvas.grid.getTopLeft(data.x, data.y);
   const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
@@ -284,14 +288,17 @@ export function _addContextMenuOptions(item, array) {
 function _moveItemToSharedInventory(item, array) {
   if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
   const inventory = game.actors.filter(a => {
-    return a.isOwner && a.type === "group" && a !== item.actor;
+    return a.isOwner && (a.type === "group") && (a !== item.actor);
   });
   for (const inv of inventory) {
     array.push({
       icon: "<i class='fa-solid fa-hand-holding-hand'></i>",
       name: `Move to ${inv.name}`,
       callback: async () => {
-        const [c] = await inv.createEmbeddedDocuments("Item", [item.toObject()]);
+        const itemData = item.toObject();
+        const create = await inv.sheet._onDropSingleItem(itemData);
+        if (!create) return;
+        const [c] = await inv.createEmbeddedDocuments("Item", [itemData]);
         if (c) await item.delete();
       }
     });

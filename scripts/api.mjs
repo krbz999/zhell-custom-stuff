@@ -1,5 +1,5 @@
 import {drawCircle} from "./modules/animations.mjs";
-import {renderClassPages} from "./modules/applications/classPages.mjs";
+import {ClassPageRenderer} from "./modules/applications/classPages.mjs";
 import {renderPartyFeatures} from "./modules/applications/partyFeatures.mjs";
 import {gameTools} from "./modules/gameTools/_gameTools.mjs";
 import {ITEMACRO} from "./modules/itemMacros.mjs";
@@ -40,7 +40,7 @@ export class api {
         awardLoot: ZHELL_SOCKETS.awardLoot,
         updateToken: ZHELL_SOCKETS.updateTokens,
         grantItems: ZHELL_SOCKETS.grantItems,
-        showClassPages: renderClassPages,
+        showClassPages: ClassPageRenderer.renderClassPages,
         renderPartyFeatures: renderPartyFeatures,
         healToken: ZHELL_SOCKETS.healToken,
         ...gameTools

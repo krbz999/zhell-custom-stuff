@@ -1,4 +1,4 @@
-import {renderClassPages} from "./applications/classPages.mjs";
+import {ClassPageRenderer} from "./applications/classPages.mjs";
 import {renderPartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -14,7 +14,7 @@ export function sceneControls(array) {
     visible: true,
     onClick: () => {
       const [initial] = Object.keys(game.user.character?.classes ?? {});
-      return renderClassPages(initial ?? null);
+      return ClassPageRenderer.renderClassPages(initial ?? null);
     }
   });
 
@@ -31,7 +31,7 @@ export function sceneControls(array) {
   });
 
   // Show Mayhem dialog.
-  if(game.user.isGM) token.tools.push({
+  if (game.user.isGM) token.tools.push({
     name: "mayhem-dialog",
     title: "Show Mayhem Dialog",
     icon: "fa-solid fa-poo-storm",

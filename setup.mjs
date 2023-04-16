@@ -26,7 +26,7 @@ import {
 } from "./scripts/modules/gameChanges.mjs";
 import {DEPEND, MODULE} from "./scripts/const.mjs";
 import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
-import {_craftingCharacterFlag} from "./scripts/modules/applications/materiaMedica.mjs";
+import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
 import {refreshColors, _performSheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
@@ -35,7 +35,7 @@ Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
 Hooks.once("init", _visionModes);
 Hooks.once("setup", _setUpGameChanges);
-Hooks.once("setup", _craftingCharacterFlag);
+Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", _miscAdjustments);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", _sequencerSetup);

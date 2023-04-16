@@ -8,23 +8,23 @@ export class ZHELL_SOCKETS {
     });
   }
 
-  static async socketTemplateFunction({userId, stuff}, push=true){
+  static async socketTemplateFunction({userId, stuff}, push = true) {
     // Find a user who can do the thing unless one is provided.
     userId ??= _getFirstGM();
 
     // If no one can do the thing, cry about it.
-    if(!userId) return ui.notifications.warn("No user found, wah!");
+    if (!userId) return ui.notifications.warn("No user found, wah!");
 
     // If someone ELSE can do it, push to them.
-    if(game.user.id !== userId) {
-      if(push) game.socket.emit(`world.${game.world.id}`, {
+    if (game.user.id !== userId) {
+      if (push) game.socket.emit(`world.${game.world.id}`, {
         actor: "socketTemplateFunction",
         data: {stuff}
       });
     }
 
     // Else if YOU can do it, just do it.
-    else if ( game.user.id === userId) {
+    else if (game.user.id === userId) {
       // Do the thing.
     }
   }
@@ -161,7 +161,8 @@ export class ZHELL_SOCKETS {
     });
     if (!grant) return;
     ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
-    await tokens[0].actor.sheet._onDropSingleItem(itemData);
+    const valid = await tokens[0].actor.sheet._onDropSingleItem(itemData);
+    if (!valid) return;
     return ZHELL_SOCKETS.grantItems({itemData: [itemData], tokenId: tokens[0].id});
   }
 }

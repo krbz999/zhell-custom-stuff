@@ -63,7 +63,7 @@ export class MurkScroller extends Application {
         && (item.system.activation.type === "action");
     }).sort((a, b) => {
       return a.name.localeCompare(b.name);
-    }).sort((a,b) => {
+    }).sort((a, b) => {
       return a.system.level - b.system.level;
     }).reduce((acc, item) => {
       return acc + `<option value="${item.id}">[${item.system.level}] ${item.name}</option>`;
@@ -77,7 +77,7 @@ export class MurkScroller extends Application {
    */
   _renderNewRow(event) {
     const div = document.createElement("DIV");
-    div.innerHTML =`
+    div.innerHTML = `
     <div class="form-group">
       <label>Spell:</label>
       <div class="form-fields">
