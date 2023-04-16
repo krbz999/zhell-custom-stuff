@@ -71,7 +71,7 @@ function _registerSettingsMenus() {
   game.settings.registerMenu(MODULE, "worldSettings", {
     name: "ZHELL.SettingsMenuWorldSettingsName",
     hint: "ZHELL.SettingsMenuWorldSettingsHint",
-    label: "Settings Menu",
+    label: "Game Changes",
     icon: "fa-solid fa-atlas",
     type: GameChangesMenu,
     restricted: true
@@ -89,7 +89,7 @@ function _registerSettingsMenus() {
   game.settings.registerMenu(MODULE, "colorSettings", {
     name: "ZHELL.SettingsMenuColorSettingsName",
     hint: "ZHELL.SettingsMenuColorSettingsHint",
-    label: "Sheet Color Settings",
+    label: "Sheet Colors",
     icon: "fa-solid fa-paint-roller",
     type: ColorationMenu,
     restricted: false

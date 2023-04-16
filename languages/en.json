@@ -56,7 +56,7 @@
   "ZHELL.SettingsColorUsesUnexpendedHint": "The color of available limited uses and spell slots.",
   "ZHELL.SettingsColorUsesUnexpendedName": "Full Color",
   "ZHELL.SettingsColorVeryRareName": "Very Rare",
-  "ZHELL.SettingsCombatantDefeatedHint": "When combatants that are not owned by a player is reduced to 0 or less hp, mark them as defeated.",
+  "ZHELL.SettingsCombatantDefeatedHint": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated.",
   "ZHELL.SettingsCombatantDefeatedName": "Mark Combatants Defeated",
   "ZHELL.SettingsDisplayAmmoHint": "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
   "ZHELL.SettingsDisplayAmmoName": "Show Saving Throw Ammo",
