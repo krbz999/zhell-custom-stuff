@@ -6,8 +6,14 @@
   padding-right: 5px;
 }
 
-.auto-height-dialog {
+.zhell-custom-stuff.vertical-dialog {
   height: auto !important;
+}
+
+.zhell-custom-stuff.vertical-dialog .buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
 /* Token HUD status effects */
