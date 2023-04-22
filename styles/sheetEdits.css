@@ -156,3 +156,37 @@
   padding: 0;
   margin: 0;
 }
+
+/* collapsible items and effect headers */
+.dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover {
+  text-shadow: 0 0 8px var(--color-shadow-primary) !important;
+  cursor: pointer;
+}
+
+/* Make collapsed header gray text color */
+.dnd5e.sheet.actor .items-header.flexrow.no-create,
+.dnd5e.sheet.actor .items-header.flexrow.no-create * {
+  color: darkgray;
+}
+
+/* Hide spell school from actor sheets */
+.dnd5e.sheet.actor .spell-school {
+  display: none;
+}
+
+/* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons */
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
+.dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
+.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
+.dnd5e.sheet.actor .characteristics label.no-edit + textarea {
+  display: none;
+}
+
+/* The materia medica counter on the character sheets */
+.dnd5e.sheet.actor .counters .counter.materia-medica input {
+  max-width: 40px;
+  width: fit-content;
+  text-align: right;
+  padding-right: 5px;
+}
