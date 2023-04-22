@@ -1,3 +1,12 @@
+import {MODULE} from "../const.mjs";
+
+/**
+ * Wrapper for an async dialog that stacks a set of buttons vertically, themed for the elements.
+ * @param {string[]} types      The different damage types.
+ * @param {string} content      The content of the dialog.
+ * @param {string} title        The title for the dialog.
+ * @returns {*}                 Whatever is returned from the respective button clicked.
+ */
 export async function elementalDialog({types = [], content, title}) {
   const icon = {
     acid: "flask",
@@ -17,13 +26,5 @@ export async function elementalDialog({types = [], content, title}) {
     return acc;
   }, {});
 
-  return Dialog.wait({title, buttons, content}, {classes: ["dialog", "elemental"]});
-}
-
-export async function columnDialog({title, content, buttons, render}) {
-  return Dialog.wait({
-    title, content, buttons, render, close: () => false
-  }, {
-    classes: ["dialog", "column-dialog"]
-  });
+  return Dialog.wait({title, buttons, content}, {classes: [MODULE, "dialog", "elemental"]});
 }
