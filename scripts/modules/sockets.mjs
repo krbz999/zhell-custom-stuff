@@ -18,7 +18,7 @@ export class ZHELL_SOCKETS {
     // If someone ELSE can do it, push to them.
     if (game.user.id !== userId) {
       if (push) game.socket.emit(`world.${game.world.id}`, {
-        actor: "socketTemplateFunction",
+        action: "socketTemplateFunction",
         data: {stuff}
       });
     }
