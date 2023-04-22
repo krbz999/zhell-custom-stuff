@@ -51,6 +51,10 @@ export class ClassPageRenderer extends Application {
     }
   }
 
+  /**
+   * The ids of every subclass available for a given class.
+   * @returns {object}      An object of class identifiers and subclass id arrays.
+   */
   get subclassIds() {
     return {
       artificer: [
@@ -119,7 +123,8 @@ export class ClassPageRenderer extends Application {
         "hkJUm1agYonsmTT2",
         "I9g1oAT4TZubeDOF",
         "xMdaMc28l5w2NOrb",
-        "dKGI1PfHRMvVDWXI"
+        "dKGI1PfHRMvVDWXI",
+        "xCoDCgQYzOqOqvVp"
       ],
       fighter: [
         "ghZF6Wel8DhvWnzO",
@@ -244,6 +249,10 @@ export class ClassPageRenderer extends Application {
     };
   }
 
+  /**
+   * The ids of every spell available for a given class.
+   * @returns {object}      An object of class identifiers and spell id arrays.
+   */
   get spellIds() {
     return {
       artificer: [
@@ -1926,6 +1935,10 @@ export class ClassPageRenderer extends Application {
     };
   }
 
+  /**
+   * The proper labels for what a subclass is called for any given class, e.g., 'Primal Paths' for barbarians.
+   * @returns {object}      An object of strings.
+   */
   get subclassLabel() {
     return {
       artificer: "Artificer Specialists",
