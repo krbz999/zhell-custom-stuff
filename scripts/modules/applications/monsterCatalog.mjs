@@ -19,7 +19,8 @@ export class MonsterCatalog extends Application {
       "zhell-catalogs.monsters-monstrosity",
       "zhell-catalogs.monsters-ooze",
       "zhell-catalogs.monsters-plant",
-      "zhell-catalogs.monsters-undead"
+      "zhell-catalogs.monsters-undead",
+      "zhell-catalogs.monsters"
     ];
     this.packs = packKeys.map(k => game.packs.get(k));
   }
@@ -103,7 +104,8 @@ export class MonsterCatalog extends Application {
     for (const m of monsters) {
       if (m.type !== "npc") continue;
       const cr = m.system.details.cr;
-      const type = m.system.details.type.value || "other";
+      const _type = m.system.details.type.value;
+      const type = (_type in CONFIG.DND5E.creatureTypes) ? _type : "other";
       let section = data.types.find(e => (e.key === type));
       if (!section) {
         section = {
