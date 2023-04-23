@@ -642,30 +642,17 @@ span.flavor-text.zhell-apply-damage-flavor {
 /* PLAYABLE CLASSES LIST */
 .zhell-custom-stuff.class-page-renderer {
   min-width: 800px;
-  min-height: 100%;
-  margin: 0;
+  min-height: 200px;
 }
 
 .zhell-custom-stuff.class-page-renderer .window-content {
   position: relative;
-  overflow: hidden;
-  border-radius: 0 0 0.5em 0.5em;
-}
-
-.zhell-custom-stuff.class-page-renderer .content {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  overflow-y: hidden;
 }
 
 .zhell-custom-stuff.class-page-renderer .tabs {
   font-size: 20px;
   font-family: 'Modesto Condensed';
   border-style: groove hidden;
-  padding: 0 1em;
   height: 30px;
 }
 
@@ -675,7 +662,7 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 .zhell-custom-stuff.class-page-renderer .tab {
-  margin: 1em;
+  margin: 1em 0;
 }
 
 /* the class item */
@@ -755,8 +742,7 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 /* Subclasses */
 .zhell-custom-stuff.class-page-renderer .subclass-section {
-  width: 100%;
-  margin: 0.5rem 0;
+  margin: 1em 0;
 }
 
 .zhell-custom-stuff.class-page-renderer .subclass-item {
@@ -781,15 +767,10 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* Spell lists */
-.zhell-custom-stuff.class-page-renderer .spell-section {
-  padding-bottom: 1em;
-}
-
 .zhell-custom-stuff.class-page-renderer .spell-lists {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1em;
-  align-items: start;
 }
 
 .zhell-custom-stuff.class-page-renderer .spell-list .collapsible-content {
@@ -804,19 +785,15 @@ span.flavor-text.zhell-apply-damage-flavor {
   transition: padding 200ms;
 }
 
-.zhell-custom-stuff.class-page-renderer .spell:hover {
+.zhell-custom-stuff.class-page-renderer .spell:not(:last-child):hover {
   padding-bottom: 0.5rem;
 }
 
 /* individual spells */
 .zhell-custom-stuff.class-page-renderer .spell .content-link {
   display: flex;
-  font-size: 12px;
-  padding-left: 0.5em;
   overflow-x: hidden;
-  height: var(--form-field-height);
   align-items: center;
-  grid-area: link;
   border-radius: 8px 0 0 0;
 }
 
@@ -828,11 +805,9 @@ span.flavor-text.zhell-apply-damage-flavor {
   background: purple;
   color: white;
   height: var(--form-field-height);
-  width: var(--form-field-height);
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-area: toggle;
   border-radius: 0 8px 0 0;
 }
 

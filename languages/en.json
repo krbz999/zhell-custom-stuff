@@ -122,5 +122,18 @@
   "ZHELL.StatusConditionRestrained": "Restrained",
   "ZHELL.StatusConditionSlow": "Slow",
   "ZHELL.StatusConditionStunned": "Stunned",
-  "ZHELL.StatusConditionUnconscious": "Unconscious"
+  "ZHELL.StatusConditionUnconscious": "Unconscious",
+  "ZHELL.SubclassLabelArtificer": "Artificer Specialists",
+  "ZHELL.SubclassLabelBarbarian": "Primal Paths",
+  "ZHELL.SubclassLabelBard": "Bard Colleges",
+  "ZHELL.SubclassLabelCleric": "Divine Domains",
+  "ZHELL.SubclassLabelDruid": "Druid Circles",
+  "ZHELL.SubclassLabelFighter": "Martial Archetypes",
+  "ZHELL.SubclassLabelMonk": "Monastic Traditions",
+  "ZHELL.SubclassLabelPaladin": "Sacred Oaths",
+  "ZHELL.SubclassLabelRanger": "Ranger Archetypes",
+  "ZHELL.SubclassLabelRogue": "Roguish Archetypes",
+  "ZHELL.SubclassLabelSorcerer": "Sorcerous Origins",
+  "ZHELL.SubclassLabelWarlock": "Otherworldly Patrons",
+  "ZHELL.SubclassLabelWizard": "Arcane Traditions"
 }

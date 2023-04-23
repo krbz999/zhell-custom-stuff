@@ -96,6 +96,11 @@ export class MonsterCatalog extends Application {
         });
       }
       sections.sort((a, b) => a.cr - b.cr);
+      sections.forEach(s => {
+        if (s.cr == 0.125) s.cr = "1/8";
+        else if (s.cr == 0.25) s.cr = "1/4";
+        else if (s.cr == 0.5) s.cr = "1/2";
+      });
 
       data.packs.push({
         key,
