@@ -25,18 +25,22 @@ export class SheetEdits {
     this.headers = new Set();
   }
 
-  /** @override */
+  /* Amusingly named method to inject the new functionality and elements into the sheet. */
   async render() {
-    if (this.settings.removeAlignment && (this.sheet.document.type === "character")) this._removeAlignment();
+    const isChar = this.sheet.document.type === "character";
+    const isGroup = this.sheet.document.type === "group";
+    const isNPC = this.sheet.document.type === "npc";
+
+    if (this.settings.removeAlignment && isChar) this._removeAlignment();
     this._setMagicItemsColor();
-    if (this.sheet.document.type !== "group") this._setHealthColor();
+    if (!isGroup) this._setHealthColor();
     if (this.settings.collapsibleHeaders) this._collapsibleHeaders();
-    if (["character", "npc"].includes(this.sheet.document.type)) this._createDots();
-    if ((this.sheet.document.type === "character") && this.settings.createForaging) await this._createForaging();
-    if (this.sheet.document.type === "character") this._createExhaustion();
-    if ((this.sheet.document.type === "character") && this.settings.createMoneySpender) this._createMoneySpender();
-    if (this.sheet.document.type === "character") this._createNewDay();
-    if (this.sheet.document.type === "character") this._createInspirationToggle();
+    if (isChar || isNPC) this._createDots();
+    if (isChar && this.settings.createForaging) await this._createForaging();
+    if (isChar) this._createExhaustion();
+    if (isChar && this.settings.createMoneySpender) this._createMoneySpender();
+    if (isChar) this._createNewDay();
+    if (isChar) this._createInspirationToggle();
   }
 
   /** Make 'Inspiration' a toggle. */
