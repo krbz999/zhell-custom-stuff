@@ -1156,7 +1156,7 @@ span.flavor-text.zhell-apply-damage-flavor {
 
 .zhell-custom-stuff.monster-catalog [data-action="toggle-collapse"] {
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  padding: 0.25rem 1rem;
   background-color: #411a13;
   border: 1px solid #000;
   border-radius: 4px 4px 0 0;

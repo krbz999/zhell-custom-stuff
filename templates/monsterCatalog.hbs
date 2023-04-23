@@ -1,14 +1,14 @@
 <div class="content">
   <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
-    {{#each packs}}
+    {{#each types}}
     <a class="item" data-tab="{{key}}"><i class="fa-solid fa-{{icon}}"></i> {{localize label}}</a>
     {{/each}}
   </nav>
 
   <div class="content-tabs">
-    {{#each packs}}
+    {{#each types}}
     <div class="tab" data-tab="{{key}}">
-      {{#each sections}}
+      {{#each ratings}}
       <div class="collapsible active" data-action="toggle-collapse">CR: {{cr}}</div>
       <div class="collapsible-content">
         <div class="monster-header">
@@ -22,8 +22,8 @@
         {{#each monsters}}
         <div class="monster">
           <div class="left-align">
-            <a class="content-link" draggable="true" data-uuid="Compendium.{{../../pack}}.{{_id}}" data-id="{{_id}}"
-              data-pack="{{../../pack}}" data-tooltip="<img src='{{img}}'>" data-tooltip-direction="LEFT">
+            <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{_id}}" data-id="{{_id}}"
+              data-pack="{{pack}}" data-tooltip="<img src='{{img}}'>" data-tooltip-direction="LEFT">
               <i class="fa-solid fa-{{../../icon}}"></i>{{name}}
             </a>
           </div>

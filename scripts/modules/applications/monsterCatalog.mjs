@@ -5,10 +5,23 @@ export class MonsterCatalog extends Application {
   constructor(initial) {
     super();
     this.initial = initial;
-    this.packs = {};
-    for (const type of Object.keys(CONFIG.DND5E.creatureTypes)) {
-      this.packs[type] = game.packs.get(`zhell-catalogs.monsters-${type}`);
-    }
+    const packKeys = [
+      "zhell-catalogs.monsters-aberration",
+      "zhell-catalogs.monsters-beast",
+      "zhell-catalogs.monsters-celestial",
+      "zhell-catalogs.monsters-construct",
+      "zhell-catalogs.monsters-dragon",
+      "zhell-catalogs.monsters-elemental",
+      "zhell-catalogs.monsters-fey",
+      "zhell-catalogs.monsters-fiend",
+      "zhell-catalogs.monsters-giant",
+      "zhell-catalogs.monsters-humanoid",
+      "zhell-catalogs.monsters-monstrosity",
+      "zhell-catalogs.monsters-ooze",
+      "zhell-catalogs.monsters-plant",
+      "zhell-catalogs.monsters-undead"
+    ];
+    this.packs = packKeys.map(k => game.packs.get(k));
   }
 
   /** @override */
@@ -58,57 +71,65 @@ export class MonsterCatalog extends Application {
       monstrosity: "spaghetti-monster-flying",
       ooze: "droplet",
       plant: "leaf",
-      undead: "skull-crossbones"
+      undead: "skull-crossbones",
+      other: "question"
     };
   }
 
   /** @override */
   async getData() {
     const data = await super.getData();
-    data.packs = [];
 
-    // Each creature type...
-    for (const [key, pack] of Object.entries(this.packs)) {
-      const index = await pack.getIndex({
+    // Get all monsters.
+    const monsters = [];
+    for (const pack of this.packs) {
+      if (!pack) continue;
+      const idx = await pack.getIndex({
         fields: [
           "system.details.cr",
           "system.attributes.hp.max",
           "system.attributes.ac.flat",
           "system.details.biography.value",
           "system.details.alignment",
-          "system.details.source"
+          "system.details.source",
+          "system.details.type.value"
         ]
       });
+      idx.forEach(i => i.pack = pack.metadata.id);
+      monsters.push(...idx);
+    }
 
-      // Split by CR...
-      const monsters = index.reduce((acc, idx) => {
-        const cr = idx.system.details.cr;
-        if (!acc[cr]) acc[cr] = [];
-        acc[cr].push(idx);
-        return acc;
-      }, {});
-
-      const sections = [];
-      for (const [cr, arr] of Object.entries(monsters)) {
-        sections.push({
-          cr: cr,
-          monsters: arr.sort((a, b) => a.name.localeCompare(b.name))
-        });
+    data.types = [];
+    for (const m of monsters) {
+      if (m.type !== "npc") continue;
+      const cr = m.system.details.cr;
+      const type = m.system.details.type.value || "other";
+      let section = data.types.find(e => (e.key === type));
+      if (!section) {
+        section = {
+          key: type,
+          label: CONFIG.DND5E.creatureTypes[type] || "Other",
+          icon: this.icon[type],
+          ratings: []
+        };
+        data.types.push(section);
       }
-      sections.sort((a, b) => a.cr - b.cr);
-      sections.forEach(s => {
-        if (s.cr == 0.125) s.cr = "1/8";
-        else if (s.cr == 0.25) s.cr = "1/4";
-        else if (s.cr == 0.5) s.cr = "1/2";
-      });
+      let ratingGroup = section.ratings.find(e => (e.cr === cr));
+      if (!ratingGroup) {
+        ratingGroup = {cr: cr, monsters: []};
+        section.ratings.push(ratingGroup);
+      }
+      ratingGroup.monsters.push(m);
+    }
 
-      data.packs.push({
-        key,
-        label: CONFIG.DND5E.creatureTypes[key],
-        sections,
-        pack: pack.metadata.id,
-        icon: this.icon[key]
-      });
+    for (const val of data.types) {
+      val.ratings.sort((a, b) => a.cr - b.cr);
+      for (const m of val.ratings) {
+        if (m.cr == 0.125) m.cr = "1/8";
+        else if (m.cr == 0.25) m.cr = "1/4";
+        else if (m.cr == 0.5) m.cr = "1/2";
+        m.monsters.sort((a, b) => a.name.localeCompare(b.name));
+      }
     }
     return data;
   }
