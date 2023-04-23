@@ -40,13 +40,15 @@ export class MurkScroller extends Application {
   }
 
   /**
-   * Update the tracked total when a dropdown has its value changed.
+   * Update the tracked total and tooltip when a dropdown has its value changed.
    * @param {PointerEvent} event      The initiating change event.
    */
   _onChangeSelect(event) {
     let level = 0;
     this.element[0].querySelectorAll("select").forEach(n => {
-      level += (this.actor.items.get(n.value)?.system.level ?? 0);
+      const item = this.actor.items.get(n.value);
+      level += (item?.system.level ?? 0);
+      n.closest(".form-group").setAttribute("data-tooltip", item?.system.description.value || "");
     });
     this.element[0].querySelector(".level-track .current").innerText = level;
   }
@@ -78,7 +80,7 @@ export class MurkScroller extends Application {
   _renderNewRow(event) {
     const div = document.createElement("DIV");
     div.innerHTML = `
-    <div class="form-group">
+    <div class="form-group" data-tooltip-direction="LEFT">
       <label>Spell:</label>
       <div class="form-fields">
         <select>${this._createNewRow()}</select>
