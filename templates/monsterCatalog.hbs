@@ -1,0 +1,50 @@
+<div class="content">
+  <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
+    {{#each packs}}
+    <a class="item" data-tab="{{key}}"><i class="fa-solid fa-{{icon}}"></i> {{localize label}}</a>
+    {{/each}}
+  </nav>
+
+  <div class="content-tabs">
+    {{#each packs}}
+    <div class="tab" data-tab="{{key}}">
+      {{#each sections}}
+      <div class="collapsible active" data-action="toggle-collapse">CR: {{cr}}</div>
+      <div class="collapsible-content">
+        <div class="monster-header">
+          <div class="left-align">Name</div>
+          <div class="left-align">Alignment</div>
+          <div class="center-align">HP</div>
+          <div class="center-align">AC</div>
+          <div class="center-align">Bio</div>
+          <div class="center-align">Src</div>
+        </div>
+        {{#each monsters}}
+        <div class="monster">
+          <div class="left-align">
+            <a class="content-link" draggable="true" data-uuid="Compendium.{{../../pack}}.{{_id}}" data-id="{{_id}}"
+              data-pack="{{../../pack}}" data-tooltip="<img src='{{img}}'>" data-tooltip-direction="LEFT">
+              <i class="fa-solid fa-{{../../icon}}"></i>{{name}}
+            </a>
+          </div>
+          <div class="left-align">{{system.details.alignment}}</div>
+          <div class="center-align">{{system.attributes.hp.max}}</div>
+          <div class="center-align">{{system.attributes.ac.flat}}</div>
+          <div class="center-align">
+            {{#if system.details.biography.value}}
+            <a data-tooltip="{{system.details.biography.value}}"><i class="fa-solid fa-circle-question"></i></a>
+            {{/if}}
+          </div>
+          <div class="center-align">
+            {{#if system.details.source}}
+            <a data-tooltip="{{system.details.source}}"><i class="fa-solid fa-circle-question"></i></a>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{/each}}
+    </div>
+    {{/each}}
+  </div>
+</div>
