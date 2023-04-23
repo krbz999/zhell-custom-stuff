@@ -805,7 +805,7 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 .zhell-custom-stuff.class-page-renderer .spell:hover {
-  padding: 0.1rem 0 0.5rem 0;
+  padding-bottom: 0.5rem;
 }
 
 /* individual spells */
