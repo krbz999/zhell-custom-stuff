@@ -13,20 +13,20 @@ export function _performSheetEdits(sheet, html) {
     sheet.sheetEdits.html = html;
   }
   const e = sheet.sheetEdits;
-  e.render(...arguments);
+  e.render();
 }
 
 export class SheetEdits {
   constructor() {
-    this.settings = {
-      ...game.settings.get(MODULE, "worldSettings"),
-      ...game.settings.get(MODULE, "colorSettings")
-    };
     this.headers = new Set();
   }
 
   /* Amusingly named method to inject the new functionality and elements into the sheet. */
   async render() {
+    this.settings = {
+      ...game.settings.get(MODULE, "worldSettings"),
+      ...game.settings.get(MODULE, "colorSettings")
+    };
     const isChar = this.sheet.document.type === "character";
     const isGroup = this.sheet.document.type === "group";
     const isNPC = this.sheet.document.type === "npc";
@@ -384,18 +384,7 @@ export class SheetEdits {
 export function refreshColors() {
   const colors = game.settings.get(MODULE, "colorSettings");
 
-  const root = document.querySelector(":root")
-  const cssSheet = Object.values(root.parentNode.styleSheets).find(s => {
-    return s.href.includes("zhell-custom-stuff/styles/sheetEdits.css");
-  });
-
-  const map = Object.values(cssSheet.rules).find(r => r.selectorText === ":root").styleMap;
-
-  for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) {
-    map.set(`--${key}`, colors[key]);
-  }
-
-  for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) {
-    map.set(`--rarity${key.capitalize()}`, colors[key]);
-  }
+  const stl = document.querySelector(":root").style;
+  for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors[key]);
+  for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors[key]);
 }

@@ -22,6 +22,7 @@ class SettingsMenu extends FormApplication {
     return null;
   }
 
+  /** @override */
   get title() {
     return null;
   }
@@ -38,18 +39,27 @@ class SettingsMenu extends FormApplication {
 }
 
 export class GameChangesMenu extends SettingsMenu {
+  /** @override */
   get template() {
     return `modules/${MODULE}/templates/settingsGameChangesMenu.hbs`;
   }
+
+  /** @override */
   get id() {
     return "zhell-custom-stuff-settings-game-changes";
   }
+
+  /** @override */
   get title() {
     return "Additions and Replacements";
   }
+
+  /** @override */
   async _updateObject(event, formData) {
     return game.settings.set(MODULE, "worldSettings", formData, {diff: false});
   }
+
+  /** @override */
   async getData() {
     const def = game.settings.get(MODULE, "worldSettings");
     const data = foundry.utils.mergeObject(WORLD_DEFAULTS, def, {insertKeys: false});
@@ -66,29 +76,51 @@ export class GameChangesMenu extends SettingsMenu {
 }
 
 export class ColorationMenu extends SettingsMenu {
+  /** @override */
   get template() {
     return `modules/${MODULE}/templates/settingsColorationMenu.hbs`;
   }
+
+  /** @override */
   get id() {
     return "zhell-custom-stuff-settings-coloration";
   }
+
+  /** @override */
   get title() {
     return "Character Sheet Colors";
   }
+
+  /** @override */
+  _getSubmitData(updateData = {}) {
+    const data = super._getSubmitData(updateData);
+    for (const entry of ["sheetColors", "rarityColors"]) {
+      for (const [key, val] of Object.entries(COLOR_DEFAULTS[entry])) {
+        if (!data[key].trim().length) data[key] = val;
+      }
+    }
+    return data;
+  }
+
+  /** @override */
   async _updateObject(event, formData) {
     return game.settings.set(MODULE, "colorSettings", formData, {diff: false});
   }
+
+  /** @override */
   async getData() {
-    const def = game.settings.get(MODULE, "colorSettings");
+    const curr = game.settings.get(MODULE, "colorSettings");
+    const defs = foundry.utils.deepClone(COLOR_DEFAULTS);
     const data = {};
     for (const entry of ["checks", "sheetColors", "rarityColors"]) {
-      const _data = foundry.utils.mergeObject(COLOR_DEFAULTS[entry], def, {insertKeys: false});
+      const _data = foundry.utils.mergeObject(defs[entry], curr, {insertKeys: false});
       data[entry] = Object.entries(_data).map(s => {
         return {
           id: s[0],
           value: s[1],
           name: `ZHELL.SettingsColor${s[0].capitalize()}Name`,
-          hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`
+          hint: `ZHELL.SettingsColor${s[0].capitalize()}Hint`,
+          placeholder: COLOR_DEFAULTS[entry][s[0]]
         };
       });
     }

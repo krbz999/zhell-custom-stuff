@@ -15,7 +15,7 @@
     <label>{{localize name}}</label>
     <div class="form-fields">
       <input type="color" value="{{value}}" data-edit="{{id}}">
-      <input type="text" name="{{id}}" value="{{value}}">
+      <input type="text" name="{{id}}" value="{{value}}" placeholder="{{placeholder}}">
     </div>
     <p class="notes">{{localize hint}}</p>
   </div>
@@ -27,14 +27,12 @@
     <label>{{localize name}}</label>
     <div class="form-fields">
       <input type="color" value="{{value}}" data-edit="{{id}}">
-      <input type="text" name="{{id}}" value="{{value}}">
+      <input type="text" name="{{id}}" value="{{value}}" placeholder="{{placeholder}}">
     </div>
   </div>
   {{/each}}
 
-  <header>
-    <button type="submit">
-      <i class="fa-solid fa-save"></i> {{localize "Save"}}
-    </button>
-  </header>
+  <button type="submit">
+    <i class="fa-solid fa-save"></i> {{localize "Save"}}
+  </button>
 </form>
