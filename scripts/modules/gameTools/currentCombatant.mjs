@@ -7,7 +7,7 @@ export async function currentCombatant() {
 
   // close all sheets.
   Object.values(ui.windows).filter(w => {
-    return w.document?.documentName.includes("Actor");
+    return w.document?.documentName.includes("Actor") && (current.actor !== w.document);
   }).forEach(w => w.minimize());
 
   // render current combatant.
