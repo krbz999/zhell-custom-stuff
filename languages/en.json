@@ -67,6 +67,8 @@
   "ZHELL.SettingsForagingDifficultyName": "Foraging DC",
   "ZHELL.SettingsMenuColorSettingsHint": "Settings for the colors that are applied to the actor sheets.",
   "ZHELL.SettingsMenuColorSettingsName": "Sheet Colors",
+  "ZHELL.SettingsMenuIdentifierSettingsHint": "Menu of various ids, identifiers, uuids, and keys.",
+  "ZHELL.SettingsMenuIdentifierSettingsName": "Identifiers and Keys",
   "ZHELL.SettingsMenuRarityColorsName": "Rarity Colors",
   "ZHELL.SettingsMenuWorldSettingsHint": "A collection of additions and replacements for core and system content.",
   "ZHELL.SettingsMenuWorldSettingsName": "Additions and Replacements",

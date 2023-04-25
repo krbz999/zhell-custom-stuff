@@ -3,26 +3,23 @@ import {MODULE} from "../../const.mjs";
 export class MonsterCatalog extends Application {
   /** @override */
   constructor(initial) {
-    super();
-    this.initial = initial;
-    const packKeys = [
-      "zhell-catalogs.monsters-aberration",
-      "zhell-catalogs.monsters-beast",
-      "zhell-catalogs.monsters-celestial",
-      "zhell-catalogs.monsters-construct",
-      "zhell-catalogs.monsters-dragon",
-      "zhell-catalogs.monsters-elemental",
-      "zhell-catalogs.monsters-fey",
-      "zhell-catalogs.monsters-fiend",
-      "zhell-catalogs.monsters-giant",
-      "zhell-catalogs.monsters-humanoid",
-      "zhell-catalogs.monsters-monstrosity",
-      "zhell-catalogs.monsters-ooze",
-      "zhell-catalogs.monsters-plant",
-      "zhell-catalogs.monsters-undead",
-      "zhell-catalogs.monsters"
-    ];
-    this.packs = packKeys.map(k => game.packs.get(k));
+    let packKeys = [];
+    let packs = [];
+    try {
+      packKeys = game.settings.get(MODULE, "identifierSettings")["monster-catalog-key"];
+      packs = packKeys.reduce((acc, key) => {
+        const pack = game.packs.get(key);
+        if (pack && (pack.metadata.type === "Actor")) acc.push(pack);
+        return acc;
+      }, []);
+    } catch {}
+    if (!packs.length) {
+      ui.notifications.warn("You have not added any valid compendium keys to the catalog setting!");
+    } else {
+      super();
+      this.packs = packs;
+      this.initial = initial;
+    }
   }
 
   /** @override */

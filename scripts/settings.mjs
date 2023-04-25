@@ -3,7 +3,7 @@ import {
   MODULE,
   WORLD_DEFAULTS
 } from "./const.mjs";
-import {ColorationMenu, GameChangesMenu} from "./modules/applications/settingsMenu.mjs";
+import {ColorationMenu, GameChangesMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 import {refreshColors} from "./modules/applications/sheetEdits.mjs";
 
 export function registerSettings() {
@@ -71,7 +71,7 @@ function _registerSettingsMenus() {
   game.settings.registerMenu(MODULE, "worldSettings", {
     name: "ZHELL.SettingsMenuWorldSettingsName",
     hint: "ZHELL.SettingsMenuWorldSettingsHint",
-    label: "Game Changes",
+    label: "ZHELL.SettingsMenuWorldSettingsName",
     icon: "fa-solid fa-atlas",
     type: GameChangesMenu,
     restricted: true
@@ -89,9 +89,25 @@ function _registerSettingsMenus() {
   game.settings.registerMenu(MODULE, "colorSettings", {
     name: "ZHELL.SettingsMenuColorSettingsName",
     hint: "ZHELL.SettingsMenuColorSettingsHint",
-    label: "Sheet Colors",
+    label: "ZHELL.SettingsMenuColorSettingsName",
     icon: "fa-solid fa-paint-roller",
     type: ColorationMenu,
     restricted: false
+  });
+
+  game.settings.register(MODULE, "identifierSettings", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {}
+  });
+
+  game.settings.registerMenu(MODULE, "identifierSettings", {
+    name: "ZHELL.SettingsMenuIdentifierSettingsName",
+    hint: "ZHELL.SettingsMenuIdentifierSettingsHint",
+    label: "ZHELL.SettingsMenuIdentifierSettingsName",
+    icon: "fa-solid fa-key",
+    type: IdentifiersMenu,
+    restricted: true
   });
 }

@@ -6,8 +6,7 @@ class SettingsMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       popOut: true,
       width: 550,
-      height: "auto",
-      resizable: false,
+      resizable: true,
       classes: [MODULE, "settings-menu"]
     });
   }
@@ -125,5 +124,58 @@ export class ColorationMenu extends SettingsMenu {
       });
     }
     return data;
+  }
+}
+
+export class IdentifiersMenu extends SettingsMenu {
+  /** @override */
+  get template() {
+    return `modules/${MODULE}/templates/settingsIdentifiersMenu.hbs`;
+  }
+
+  /** @override */
+  get id() {
+    return "zhell-custom-stuff-settings-identifiers";
+  }
+
+  /** @override */
+  get title() {
+    return "Identifiers and Keys";
+  }
+
+  /** @override */
+  async _updateObject(event, formData) {
+    formData["monster-catalog-key"] = formData["monster-catalog-key"]?.filter(key => key.trim().length > 0) ?? [];
+    return game.settings.set(MODULE, "identifierSettings", formData);
+  }
+
+  /** @override */
+  async getData() {
+    return game.settings.get(MODULE, "identifierSettings");
+  }
+
+  /** @override */
+  activateListeners(html) {
+    super.activateListeners(html);
+    html[0].addEventListener("click", e => e.target.closest("[data-action='delete-key']")?.closest(".form-group").remove());
+    html[0].querySelectorAll("[data-action='add-key']").forEach(n => n.addEventListener("click", this._onAddKey.bind(this)));
+  }
+
+  /**
+   * Append a row to the correct list of form groups.
+   * @param {PointerEvent} event      The initiating click event.
+   */
+  _onAddKey(event) {
+    const content = `
+    <div class="form-group">
+      <label>Key</label>
+      <div class="form-fields">
+        <input type="text" name="monster-catalog-key">
+      </div>
+      <a data-action="delete-key"><i class="fa-solid fa-trash"></i></a>
+    </div>`;
+    const div = document.createElement("DIV");
+    div.innerHTML = content;
+    event.currentTarget.closest("form").querySelector(`.keys[data-type='${event.currentTarget.dataset.type}']`).appendChild(div.firstElementChild);
   }
 }

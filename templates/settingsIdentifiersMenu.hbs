@@ -1,0 +1,19 @@
+<form class="identifiers-and-keys">
+  <h1>Monster Catalog Keys<a data-action="add-key" data-type="monster-catalog"><i class="fa-solid fa-plus"></i></a></h1>
+  <p class="notes">Compendium keys for the monster catalog.</p>
+  <div class="keys" data-type="monster-catalog">
+    {{#each monster-catalog-key}}
+    <div class="form-group">
+      <label>Key</label>
+      <div class="form-fields">
+        <input type="text" name="monster-catalog-key" value="{{this}}">
+      </div>
+      <a data-action="delete-key"><i class="fa-solid fa-trash"></i></a>
+    </div>
+    {{/each}}
+  </div>
+
+  <button type="submit">
+    <i class="fa-solid fa-save"></i> {{localize "Save"}}
+  </button>
+</form>

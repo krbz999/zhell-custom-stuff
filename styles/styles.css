@@ -514,12 +514,27 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 /* SETTINGS MENU */
+.zhell-custom-stuff.settings-menu {
+  min-width: 400px;
+  height: auto !important;
+}
+
 .zhell-custom-stuff.settings-menu form .form-group .form-fields input[type=checkbox] {
   margin-right: 5em;
 }
 
 .zhell-custom-stuff.settings-menu .form-group:not(:last-of-type) {
   border-bottom: 2px groove;
+}
+
+.zhell-custom-stuff.settings-menu .identifiers-and-keys [data-action="add-key"] {
+  position: absolute;
+  right: 0.75em;
+}
+
+.zhell-custom-stuff.settings-menu .identifiers-and-keys [data-action="delete-key"] {
+  flex: 0;
+  padding: 0 0.5em;
 }
 
 /* Vertical dialog */
