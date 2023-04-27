@@ -1,5 +1,4 @@
 import {DEPEND, MODULE} from "../const.mjs";
-import {drawCircle} from "./animations.mjs";
 import {arepo} from "./itemacros/boons/arepo.mjs";
 import {draconiz} from "./itemacros/boons/draconiz.mjs";
 import {murk} from "./itemacros/boons/murk.mjs";
@@ -237,7 +236,7 @@ export class ItemMacroHelpers {
     }
 
     await actor.sheet?.minimize();
-    const p = drawCircle(token, distance);
+    const p = ItemMacroHelpers.drawCircle(token, distance);
 
     async function _pickTargetLocation() {
       const pos = await warpgate.crosshairs.show({
@@ -262,7 +261,7 @@ export class ItemMacroHelpers {
       .effect().file(vanish).atLocation(token).randomRotation().scaleToObject(2)
       .wait(750)
       .animation().on(token).opacity(0.0).waitUntilFinished()
-      .play();
+      .play({remote: false});
 
     await token.document.update({x: x - canvas.grid.size / 2, y: y - canvas.grid.size / 2}, {animate: false});
 
@@ -270,7 +269,7 @@ export class ItemMacroHelpers {
       .effect().file(appear).atLocation(token).randomRotation().scaleToObject(2)
       .wait(1500)
       .animation().on(token).opacity(1.0)
-      .play();
+      .play({remote: false});
 
     await warpgate.wait(1000);
     return actor.sheet?.maximize();
@@ -362,5 +361,24 @@ export class ItemMacroHelpers {
     const add = Math.floor((level + 1) / 6);
     const {formula} = new Roll(part).alter(0, add);
     return {formula, type};
+  }
+
+  //
+  /**
+   * Draw a circle around a token placeable.
+   * @param {Token} token         A token placeable.
+   * @param {number} radius       The radius of the circle (in ft).
+   * @returns {PIXIGraphics}      The pixi graphics element.
+   */
+  static drawCircle(token, radius) {
+    const {x, y} = token.center;
+    const tokenRadius = Math.abs(token.document.x - x);
+    const pixels = radius / canvas.scene.grid.distance * canvas.scene.grid.size + tokenRadius;
+    const color = game.user.color.replace("#", "0x");
+    const p = new PIXI.Graphics()
+      .beginFill(color, 0.5).drawCircle(x, y, pixels).endFill()
+      .beginHole().drawCircle(x, y, pixels - 5).endHole();
+    canvas.app.stage.addChild(p);
+    return p;
   }
 }

@@ -1,6 +1,6 @@
 import {ClassPageRenderer} from "./applications/classPages.mjs";
 import {MonsterCatalog} from "./applications/monsterCatalog.mjs";
-import {renderPartyFeatures} from "./applications/partyFeatures.mjs";
+import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
 export function sceneControls(array) {
@@ -26,9 +26,7 @@ export function sceneControls(array) {
     icon: "fa-solid fa-yin-yang",
     button: true,
     visible: true,
-    onClick: () => {
-      return renderPartyFeatures();
-    }
+    onClick: PartyFeatures.renderPartyFeatures
   });
 
   // Show monster catalog.
@@ -38,7 +36,7 @@ export function sceneControls(array) {
     icon: "fa-solid fa-spaghetti-monster-flying",
     button: true,
     visible: true,
-    onClick: () => MonsterCatalog.renderMonsterCatalog()
+    onClick: MonsterCatalog.renderMonsterCatalog
   });
 
   // Show Mayhem dialog.
@@ -48,8 +46,6 @@ export function sceneControls(array) {
     icon: "fa-solid fa-poo-storm",
     button: true,
     visible: true,
-    onClick: () => {
-      return mayhem();
-    }
+    onClick: mayhem
   });
 }

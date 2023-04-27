@@ -1,10 +1,10 @@
 import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 
-export class ZHELL_SOCKETS {
+export class SocketsHandler {
   static socketsOn() {
     game.socket.on(`world.${game.world.id}`, function(request) {
       console.log("REQUEST:", request);
-      return ZHELL_SOCKETS[request.action](request.data, false);
+      return SocketsHandler[request.action](request.data, false);
     });
   }
 
@@ -163,7 +163,7 @@ export class ZHELL_SOCKETS {
     ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
     const valid = await tokens[0].actor.sheet._onDropSingleItem(itemData);
     if (!valid) return;
-    return ZHELL_SOCKETS.grantItems({itemData: [itemData], tokenId: tokens[0].id});
+    return SocketsHandler.grantItems({itemData: [itemData], tokenId: tokens[0].id});
   }
 }
 
@@ -201,7 +201,7 @@ async function _pickTokenTarget(tokens, itemData) {
     const tokenId = top[0];
     const target = canvas.scene.tokens.get(tokenId);
     ui.notifications.info(`Adding item to ${target.name}!`);
-    return ZHELL_SOCKETS.grantItems({itemData: [itemData], tokenId});
+    return SocketsHandler.grantItems({itemData: [itemData], tokenId});
   }
   return new ImageAnchorPicker({top, title, callback}).render(true);
 }

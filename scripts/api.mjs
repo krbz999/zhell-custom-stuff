@@ -1,9 +1,8 @@
-import {drawCircle} from "./modules/animations.mjs";
 import {ClassPageRenderer} from "./modules/applications/classPages.mjs";
-import {renderPartyFeatures} from "./modules/applications/partyFeatures.mjs";
+import {PartyFeatures} from "./modules/applications/partyFeatures.mjs";
 import {gameTools} from "./modules/gameTools/_gameTools.mjs";
-import {ITEMACRO} from "./modules/itemMacros.mjs";
-import {ZHELL_SOCKETS} from "./modules/sockets.mjs";
+import {ITEMACRO, ItemMacroHelpers} from "./modules/itemMacros.mjs";
+import {SocketsHandler} from "./modules/sockets.mjs";
 import {
   _checkTokenInTemplate,
   _getDocumentFromCompendium,
@@ -34,15 +33,15 @@ export class api {
         roman: _romanize,
         whisperPlayers: _whisperPlayers,
         titleCard: _titleCard,
-        drawCircle: drawCircle,
-        loadTextureForAll: ZHELL_SOCKETS.loadTextureForAll,
-        createTiles: ZHELL_SOCKETS.createTiles,
-        awardLoot: ZHELL_SOCKETS.awardLoot,
-        updateToken: ZHELL_SOCKETS.updateTokens,
-        grantItems: ZHELL_SOCKETS.grantItems,
+        drawCircle: ItemMacroHelpers.drawCircle,
+        loadTextureForAll: SocketsHandler.loadTextureForAll,
+        createTiles: SocketsHandler.createTiles,
+        awardLoot: SocketsHandler.awardLoot,
+        updateToken: SocketsHandler.updateTokens,
+        grantItems: SocketsHandler.grantItems,
         showClassPages: ClassPageRenderer.renderClassPages,
-        renderPartyFeatures: renderPartyFeatures,
-        healToken: ZHELL_SOCKETS.healToken,
+        renderPartyFeatures: PartyFeatures.renderPartyFeatures,
+        healToken: SocketsHandler.healToken,
         ...gameTools
       },
       ITEMACRO

@@ -51,7 +51,7 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
       .fadeIn(1000).fadeOut(1000).elevation(token.document.elevation + 1)
       .size(canvas.grid.size * 13).scaleIn(0, 3000).rotateIn(360, 5000)
       .tieToDocuments(effect)
-      .play();
+      .play({remote: true});
   }
 
   async function endEffect(rollDamage = false) {
@@ -212,7 +212,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       .attachTo(steedId).file(assets[2]).scale(0.5)
       .effect()
       .file(assets[3]).attachTo(token).size(canvas.grid.size).waitUntilFinished(-2000)
-      .play();
+      .play({remote: false});
     await warpgate.mutate(token.document, updatesShape, {}, {name: item.name});
     await actor.sheet?.maximize();
     return actor.createEmbeddedDocuments("ActiveEffect", [{
@@ -232,7 +232,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
         sequence.effect().file("jb2a.explosion.tealyellow.1").attachTo(token).size(canvas.grid.size * 1.5).waitUntilFinished(-2000);
         const steedToken = canvas.scene.tokens.find(i => i.flags.world?.findFriend === actor.id);
         if (steedToken) sequence.effect().file("jb2a.explosion.greenorange.1").atLocation(steedToken.object.center).scale(0.5);
-        await sequence.play();
+        await sequence.play({remote: true});
         return warpgate.dismiss(steedToken?.id);
       }.toString()})()`
     }]);

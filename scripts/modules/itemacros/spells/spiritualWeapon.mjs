@@ -1,5 +1,4 @@
 import {DEPEND} from "../../../const.mjs";
-import {drawCircle} from "../../animations.mjs";
 import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
@@ -21,7 +20,7 @@ export async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, e
 
   // then spawn the actor:
   await actor.sheet.minimize();
-  const p = drawCircle(token, item.system.range.value);
+  const p = ItemMacroHelpers.drawCircle(token, item.system.range.value);
   const [spawn] = await ItemMacroHelpers._spawnHelper("Spiritual Weapon", updates, {}, options);
   await actor.sheet.maximize();
   canvas.app.stage.removeChild(p);

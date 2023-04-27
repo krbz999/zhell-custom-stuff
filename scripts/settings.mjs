@@ -4,7 +4,7 @@ import {
   WORLD_DEFAULTS
 } from "./const.mjs";
 import {ColorationMenu, GameChangesMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
-import {refreshColors} from "./modules/applications/sheetEdits.mjs";
+import {SheetEdits} from "./modules/applications/sheetEdits.mjs";
 
 export function registerSettings() {
   _registerSettings();
@@ -83,7 +83,7 @@ function _registerSettingsMenus() {
     config: false,
     type: Object,
     default: COLOR_DEFAULTS,
-    onChange: refreshColors
+    onChange: SheetEdits.refreshColors
   });
 
   game.settings.registerMenu(MODULE, "colorSettings", {

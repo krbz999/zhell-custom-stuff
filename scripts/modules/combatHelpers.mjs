@@ -1,6 +1,6 @@
 import {DEPEND} from "../const.mjs";
 
-export class COMBAT {
+export class CombatEnhancements {
   /**
    * Mark a non-player-owned and unlinked combatant's token as defeated when it reaches zero hit points.
    * @param {TokenDocument} tokenDoc      The token document that was updated.

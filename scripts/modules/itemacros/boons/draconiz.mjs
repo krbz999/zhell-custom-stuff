@@ -25,7 +25,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
       .effect().file("jb2a.lightning_strike.blue.5").atLocation(token)
       .effect().file("jb2a.lightning_strike.blue.5").atLocation(token).mirrorX()
       .wait(1000)
-      .play();
+      .play({remote: true});
 
     await token.document.update({width: 2, height: 2}, {animation: {duration: 500, easing}});
 
@@ -33,7 +33,7 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
       .wait(500)
       .effect().file("jb2a.token_border.circle.static.blue.004")
       .fadeIn(500).attachTo(token).name("Show of Force").persist()
-      .play();
+      .play({remote: true});
   }
 
   const onDelete = async function() {

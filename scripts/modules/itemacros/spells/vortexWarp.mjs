@@ -1,5 +1,4 @@
 import {DEPEND} from "../../../const.mjs";
-import {drawCircle} from "../../animations.mjs";
 import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export async function VORTEX_WARP(item, speaker, actor, token, character, event, args) {
@@ -17,7 +16,7 @@ export async function VORTEX_WARP(item, speaker, actor, token, character, event,
   const level = ItemMacroHelpers._getSpellLevel(use);
   const range = 30 * (level + 1);
 
-  const p = drawCircle(token, range);
+  const p = ItemMacroHelpers.drawCircle(token, range);
 
   await actor.sheet?.minimize();
 
@@ -48,7 +47,8 @@ export async function VORTEX_WARP(item, speaker, actor, token, character, event,
       return new Sequence()
         .wait(500)
         .effect().atLocation(tokenDoc).file("jb2a.misty_step.02")
-        .animation().delay(1000).on(tokenDoc).fadeIn(1000).waitUntilFinished().play();
+        .animation().delay(1000).on(tokenDoc).fadeIn(1000).waitUntilFinished()
+        .play({remote: false});
     }
   }
   ui.notifications.info(`Attempting to warp ${target.document.name}!`);

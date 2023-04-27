@@ -1,59 +1,44 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {api} from "./scripts/api.mjs";
-import {ZHELL_SOCKETS} from "./scripts/modules/sockets.mjs";
-import {COMBAT} from "./scripts/modules/combatHelpers.mjs";
+import {SocketsHandler} from "./scripts/modules/sockets.mjs";
+import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
 import {
-  ZHELL_ANIMATIONS,
+  AnimationsHandler,
   _equipmentPageListeners,
   _initD20,
-  _rotateTokensOnMovement,
-  _sequencerSetup,
   _setupCollapsibles
 } from "./scripts/modules/animations.mjs";
-import {
-  _addContextMenuOptions,
-  _dropActorFolder,
-  _itemStatusCondition,
-  _miscAdjustments,
-  _preCreateActiveEffect,
-  _preCreateScene,
-  _replaceTokenHUD,
-  _restItemDeletion,
-  _sceneHeaderView,
-  _setUpGameChanges,
-  _visionModes,
-  _visualActiveEffectsCreateEffectButtons
-} from "./scripts/modules/gameChanges.mjs";
+import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
 import {DEPEND, MODULE} from "./scripts/const.mjs";
-import {EXHAUSTION} from "./scripts/modules/zhell_functions.mjs";
+import {ExhaustionHandler} from "./scripts/modules/zhell_functions.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
-import {refreshColors, _performSheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
+import {SheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", api.register);
-Hooks.once("init", _visionModes);
-Hooks.once("setup", _setUpGameChanges);
+Hooks.once("init", GameChangesHandler._visionModes);
+Hooks.once("setup", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
-Hooks.once("setup", _miscAdjustments);
+Hooks.once("setup", GameChangesHandler._miscAdjustments);
 Hooks.once("diceSoNiceReady", _initD20);
-Hooks.once("sequencerReady", _sequencerSetup);
-Hooks.once("ready", refreshColors);
-Hooks.once("ready", ZHELL_SOCKETS.socketsOn);
-Hooks.on("dropCanvasData", ZHELL_SOCKETS._onDropData);
+Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);
+Hooks.once("ready", SheetEdits.refreshColors);
+Hooks.once("ready", SocketsHandler.socketsOn);
+Hooks.on("dropCanvasData", SocketsHandler._onDropData);
 Hooks.once("ready", _setupCollapsibles);
 
-Hooks.on("renderItemSheet", _itemStatusCondition);
-Hooks.on("renderActorSheet", _performSheetEdits);
+Hooks.on("renderItemSheet", GameChangesHandler._itemStatusCondition);
+Hooks.on("renderActorSheet", SheetEdits._performSheetEdits);
 Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
-Hooks.on("preUpdateToken", _rotateTokensOnMovement);
-Hooks.on("renderTokenHUD", _replaceTokenHUD);
-Hooks.on("dnd5e.restCompleted", _restItemDeletion);
-Hooks.on("dnd5e.restCompleted", EXHAUSTION._longRestExhaustionReduction);
-Hooks.on("dnd5e.getItemContextOptions", _addContextMenuOptions);
-Hooks.on("preCreateActiveEffect", _preCreateActiveEffect);
-Hooks.on("updateCombat", COMBAT._rechargeMonsterFeatures);
+Hooks.on("preUpdateToken", GameChangesHandler._rotateTokensOnMovement);
+Hooks.on("renderTokenHUD", GameChangesHandler._replaceTokenHUD);
+Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
+Hooks.on("dnd5e.restCompleted", ExhaustionHandler._longRestExhaustionReduction);
+Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
+Hooks.on("preCreateActiveEffect", GameChangesHandler._preCreateActiveEffect);
+Hooks.on("updateCombat", CombatEnhancements._rechargeMonsterFeatures);
 Hooks.on("renderChatMessage", DamageApplicator._appendToDamageRolls);
 Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
 Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
@@ -62,33 +47,33 @@ Hooks.on("getSceneControlButtons", sceneControls);
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
   if (((reactionSetting === "gm") && game.user.isGM) || (reactionSetting === "all")) {
-    Hooks.on("dnd5e.useItem", COMBAT._spendReaction);
+    Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);
   }
 
   if (game.settings.get(MODULE, "displaySavingThrowAmmo")) {
-    Hooks.on("dnd5e.rollAttack", COMBAT._displaySavingThrowAmmo);
+    Hooks.on("dnd5e.rollAttack", CombatEnhancements._displaySavingThrowAmmo);
   }
 
   if (game.user.isGM) {
     if (game.settings.get(MODULE, "markDefeatedCombatants")) {
-      Hooks.on("updateToken", COMBAT._markDefeatedCombatant);
+      Hooks.on("updateToken", CombatEnhancements._markDefeatedCombatant);
     }
-    Hooks.on("getSceneConfigHeaderButtons", _sceneHeaderView);
-    Hooks.on("dropCanvasData", _dropActorFolder);
-    Hooks.on("preCreateScene", _preCreateScene);
+    Hooks.on("getSceneConfigHeaderButtons", GameChangesHandler._sceneHeaderView);
+    Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);
+    Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
   }
 
   if (game.modules.get(DEPEND.VAE)?.active) {
-    Hooks.on("visual-active-effects.createEffectButtons", _visualActiveEffectsCreateEffectButtons);
+    Hooks.on("visual-active-effects.createEffectButtons", GameChangesHandler._visualActiveEffectsCreateEffectButtons);
   }
 
   // hook for various actions are performed to display animations.
   const canAnimate = [DEPEND.SEQ, DEPEND.JB2A].every(id => !!game.modules.get(id)?.active);
   if (canAnimate) {
-    Hooks.on("createMeasuredTemplate", ZHELL_ANIMATIONS.onCreateMeasuredTemplate);
-    Hooks.on("dnd5e.useItem", ZHELL_ANIMATIONS.onItemUse);
-    Hooks.on("dnd5e.rollAttack", ZHELL_ANIMATIONS.onItemRollAttack);
-    Hooks.on("dnd5e.rollDamage", ZHELL_ANIMATIONS.onItemRollDamage);
-    Hooks.on("dnd5e.rollSkill", ZHELL_ANIMATIONS.onRollSkill);
+    Hooks.on("createMeasuredTemplate", AnimationsHandler.onCreateMeasuredTemplate);
+    Hooks.on("dnd5e.useItem", AnimationsHandler.onItemUse);
+    Hooks.on("dnd5e.rollAttack", AnimationsHandler.onItemRollAttack);
+    Hooks.on("dnd5e.rollDamage", AnimationsHandler.onItemRollDamage);
+    Hooks.on("dnd5e.rollSkill", AnimationsHandler.onRollSkill);
   }
 });

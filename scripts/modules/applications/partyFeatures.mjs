@@ -1,6 +1,6 @@
 import {MODULE} from "../../const.mjs";
 
-class PartyFeatures extends Application {
+export class PartyFeatures extends Application {
   constructor() {
     super();
 
@@ -201,8 +201,8 @@ class PartyFeatures extends Application {
     await ChatMessage.create({content, speaker: {alias: this.alias}});
     return this.groupActor.setFlag(MODULE, "partyFeatureUses.fragment.value", uses.value - 1);
   }
-}
 
-export function renderPartyFeatures() {
-  return new PartyFeatures().render(true);
+  static renderPartyFeatures() {
+    return new PartyFeatures().render(true);
+  }
 }

@@ -1,20 +1,9 @@
 import {COLOR_DEFAULTS, MODULE} from "../../const.mjs";
 import {MateriaMedica} from "./materiaMedica.mjs";
 import {MoneySpender} from "./moneySpender.mjs";
-import {EXHAUSTION} from "../zhell_functions.mjs";
+import {ExhaustionHandler} from "../zhell_functions.mjs";
 
-export function _performSheetEdits(sheet, html) {
-  if (!sheet.sheetEdits) {
-    const edits = new SheetEdits();
-    sheet.sheetEdits = edits;
-    edits.sheet = sheet;
-    edits.html = html;
-  } else {
-    sheet.sheetEdits.html = html;
-  }
-  const e = sheet.sheetEdits;
-  e.render();
-}
+
 
 export class SheetEdits {
   constructor() {
@@ -282,12 +271,12 @@ export class SheetEdits {
       up: {
         icon: "<i class='fa-solid fa-arrow-up'></i>",
         label: "Gain a Level",
-        callback: () => EXHAUSTION.increaseExhaustion(actor)
+        callback: () => ExhaustionHandler.increaseExhaustion(actor)
       },
       down: {
         icon: "<i class='fa-solid fa-arrow-down'></i>",
         label: "Down a Level",
-        callback: () => EXHAUSTION.decreaseExhaustion(actor)
+        callback: () => ExhaustionHandler.decreaseExhaustion(actor)
       }
     };
     if (level < 1) delete buttons.down;
@@ -375,16 +364,28 @@ export class SheetEdits {
     });
     return this.document.updateEmbeddedDocuments("Item", updates);
   }
-}
 
-/**
- * Refreshes the style sheet when a user changes their color settings for various sheet colors
- * such as limited uses, prepared spells, and the color of rarities on magic items.
- */
-export function refreshColors() {
-  const colors = game.settings.get(MODULE, "colorSettings");
+  static _performSheetEdits(sheet, html) {
+    if (!sheet.sheetEdits) {
+      const edits = new SheetEdits();
+      sheet.sheetEdits = edits;
+      edits.sheet = sheet;
+      edits.html = html;
+    } else {
+      sheet.sheetEdits.html = html;
+    }
+    const e = sheet.sheetEdits;
+    e.render();
+  }
 
-  const stl = document.querySelector(":root").style;
-  for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors[key]);
-  for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors[key]);
+  /**
+   * Refreshes the style sheet when a user changes their color settings for various sheet colors
+   * such as limited uses, prepared spells, and the color of rarities on magic items.
+   */
+  static refreshColors() {
+    const colors = game.settings.get(MODULE, "colorSettings");
+    const stl = document.querySelector(":root").style;
+    for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors[key]);
+    for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors[key]);
+  }
 }

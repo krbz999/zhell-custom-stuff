@@ -2,7 +2,7 @@ import {MODULE} from "../../const.mjs";
 
 export class MonsterCatalog extends Application {
   /** @override */
-  constructor(initial) {
+  constructor() {
     let packKeys = [];
     let packs = [];
     try {
@@ -18,7 +18,6 @@ export class MonsterCatalog extends Application {
     } else {
       super();
       this.packs = packs;
-      this.initial = initial;
     }
   }
 
@@ -134,12 +133,6 @@ export class MonsterCatalog extends Application {
   }
 
   /** @override */
-  async _renderInner(data) {
-    if (this.initial) this._tabs[0].active = this.initial;
-    return super._renderInner(data);
-  }
-
-  /** @override */
   _onChangeTab(event, tabs, active) {
     super._onChangeTab(event, tabs, active);
     this.element[0].querySelector(".content-tabs").scrollTop = 0;
@@ -147,10 +140,9 @@ export class MonsterCatalog extends Application {
 
   /**
    * Render this application.
-   * @param {string} [initial=null]     The initial tab to render.
-   * @returns {MonsterCatalog}          The rendered application.
+   * @returns {MonsterCatalog}      The rendered application.
    */
-  static renderMonsterCatalog(initial = null) {
-    return new MonsterCatalog(initial).render(true);
+  static renderMonsterCatalog() {
+    return new MonsterCatalog().render(true);
   }
 }

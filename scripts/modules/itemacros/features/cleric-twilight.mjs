@@ -82,7 +82,8 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
       .effect().attachTo(token).persist().name(item.name).file(file).size(canvas.grid.size * 8)
       .scaleIn(0, 800, {ease: "easeOutCubic"}).rotateIn(180, 1200, {ease: "easeOutCubic"})
       .scaleOut(0, 500, {ease: "easeOutCubic"}).fadeOut(500, {ease: "easeOutCubic"})
-      .tieToDocuments(eff).play();
+      .tieToDocuments(eff)
+      .play({remote: true});
   }
 
   new Dialog({

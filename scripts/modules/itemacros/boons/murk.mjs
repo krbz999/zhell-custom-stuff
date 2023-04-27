@@ -78,6 +78,8 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
     const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
     const color = {necrotic: "purple", fire: "orange"}[type];
     const file = `jb2a.token_border.circle.spinning.${color}.006`;
-    return new Sequence().effect().file(file).attachTo(token).scaleToObject(2).tieToDocuments(effect).persist().fadeIn(500).fadeOut(500).play();
+    return new Sequence()
+      .effect().file(file).attachTo(token).scaleToObject(2).tieToDocuments(effect).persist().fadeIn(500).fadeOut(500)
+      .play({remote: true});
   }
 }

@@ -86,5 +86,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
   const file = "jb2a.markers.circle_of_stars.blue";
-  return new Sequence().effect().file(file).attachTo(token).scale(2).fadeIn(500).fadeOut(500).tieToDocuments(effect).persist().play();
+  return new Sequence()
+    .effect().file(file).attachTo(token).scale(2).fadeIn(500).fadeOut(500).tieToDocuments(effect).persist()
+    .play({remote: true});
 }

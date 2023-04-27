@@ -1,7 +1,7 @@
 import {database} from "../../sources/animations.mjs";
 import {MODULE} from "../const.mjs";
 
-export class ZHELL_ANIMATIONS {
+export class AnimationsHandler {
   static onCreateMeasuredTemplate(templateDoc, _, userId) {
     if (userId !== game.user.id) return;
 
@@ -19,49 +19,63 @@ export class ZHELL_ANIMATIONS {
     check = item.flags[MODULE]?.breathWeapon?.type;
     if (check) {
       const file = check;
-      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
+      return new Sequence()
+        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
+        .play({remote: true});
     }
 
     // SCORCHING CLEAVER.
     check = item.name.includes("Erupting Slash");
     if (check) {
       const file = "jb2a.fire_jet.orange";
-      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
+      return new Sequence()
+        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
+        .play({remote: true});
     }
 
     // CALL LIGHTNING.
     check = item.name.includes("Call Lightning");
     if (check) {
       const file = "jb2a.lightning_strike.blue.0";
-      return new Sequence().effect().file(file).atLocation(templateDoc).scale(2).play();
+      return new Sequence()
+        .effect().file(file).atLocation(templateDoc).scale(2)
+        .play({remote: true});
     }
 
     // JEWEL OF THE LIVING LIGHTNING.
     check = item.name.includes("Jewel of the Living Lightning");
     if (check) {
       const file = "zhell.effects.spells.lightningBolt.yellow.0";
-      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).duration(2000).atLocation(templateDoc).stretchTo(templateDoc).play();
+      return new Sequence()
+        .effect().file(file).fadeIn(200).fadeOut(200).duration(2000).atLocation(templateDoc).stretchTo(templateDoc)
+        .play({remote: true});
     }
 
     // BURNING HANDS.
     check = item.name.includes("Burning Hands");
     if (check) {
       const file = "jb2a.burning_hands.01.orange";
-      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
+      return new Sequence()
+        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
+        .play({remote: true});
     }
 
     // STAR DUST.
     check = item.name.includes("Star Dust");
     if (check) {
       const file = "jb2a.side_impact.part.slow.star.pinkyellow";
-      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
+      return new Sequence()
+        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
+        .play({remote: true});
     }
 
     // EVARD'S BLACK TENTACLES.
     check = item.name.includes("Black Tentacles");
     if (check) {
       const file = "jb2a.arms_of_hadar.dark_purple";
-      return new Sequence().effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().belowTokens().play();
+      return new Sequence()
+        .effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().belowTokens()
+        .play({remote: true});
     }
 
     // FIREBALL.
@@ -72,7 +86,7 @@ export class ZHELL_ANIMATIONS {
 
       const seq = new Sequence();
       if (token) seq.effect().file(beam).atLocation(token).stretchTo(templateDoc).playbackRate(2).waitUntilFinished();
-      return seq.effect().file(expl).atLocation(templateDoc).play();
+      return seq.effect().file(expl).atLocation(templateDoc).play({remote: true});
     }
   }
 
@@ -90,7 +104,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.eldritch_blast";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // FIRE BOLT.
@@ -98,7 +114,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.fire_bolt.orange";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // RADIANT FLAME.
@@ -106,7 +124,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.chain_lightning.secondary.yellow";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // BOW OF THE OUTCAST.
@@ -114,7 +134,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.arrow.physical";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // GUIDING BOLT.
@@ -122,7 +144,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.bullet";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // BOWS in general.
@@ -130,7 +154,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.arrow.physical.white.01";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // CROSSBOWS in general.
@@ -138,7 +164,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.bolt.physical.white02";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
 
     // ICE KNIFE.
@@ -146,7 +174,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.spell_projectile.ice_shard.blue";
-      return new Sequence().effect().file(file).atLocation(token).stretchTo(target).play();
+      return new Sequence()
+        .effect().file(file).atLocation(token).stretchTo(target)
+        .play({remote: true});
     }
 
     // PAST KNOWLEDGE.
@@ -155,7 +185,9 @@ export class ZHELL_ANIMATIONS {
       if (!target || !token) return;
       const type = item.system.damage.parts[0][1] === "necrotic" ? "dark_bluewhite" : "red";
       const file = `jb2a.guiding_bolt.02.${type}`;
-      return new Sequence().effect().file(file).playbackRate(1.5).atLocation(token.center).stretchTo(target).play();
+      return new Sequence()
+        .effect().file(file).playbackRate(1.5).atLocation(token.center).stretchTo(target)
+        .play({remote: true});
     }
   }
 
@@ -175,12 +207,15 @@ export class ZHELL_ANIMATIONS {
       if (target) {
         const seq = new Sequence();
         for (const t of game.user.targets) {
-          seq.effect().attachTo(t).file(file1).scaleIn(0, 500)
+          seq
+            .effect().attachTo(t).file(file1).scaleIn(0, 500)
             .effect().attachTo(t).file(file2).scaleIn(0, 500).fadeOut(500);
         }
-        return seq.play();
+        return seq.play({remote: true});
       } else if (token) {
-        return new Sequence().effect().attachTo(token).file(file2).scaleIn(0, 500).fadeOut(500).play();
+        return new Sequence()
+          .effect().attachTo(token).file(file2).scaleIn(0, 500).fadeOut(500)
+          .play({remote: true});
       }
     }
 
@@ -193,7 +228,7 @@ export class ZHELL_ANIMATIONS {
       for (const t of game.user.targets) {
         seq.effect().attachTo(t).file(file).scaleIn(0, 500);
       }
-      return seq.play();
+      return seq.play({remote: true});
     }
 
     // ELDRITCH SMITE.
@@ -201,7 +236,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.purplepink";
-      return new Sequence().effect().attachTo(target).file(file).play();
+      return new Sequence()
+        .effect().attachTo(target).file(file)
+        .play({remote: true});
     }
 
     // DIVINE SMITE.
@@ -209,7 +246,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.greenyellow";
-      return new Sequence().effect().attachTo(target).file(file).play();
+      return new Sequence()
+        .effect().attachTo(target).file(file)
+        .play({remote: true});
     }
 
     // LIGHTNING TENDRIL.
@@ -217,7 +256,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.chain_lightning.secondary.blue";
-      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
+      return new Sequence()
+        .effect().stretchTo(target).atLocation(token).file(file)
+        .play({remote: true});
     }
   }
 
@@ -234,9 +275,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!token) return;
       const file = "assets/images/tiles/symbols/holy/hav_draconiz_gold.webp";
-      return new Sequence().effect()
-        .file(file).duration(2000).atLocation(token).scaleIn(.5, 2000)
-        .size(2.5, {gridUnits: true}).fadeIn(500).fadeOut(500).play();
+      return new Sequence()
+        .effect().file(file).duration(2000).atLocation(token).scaleIn(.5, 2000).size(2.5, {gridUnits: true}).fadeIn(500).fadeOut(500)
+        .play({remote: true});
     }
 
     // SPOTLIGHT.
@@ -244,7 +285,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!token) return;
       const file = "jb2a.template_circle.out_pulse.01.burst.bluewhite";
-      return new Sequence().effect().file(file).atLocation(token).scale(0.75).play();
+      return new Sequence()
+        .effect().file(file).atLocation(token).scale(0.75)
+        .play({remote: true});
     }
 
     // TOLL THE DEAD.
@@ -252,7 +295,9 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!target) return;
       const file = "jb2a.toll_the_dead.purple.complete";
-      return new Sequence().effect().file(file).scale(0.5).atLocation(target).play();
+      return new Sequence()
+        .effect().file(file).scale(0.5).atLocation(target)
+        .play({remote: true});
     }
 
     // PALADIN AURA.
@@ -263,7 +308,9 @@ export class ZHELL_ANIMATIONS {
       const file = "jb2a.extras.tmfx.border.circle.outpulse.01.normal";
       const has = !!Sequencer.EffectManager.getEffects({name}).length;
       if (has) return Sequencer.EffectManager.endEffects({name});
-      return new Sequence().effect().attachTo(token).file(file).persist().name(name).tint("#ff7300").play();
+      return new Sequence()
+        .effect().attachTo(token).file(file).persist().name(name).tint("#ff7300")
+        .play({remote: true});
     }
   }
 
@@ -276,8 +323,15 @@ export class ZHELL_ANIMATIONS {
     if (check) {
       if (!token) return;
       const file = "jb2a.sneak_attack.";
-      return new Sequence().effect().file(file).attachTo(token).play();
+      return new Sequence()
+        .effect().file(file).attachTo(token)
+        .play({remote: true});
     }
+  }
+
+  // SET UP SEQUENCER DB.
+  static _sequencerSetup() {
+    Sequencer.Database.registerEntries("zhell", database);
   }
 }
 
@@ -299,36 +353,10 @@ export function _initD20(dice3d) {
   });
 }
 
-// SET UP SEQUENCER DB.
-export function _sequencerSetup() {
-  Sequencer.Database.registerEntries("zhell", database);
-}
-
 export function _equipmentPageListeners(app, html) {
   if (app.object.parent.name !== "Index: Table Rules") return;
   if (app.object.name !== "Equipment") return;
   html[0].querySelectorAll(".zhell-equipment-tables :is(h1, h2, h3)").forEach(n => {
     n.addEventListener("click", e => e.currentTarget.classList.toggle("collapsed"));
   });
-}
-
-// ROTATE TOKENS WHEN THEY MOVE.
-export function _rotateTokensOnMovement(doc, update, options) {
-  if (doc.lockRotation || (options.animate === false)) return;
-  if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
-  const ray = new Ray(doc, {x: update.x ?? doc.x, y: update.y ?? doc.y});
-  update.rotation = ray.angle * 180 / Math.PI - 90;
-}
-
-// draw a circle around a token placeable.
-export function drawCircle(token, radius) {
-  const {x, y} = token.center;
-  const tokenRadius = Math.abs(token.document.x - x);
-  const pixels = radius / canvas.scene.grid.distance * canvas.scene.grid.size + tokenRadius;
-  const color = game.user.color.replace("#", "0x");
-  const p = new PIXI.Graphics()
-    .beginFill(color, 0.5).drawCircle(x, y, pixels).endFill()
-    .beginHole().drawCircle(x, y, pixels - 5).endHole();
-  canvas.app.stage.addChild(p);
-  return p;
 }
