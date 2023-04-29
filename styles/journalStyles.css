@@ -291,10 +291,3 @@ h1.havilon-race-header {
 .sheet.journal-entry .materia-medica table td:nth-child(2) {
   text-align: center;
 }
-
-/* MONSTER TABLES JOURNAL */
-table.monster-table :is(.hit-points, .armor-class) {
-  text-align: center;
-  width: 20%;
-  white-space: nowrap;
-}

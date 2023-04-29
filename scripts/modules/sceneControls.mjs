@@ -1,5 +1,4 @@
 import {ClassPageRenderer} from "./applications/classPages.mjs";
-import {MonsterCatalog} from "./applications/monsterCatalog.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -27,16 +26,6 @@ export function sceneControls(array) {
     button: true,
     visible: true,
     onClick: PartyFeatures.renderPartyFeatures
-  });
-
-  // Show monster catalog.
-  if (game.user.isGM) token.tools.push({
-    name: "monster-catalog",
-    title: "Monster Catalog",
-    icon: "fa-solid fa-spaghetti-monster-flying",
-    button: true,
-    visible: true,
-    onClick: MonsterCatalog.renderMonsterCatalog
   });
 
   // Show Mayhem dialog.

@@ -1,17 +1,32 @@
-<form class="identifiers-and-keys">
-  <h1>Monster Catalog Keys<a data-action="add-key" data-type="monster-catalog"><i class="fa-solid fa-plus"></i></a></h1>
-  <p class="notes">Compendium keys for the monster catalog.</p>
-  <div class="keys" data-type="monster-catalog">
-    {{#each monster-catalog-key}}
+<form>
+  {{#each section}}
+  <h1>{{title}}</h1>
+  <p class="notes">{{description}}</p>
+  <div class="keys-enabled" data-type="{{type}}">
+    <h3>Enabled</h3>
+    {{#each key}}
     <div class="form-group">
       <label>Key</label>
       <div class="form-fields">
-        <input type="text" name="monster-catalog-key" value="{{this}}">
+        <span class="key {{#if active}}active{{/if}}">{{label}}</span>
       </div>
-      <a data-action="delete-key"><i class="fa-solid fa-trash"></i></a>
+      <a data-action="toggle"><i class="fa-solid fa-trash"></i></a>
     </div>
     {{/each}}
   </div>
+  <div class="keys-disabled" data-type="{{type}}">
+    <h3>Disabled</h3>
+    {{#each key}}
+    <div class="form-group">
+      <label>Key</label>
+      <div class="form-fields">
+        <span class="key {{#unless active}}active{{/unless}}">{{label}}</span>
+      </div>
+      <a data-action="toggle"><i class="fa-solid fa-plus"></i></a>
+    </div>
+    {{/each}}
+  </div>
+  {{/each}}
 
   <button type="submit">
     <i class="fa-solid fa-save"></i> {{localize "Save"}}
