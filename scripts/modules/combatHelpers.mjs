@@ -3,16 +3,16 @@ import {DEPEND} from "../const.mjs";
 export class CombatEnhancements {
   /**
    * Mark a non-player-owned and unlinked combatant's token as defeated when it reaches zero hit points.
-   * @param {TokenDocument} tokenDoc      The token document that was updated.
-   * @param {object} updates              The update performed on the token document.
+   * @param {Actor} actor         The actor that was updated.
+   * @param {object} updates      The update performed on the actor.
    */
-  static async _markDefeatedCombatant(tokenDoc, updates) {
-    if (tokenDoc.actor.hasPlayerOwner || !tokenDoc.combatant) return;
-    const hpUpdate = updates.actorData?.system?.attributes?.hp?.value;
+  static async _markDefeatedCombatant(actor, updates) {
+    if (actor.hasPlayerOwner || !actor.inCombat) return;
+    const hpUpdate = updates.system?.attributes?.hp?.value;
     if (!Number.isNumeric(hpUpdate) || !(hpUpdate <= 0)) return;
     const effect = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED);
-    await tokenDoc.object.toggleEffect(effect, {overlay: true});
-    return tokenDoc.combatant.update({defeated: true});
+    await (actor.token ?? actor.getActiveTokens(false, true)[0]).toggleActiveEffect(effect, {overlay: true});
+    return (actor.token ?? actor.getActiveTokens()[0]).combatant.update({defeated: true});
   }
 
   /**
@@ -39,15 +39,12 @@ export class CombatEnhancements {
   static _spendReaction(item) {
     if (item.system.activation?.type !== "reaction") return;
     if (!game.combat) return;
-    const has = item.actor.effects.find(e => e.flags.core?.statusId === "reaction");
-    if (has) return;
+    if (item.actor.effects.some(e => e.statuses.has("reaction"))) return;
     const combatant = item.actor.token?.combatant ?? item.actor.getActiveTokens()[0]?.combatant;
     if (!combatant) return;
     const reaction = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === "reaction"));
-    reaction.flags[DEPEND.VAE].data = {
-      intro: "<p>" + game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name}) + "</p>",
-      content: item.system.description.value
-    };
+    reaction.description = game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name});
+    foundry.utils.setProperty(reaction, `flags.${DEPEND.VAE}.data.content`, item.system.description.value);
     return combatant.token.toggleActiveEffect(reaction, {active: true});
   }
 

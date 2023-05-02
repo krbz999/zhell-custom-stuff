@@ -6,11 +6,11 @@ export async function MAGE_ARMOR(item, speaker, actor, token, character, event, 
   if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
 
   const mutName = `${item.name} (${actor.name})`;
-  const statusId = `${item.name.slugify({strict: true})}-${actor.name.slugify({strict: true})}`;
+  const identifier = `${item.name.slugify({strict: true})}-${actor.name.slugify({strict: true})}`;
 
   const hasArmor = canvas.scene.tokens.filter(token => {
     return token.actor.effects.find(e => {
-      return e.flags.core?.statusId === statusId;
+      return e.flags.world?.mageArmor === identifier;
     });
   });
 
@@ -37,20 +37,19 @@ export async function MAGE_ARMOR(item, speaker, actor, token, character, event, 
     return warpgate.mutate(target, {
       embedded: {
         ActiveEffect: {
-          [statusId]: {
-            label: item.name,
+          [identifier]: {
+            name: item.name,
             icon: item.img,
             origin: actor.uuid,
             duration: ItemMacroHelpers._getItemDuration(item),
             changes: [{key: "system.attributes.ac.calc", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: "mage"}],
-            "flags.core.statusId": statusId,
-            "flags.visual-active-effects.data": {
-              intro: "<p>Your AC is increased by Mage Armor.</p>",
-              content: item.system.description.value
-            }
+            statuses: [identifier],
+            description: "Your AC is increased by Mage Armor.",
+            "flags.world.mageArmor": identifier,
+            "flags.visual-active-effects.data.content": item.system.description.value
           }
         }
       }
-    }, {}, {name: mutName, comparisonKeys: {ActiveEffect: "flags.core.statusId"}});
+    }, {}, {name: mutName, comparisonKeys: {ActiveEffect: "flags.world.mageArmor"}});
   }
 }

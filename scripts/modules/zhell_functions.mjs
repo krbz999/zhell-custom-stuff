@@ -197,9 +197,7 @@ export class ExhaustionHandler {
     }
 
     // get current exhaustion effect, if any.
-    const exhaustion = actor.effects.find(i => {
-      return i.flags.core?.statusId === "exhaustion";
-    });
+    const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if exhausted, increase the level.
     if (exhaustion) {
@@ -219,9 +217,7 @@ export class ExhaustionHandler {
     }
 
     // get current exhaustion effect, if any.
-    const exhaustion = actor.effects.find(i => {
-      return i.flags.core?.statusId === "exhaustion";
-    });
+    const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if exhausted, decrease the level.
     if (exhaustion) {
@@ -247,9 +243,7 @@ export class ExhaustionHandler {
     }
 
     // Attempt to find any current exhaustion effect.
-    const exhaustion = actor.effects.find(i => {
-      return i.flags.core?.statusId === "exhaustion";
-    });
+    const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if num===0, remove it.
     if (num === 0) return exhaustion?.delete();
@@ -261,18 +255,18 @@ export class ExhaustionHandler {
         return (i.id === CONFIG.specialStatusEffects.DEFEATED);
       }));
       foundry.utils.mergeObject(dead, {
-        "flags.core.statusId": dead.id,
-        "flags.core.overlay": true,
-        label: game.i18n.localize(dead.label)
+        statuses: [dead.id],
+        name: game.i18n.localize(dead.name),
+        "flags.core.overlay": true
       });
       return actor.createEmbeddedDocuments("ActiveEffect", [dead]);
     }
 
     // Otherwise either update or create the exhaustion effect.
     const data = {
-      label: game.i18n.localize("ZHELL.StatusConditionExhaustion"),
-      "flags.core.statusId": "exhaustion",
-      "flags.visual-active-effects.data.intro": `<p>${game.i18n.format("ZHELL.StatusConditionExhaustionDescription", {level: num})}</p>`,
+      name: game.i18n.localize("ZHELL.StatusConditionExhaustion"),
+      statuses: ["exhaustion"],
+      description: `<p>${game.i18n.format("ZHELL.StatusConditionExhaustionDescription", {level: num})}</p>`,
       "flags.zhell-custom-stuff.exhaustion": num,
       icon: "icons/skills/wounds/injury-body-pain-gray.webp",
       changes: [

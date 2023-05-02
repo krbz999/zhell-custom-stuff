@@ -61,13 +61,11 @@ async function INJURY_POISON(item, speaker, actor, token, character, event, args
   if (!use) return;
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
-    label: babData.name,
+    name: babData.name,
     icon: item.img,
-    "flags.visual-active-effects.data": {
-      intro: `<p>You have poisoned ${poisonItem.name}. It will deal additional poison damage when dealing piercing or slashing damage.</p>`,
-      content: item.system.description.value
-    },
-    "flags.core.statusId": `injury-poison-${poisonItem.id}`,
+    description: `You have poisoned ${poisonItem.name}. It will deal additional poison damage when dealing piercing or slashing damage.`,
+    statuses: [`injury-poison-${poisonItem.id}`],
+    "flags.visual-active-effects.data.content": item.system.description.value,
     "flags.babonus.bonuses": {[babData.id]: babData}
   }]);
 }

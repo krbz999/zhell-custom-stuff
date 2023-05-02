@@ -38,7 +38,7 @@
   opacity: 0.15;
 }
 
-#token-hud .col.right .status-effects .status-effect-label {
+#token-hud .col.right .status-effects .status-effect-name {
   font-size: 18px;
   text-align: left;
   margin: 0 0 0 3px;

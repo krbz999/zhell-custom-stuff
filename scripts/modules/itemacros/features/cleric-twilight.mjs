@@ -33,7 +33,7 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
   if (!use) return;
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
-    label: item.name,
+    name: item.name,
     origin: item.uuid,
     changes: [{
       key: "system.attributes.movement.fly",
@@ -42,11 +42,9 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
     }],
     duration: {seconds: 60},
     icon: item.img,
-    "flags.core.statusId": item.name.slugify({strict: true}),
-    "flags.visual-active-effects.data": {
-      intro: "<p>You have a flying speed equal to your walking speed.</p>",
-      content: item.system.description.value
-    }
+    statuses: [item.name.slugify({strict: true})],
+    description: "You have a flying speed equal to your walking speed.",
+    "flags.visual-active-effects.data.content": item.system.description.value
   }]);
 }
 
@@ -60,7 +58,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   const target = game.user.targets.first();
 
   // find Sequencer effect
-  const e = actor.effects.find(e => e.flags.core?.statusId === id);
+  const e = actor.effects.find(e => e.statuses.has(id));
 
   if (!e) {
     const use = await item.use();
@@ -68,14 +66,12 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
 
     const [eff] = await actor.createEmbeddedDocuments("ActiveEffect", [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
+      statuses: [id],
+      description: "When a creature ends their turn within your twilight sanctuary, you may choose to grant them temporary hit points or end the charmed or frightened condition on them.",
       "duration.seconds": 60,
-      "flags.visual-active-effects.data": {
-        intro: "<p>When a creature ends their turn within your twilight sanctuary, you may choose to grant them temporary hit points or end the charmed or frightened condition on them.</p>",
-        content: item.system.description.value
-      },
-      "flags.core.statusId": id
+      "flags.visual-active-effects.data.content": item.system.description.value,
     }]);
 
     return new Sequence()

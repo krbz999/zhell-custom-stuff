@@ -48,14 +48,12 @@ export async function WIELDING(item, speaker, actor, token, character, event, ar
 
   const [{id}] = await actor.createEmbeddedDocuments("ActiveEffect", [{
     icon: itemData.img,
-    label: `${itemData.name} (${item.name})`,
-    "flags.core.statusId": item.name.slugify({strict: true}),
+    name: `${itemData.name} (${item.name})`,
+    statuses: [item.name.slugify({strict: true})],
     origin: actor.uuid,
     duration: foundry.utils.deepClone(conc.duration),
-    "flags.visual-active-effects.data": {
-      intro: `<p>You are in control of ${itemData.name}.</p>`,
-      content: itemData.system.description.value
-    },
+    description: `You are in control of ${itemData.name}.`,
+    "flags.visual-active-effects.data.content": itemData.system.description.value,
     [`flags.${MODULE}`]: {itemData, types: ["use"]}
   }]);
 

@@ -56,7 +56,7 @@ Hooks.once("ready", function() {
 
   if (game.user.isGM) {
     if (game.settings.get(MODULE, "markDefeatedCombatants")) {
-      Hooks.on("updateToken", CombatEnhancements._markDefeatedCombatant);
+      Hooks.on("updateActor", CombatEnhancements._markDefeatedCombatant);
     }
     Hooks.on("getSceneConfigHeaderButtons", GameChangesHandler._sceneHeaderView);
     Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);

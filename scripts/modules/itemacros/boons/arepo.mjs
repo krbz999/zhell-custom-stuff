@@ -217,17 +217,14 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     await actor.sheet?.maximize();
     return actor.createEmbeddedDocuments("ActiveEffect", [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: actor.uuid,
       duration: {seconds: actor.system.attributes.prof * 60 * 60},
-      "flags.core.statusId": item.name.slugify({strict: true}),
-      "flags.visual-active-effects.data": {
-        intro: "<p>You are transformed using Find Friend.</p>",
-        content: item.system.description.value
-      },
+      statuses: [item.name.slugify({strict: true})],
+      description: "You are transformed using Find Friend.",
+      "flags.visual-active-effects.data.content": item.system.description.value,
       "flags.effectmacro.onDelete.script": `(${async function() {
-        const name = effect.label;
-        await warpgate.revert(token.document, name);
+        await warpgate.revert(token.document, effect.name);
         const sequence = new Sequence();
         sequence.effect().file("jb2a.explosion.tealyellow.1").attachTo(token).size(canvas.grid.size * 1.5).waitUntilFinished(-2000);
         const steedToken = canvas.scene.tokens.find(i => i.flags.world?.findFriend === actor.id);

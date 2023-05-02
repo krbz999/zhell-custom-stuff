@@ -49,7 +49,7 @@ export async function mayhem() {
     }[btn];
     const content = `
     <div class="zhell-custom-stuff mayhem">
-      <i class="fa-solid fa-bolt"></i> Mayhem!
+      <i class="fa-solid fa-bolt fa-shake"></i> Mayhem!
     </div>
     <p>${blurb}</p>
     <p style="text-align: center;">Current stack: <strong>${newValue}</strong></p>`;

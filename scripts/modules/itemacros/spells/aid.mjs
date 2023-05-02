@@ -22,22 +22,18 @@ export async function AID(item, speaker, actor, token, character, event, args) {
   }
 
   const effectData = {
-    label: item.name,
+    name: item.name,
     icon: item.img,
     duration: ItemMacroHelpers._getItemDuration(item),
     changes: [{key: "system.attributes.hp.tempmax", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 5 * (spellLevel - 1)}],
-    "flags.core.statusId": item.name.slugify({strict: true}),
-    "flags.visual-active-effects.data.intro": `<p>Your hit point maximum is increased by ${5 * (spellLevel - 1)}.</p>`,
+    statuses: [item.name.slugify({strict: true})],
+    description: `Your hit point maximum is increased by ${5 * (spellLevel - 1)}.`,
     "flags.effectmacro.data.spellLevel": spellLevel,
     "flags.effectmacro.onCreate.script": `(${onCreate.toString()})()`
   };
 
-  const updates = {embedded: {ActiveEffect: {[effectData.label]: effectData}}};
-  const options = {
-    permanent: true,
-    description: `${actor.name} is casting ${item.name} on you.`,
-    comparisonKeys: {ActiveEffect: "label"}
-  };
+  const updates = {embedded: {ActiveEffect: {[effectData.name]: effectData}}};
+  const options = {permanent: true, description: `${actor.name} is casting ${item.name} on you.`};
 
   ui.notifications.info("Granting hit points to your targets!");
   for (const target of targets) warpgate.mutate(target.document, updates, {}, options);

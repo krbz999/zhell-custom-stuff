@@ -15,13 +15,11 @@ export async function BLADE_CANTRIP(item, speaker, actor, token, character, even
 
   const effectData = [{
     icon: item.img,
-    label: item.name,
+    name: item.name,
     changes: [{key: "system.bonuses.mwak.damage", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: `+${formula}[${type}]`}],
-    "flags.core.statusId": item.name.slugify({strict: true}),
-    "flags.visual-active-effects.data": {
-      intro: `<p>You deal ${formula} additional ${type} damage on your next damage roll.</p>`,
-      content: item.system.description.value
-    },
+    statuses: [item.name.slugify({strict: true})],
+    description: `You deal ${formula} additional ${type} damage on your next damage roll.`,
+    "flags.visual-active-effects.data.content": item.system.description.value,
     "flags.effectmacro": {
       "dnd5e.rollDamage.script": `(${deleteMe.toString()})()`,
       "onCombatEnd.script": `(${deleteMe.toString()})()`

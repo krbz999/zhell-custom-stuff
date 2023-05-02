@@ -114,22 +114,19 @@ export class ItemMacroHelpers {
 
     return [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
       duration: {seconds: (value ? value : 1) * (units === "minute" ? 60 : units === "hour" ? 3600 : 1)},
+      statuses: [item.name.slugify({strict: true})],
+      description: intro ?? "You are lit up!",
       flags: foundry.utils.mergeObject({
-        "visual-active-effects.data": {
-          intro: intro ?? "<p>You are lit up!</p>",
-          content: item.system.description.value,
-          forceInclude: true
-        },
+        "visual-active-effects": {data: {content: item.system.description.value, forceInclude: true}},
         effectmacro: {
           lightConfig: config,
           onCreate: {script: `(${onCreate.toString()})()`},
           onDelete: {script: `(${onDelete.toString()})()`},
           onDisable: {script: `(${onDisable.toString()})()`}
-        },
-        core: {statusId: item.name.slugify({strict: true})}
+        }
       }, flags ?? {})
     }];
   }
@@ -157,10 +154,10 @@ export class ItemMacroHelpers {
 
     return [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
       duration: ItemMacroHelpers._getItemDuration(item),
-      "flags.core.statusId": item.name.slugify({strict: true}),
+      statuses: [item.name.slugify({strict: true})],
       "flags.effectmacro": {
         "onCreate.script": `(${onCreate.toString()})()`,
         "onEnable.script": `(${onCreate.toString()})()`,
@@ -178,13 +175,11 @@ export class ItemMacroHelpers {
    */
   static _constructGenericEffectData({item, level = null, types}) {
     return [{
-      label: item.name,
+      name: item.name,
       icon: item.img,
       duration: ItemMacroHelpers._getItemDuration(item),
-      "flags.core.statusId": item.name.slugify({strict: true}),
-      "flags.visual-active-effects.data": {
-        content: item.system.description.value
-      },
+      statuses: [item.name.slugify({strict: true})],
+      "flags.visual-active-effects.data.content": item.system.description.value,
       [`flags.${MODULE}`]: {
         itemData: item.clone({"system.level": level}, {keepId: true}).toObject(),
         types: types ? types : ["redisplay"]

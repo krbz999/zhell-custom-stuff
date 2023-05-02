@@ -10,18 +10,11 @@ import {DEPEND} from "../scripts/const.mjs";
 */
 export const SPELL_EFFECTS = [
   {
-    id: "bane", label: "ZHELL.StatusConditionBane", sort: 1100,
+    id: "bane", name: "ZHELL.StatusConditionBane", sort: 1100,
     icon: "assets/images/conditions/bane.webp",
     duration: {seconds: 60},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are under the effects of the Bane spell.</p>"
-            + "<p>You subtract <strong>1d4</strong> from all saving throws and attack rolls.</p>"
-        }
-      }
-    },
+    description: "You are under the effects of the Bane spell."
+      + "You subtract <strong>1d4</strong> from all saving throws and attack rolls.",
     changes: [
       {key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-1d4"},
       {key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-1d4"},
@@ -31,18 +24,11 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "bless", label: "ZHELL.StatusConditionBless", sort: 1000,
+    id: "bless", name: "ZHELL.StatusConditionBless", sort: 1000,
     icon: "assets/images/conditions/bless.webp",
     duration: {seconds: 60},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are under the effects of the Bless spell.</p>"
-            + "<p>You add a <strong>1d4</strong> bonus to all saving throws and attack rolls.</p>"
-        }
-      }
-    },
+    description: "You are under the effects of the Bless spell."
+      + "You add a <strong>1d4</strong> bonus to all saving throws and attack rolls.",
     changes: [
       {key: "system.bonuses.abilities.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"},
       {key: "system.bonuses.msak.attack", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"},
@@ -52,18 +38,11 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "haste", label: "ZHELL.StatusConditionHaste", sort: 1200,
+    id: "haste", name: "ZHELL.StatusConditionHaste", sort: 1200,
     icon: "assets/images/conditions/haste.webp",
     duration: {seconds: 60},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are under the effects of the Haste spell.</p>"
-            + "<p>Your movement speed is doubled, you have a +2 bonus to AC, and you have advantage on Dexterity saving throws.</p>"
-        }
-      }
-    },
+    description: "You are under the effects of the Haste spell."
+      + "Your movement speed is doubled, you have a +2 bonus to AC, and you have advantage on Dexterity saving throws.",
     changes: [
       {key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2},
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 2},
@@ -74,18 +53,11 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "slow", label: "ZHELL.StatusConditionSlow", sort: 1300,
+    id: "slow", name: "ZHELL.StatusConditionSlow", sort: 1300,
     icon: "assets/images/conditions/slowed.webp",
     duration: {seconds: 60},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are under the effects of the Slow spell.</p>"
-            + "<p>Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.</p>"
-        }
-      }
-    },
+    description: "You are under the effects of the Slow spell."
+      + "Your movement speed is halved, and you subtract 2 from your AC and Dexterity saving throws.",
     changes: [
       {key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2},
       {key: "system.abilities.dex.bonuses.save", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2},
@@ -97,33 +69,19 @@ export const SPELL_EFFECTS = [
     ]
   },
   {
-    id: "invisible", label: "ZHELL.StatusConditionInvisible", sort: 1500,
+    id: "invisible", name: "ZHELL.StatusConditionInvisible", sort: 1500,
     icon: "assets/images/conditions/invisible.webp",
     duration: {seconds: 3600},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are invisible.</p>"
-            + "<p>You are impossible to see, and are considered heavily obscured.</p>"
-            + "<p>Attack rolls against you have disadvantage, and your attack rolls have advantage.</p>"
-        }
-      }
-    }
+    description: "You are invisible."
+      + "You are impossible to see, and are considered heavily obscured."
+      + "Attack rolls against you have disadvantage, and your attack rolls have advantage."
   },
   {
-    id: "fly", label: "ZHELL.StatusConditionFlying", sort: 1400,
+    id: "fly", name: "ZHELL.StatusConditionFly", sort: 1400,
     icon: "assets/images/conditions/flying.webp",
     duration: {seconds: 600},
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are under the effects of the Fly spell.</p>"
-            + "<p>You have a flying speed of 60 feet.</p>"
-        }
-      }
-    },
+    description: "You are under the effects of the Fly spell."
+      + "You have a flying speed of 60 feet.",
     changes: [
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 60}
     ]
@@ -141,89 +99,43 @@ export const SPELL_EFFECTS = [
 */
 export const STATUS_EFFECTS = [
   {
-    id: "blind", label: "ZHELL.StatusConditionBlinded", sort: 300,
+    id: "blind", name: "ZHELL.StatusConditionBlind", sort: 300,
     icon: "assets/images/conditions/blinded.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You cannot see, and you automatically fail any ability checks that require sight.</p>"
-            + "<p>Attack rolls against you have advantage, and your attack rolls have disadvantage.</p>"
-        }
-      }
-    }
+    description: "You cannot see, and you automatically fail any ability checks that require sight."
+      + "Attack rolls against you have advantage, and your attack rolls have disadvantage."
   },
   {
-    id: "charm", label: "ZHELL.StatusConditionCharmed", sort: 200,
+    id: "charm", name: "ZHELL.StatusConditionCharm", sort: 200,
     icon: "assets/images/conditions/charmed.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You cannot attack the charmer or target them with harmful abilities or magical effects.</p>"
-            + "<p>The charmer has advantage on any ability check to interact socially with you.</p>"
-        }
-      }
-    }
+    description: "You cannot attack the charmer or target them with harmful abilities or magical effects."
+      + "The charmer has advantage on any ability check to interact socially with you."
   },
   {
-    id: "dead", label: "ZHELL.StatusConditionDead", sort: 100,
+    id: "dead", name: "ZHELL.StatusConditionDead", sort: 100,
     icon: "assets/images/conditions/dead.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro: "<p>You have met an unfortunate end.</p>"
-        }
-      }
-    }
+    description: "You have met an unfortunate end."
   },
   {
-    id: "deaf", label: "ZHELL.StatusConditionDeafened", sort: 330,
+    id: "deaf", name: "ZHELL.StatusConditionDeaf", sort: 330,
     icon: "assets/images/conditions/deafened.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro: "<p>You cannot hear and automatically fail any ability checks that require hearing.</p>"
-        }
-      }
-    }
+    description: "You cannot hear and automatically fail any ability checks that require hearing."
   },
   {
-    id: "mute", label: "ZHELL.StatusConditionMuted", sort: 360,
+    id: "mute", name: "ZHELL.StatusConditionMute", sort: 360,
     icon: "assets/images/conditions/muted.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You cannot speak and cannot cast spells with a verbal component.</p>"
-            + "<p>You automatically fail any ability checks that require speech.</p>"
-        }
-      }
-    }
+    description: "You cannot speak and cannot cast spells with a verbal component."
+      + "You automatically fail any ability checks that require speech."
   },
   {
-    id: "fear", label: "ZHELL.StatusConditionFrightened", sort: 250,
+    id: "fear", name: "ZHELL.StatusConditionFear", sort: 250,
     icon: "assets/images/conditions/frightened.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight.</p>"
-            + "<p>You cannot willingly move closer to the source of your fear.</p>"
-        }
-      }
-    }
+    description: "You have disadvantage on all attack rolls and ability checks while the source of your fear is within your line of sight."
+      + "You cannot willingly move closer to the source of your fear."
   },
   {
-    id: "grappled", label: "ZHELL.StatusConditionGrappled", sort: 430,
+    id: "grappled", name: "ZHELL.StatusConditionGrappled", sort: 430,
     icon: "assets/images/conditions/grappled.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro: "<p>Your speed is zero.</p>"
-        }
-      }
-    },
+    description: "Your speed is zero.",
     changes: [
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
@@ -233,29 +145,16 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "incapacitated", label: "ZHELL.StatusConditionIncapacitated", sort: 500,
+    id: "incapacitated", name: "ZHELL.StatusConditionIncapacitated", sort: 500,
     icon: "assets/images/conditions/incapacitated.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro: "<p>You cannot take actions or reactions.</p>"
-        }
-      }
-    }
+    description: "You cannot take actions or reactions."
   },
   {
-    id: "paralysis", label: "ZHELL.StatusConditionParalyzed", sort: 600,
+    id: "paralysis", name: "ZHELL.StatusConditionParalysis", sort: 600,
     icon: "assets/images/conditions/paralyzed.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are incapacitated, and you cannot move or speak.</p>"
-            + "<p>You automatically fail Strength and Dexterity saving throws.</p>"
-            + "<p>Attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.</p>"
-        }
-      }
-    },
+    description: "You are incapacitated, and you cannot move or speak."
+      + "You automatically fail Strength and Dexterity saving throws."
+      + "Attack rolls against you have advantage, and any attacks against you is a critical hit if the attacker is within 5 feet of you.",
     changes: [
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
@@ -265,56 +164,29 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "petrified", label: "ZHELL.StatusConditionPetrified", sort: 650,
+    id: "petrified", name: "ZHELL.StatusConditionPetrified", sort: 650,
     icon: "assets/images/conditions/petrified.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are inanimate, incapacitated, and unaware of your surroundings.</p>"
-            + "<p>Your weight is increased by a factor of ten, you cannot move or speak, and attack rolls against you have advantage.</p>"
-            + "<p>You automatically fail all Strength and Dexterity saving throws.</p>"
-            + "<p>You have resistance to all damage, and you are immune to poison and disease.</p>"
-        }
-      }
-    }
+    description: "You are inanimate, incapacitated, and unaware of your surroundings."
+      + "Your weight is increased by a factor of ten, you cannot move or speak, and attack rolls against you have advantage."
+      + "You automatically fail all Strength and Dexterity saving throws."
+      + "You have resistance to all damage, and you are immune to poison and disease."
   },
   {
-    id: "poison", label: "ZHELL.StatusConditionPoisoned", sort: 280,
+    id: "poison", name: "ZHELL.StatusConditionPoison", sort: 280,
     icon: "assets/images/conditions/poisoned.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro: "<p>You have disadvantage on all attack rolls and ability checks.</p>"
-        }
-      }
-    }
+    description: "You have disadvantage on all attack rolls and ability checks."
   },
   {
-    id: "prone", label: "ZHELL.StatusConditionProne", sort: 400,
+    id: "prone", name: "ZHELL.StatusConditionProne", sort: 400,
     icon: "assets/images/conditions/prone.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You can only crawl unless you expend half your movement to stand up.</p>"
-            + "<p>You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you; it otherwise has disadvantage.</p>"
-        }
-      }
-    }
+    description: "You can only crawl unless you expend half your movement to stand up."
+      + "You have disadvantage on attack rolls, and any attack roll has advantage against you if the attacker is within 5 feet of you; it otherwise has disadvantage."
   },
   {
-    id: "restrain", label: "ZHELL.StatusConditionRestrained", sort: 450,
+    id: "restrain", name: "ZHELL.StatusConditionRestrain", sort: 450,
     icon: "assets/images/conditions/restrained.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage.</p>"
-            + "<p>You have disadvantage on Dexterity saving throws.</p>"
-        }
-      }
-    },
+    description: "Your speed is zero, attack rolls against you have advantage, and your attack rolls have disadvantage."
+      + "You have disadvantage on Dexterity saving throws.",
     changes: [
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
@@ -324,17 +196,10 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "stun", label: "ZHELL.StatusConditionStunned", sort: 540,
+    id: "stun", name: "ZHELL.StatusConditionStun", sort: 540,
     icon: "assets/images/conditions/stunned.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are incapacitated, cannot move, and can speak only falteringly.</p>"
-            + "<p>You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.</p>"
-        }
-      }
-    },
+    description: "You are incapacitated, cannot move, and can speak only falteringly."
+      + "You automatically fail Strength and Dexterity saving throws, and attack rolls against you have advantage.",
     changes: [
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
@@ -344,17 +209,10 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "unconscious", label: "ZHELL.StatusConditionUnconscious", sort: 560,
+    id: "unconscious", name: "ZHELL.StatusConditionUnconscious", sort: 560,
     icon: "assets/images/conditions/unconscious.webp",
-    flags: {
-      [DEPEND.VAE]: {
-        data: {
-          intro:
-            "<p>You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws.</p>"
-            + "<p>Attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.</p>"
-        }
-      }
-    },
+    description: "You are incapacitated, cannot move or speak, you fall prone, and you automatically fail all Strength and Dexterity saving throws."
+      + "Attack rolls against you have advantage, and any attack that hits you is a critical hit if the attacker is within 5 feet of you.",
     changes: [
       {key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
       {key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY, value: 0, priority: 60},
@@ -364,11 +222,11 @@ export const STATUS_EFFECTS = [
     ]
   },
   {
-    id: "reaction", label: "ZHELL.StatusConditionReaction", sort: 1600,
+    id: "reaction", name: "ZHELL.StatusConditionReaction", sort: 1600,
     icon: "assets/images/conditions/reaction.webp",
     duration: {rounds: 1},
+    description: "You have spent your reaction. You cannot take another reaction until the start of your next turn.",
     flags: {
-      [DEPEND.VAE]: {data: {intro: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>"}},
       effectmacro: {
         onCombatEnd: {script: `(${function() {return effect.delete()}})()`},
         onCombatStart: {script: `(${function() {return effect.delete()}})()`},

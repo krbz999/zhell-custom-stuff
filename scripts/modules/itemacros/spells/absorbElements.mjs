@@ -25,14 +25,12 @@ export async function ABSORB_ELEMENTS(item, speaker, actor, token, character, ev
         {key: "system.bonuses.msak.damage", mode, value}
       ],
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
       duration: {rounds: 1},
-      "flags.core.statusId": item.name.slugify({strict: true}),
-      "flags.visual-active-effects.data": {
-        intro: `<p>You have ${s} resistance and deal ${level}d6 additional ${s} damage on your first melee attack before this effect expires.</p>`,
-        content: item.system.description.value
-      }
+      statuses: [item.name.slugify({strict: true})],
+      description: `You have ${s} resistance and deal ${level}d6 additional ${s} damage on your first melee attack before this effect expires.`,
+      "flags.visual-active-effects.data.content": item.system.description.value
     }];
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }

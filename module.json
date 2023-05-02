@@ -1,7 +1,7 @@
 {
   "id": "zhell-custom-stuff",
   "title": "Zhell's Custom Stuff",
-  "version": "10.0.38",
+  "version": "11.0.0",
   "authors": [
     {
       "name": "Zhell",
@@ -11,9 +11,9 @@
     }
   ],
   "compatibility": {
-    "minimum": "10",
-    "maximum": "10",
-    "verified": "10.291"
+    "minimum": "11",
+    "maximum": "11",
+    "verified": "11.296"
   },
   "esmodules": [
     "./setup.mjs"

@@ -60,7 +60,7 @@ async function HIT_DIE_APPLY(item, speaker, actor, token, character, event, args
 async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
   if (has) return has.delete();
 
   const use = await item.use();
@@ -73,7 +73,7 @@ async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args
 async function TORCH(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
   if (has) return has.delete();
 
   const use = await item.use();
@@ -149,7 +149,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
 async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const has = actor.effects.find(e => e.statuses(item.name.slugify({strict: true})));
   if (has) return has.delete();
 
   const oilFlask = actor.items.getName("Oil Flask");

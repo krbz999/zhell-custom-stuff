@@ -43,18 +43,15 @@ async function PAST_KNOWLEDGE(item, speaker, actor, token, character, event, arg
   async function _createEffectData(html, event) {
     const type = event.currentTarget.dataset.button;
     const effectData = [{
-      label: item.name,
+      name: item.name,
       icon: item.img,
       origin: item.uuid,
       duration: {seconds: 60},
       changes: [{key: "flags.dnd5e.concentrationBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+2"}],
+      statuses: [item.name.slugify({strict: true})],
+      description: "You have assumed the form of Yebraztos the Scrollkeeper.",
       flags: {
-        core: {statusId: item.name.slugify({strict: true})},
-        "visual-active-effects.data": {
-          forceInclude: true,
-          intro: "<p>You have assumed the form of Yebraztos the Scrollkeeper.</p>",
-          content: item.system.description.value
-        },
+        "visual-active-effects.data": {forceInclude: true, content: item.system.description.value},
         [MODULE]: {
           itemData: {
             name: "Energy Burst",

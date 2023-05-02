@@ -4,11 +4,9 @@ import {ItemMacroHelpers} from "../../itemMacros.mjs";
 export async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
 
-  const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify({strict: true});
-  });
+  const isActive = actor.effects.some(e => e.statuses.has(item.name.slugify({strict: true})));
   if (isActive) {
-    ui.notifications.warn("You already have a weapon summoned!");
+    ui.notifications.warn("You already have a weapon summoned! Use the buttons in the effect.");
     return null;
   }
 
