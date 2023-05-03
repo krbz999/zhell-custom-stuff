@@ -531,7 +531,6 @@ export class GameChangesHandler {
     }
   }
 
-  // ROTATE TOKENS WHEN THEY MOVE.
   /**
    * Rotate tokens when they move, unless their rotation is locked.
    * @param {TokenDocument} doc     The token document being updated.
