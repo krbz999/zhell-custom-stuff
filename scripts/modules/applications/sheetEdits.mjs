@@ -3,8 +3,6 @@ import {MateriaMedica} from "./materiaMedica.mjs";
 import {MoneySpender} from "./moneySpender.mjs";
 import {ExhaustionHandler} from "../zhell_functions.mjs";
 
-
-
 export class SheetEdits {
   constructor() {
     this.headers = new Set();
@@ -30,6 +28,7 @@ export class SheetEdits {
     if (isChar && this.settings.createMoneySpender) this._createMoneySpender();
     if (isChar) this._createNewDay();
     if (isChar) this._createInspirationToggle();
+    if (isChar) this._createAttunement();
   }
 
   /** Make 'Inspiration' a toggle. */
@@ -109,7 +108,7 @@ export class SheetEdits {
     const sheet = this.sheet;
     const actor = sheet.document;
 
-    if (this.settings.showSpellSlots) {
+    if (this.settings.checks.showSpellSlots) {
       Object.entries(actor.system.spells).forEach(([key, {value, max}]) => {
         const _max = this.html[0].querySelector(`.spell-max[data-level=${key}]`);
         const dotContainer = document.createElement("DIV");
@@ -131,7 +130,7 @@ export class SheetEdits {
       });
     }
 
-    if (this.settings.showLimitedUses) {
+    if (this.settings.checks.showLimitedUses) {
       actor.items.filter(i => !!i.hasLimitedUses).forEach(item => {
         const uses = item.system.uses;
         if (!uses.max) return;
@@ -365,6 +364,33 @@ export class SheetEdits {
     return this.document.updateEmbeddedDocuments("Item", updates);
   }
 
+  _createAttunement() {
+    const att = this.sheet.document.system.attributes.attunement;
+    const content = `
+    <div class="attunement-tracker">
+      <label class="attunement-label">Attunement</label>
+      <span class="attunement-value">${att.value}</span>
+      <span class="sep"> / </span>
+      <span class="attunement-max">${att.max}</span>
+        <a data-action="attunement-max-override" data-tooltip="Override Attunement">
+          <i class="fa-solid fa-edit"></i>
+        </a>
+      </span>
+    </div>`;
+    const div = document.createElement("DIV");
+    div.innerHTML = content;
+    div.querySelector("[data-action]").addEventListener("click", function(event) {
+      const name = "system.attributes.attunement.max";
+      const span = event.currentTarget.parentElement.querySelector(".attunement-max");
+      const div = document.createElement("DIV");
+      div.innerHTML = `<input type="number" data-dtype="Number" name="${name}" value="${att.max}">`;
+      div.querySelector("input").addEventListener("focus", (event) => event.currentTarget.select());
+      span.replaceWith(div.firstElementChild);
+      event.currentTarget.remove();
+    });
+    this.html[0].querySelector(".currency.flexrow").after(div.firstElementChild);
+  }
+
   static _performSheetEdits(sheet, html) {
     if (!sheet.sheetEdits) {
       const edits = new SheetEdits();
@@ -385,7 +411,7 @@ export class SheetEdits {
   static refreshColors() {
     const colors = game.settings.get(MODULE, "colorSettings");
     const stl = document.querySelector(":root").style;
-    for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors[key]);
-    for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors[key]);
+    for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors.sheetColors[key]);
+    for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors.rarityColors[key]);
   }
 }
