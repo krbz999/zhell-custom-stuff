@@ -53,7 +53,6 @@ export class ItemMacroHelpers {
     let abi = true;
     for (const id of moduleIds) {
       if (!game.modules.get(id)?.active) {
-        //console.warn(`Missing module for Item Macro: '${id}'.`);
         ui.notifications.warn(`Missing module for Item Macro: '${id}'.`);
         abi = false;
       }

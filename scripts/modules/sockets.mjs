@@ -3,7 +3,6 @@ import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 export class SocketsHandler {
   static socketsOn() {
     game.socket.on(`world.${game.world.id}`, function(request) {
-      console.log("REQUEST:", request);
       return SocketsHandler[request.action](request.data, false);
     });
   }

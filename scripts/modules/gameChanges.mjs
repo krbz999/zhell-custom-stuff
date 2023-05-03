@@ -431,7 +431,6 @@ export class GameChangesHandler {
    * @param {object} tokenData      The data of the token related to the HUD.
    */
   static _replaceTokenHUD(hud, html, tokenData) {
-    console.log({hud, html, tokenData});
     const sorting = CONFIG.statusEffects.reduce((acc, e) => {
       acc[e.id] = e.sort;
       return acc;
@@ -439,7 +438,6 @@ export class GameChangesHandler {
     const innerHTML = Object.values(tokenData.statusEffects).sort((a, b) => {
       return sorting[a.id] - sorting[b.id];
     }).reduce((acc, eff) => {
-      console.log({acc, eff});
       const condition = CONFIG.statusEffects.find(e => e.id === eff.id) ?? {};
       const clss = "status-effect effect-control";
       const atts = (eff.isActive ? "active" : "") + " " + (eff.isOverlay ? "overlay" : "");
