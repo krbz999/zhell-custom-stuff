@@ -664,6 +664,10 @@ span.flavor-text.zhell-apply-damage-flavor {
   position: relative;
 }
 
+.zhell-custom-stuff.class-page-renderer .content {
+  height: 100%;
+}
+
 .zhell-custom-stuff.class-page-renderer .tabs {
   font-size: 20px;
   font-family: 'Modesto Condensed';
