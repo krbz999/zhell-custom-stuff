@@ -2,8 +2,9 @@ import {MODULE} from "../const.mjs";
 
 /**
  * Get a document from a compendium.
- * @param {String} documentName Name of the document.
- * @param {String} catalog      Key of the compendium, or suffix of the catalog.
+ * @param {string} documentName     Name of the document.
+ * @param {string} catalog          Key of the compendium, or suffix of the catalog.
+ * @returns {Document}              The retrieved document.
  */
 export async function _getDocumentFromCompendium(documentName, catalog) {
   const key = `zhell-catalogs.${catalog}`;
@@ -16,7 +17,8 @@ export async function _getDocumentFromCompendium(documentName, catalog) {
 
 /**
  * Set the current foraging DC programmatically.
- * @param {Number} number The new foraging DC
+ * @param {number} number     The new foraging DC
+ * @returns {Setting}         The updated setting.
  */
 export async function _setForageDC(number) {
   if (!game.user.isGM) return ui.notifications.warn("Excuse me?");
@@ -25,14 +27,19 @@ export async function _setForageDC(number) {
 
 /**
  * Teleport the tokens within one circular area.
- * @param {Object} crosshairsConfig Options for the warpgate crosshairs.
- * @param {Boolean} fade            Whether or not to use Sequencer to fade in and out.
- * @param {Number} fadeDuration     The duration of the fade in and out.
+ * @param {object} [crosshairsConfig={}]      Options for the warpgate crosshairs.
+ * @param {boolean} [fade=true]               Whether or not to use Sequencer to fade in and out.
+ * @param {number} [fadeDuration=500]         The duration of the fade in and out.
+ * @returns {TokenDocument[]}                 The array of updated token documents.
  */
 export async function _teleportTokens(crosshairsConfig = {}, fade = true, fadeDuration = 500) {
   const config = foundry.utils.mergeObject({
-    size: 4, drawIcon: false, fillAlpha: 0.1,
-    lockSize: false, label: "Pick Up Tokens", interval: -1
+    size: 4,
+    drawIcon: false,
+    fillAlpha: 0.1,
+    lockSize: false,
+    label: "Pick Up Tokens",
+    interval: -1
   }, crosshairsConfig);
   // pick area of tokens.
   const origin = await warpgate.crosshairs.show(config);
@@ -81,12 +88,16 @@ export async function _teleportTokens(crosshairsConfig = {}, fade = true, fadeDu
 
 /**
  * Target all tokens within an area.
- * @param {Object} crosshairsConfig Options for the warpgate crosshairs.
+ * @param {object} crosshairsConfig     Options for the warpgate crosshairs.
+ * @returns {string[]}                  The array of token ids.
  */
 export async function _targetTokens(crosshairsConfig = {}) {
   const config = foundry.utils.mergeObject({
-    size: 4, drawIcon: false, fillAlpha: 0.1,
-    lockSize: false, rememberControlled: true,
+    size: 4,
+    drawIcon: false,
+    fillAlpha: 0.1,
+    lockSize: false,
+    rememberControlled: true,
     label: "Pick Targets",
   }, crosshairsConfig);
   const origin = await warpgate.crosshairs.show(config);
@@ -99,43 +110,40 @@ export async function _targetTokens(crosshairsConfig = {}) {
 
 /**
  * Get the user ids of the owners of an array of tokens.
- * @param {Array} tokens      An array of tokens.
- * @param {Boolean} excludeGM Whether or not to exclude GM user ids.
+ * @param {Token[]} [tokens=[]]           An array of tokens.
+ * @param {boolean} [excludeGM=false]     Whether or not to exclude GM user ids.
+ * @returns {string[]}                    The array of user ids.
  */
 export function _getTokenOwnerIds(tokens = [], excludeGM = false) {
-  const userIds = game.users.filter(user => {
-    return tokens.map(t => t.actor).some(a => {
-      return a?.testUserPermission(user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER);
-    });
-  }).map(i => i.id);
+  const userIds = game.users.reduce((acc, user) => {
+    if (tokens.some(t => t.document.testUserPermission(user, "OWNER"))) acc.push(user.id);
+    return acc;
+  }, []);
   if (excludeGM) return userIds.filter(i => !game.users.get(i).isGM);
   else return userIds;
 }
 
 /**
  * Render a dialog to whisper a set of players privately.
+ * @returns {Dialog}      The rendered dialog.
  */
 export async function _whisperPlayers() {
   const users = game.users.filter(u => u.id !== game.user.id);
   const characterIds = users.map(u => u.character?.id).filter(i => !!i);
-  const selectedPlayerIds = canvas.tokens.controlled.map(i => {
-    return i.actor.id;
-  }).filter(i => {
-    return characterIds.includes(i);
-  });
+  const selectedPlayerIds = canvas.tokens.controlled.reduce((acc, token) => {
+    if (characterIds.includes(token.actor.id)) acc.push(token.actor.id);
+    return acc;
+  }, []);
   const template = `modules/${MODULE}/templates/whisperDialog.hbs`;
   const characters = users.map(user => {
     const isControlled = selectedPlayerIds.includes(user.character?.id);
     const selected = (user.character && isControlled) ? "selected" : "";
-    const id = user.id;
-    const name = user.name;
-    return {selected, id, name};
+    return {selected, id: user.id, name: user.name};
   });
-  const content = await renderTemplate(template, {characters});
 
   return new Dialog({
     title: "Whisper",
-    content,
+    content: await renderTemplate(template, {characters}),
     buttons: {
       whisper: {
         icon: "<i class='fa-solid fa-envelope'></i>",
@@ -166,16 +174,16 @@ export async function _whisperPlayers() {
 
 /**
  * Convert a number to a Roman numeral.
- * @param {Number} number The number to convert.
+ * @param {number} number     The number to convert.
+ * @returns {string}          The converted number.
  */
 export function _romanize(number) {
   let num = Number(number);
   const roman = {
-    M: 1000, CM: 900, D: 500,
-    CD: 400, C: 100, XC: 90,
-    L: 50, XL: 40, X: 10,
+    M: 1000, CM: 900, D: 500, CD: 400, C: 100,
+    XC: 90, L: 50, XL: 40, X: 10,
     IX: 9, V: 5, IV: 4, I: 1
-  }
+  };
   let str = '';
 
   for (const i of Object.keys(roman)) {
@@ -297,8 +305,8 @@ export class ExhaustionHandler {
 
 /**
  * Show text on the screen for all users.
- * @param {String} text     The text to display.
- * @param {Number} fontSize The font size of the text.
+ * @param {string} text               The text to display.
+ * @param {number} [fontSize=80]      The font size of the text.
  */
 export async function _titleCard(text, fontSize = 80) {
   if (!text) {
@@ -318,7 +326,7 @@ export async function _titleCard(text, fontSize = 80) {
     lineJoin: "round",
     strokeThickness: 4,
     fontFamily: "Old Evils"
-  }
+  };
 
   return new Sequence()
     .effect().text(text, textStyle).screenSpace().screenSpaceAnchor({x: 0.5, y: 0.34}).duration(12000).fadeIn(2000).fadeOut(2000)
@@ -327,8 +335,9 @@ export async function _titleCard(text, fontSize = 80) {
 
 /**
  * Get whether a Token is contained within a TemplateDocument.
- * @param {Token5e} token                     The token placeable.
- * @param {MeasuredTemplateDocument} tempDoc  The template document.
+ * @param {Token} token                           The token placeable.
+ * @param {MeasuredTemplateDocument} tempDoc      The template document.
+ * @returns {boolean}                             Whether the token is contained.
  */
 export function _checkTokenInTemplate(token, tempDoc) {
   const {size} = canvas.scene.grid;
@@ -351,7 +360,7 @@ export function _checkTokenInTemplate(token, tempDoc) {
 
 /**
  * Release all tokens and then control all tokens contained within a template.
- * @param {MeasuredTemplateDocument} tempDoc The template document.
+ * @param {MeasuredTemplateDocument} tempDoc      The template document.
  */
 export function _selectContained(tempDoc) {
   const tokens = canvas.tokens.placeables.filter(token => {
