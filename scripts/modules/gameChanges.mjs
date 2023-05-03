@@ -32,6 +32,8 @@ export class GameChangesHandler {
   static _addConditions() {
     const toAdd = {turned: "Turned"};
     foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, toAdd);
+
+    CONFIG.DND5E.conditionTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.conditionTypes).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _addPiety() {
@@ -41,50 +43,23 @@ export class GameChangesHandler {
   }
 
   static _consumables() {
-    // the new consumable types.
-    const addedConsumableTypes = {
-      drink: "Drink",
-      elixir: "Elixir",
-      bomb: "Bomb",
-      trap: "Trap"
-    }
+    const toDelete = ["rod", "wand"];
+    for (const d of toDelete) delete CONFIG.DND5E.consumableTypes[d];
 
-    // delete unwanted consumable types.
-    const deletedConsumableTypes = ["rod", "wand"];
-    const oldObject = foundry.utils.deepClone(CONFIG.DND5E.consumableTypes);
-    for (const del of deletedConsumableTypes) delete oldObject[del];
+    const toAdd = {drink: "Drink", elixir: "Elixir", bomb: "Bomb", trap: "Trap"};
+    foundry.utils.mergeObject(CONFIG.DND5E.consumableTypes, toAdd);
 
-    // merge remaining with new types to add.
-    const newArray = Object.entries(addedConsumableTypes)
-      .concat(Object.entries(oldObject))
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-
-    CONFIG.DND5E.consumableTypes = Object.fromEntries(newArray);
+    CONFIG.DND5E.consumableTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.consumableTypes).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _languages() {
-    CONFIG.DND5E.languages = {
-      common: "Common",
-      cait: "Cait",
-      draconic: "Draconic",
-      dwarvish: "Dwarvish",
-      elvish: "Elvish",
-      infernal: "Infernal",
-      orc: "Orcish",
-      aarakocra: "Aarakocra",
-      abyssal: "Abyssal",
-      celestial: "Celestial",
-      giant: "Giant",
-      primordial: "Primordial",
-      aquan: "Aquan",
-      auran: "Auran",
-      ignan: "Ignan",
-      terran: "Terran",
-      sylvan: "Sylvan",
-      undercommon: "Undercommon",
-      cant: "Thieves' Cant",
-      druidic: "Druidic"
-    }
+    const toDelete = ["gnomish", "halfling"];
+    for (const lang of toDelete) delete CONFIG.DND5E.languages[lang];
+
+    const toAdd = {cait: "Cait", orc: "Orcish"};
+    foundry.utils.mergeObject(CONFIG.DND5E.languages, toAdd);
+
+    CONFIG.DND5E.languages = Object.fromEntries(Object.entries(CONFIG.DND5E.languages).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _tools() {
@@ -190,10 +165,8 @@ export class GameChangesHandler {
     };
 
     // delete some weapon properties.
-    const del = ["fir", "rel"];
-    del.forEach(property => {
-      delete CONFIG.DND5E.weaponProperties[property];
-    });
+    const toDelete = ["fir", "rel"];
+    for(const d of toDelete) delete CONFIG.DND5E.weaponProperties[d];
   }
 
   static _conditions() {
@@ -337,7 +310,7 @@ export class GameChangesHandler {
    * @param {HTMLElement} html      The sheet's element.
    */
   static async _itemStatusCondition(sheet, html) {
-    if (sheet.document.actor || !sheet.isEditable) return;
+    if (!sheet.isEditable) return;
     const list = html[0].querySelector(".items-list.effects-list");
     if (!list) return;
 

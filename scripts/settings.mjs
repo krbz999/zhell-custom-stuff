@@ -1,8 +1,4 @@
-import {
-  COLOR_DEFAULTS,
-  MODULE,
-  WORLD_DEFAULTS
-} from "./const.mjs";
+import {COLOR_DEFAULTS, MODULE, WORLD_DEFAULTS} from "./const.mjs";
 import {ColorationMenu, GameChangesMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 import {SheetEdits} from "./modules/applications/sheetEdits.mjs";
 
