@@ -196,7 +196,7 @@ export class ExhaustionHandler {
       return null;
     }
 
-    // get current exhaustion effect, if any.
+    // Get current exhaustion effect, if any.
     const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if exhausted, increase the level.
@@ -216,7 +216,7 @@ export class ExhaustionHandler {
       return null;
     }
 
-    // get current exhaustion effect, if any.
+    // Get current exhaustion effect, if any.
     const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if exhausted, decrease the level.
@@ -242,7 +242,7 @@ export class ExhaustionHandler {
       return null;
     }
 
-    // Attempt to find any current exhaustion effect.
+    // Get current exhaustion effect, if any.
     const exhaustion = actor.effects.find(i => i.statuses.has("exhaustion"));
 
     // if num===0, remove it.
