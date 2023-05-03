@@ -5,6 +5,7 @@ export class CombatEnhancements {
    * Mark a non-player-owned and unlinked combatant's token as defeated when it reaches zero hit points.
    * @param {Actor} actor         The actor that was updated.
    * @param {object} updates      The update performed on the actor.
+   * @returns {Combatant}         The combatant that was updated.
    */
   static async _markDefeatedCombatant(actor, updates) {
     if (actor.hasPlayerOwner || !actor.inCombat) return;
@@ -21,6 +22,7 @@ export class CombatEnhancements {
    * @param {Item} weapon             The item making the attack roll.
    * @param {D20Roll} roll            The roll result.
    * @param {object[]} ammoUpdate     The updates to consumed ammo item(s).
+   * @returns {ChatMessage}           The displayed chat message.
    */
   static async _displaySavingThrowAmmo(weapon, roll, ammoUpdate) {
     if (!ammoUpdate.length) return;
@@ -35,6 +37,7 @@ export class CombatEnhancements {
    * The effect is altered to show the name of the item used and is removed at the start of the same actor's
    * turn. This hook only fires during combat and can be toggled to fire for GM, none, or players too.
    * @param {Item} item     The item that was used.
+   * @returns {boolean}     Whether the effect is now on or off (always true).
    */
   static _spendReaction(item) {
     if (item.system.activation?.type !== "reaction") return;
@@ -55,6 +58,7 @@ export class CombatEnhancements {
    * @param {object} update       The update object used to update the combat document.
    * @param {object} context      Object of update options.
    * @param {string} userId       The id of the user performing the update.
+   * @returns {ChatMessage}       The created chat message notification.
    */
   static async _rechargeMonsterFeatures(combat, update, context, userId) {
     if (!game.user.isGM || (context.direction !== 1)) return;
@@ -67,7 +71,7 @@ export class CombatEnhancements {
     }
     if ((actor.type !== "npc") || !(actor.system.resources.legact.max > 0)) return;
     await actor.update({"system.resources.legact.value": actor.system.resources.legact.max});
-    await ChatMessage.create({
+    return ChatMessage.create({
       content: `${actor.name}'s legendary actions were reset.`,
       whisper: [game.user.id]
     });
