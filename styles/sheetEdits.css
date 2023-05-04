@@ -163,8 +163,7 @@
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
-.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
-.dnd5e.sheet.actor .characteristics label.no-edit + textarea {
+.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control {
   display: none;
 }
 
