@@ -1,5 +1,6 @@
 import {ClassPageRenderer} from "./modules/applications/classPages.mjs";
 import {PartyFeatures} from "./modules/applications/partyFeatures.mjs";
+import {WhisperPlayers} from "./modules/applications/whisperPlayers.mjs";
 import {gameTools} from "./modules/gameTools/_gameTools.mjs";
 import {ITEMACRO, ItemMacroHelpers} from "./modules/itemMacros.mjs";
 import {PublicAPI} from "./modules/publicAPI.mjs";
@@ -18,7 +19,7 @@ export function setupAPI() {
       setForageDC: PublicAPI._setForageDC,
       getDocument: PublicAPI._getDocumentFromCompendium,
       roman: PublicAPI._romanize,
-      whisperPlayers: PublicAPI._whisperPlayers,
+      whisperPlayers: WhisperPlayers.whisperPlayers,
       titleCard: PublicAPI._titleCard,
       drawCircle: ItemMacroHelpers.drawCircle,
       loadTextureForAll: SocketsHandler.loadTextureForAll,

@@ -125,55 +125,6 @@ export class PublicAPI {
   }
 
   /**
-   * Render a dialog to whisper a set of players privately.
-   * @returns {Dialog}      The rendered dialog.
-   */
-  static async _whisperPlayers() {
-    const users = game.users.filter(u => u.id !== game.user.id);
-    const characterIds = users.map(u => u.character?.id).filter(i => !!i);
-    const selectedPlayerIds = canvas.tokens.controlled.reduce((acc, token) => {
-      if (characterIds.includes(token.actor.id)) acc.push(token.actor.id);
-      return acc;
-    }, []);
-    const template = `modules/${MODULE}/templates/whisperDialog.hbs`;
-    const characters = users.map(user => {
-      const isControlled = selectedPlayerIds.includes(user.character?.id);
-      const selected = (user.character && isControlled) ? "selected" : "";
-      return {selected, id: user.id, name: user.name};
-    });
-
-    return new Dialog({
-      title: "Whisper",
-      content: await renderTemplate(template, {characters}),
-      buttons: {
-        whisper: {
-          icon: "<i class='fa-solid fa-envelope'></i>",
-          label: "Whisper",
-          callback: async (html) => {
-            let content = html[0].querySelector("textarea").value;
-            if (!content) return;
-
-            content = content.split("\n").reduce((acc, e) => {
-              return acc + `<p>${e.trim()}</p>`;
-            }, "");
-            const whisperIds = new Set();
-            for (const {id} of users) {
-              if (html[0].querySelector(`span[id="${id}"].selected`)) whisperIds.add(id);
-            }
-            const whisper = whisperIds.size ? Array.from(whisperIds) : [game.user.id];
-            return ChatMessage.create({content, whisper});
-          }
-        }
-      },
-      render: (html) => {
-        html[0].querySelectorAll(".zhell-whisper .player-name").forEach(n => {
-          n.addEventListener("click", (event) => event.currentTarget.classList.toggle("selected"));
-        });
-      },
-    }, {classes: ["dialog", "zhell-whisper"]}).render(true, {height: "auto"});
-  }
-
-  /**
    * Convert a number to a Roman numeral.
    * @param {number} number     The number to convert.
    * @returns {string}          The converted number.

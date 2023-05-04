@@ -45,38 +45,34 @@
 }
 
 /* WHISPER DIALOG */
-.zhell-whisper form {
-  margin: 1em 0;
+.zhell-custom-stuff.whisper-dialog {
+  height: auto !important;
+  width: 400px !important;
 }
 
-.zhell-whisper .form-fields {
+.zhell-custom-stuff.whisper-dialog .players {
   display: grid;
   grid-template-columns: auto auto auto;
   gap: 3px;
+  padding-bottom: 1em;
 }
 
-.zhell-whisper textarea {
+.zhell-custom-stuff.whisper-dialog textarea {
   resize: none;
 }
 
-.zhell-whisper .player-name {
-  padding: 5px 0;
+.zhell-custom-stuff.whisper-dialog [data-action="player"] {
   border: 1px solid black;
   border-radius: 5px;
   text-align: center;
   transition: 0.15s;
   transform: scale(0.9);
-  font-family: 'Modesto Condensed';
-  font-size: 23px;
+  font-size: 20px;
 }
 
-.zhell-whisper .player-name.selected {
+.zhell-custom-stuff.whisper-dialog [data-action="player"].selected {
   background-color: darkgray;
   transform: scale(1.0);
-}
-
-.zhell-whisper .player-name:not(.selected):hover {
-  box-shadow: 0 0 8px red;
 }
 
 /* COLLAPSIBLES */
