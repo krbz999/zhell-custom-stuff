@@ -2,7 +2,6 @@ import {MODULE} from "../const.mjs";
 import {SPELL_EFFECTS, STATUS_EFFECTS} from "../../sources/conditions.mjs";
 
 export class GameChangesHandler {
-
   // hooks on setup.
   static _setUpGameChanges() {
     const settings = game.settings.get(MODULE, "worldSettings");
@@ -16,7 +15,6 @@ export class GameChangesHandler {
     if (settings.replaceWeapons) GameChangesHandler._weapons();
     if (settings.replaceTokenConditions) GameChangesHandler._conditions();
   }
-
 
   static _addEquipment() {
     const toAdd = {wand: "Wand"};
@@ -176,7 +174,6 @@ export class GameChangesHandler {
     });
     CONFIG.statusEffects = statusEffects;
   }
-
 
   // Add 'View' button to scene headers for the GM.
   static _sceneHeaderView(app, array) {

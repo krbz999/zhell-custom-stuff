@@ -43,7 +43,6 @@ export const ITEMACRO = {
 };
 
 export class ItemMacroHelpers {
-
   /**
    * Helper function to verify that all module dependencies are installed and active for a particular item macro.
    * @param {string[]} moduleIds      The array of module ids.
