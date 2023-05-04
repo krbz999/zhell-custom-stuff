@@ -8,8 +8,8 @@ import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
 import {SheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
-import {ExhaustionHandler} from "./scripts/modules/publicAPI.mjs";
 import {setupAPI} from "./scripts/apiSetup.mjs";
+import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -17,6 +17,7 @@ Hooks.once("init", GameChangesHandler._visionModes);
 Hooks.once("setup", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", GameChangesHandler._miscAdjustments);
+Hooks.once("setup", ExhaustionHandler._appendActorMethods);
 Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);
 Hooks.once("ready", SheetEdits.refreshColors);

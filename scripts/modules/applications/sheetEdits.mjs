@@ -1,7 +1,6 @@
 import {COLOR_DEFAULTS, MODULE} from "../../const.mjs";
 import {MateriaMedica} from "./materiaMedica.mjs";
 import {MoneySpender} from "./moneySpender.mjs";
-import {ExhaustionHandler} from "../zhell_functions.mjs";
 
 export class SheetEdits {
   constructor() {
@@ -270,16 +269,23 @@ export class SheetEdits {
       up: {
         icon: "<i class='fa-solid fa-arrow-up'></i>",
         label: "Gain a Level",
-        callback: () => ExhaustionHandler.increaseExhaustion(actor)
+        callback: _applyExhaustion
       },
       down: {
         icon: "<i class='fa-solid fa-arrow-down'></i>",
         label: "Down a Level",
-        callback: () => ExhaustionHandler.decreaseExhaustion(actor)
+        callback: _applyExhaustion
       }
     };
     if (level < 1) delete buttons.down;
     if (level > 10) delete buttons.up;
+
+    function _applyExhaustion(html, event) {
+      const type = event.currentTarget.dataset.button;
+      const num = (type === "up") ? (level + 1) : (type === "down") ? (level - 1) : null;
+      if (num === null) return ui.notifications.warn("EXHAUSTION ERROR");
+      return actor.applyExhaustion(num);
+    }
 
     return new Dialog({
       title: `Exhaustion: ${actor.name}`,
