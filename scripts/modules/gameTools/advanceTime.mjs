@@ -1,8 +1,6 @@
 export async function advanceTime(s = null) {
   const content = `
-  <p style="text-align: center;">
-    Advance time by a number of seconds.
-  </p>
+  <p style="text-align: center;">Advance time by a number of seconds.</p>
   <form class="dnd5e">
   <div class="form-group">
     <label>Seconds:</label>
