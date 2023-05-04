@@ -1,23 +1,18 @@
 import {registerSettings} from "./scripts/settings.mjs";
-import {api} from "./scripts/api.mjs";
 import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
-import {
-  AnimationsHandler,
-  _equipmentPageListeners,
-  _initD20,
-  _setupCollapsibles
-} from "./scripts/modules/animations.mjs";
+import {AnimationsHandler, _equipmentPageListeners, _initD20, _setupCollapsibles} from "./scripts/modules/animations.mjs";
 import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
 import {DEPEND, MODULE} from "./scripts/const.mjs";
-import {ExhaustionHandler} from "./scripts/modules/zhell_functions.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
 import {SheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
+import {ExhaustionHandler} from "./scripts/modules/publicAPI.mjs";
+import {setupAPI} from "./scripts/apiSetup.mjs";
 
 Hooks.once("init", registerSettings);
-Hooks.once("init", api.register);
+Hooks.once("init", setupAPI);
 Hooks.once("init", GameChangesHandler._visionModes);
 Hooks.once("setup", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
