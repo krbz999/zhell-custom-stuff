@@ -164,7 +164,7 @@ export class GameChangesHandler {
 
     // delete some weapon properties.
     const toDelete = ["fir", "rel"];
-    for(const d of toDelete) delete CONFIG.DND5E.weaponProperties[d];
+    for (const d of toDelete) delete CONFIG.DND5E.weaponProperties[d];
   }
 
   static _conditions() {
@@ -207,14 +207,18 @@ export class GameChangesHandler {
 
   // delete items after a rest.
   static async _restItemDeletion(actor, data) {
-    if (!data.longRest) return;
-    const ids = actor.items.filter(item => {
-      return item.flags[MODULE]?.longRestDestroy;
-    }).map(i => i.id);
+    const property = data.longRest ? "longRestDestroy" : "shortRestDestroy";
+    const {ids, content} = actor.items.reduce((acc, item) => {
+      if (item.flags[MODULE]?.[property]) {
+        acc.ids.push(item.id);
+        acc.content += `<li>${item.name}</li>`;
+      }
+      return acc;
+    }, {ids: [], content: ""});
     if (!ids.length) return;
     await actor.deleteEmbeddedDocuments("Item", ids);
     return ChatMessage.create({
-      content: `${actor.name}'s experimental elixirs evaporated.`,
+      content: `Some of ${actor.name}'s items were destroyed:<ul>${content}</ul>`,
       speaker: ChatMessage.getSpeaker({actor})
     });
   }
