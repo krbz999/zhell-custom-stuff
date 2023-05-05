@@ -61,9 +61,8 @@ async function SONG_OF_WITHERTIDE(item, speaker, actor, token, character, event,
 }
 
 /**
- * Initiate a dialog to choose a new form for the actor and the form the steed should
- * take. Then summon the steed and change forms. When the associated effect is deleted
- * the actor reverts, and the steed is dismissed.
+ * Initiate a dialog to choose a new form for the actor and the form the steed should take. Then summon the
+ * steed and change forms. When the associated effect is deleted the actor reverts, and the steed is dismissed.
  */
 async function FIND_FRIEND(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.WG, DEPEND.JB2A, DEPEND.EM)) return item.use();
@@ -91,7 +90,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       "sandpiper",
       "seagull"
     ].map(n => ({name: n, src: `${prefix}${n}.webp`}))
-  }
+  };
 
   // get whether the actor has a mutation.
   const hasMutation = await warpgate.mutationStack(token.document).getName(item.name);
@@ -100,7 +99,12 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
   await Promise.all([...data.top, ...data.bottom].map(({src}) => loadTexture(src)));
   const use = await item.use();
   if (!use) return;
-  return new ImageAnchorPicker({title: item.name, ...data, label: "Show us the meaning of haste!", callback: _onMutate}).render(true);
+  return new ImageAnchorPicker({
+    title: item.name,
+    ...data,
+    label: "Show us the meaning of haste!",
+    callback: _onMutate
+  }).render(true);
 
   function _generateUpdateObjects(nameSteed, nameShape) {
     // movement speeds.
@@ -120,10 +124,11 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     // updates to the shape and steed that are constant no matter the choice.
     const constantShape = {
       actor: {
-        "system.attributes.hp": {value: 4, max: 4},
-        "system.attributes.ac": {calc: "natural", flat: 12},
-        "system.traits.size": "tiny",
-        "system.abilities": {"str.value": 2, "dex.value": 14, "con.value": 10}
+        system: {
+          attributes: {hp: {value: 4, max: 4}, ac: {calc: "natural", flat: 12}},
+          traits: {size: "tiny"},
+          abilities: {str: {value: 2}, dex: {value: 14}, con: {value: 10}}
+        }
       },
       token: {width: 0.5, height: 0.5}
     };
@@ -160,20 +165,28 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     };
 
     const updatesSteed = foundry.utils.mergeObject({
-      "token.texture.src": prefix + nameSteed + ".webp",
-      "token.name": nameSteed.titleCase(),
-      "actor.img": prefix + nameSteed + ".webp",
-      "actor.name": nameSteed.titleCase(),
-      "actor.system.attributes.movement": steedMovement[nameSteed],
-      "embedded.Item": embedded[nameSteed]
+      token: {
+        texture: {src: `${prefix}${nameSteed}.webp`},
+        name: nameSteed.titleCase()
+      },
+      actor: {
+        img: `${prefix}${nameSteed}.webp`,
+        name: nameSteed.titleCase(),
+        system: {attributes: {movement: steedMovement[nameSteed]}}
+      },
+      embedded: {
+        Item: embedded[nameSteed]
+      }
     }, constantSteed);
 
     const updatesShape = foundry.utils.mergeObject({
-      "token.texture.src": prefix + nameShape + ".webp",
-      "token.texture.scaleX": 1,
-      "token.texture.scaleY": 1,
-      "actor.system.attributes.movement": shapeMovement[nameShape],
-      "actor.img": prefix + nameShape + ".webp"
+      token: {
+        texture: {src: `${prefix}${nameShape}.webp`, scaleX: 1, scaleY: 1},
+      },
+      actor: {
+        system: {attributes: {movement: shapeMovement[nameShape]}},
+        img: `${prefix}${nameShape}.webp`
+      }
     }, constantShape);
 
     return {updatesSteed, updatesShape};
