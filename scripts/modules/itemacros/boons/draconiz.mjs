@@ -81,9 +81,13 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
 
   const target = game.user.targets.first();
   if (!target?.actor) {
-    ui.notifications.warn("If you had a target, you'd know immediately.");
-    return;
+    return ui.notifications.warn("If you had a target, you'd know immediately.");
   }
+
+  if (["vehicle", "group"].includes(target.actor.type)) {
+    return ui.notifications.warn("You can only compare your abilities to that of another creature.");
+  }
+
   const mine = actor.system.abilities;
   const theirs = target.actor.system.abilities;
 
