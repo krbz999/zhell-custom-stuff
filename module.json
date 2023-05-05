@@ -7,13 +7,13 @@
       "name": "Zhell",
       "url": "https://github.com/krbz999",
       "discord": "Zhell#9201",
-      "ko-fi": "https://ko-fi.com/zhell"
+      "ko-fi": "https://ko-fi.com/zhell",
+      "patreon": "https://patreon.com/zhell"
     }
   ],
   "compatibility": {
     "minimum": "11",
-    "maximum": "11",
-    "verified": "11.296"
+    "maximum": "11"
   },
   "esmodules": [
     "./setup.mjs"
@@ -31,6 +31,12 @@
       "description": "Personal module for replacing or adding to many things."
     }
   ],
+  "flags": {
+    "hotReload": {
+      "extensions": ["css", "hbs", "json"],
+      "paths": []
+    }
+  },
   "url": "https://github.com/krbz999/zhell-custom-stuff",
   "manifest": "https://raw.githubusercontent.com/krbz999/zhell-custom-stuff/main/module.json",
   "download": "https://github.com/krbz999/zhell-custom-stuff/raw/main/module.zip"
