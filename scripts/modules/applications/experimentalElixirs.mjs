@@ -339,7 +339,7 @@ export class ExperimentalElixir extends Application {
       ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.item.name}));
       return;
     }
-    const roll = await new Roll("(@scale.alchemist.elixirs)d8x8rr8", this.rollData).evaluate({async: true});
+    const roll = await new Roll("(@scale.alchemist.elixirs)d8x8rr8", this.rollData).evaluate();
     await roll.toMessage({
       speaker: this.speaker,
       flavor: game.i18n.format("ZHELL.ExperimentalElixirRollRandom", {name: this.actor.name})
