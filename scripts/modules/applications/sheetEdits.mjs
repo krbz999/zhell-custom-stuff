@@ -130,7 +130,7 @@ export class SheetEdits {
     }
 
     if (this.settings.checks.showLimitedUses) {
-      actor.items.filter(i => !!i.hasLimitedUses).forEach(item => {
+      actor.items.filter(i => i.hasLimitedUses).forEach(item => {
         const uses = item.system.uses;
         if (!uses.max) return;
         const itemHTML = this.html[0].querySelector(`.item[data-item-id="${item.id}"]`);

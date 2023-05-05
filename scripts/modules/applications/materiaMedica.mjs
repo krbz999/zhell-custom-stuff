@@ -110,10 +110,10 @@ export class MateriaMedica extends Application {
     const {potions, poisons, misc} = this.uuids;
     for (const n of [2, 4, 6, 8, 10]) {
       const [itemA, itemB, itemC] = await Promise.all([fromUuid(potions[n]), fromUuid(poisons[n]), fromUuid(misc[n])]);
-      const scalingH = n === 2 ? this._getScalingHealing(materials, this.speedCrafting) : null;
-      const scalingD = n === 2 ? this._getScalingDamage(materials) : null;
-      const costA = n === 2 ? "varies" : n;
-      const costB = `${n === 2 ? "varies" : n} + method`;
+      const scalingH = (n === 2) ? this._getScalingHealing(materials, this.speedCrafting) : null;
+      const scalingD = (n === 2) ? this._getScalingDamage(materials) : null;
+      const costA = (n === 2) ? "varies" : n;
+      const costB = `${(n === 2) ? "varies" : n} + method`;
       potionItems.push({button: itemA.name, uuid: potions[n], scaling: scalingH, description: itemA.system.description.value, cost: costA});
       poisonItems.push({button: itemB.name, uuid: poisons[n], scaling: scalingD, description: itemB.system.description.value, cost: costB});
       miscItems.push({button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n});
@@ -124,10 +124,13 @@ export class MateriaMedica extends Application {
     const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({value: cost, label: `${label} (${cost})`}));
 
     /* FORAGING */
-    const forageOptions = this.actor.items.filter(item => {
-      return (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
-    }).map(tool => ({id: tool.id, label: tool.name})).concat([
-      {id: "nat", label: "Nature"}, {id: "sur", label: "Survival"}
+    const forageOptions = this.actor.items.reduce((acc, item) => {
+      const valid = (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
+      if (valid) acc.push({id: item.id, label: item.name});
+      return acc;
+    }, [
+      {id: "nat", label: CONFIG.DND5E.skills.nat.label},
+      {id: "sur", label: CONFIG.DND5E.skills.sur.label}
     ]);
 
     return foundry.utils.mergeObject(data, {
@@ -159,13 +162,13 @@ export class MateriaMedica extends Application {
       return;
     }
     const type = target.closest(".tab").querySelector("#forage-tool").value;
-    const fumble = null;
-    const critical = null;
     const tool = this.actor.items.get(type);
 
     const rollConfig = {
       targetValue: this.targetValue,
-      fumble, critical, event,
+      fumble: null,
+      critical: null,
+      event,
       dialogOptions: {
         left: event.clientX - 200,
         top: event.clientY - 180

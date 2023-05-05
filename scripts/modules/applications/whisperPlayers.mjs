@@ -14,7 +14,10 @@ export class WhisperPlayers extends Application {
   /** @override */
   async getData() {
     const users = game.users.filter(u => u.id !== game.user.id);
-    const characterIds = users.map(u => u.character?.id).filter(i => !!i);
+    const characterIds = users.reduce((acc, u) => {
+      if (u.character?.id) acc.push(u.character.id);
+      return acc;
+    }, [])
     const selectedPlayerIds = canvas.tokens.controlled.reduce((acc, token) => {
       if (characterIds.includes(token.actor.id)) acc.push(token.actor.id);
       return acc;
