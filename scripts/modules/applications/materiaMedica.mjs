@@ -119,7 +119,6 @@ export class MateriaMedica extends Application {
       miscItems.push({button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n});
     }
 
-
     /* POISONS */
     const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({value: cost, label: `${label} (${cost})`}));
 
@@ -140,7 +139,9 @@ export class MateriaMedica extends Application {
       max: this.maxRolls,
       potionItems,
       poisonItems,
-      miscItems
+      miscItems,
+      healIdx: this.healIdx,
+      poisIdx: this.poisIdx
     });
   }
 
@@ -394,41 +395,50 @@ export class MateriaMedica extends Application {
   }
 
   _refreshDropdowns() {
-    const heal = this.element[0].querySelector("#scale-potion");
-    const healI = heal.selectedIndex;
-    heal.innerHTML = this._getScalingHealing(this.materials, this.speedCrafting);
-    heal.selectedIndex = Math.clamped(healI, 0, heal.childElementCount - 1);
+    const tab = this.element[0].querySelector("[data-tab].active").dataset.tab;
+    const healIdx = this.element[0].querySelector("#scale-potion").value;
+    const poisIdx = this.element[0].querySelector("#scale-poison").value;
+    return this.render(true, {tab, healIdx, poisIdx});
+  }
 
-    const dmg = this.element[0].querySelector("#scale-poison");
-    const dmgI = dmg.selectedIndex;
-    dmg.innerHTML = this._getScalingDamage(this.materials);
-    dmg.selectedIndex = Math.clamped(dmgI, 0, dmg.childElementCount - 1);
+  /** @override */
+  async render(force, options = {}) {
+    this.healIdx = options.healIdx;
+    this.poisIdx = options.poisIdx;
+    this.initial = options.initial;
+    return super.render(force, options);
+  }
+
+  /** @override */
+  async _renderInner(data) {
+    if (this.initial) this._tabs[0].active = this.initial;
+    return super._renderInner(data);
   }
 
   _getScalingDamage(materials) {
-    let scalingDamage = "<option value=''>&mdash;</option>";
+    const options = [{value: null, label: "-"}];
     let mult = 1;
     let roll = new Roll("2d6 + 2");
     while (2 * mult <= materials) {
-      scalingDamage += `<option value="${2 * mult}">${roll.formula}</option>`;
+      options.push({value: 2 * mult, label: roll.formula});
       mult++;
       roll = new Roll("2d6 + 2").alter(mult, 0, {multiplyNumeric: true});
     }
-    return scalingDamage;
+    return options;
   }
 
   /* Helper methods to create the select options. */
   _getScalingHealing(materials, speedCrafting = false) {
-    let scalingHeal = "<option value=''>&mdash;</option>";
+    const options = [{value: null, label: "-"}];
     let power = 1;
     let roll = new Roll("2d4 + 2");
     const upperBound = materials * (speedCrafting ? 2 : 1);
     while (2 ** power <= upperBound) {
-      scalingHeal += `<option value="${2 ** power}">${roll.formula}</option>`;
+      options.push({value: 2 ** power, label: roll.formula});
       power++;
       roll = roll.alter(2, 0, {multiplyNumeric: true});
     }
-    return scalingHeal;
+    return options;
   }
 
   static setUpCharacterFlag() {
