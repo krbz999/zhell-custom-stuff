@@ -16,6 +16,6 @@ export async function SHIELD(item, speaker, actor, token, character, event, args
     statuses: [item.name.slugify({strict: true})],
     description: "You have a +5 bonus to your AC and immunity to damage from the Magic Missile spell.",
     "flags.visual-active-effects.data.content": item.system.description.value,
-    "flags.effectmacro.onTurnStart.script": `(${function() {return effect.delete();}})()`
+    "flags.effectmacro.onTurnStart.script": "return effect.delete();"
   }]);
 }

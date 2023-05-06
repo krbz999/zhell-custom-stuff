@@ -7,12 +7,7 @@ export async function BLADE_CANTRIP(item, speaker, actor, token, character, even
   const use = await item.use();
   if (!use) return;
 
-  const deleteMe = async function() {
-    return effect.delete();
-  }
-
   const {formula, type} = ItemMacroHelpers._bladeCantripDamageBonus(item);
-
   const effectData = [{
     icon: item.img,
     name: item.name,
@@ -21,8 +16,8 @@ export async function BLADE_CANTRIP(item, speaker, actor, token, character, even
     description: `You deal ${formula} additional ${type} damage on your next damage roll.`,
     "flags.visual-active-effects.data.content": item.system.description.value,
     "flags.effectmacro": {
-      "dnd5e.rollDamage.script": `(${deleteMe.toString()})()`,
-      "onCombatEnd.script": `(${deleteMe.toString()})()`
+      "dnd5e.rollDamage.script": "return effect.delete();",
+      "onCombatEnd.script": "return effect.delete();"
     }
   }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);

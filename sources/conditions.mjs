@@ -228,9 +228,9 @@ export const STATUS_EFFECTS = [
     description: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>",
     flags: {
       effectmacro: {
-        onCombatEnd: {script: `(${function() {return effect.delete()}})()`},
-        onCombatStart: {script: `(${function() {return effect.delete()}})()`},
-        onTurnStart: {script: `(${function() {return effect.delete()}})()`}
+        onCombatEnd: {script: "return effect.delete();"},
+        onCombatStart: {script: "return effect.delete();"},
+        onTurnStart: {script: "return effect.delete();"}
       }
     }
   }
