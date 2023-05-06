@@ -1028,7 +1028,11 @@ span.flavor-text.zhell-apply-damage-flavor {
 }
 
 .zhell-custom-stuff.murk-scroller .spells {
-  margin: 0 1em;
+  margin: 0.5em;
+}
+
+.murk-scroller .form-group .form-fields {
+  flex-wrap: nowrap;
 }
 
 /* MAYHEM */
