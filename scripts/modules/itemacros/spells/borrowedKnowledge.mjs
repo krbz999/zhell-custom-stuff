@@ -19,7 +19,8 @@ export async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character,
   });
   if (!skl) return;
 
-  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
+  const status = item.name.slugify({strict: true});
+  const has = actor.effects.find(e => e.statuses.has(status));
   if (has) await has.delete();
 
   return actor.createEmbeddedDocuments("ActiveEffect", [{
@@ -27,7 +28,7 @@ export async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character,
     icon: item.img,
     duration: ItemMacroHelpers._getItemDuration(item),
     changes: [{key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1}],
-    statuses: [item.name.slugify({strict: true})],
+    statuses: [status],
     description: `You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.`,
     "flags.visual-active-effects.data.content": item.system.description.value
   }]);

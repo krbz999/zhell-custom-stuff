@@ -12,14 +12,18 @@ async function ARCANE_RECOVERY(item, speaker, actor, token, character, event, ar
 
   // creating the form.
   const levels = Object.entries(actor.system.spells).reduce((acc, [key, values]) => {
-    const level = key === "pact" ? values.level : Number(key.at(-1));
-    if (!level.between(1, 6) || values.max < 1) return acc;
+    const level = (key === "pact") ? values.level : Number(key.at(-1));
+    if (!level.between(1, 6) || (values.max < 1)) return acc;
     const slots = Array.fromRange(values.max).reduce((ac, n) => {
       const cd = (n < values.value) ? "checked disabled" : "";
       return ac + `<input type="checkbox" data-key="${key}" data-level="${level}" ${cd}>`
     }, "");
-    const label = key === "pact" ? "Pact Slots" : game.i18n.localize("DND5E.SpellLevel" + level);
-    return acc + `<div class="form-group"><label>${label}</label><div class="form-fields">${slots}</div></div>`;
+    const label = (key === "pact") ? "Pact Slots" : game.i18n.localize("DND5E.SpellLevel" + level);
+    return acc + `
+    <div class="form-group">
+      <label>${label}</label>
+      <div class="form-fields">${slots}</div>
+    </div>`;
   }, "");
 
   if (!levels.length) {

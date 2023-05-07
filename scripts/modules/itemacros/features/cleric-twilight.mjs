@@ -52,13 +52,13 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
 
   // CONSTS
-  const id = item.name.slugify({strict: true});
+  const status = item.name.slugify({strict: true});
   const file = "jb2a.markers.circle_of_stars.orangepurple";
   const error = "Please target a token.";
   const target = game.user.targets.first();
 
   // find Sequencer effect
-  const e = actor.effects.find(e => e.statuses.has(id));
+  const e = actor.effects.find(e => e.statuses.has(status));
 
   if (!e) {
     const use = await item.use();
@@ -68,7 +68,7 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
       icon: item.img,
       name: item.name,
       origin: item.uuid,
-      statuses: [id],
+      statuses: [status],
       description: "When a creature ends their turn within your twilight sanctuary, you may choose to grant them temporary hit points or end the charmed or frightened condition on them.",
       "duration.seconds": 60,
       "flags.visual-active-effects.data.content": item.system.description.value,
