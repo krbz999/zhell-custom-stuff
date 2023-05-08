@@ -14,7 +14,6 @@ import {FAR_STEP} from "./spells/farStep.mjs";
 import {FIND_FAMILIAR} from "./spells/findFamiliar.mjs";
 import {FIND_STEED} from "./spells/findSteed.mjs";
 import {FLAMING_SPHERE} from "./spells/flamingSphere.mjs";
-import {MAGE_ARMOR} from "./spells/mageArmor.mjs";
 import {MISTY_STEP} from "./spells/mistyStep.mjs";
 import {MOONBEAM} from "./spells/moonbeam.mjs";
 import {RAINBOW_RECURVE} from "./spells/rainbowRecurve.mjs";
@@ -43,7 +42,6 @@ export const spells = {
   FIND_FAMILIAR,
   FIND_STEED,
   FLAMING_SPHERE,
-  MAGE_ARMOR,
   MISTY_STEP,
   MOONBEAM,
   RAINBOW_RECURVE,
