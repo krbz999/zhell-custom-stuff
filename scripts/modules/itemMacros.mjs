@@ -183,16 +183,15 @@ export class ItemMacroHelpers {
    * @returns {object[]}              An array of ActiveEffect data.
    */
   static _constructGenericEffectData({item, level = null, types}) {
+    const itemData = item.clone({"system.level": level}, {keepId: true}).toObject();
+    types ??= ["redisplay"];
     return [{
       name: item.name,
       icon: item.img,
       duration: ItemMacroHelpers._getItemDuration(item),
       statuses: [item.name.slugify({strict: true})],
-      "flags.visual-active-effects.data.content": item.system.description.value,
-      [`flags.${MODULE}`]: {
-        itemData: item.clone({"system.level": level}, {keepId: true}).toObject(),
-        types: types ? types : ["redisplay"]
-      }
+      [`flags.${[DEPEND.VAE]}.data.content`]: item.system.description.value,
+      [`flags.${MODULE}`]: {itemData, types}
     }];
   }
 
@@ -365,7 +364,7 @@ export class ItemMacroHelpers {
    */
   static _bladeCantripDamageBonus(item) {
     const [part, type] = item.system.damage.parts[0];
-    const level = item.parent.system.details.level ?? Math.floor(item.parent.system.details.cr);
+    const level = item.actor.system.details.level ?? Math.floor(item.actor.system.details.cr);
     const add = Math.floor((level + 1) / 6);
     const {formula} = new Roll(part).alter(0, add);
     return {formula, type};

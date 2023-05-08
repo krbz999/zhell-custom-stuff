@@ -3,18 +3,20 @@ import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export async function WIELDING(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.CN, DEPEND.VAE, DEPEND.EM)) return item.use();
+
   const isConc = CN.isActorConcentratingOnItem(actor, item);
   if (isConc) return;
 
   const use = await item.use();
   if (!use) return;
-  const level = ItemMacroHelpers._getSpellLevel(use);
 
+  const level = ItemMacroHelpers._getSpellLevel(use);
   const target = game.user.targets.first();
 
   function getWeaponOptions(actorDoc) {
-    const pre = actorDoc === actor ? "" : "[Target] ";
-    return actorDoc?.itemTypes.weapon.reduce((acc, e) => {
+    if (!actorDoc) return "";
+    const pre = (actorDoc === actor) ? "" : "[Target] ";
+    return actorDoc.itemTypes.weapon.reduce((acc, e) => {
       return acc + `<option value="${e.uuid}">${pre}${e.name}</option>`;
     }, "") ?? "";
   }
@@ -53,7 +55,7 @@ export async function WIELDING(item, speaker, actor, token, character, event, ar
     origin: actor.uuid,
     duration: foundry.utils.deepClone(conc.duration),
     description: `You are in control of ${itemData.name}.`,
-    "flags.visual-active-effects.data.content": itemData.system.description.value,
+    [`flags.${DEPEND.VAE}.data.content`]: itemData.system.description.value,
     [`flags.${MODULE}`]: {itemData, types: ["use"]}
   }]);
 

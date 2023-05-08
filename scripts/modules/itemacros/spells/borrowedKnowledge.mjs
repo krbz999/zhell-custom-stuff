@@ -1,3 +1,4 @@
+import {DEPEND} from "../../../const.mjs";
 import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
 export async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character, event, args) {
@@ -30,6 +31,6 @@ export async function BORROWED_KNOWLEDGE(item, speaker, actor, token, character,
     changes: [{key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1}],
     statuses: [status],
     description: `You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.`,
-    "flags.visual-active-effects.data.content": item.system.description.value
+    [`flags.${DEPEND.VAE}.data.content`]: item.system.description.value
   }]);
 }

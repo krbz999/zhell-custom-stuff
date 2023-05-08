@@ -1,3 +1,4 @@
+import {DEPEND} from "../../../const.mjs";
 import {elementalDialog} from "../../customDialogs.mjs";
 import {ItemMacroHelpers} from "../../itemMacros.mjs";
 
@@ -27,7 +28,7 @@ export async function ABSORB_ELEMENTS(item, speaker, actor, token, character, ev
     duration: {rounds: 1},
     statuses: [item.name.slugify({strict: true})],
     description: `You have ${type} resistance and deal ${level}d6 additional ${type} damage on your first melee attack before this effect expires.`,
-    "flags.visual-active-effects.data.content": item.system.description.value
+    [`flags.${DEPEND.VAE}.data.content`]: item.system.description.value
   }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
 }
