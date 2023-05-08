@@ -65,7 +65,9 @@ async function INJURY_POISON(item, speaker, actor, token, character, event, args
     icon: item.img,
     description: `You have poisoned ${poisonItem.name}. It will deal additional poison damage when dealing piercing or slashing damage.`,
     statuses: [`injury-poison-${poisonItem.id}`],
-    "flags.visual-active-effects.data.content": item.system.description.value,
-    "flags.babonus.bonuses": {[babData.id]: babData}
+    flags: {
+      [`flags.${DEPEND.VAE}.data.content`]: item.system.description.value,
+      [`flags.${DEPEND.BAB}.bonuses`]: {[babData.id]: babData}
+    }
   }]);
 }

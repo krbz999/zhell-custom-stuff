@@ -3,7 +3,7 @@ import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
 import {AnimationsHandler, _equipmentPageListeners, _initD20, _setupCollapsibles} from "./scripts/modules/animations.mjs";
 import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
-import {DEPEND, MODULE} from "./scripts/const.mjs";
+import {MODULE} from "./scripts/const.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
 import {SheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
@@ -59,12 +59,12 @@ Hooks.once("ready", function() {
     Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
   }
 
-  if (game.modules.get(DEPEND.VAE)?.active) {
+  if (game.modules.get("visual-active-effects")?.active) {
     Hooks.on("visual-active-effects.createEffectButtons", GameChangesHandler._visualActiveEffectsCreateEffectButtons);
   }
 
   // hook for various actions are performed to display animations.
-  const canAnimate = [DEPEND.SEQ, DEPEND.JB2A].every(id => !!game.modules.get(id)?.active);
+  const canAnimate = ["sequencer", "jb2a_patreon"].every(id => !!game.modules.get(id)?.active);
   if (canAnimate) {
     Hooks.on("createMeasuredTemplate", AnimationsHandler.onCreateMeasuredTemplate);
     Hooks.on("dnd5e.useItem", AnimationsHandler.onItemUse);

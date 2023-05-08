@@ -56,14 +56,14 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       color: "#e05d06",
       animation: {type: "torch", speed: 1}
     };
-    const babonusData = babonus.createBabonus({
+    const data = babonus.createBabonus({
       type: "damage",
       name: item.name,
       description: item.system.description.value,
       bonuses: {bonus: `@abilities.cha.mod[fire]`},
       filters: {customScripts: `return item.id === "${id}";`}
     }).toObject();
-    const flags = {[`babonus.bonuses.${babonusData.id}`]: babonusData};
+    const flags = {[`${DEPEND.BAB}.bonuses.${data.id}`]: data};
     const effectData = ItemMacroHelpers._constructLightEffectData({item, lightData, flags});
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }

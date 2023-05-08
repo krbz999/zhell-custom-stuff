@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import {DEPEND, MODULE} from "../../const.mjs";
 
 export class MurkScroller extends Application {
   constructor(options = {}) {
@@ -165,7 +165,7 @@ export class MurkScroller extends Application {
 
     // Add concentration info.
     if (item.system.components.concentration) {
-      const path = "flags.concentrationnotifier.data.requiresConcentration";
+      const path = `flags.${DEPEND.CN}.data.requiresConcentration`;
       foundry.utils.setProperty(scrollData, path, true);
     }
     scrollData.name = scrollData.name.replace("Spell Scroll:", "Murk Scroll:");

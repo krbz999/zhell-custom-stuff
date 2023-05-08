@@ -1,5 +1,3 @@
-import {DEPEND} from "../const.mjs";
-
 export class CombatEnhancements {
   /**
    * Mark a non-player-owned and unlinked combatant's token as defeated when it reaches zero hit points.
@@ -47,7 +45,7 @@ export class CombatEnhancements {
     if (!combatant) return;
     const reaction = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === "reaction"));
     reaction.description = game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name});
-    foundry.utils.setProperty(reaction, `flags.${DEPEND.VAE}.data.content`, item.system.description.value);
+    foundry.utils.setProperty(reaction, "flags.visual-active-effects.data.content", item.system.description.value);
     return combatant.token.toggleActiveEffect(reaction, {active: true});
   }
 

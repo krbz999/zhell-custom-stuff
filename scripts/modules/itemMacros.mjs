@@ -124,8 +124,8 @@ export class ItemMacroHelpers {
       statuses: [item.name.slugify({strict: true})],
       description: intro ?? "You are lit up!",
       flags: foundry.utils.mergeObject({
-        "visual-active-effects": {data: {content: item.system.description.value, forceInclude: true}},
-        effectmacro: {
+        [DEPEND.VAE]: {data: {content: item.system.description.value, forceInclude: true}},
+        [DEPEND.EM]: {
           lightConfig: config,
           onCreate: {script: `(${onCreate.toString()})()`},
           onDelete: {script: `(${onDelete.toString()})()`},
@@ -162,12 +162,14 @@ export class ItemMacroHelpers {
       origin: item.uuid,
       duration: ItemMacroHelpers._getItemDuration(item),
       statuses: [item.name.slugify({strict: true})],
-      "flags.effectmacro": {
-        "onCreate.script": `(${onCreate.toString()})()`,
-        "onEnable.script": `(${onCreate.toString()})()`,
-        "onDelete.script": `(${onDelete.toString()})()`,
-        "onDisable.script": `(${onDelete.toString()})()`,
-        "data.modes": modes
+      flags: {
+        [DEPEND.EM]: {
+          "onCreate.script": `(${onCreate.toString()})()`,
+          "onEnable.script": `(${onCreate.toString()})()`,
+          "onDelete.script": `(${onDelete.toString()})()`,
+          "onDisable.script": `(${onDelete.toString()})()`,
+          "data.modes": modes
+        }
       }
     }];
   }

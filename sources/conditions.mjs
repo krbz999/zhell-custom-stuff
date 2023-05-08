@@ -1,5 +1,3 @@
-import {DEPEND} from "../scripts/const.mjs";
-
 /*
   1000: Bless
   1100: Bane
