@@ -13,7 +13,7 @@
       <section class="class-section">
         <img class="class-image" src="{{img}}">
         <div class="class-item">
-          <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
+          <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
             {{name}}
           </a>
         </div>
@@ -24,7 +24,7 @@
         <div class="subclass-list collapsible-content">
           {{#each subclassIds}}
           <div class="subclass-item">
-            <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
+            <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
               {{name}}
             </a>
           </div>
@@ -41,8 +41,8 @@
             <h3 data-action="toggle-collapse">{{label}}</h3>
             <div class="collapsible-content">
             {{#each spells}}
-            <div class="spell" data-uuid="Compendium.{{pack}}.{{id}}">
-              <a class="content-link" draggable="true" data-uuid="Compendium.{{pack}}.{{id}}" data-id="{{id}}" data-pack="{{pack}}">
+            <div class="spell" data-uuid="{{uuid}}">
+              <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
                 <i class="fas fa-wand-magic-sparkles"></i> {{name}}
               </a>
               <a data-action="toggle-description" data-tooltip="Toggle Details">

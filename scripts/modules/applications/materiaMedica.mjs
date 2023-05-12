@@ -34,29 +34,33 @@ export class MateriaMedica extends Application {
   }
 
   get uuids() {
-    return {
+    if (this._uuids) return this._uuids;
+
+    const pack = game.packs.get("zhell-catalogs.materia-medica");
+    this._uuids = {
       potions: {
-        2: "Compendium.zhell-catalogs.materia-medica.KwysQnHpErP39QsZ",
-        4: "Compendium.zhell-catalogs.materia-medica.gFTlhdY6vtVsXU8C",
-        6: "Compendium.zhell-catalogs.materia-medica.Cg4a3MOxqOyGvKDK",
-        8: "Compendium.zhell-catalogs.materia-medica.myWY2Xy0GWsS2MEh",
-        10: "Compendium.zhell-catalogs.materia-medica.AkbBxDOPcEsQFpN1"
+        2: pack.getUuid("KwysQnHpErP39QsZ"),
+        4: pack.getUuid("gFTlhdY6vtVsXU8C"),
+        6: pack.getUuid("Cg4a3MOxqOyGvKDK"),
+        8: pack.getUuid("myWY2Xy0GWsS2MEh"),
+        10: pack.getUuid("AkbBxDOPcEsQFpN1")
       },
       poisons: {
-        2: "Compendium.zhell-catalogs.materia-medica.kwBcsGI3dMLuG96M",
-        4: "Compendium.zhell-catalogs.materia-medica.r3OcEJjhhpNIlxFo",
-        6: "Compendium.zhell-catalogs.materia-medica.pZs5VWxoNQWQMTL7",
-        8: "Compendium.zhell-catalogs.materia-medica.IFFhdKPlSbsCMc7z",
-        10: "Compendium.zhell-catalogs.materia-medica.DWtLIZLw11liaYW9"
+        2: pack.getUuid("kwBcsGI3dMLuG96M"),
+        4: pack.getUuid("r3OcEJjhhpNIlxFo"),
+        6: pack.getUuid("pZs5VWxoNQWQMTL7"),
+        8: pack.getUuid("IFFhdKPlSbsCMc7z"),
+        10: pack.getUuid("DWtLIZLw11liaYW9")
       },
       misc: {
-        2: "Compendium.zhell-catalogs.materia-medica.MBhPt5wCZcQYuZIW",
-        4: "Compendium.zhell-catalogs.materia-medica.hYdmn5QbDdZeCRAb",
-        6: "Compendium.zhell-catalogs.materia-medica.WOESrV6nTY6vJE8O",
-        8: "Compendium.zhell-catalogs.materia-medica.ZUkFIwTYMIcJfZUh",
-        10: "Compendium.zhell-catalogs.materia-medica.BtV0RgISbFQeKh4u"
+        2: pack.getUuid("MBhPt5wCZcQYuZIW"),
+        4: pack.getUuid("hYdmn5QbDdZeCRAb"),
+        6: pack.getUuid("WOESrV6nTY6vJE8O"),
+        8: pack.getUuid("ZUkFIwTYMIcJfZUh"),
+        10: pack.getUuid("BtV0RgISbFQeKh4u")
       }
     };
+    return this._uuids;
   }
 
   getCost(uuid) {

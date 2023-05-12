@@ -1940,10 +1940,15 @@ export class ClassPageRenderer extends Application {
 
   /** @override */
   async getData() {
-    const classes = Array.from(game.packs.get("zhell-catalogs.classes").index);
+    const packs = {
+      class: game.packs.get("zhell-catalogs.classes"),
+      subclass: game.packs.get("zhell-catalogs.subclasses"),
+      spell: game.packs.get("zhell-catalogs.spells")
+    };
+    const classes = Array.from(packs.class.index);
     classes.sort((a, b) => a.name.localeCompare(b.name));
-    const spells = await game.packs.get("zhell-catalogs.spells").getIndex({fields: ["system.level"]});
-    const subclasses = game.packs.get("zhell-catalogs.subclasses").index;
+    const spells = await packs.spell.getIndex({fields: ["system.level"]});
+    const subclasses = packs.subclass.index;
 
     const data = await super.getData();
     data.classes = [];
@@ -1955,15 +1960,31 @@ export class ClassPageRenderer extends Application {
 
       const _data = {};
       _data.identifier = identifier;
+      _data.uuid = packs.class.getUuid(c._id);
       _data.name = c.name;
-      _data.pack = "zhell-catalogs.classes";
+      _data.pack = packs.class.metadata.id;
       _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
       _data.id = c._id;
       _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
-      _data.subclassIds = _subclasses.map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.subclasses", img: s.img}));
+
+      // Add all subclasses to the class.
+      _data.subclassIds = _subclasses.map(s => ({
+        id: s._id,
+        name: s.name,
+        pack: packs.subclass.metadata.id,
+        img: s.img,
+        uuid: packs.subclass.getUuid(s._id)
+      }));
+
+      // Add all spells to the class.
       _data.spellLists = Array.fromRange(10).map(n => ({
         label: (n === 0) ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`,
-        spells: _spells.filter(s => (s.system.level === n)).map(s => ({id: s._id, name: s.name, pack: "zhell-catalogs.spells"}))
+        spells: _spells.filter(s => (s.system.level === n)).map(s => ({
+          id: s._id,
+          name: s.name,
+          pack: packs.spell.metadata.id,
+          uuid: packs.spell.getUuid(s._id)
+        }))
       }));
       _data.hasSpells = _data.spellLists.some(list => list.spells.length > 0);
       data.classes.push(_data);

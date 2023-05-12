@@ -358,10 +358,18 @@ export class DamageApplicator extends Application {
       save: message.flags[MODULE].damage.hasSave
     };
     div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/damageRollButtons.hbs", data);
-    div.querySelector("[data-action='render']").addEventListener("click", (event) => new DamageApplicator({message}).render(true));
-    div.querySelector("[data-action='quick-apply']").addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
-    div.querySelector("[data-action='save-and-apply']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
-    div.querySelector("[data-action='quick-apply-half']")?.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
+    div.querySelectorAll("[data-action]").forEach(n => {
+      const action = n.dataset.action;
+      if (action === "render") {
+        n.addEventListener("click", (event) => new DamageApplicator({message}).render(true));
+      } else if (action === "quick-apply") {
+        n.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
+      } else if (action === "save-and-apply") {
+        n.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: true}));
+      } else if (action === "quick-apply-half") {
+        n.addEventListener("click", (event) => new DamageApplicator({message}).damageAll(event, {save: false}));
+      }
+    });
     roll.after(div.firstElementChild);
   }
 
