@@ -35,9 +35,23 @@ export class GameChangesHandler {
   }
 
   static _addPiety() {
-    CONFIG.DND5E.abilities["pty"] = "Piety";
-    CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
-    CONFIG.DND5E.featureTypes.boon = {label: "Divine Boon"};
+    // Ability scores.
+    CONFIG.DND5E.abilities.pty = {
+      label: "Piety",
+      abbreviation: "pty",
+      type: "mental",
+      defaults: {vehicle: 0}
+    };
+
+    // Feature types.
+    const toAdd = {
+      boon: {label: "DND5E.Feature.DivineBoon"},
+      curse: {label: "DND5E.Feature.Curse"}
+    };
+    foundry.utils.mergeObject(CONFIG.DND5E.featureTypes, toAdd);
+    CONFIG.DND5E.featureTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.featureTypes).sort((a, b) => {
+      return a[1].label.localeCompare(b[1].label, game.i18n.lang);
+    }));
   }
 
   static _consumables() {

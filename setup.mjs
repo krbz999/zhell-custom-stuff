@@ -14,7 +14,7 @@ import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
 Hooks.once("init", GameChangesHandler._visionModes);
-Hooks.once("setup", GameChangesHandler._setUpGameChanges);
+Hooks.once("init", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", GameChangesHandler._miscAdjustments);
 Hooks.once("setup", ExhaustionHandler._appendActorMethods);

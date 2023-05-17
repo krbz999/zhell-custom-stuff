@@ -3,6 +3,8 @@
   "DND5E.ConsumableDrink": "Drink",
   "DND5E.ConsumableElixir": "Elixir",
   "DND5E.ConsumableTrap": "Trap",
+  "DND5E.Feature.Curse": "Curse",
+  "DND5E.Feature.DivineBoon": "Divine Boon",
   "DND5E.RestL": "Long",
   "DND5E.RestS": "Short",
   "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
