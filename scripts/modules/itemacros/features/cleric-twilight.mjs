@@ -51,16 +51,13 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
 async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
 
-  // CONSTS
+  // Constants.
   const status = item.name.slugify({strict: true});
   const file = "jb2a.markers.circle_of_stars.orangepurple";
   const error = "Please target a token.";
   const target = game.user.targets.first();
 
-  // find Sequencer effect
-  const e = actor.effects.find(e => e.statuses.has(status));
-
-  if (!e) {
+  if (!actor.statuses.has(status)) {
     const use = await item.use();
     if (!use) return;
 

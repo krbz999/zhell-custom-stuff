@@ -6,8 +6,7 @@ export const fathomless = {TENTACLE_OF_THE_DEEPS};
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
 
-  const status = item.name.slugify({strict: true});
-  const isActive = actor.effects.some(e => e.statuses.has(status));
+  const isActive = actor.statuses.has(item.name.slugify({strict: true}));
   if (isActive) return item.displayCard();
 
   const use = await item.use();

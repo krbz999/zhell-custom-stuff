@@ -6,7 +6,8 @@ export const hearth = {BURNING_WEAPON, WARMING_RESPITE};
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
-  const effect = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
+  const status = item.name.slugify({strict: true});
+  const effect = actor.effects.find(e => e.statuses.has(status));
   if (effect) return effect.delete();
 
   const weapons = actor.items.filter(i => (i.type === "weapon") && i.system.equipped);

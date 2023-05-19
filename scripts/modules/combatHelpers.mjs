@@ -10,8 +10,9 @@ export class CombatEnhancements {
     const hpUpdate = updates.system?.attributes?.hp?.value;
     if (!Number.isNumeric(hpUpdate) || !(hpUpdate <= 0)) return;
     const effect = CONFIG.statusEffects.find(e => e.id === CONFIG.specialStatusEffects.DEFEATED);
-    await (actor.token ?? actor.getActiveTokens(false, true)[0]).toggleActiveEffect(effect, {overlay: true});
-    return (actor.token ?? actor.getActiveTokens()[0]).combatant.update({defeated: true});
+    const combatant = game.combat.getCombatantByActor(actor);
+    await combatant.token.toggleActiveEffect(effect, {overlay: true});
+    return combatant.update({defeated: true});
   }
 
   /**
@@ -40,8 +41,8 @@ export class CombatEnhancements {
   static _spendReaction(item) {
     if (item.system.activation?.type !== "reaction") return;
     if (!game.combat) return;
-    if (item.actor.effects.some(e => e.statuses.has("reaction"))) return;
-    const combatant = item.actor.token?.combatant ?? item.actor.getActiveTokens()[0]?.combatant;
+    if (item.actor.statuses.has("reaction")) return;
+    const combatant = game.combat.getCombatantByActor(item.actor);
     if (!combatant) return;
     const reaction = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === "reaction"));
     reaction.description = game.i18n.format("ZHELL.StatusConditionReactionDescription", {name: item.name});

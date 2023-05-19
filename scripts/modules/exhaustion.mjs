@@ -56,7 +56,7 @@ export class ExhaustionHandler {
     if (!data.longRest) return;
 
     // New exhaustion level:
-    const level = actor.effects.find(e => e.statuses.has("exhaustion"))?.flags[MODULE].exhaustion - 1;
-    return actor.applyExhaustion(level);
+    const level = actor.effects.find(e => e.statuses.has("exhaustion"))?.flags[MODULE].exhaustion ?? 0;
+    return actor.applyExhaustion(level - 1);
   }
 }

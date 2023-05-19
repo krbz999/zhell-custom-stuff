@@ -5,7 +5,8 @@ import {ItemMacroHelpers} from "../../itemMacros.mjs";
 export async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
-  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
+  const status = item.name.slugify({strict: true});
+  const has = actor.effects.find(e => e.statuses.has(status));
   if (has) {
     await CN.isActorConcentratingOnItem(actor, item)?.delete();
     return has.delete();
@@ -53,7 +54,7 @@ export async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, e
     icon: item.img,
     name: `${item.name} (${weapon.name})`,
     duration: foundry.utils.deepClone(conc.duration),
-    statuses: [item.name.slugify({strict: true})],
+    statuses: [status],
     description: `You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.`,
     [`flags.${DEPEND.BAB}.bonuses`]: {[atk.id]: atk, [dmg.id]: dmg}
   }];
