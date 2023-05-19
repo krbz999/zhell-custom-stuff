@@ -54,6 +54,38 @@ export async function mayhem() {
     <p>${blurb}</p>
     <p style="text-align: center;">Current stack: <strong>${newValue}</strong></p>`;
     await ChatMessage.create({content});
+
+    if (btn === "earn") {
+      const file = "jb2a.lightning_strike.blue";
+      new Sequence()
+        .effect()
+          .file(file)
+          .screenSpace()
+          .scale(2)
+          .screenSpaceAnchor({x: 0.35, y: 0.75})
+          .screenSpaceAboveUI()
+          .playbackRate(0.6)
+          .delay(500)
+        .effect()
+          .file(file)
+          .screenSpace()
+          .scale(2)
+          .screenSpaceAnchor({x: 0.65, y: 0.75})
+          .screenSpaceAboveUI()
+          .playbackRate(0.6)
+          .mirrorX()
+          .delay(1500)
+        .effect()
+          .text("+1 Mayhem!", {fontFamily: "Modesto Condensed", fontSize: 48})
+          .screenSpace()
+          .screenSpaceAnchor({x: 0.5, y: 0.5})
+          .screenSpaceAboveUI()
+          .fadeIn(500)
+          .fadeOut(500)
+          .duration(3000)
+        .play({remote: true});
+    }
+
     return game.user.setFlag("world", "mayhem.value", newValue);
   }
 }
