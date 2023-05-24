@@ -43,17 +43,15 @@ export const ITEMACRO = {
 };
 
 export class ItemMacroHelpers {
-
   /**
-   * Helper function to verify that all module dependencies
-   * are installed and active for a particular item macro.
-   * Returns true or false.
+   * Helper function to verify that all module dependencies are installed and active for a particular item macro.
+   * @param {string[]} moduleIds      The array of module ids.
+   * @returns {boolean}               Whether all the given modules are active.
    */
   static _getDependencies(...moduleIds) {
     let abi = true;
     for (const id of moduleIds) {
       if (!game.modules.get(id)?.active) {
-        //console.warn(`Missing module for Item Macro: '${id}'.`);
         ui.notifications.warn(`Missing module for Item Macro: '${id}'.`);
         abi = false;
       }
@@ -62,11 +60,13 @@ export class ItemMacroHelpers {
   }
 
   /**
-   * Helper function to return a string of options for each spell slot
-   * level for which you have slots available, including pact slots.
-   * Optionally instead levels for which you have expended spell slots.
-   * Optionally with a maximum level.
-   * Returns a string (possibly of length 0).
+   * Helper function to return a string of options for each spell slot level for which you have
+   * slots available, including pact slots. Optionally instead levels for which you have expended
+   * spell slots. Optionally with a maximum level. Returns a string (possibly of length 0).
+   * @param {Actor} actor                     The actor with spell slots.
+   * @param {boolean} [missing=false]         Whether to instead find levels for which you have expended slots.
+   * @param {number} [maxLevel=Infinity]      The maximum spell slot level to use as an option.
+   * @returns {string}                        The string of select options.
    */
   static _constructSpellSlotOptions(actor, {missing = false, maxLevel = Infinity} = {}) {
     return Object.entries(actor.system.spells).reduce((acc, [key, data]) => {
@@ -83,7 +83,11 @@ export class ItemMacroHelpers {
   /**
    * Helper function to construct an effect that creates light on a token when the effect is created,
    * and reverts the light when the effect is deleted or disabled (deleting the effect on disable, too).
-   * Returns an array of effect data.
+   * @param {Item} item             The item to retrieve data from.
+   * @param {object} lightData      An optional override object of light data.
+   * @param {string} intro          An optional string to use for the effect's description.
+   * @param {object} flags          Additional flag data to merge into the effect.
+   * @returns {object[]}            An array of ActiveEffect data.
    */
   static _constructLightEffectData({item, lightData, intro, flags}) {
     const config = lightData ?? {dim: 40, bright: 20};
@@ -114,22 +118,19 @@ export class ItemMacroHelpers {
 
     return [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
       duration: {seconds: (value ? value : 1) * (units === "minute" ? 60 : units === "hour" ? 3600 : 1)},
+      statuses: [item.name.slugify({strict: true})],
+      description: intro ?? "You are lit up!",
       flags: foundry.utils.mergeObject({
-        "visual-active-effects.data": {
-          intro: intro ?? "<p>You are lit up!</p>",
-          content: item.system.description.value,
-          forceInclude: true
-        },
-        effectmacro: {
+        [DEPEND.VAE]: {data: {content: item.system.description.value, forceInclude: true}},
+        [DEPEND.EM]: {
           lightConfig: config,
           onCreate: {script: `(${onCreate.toString()})()`},
           onDelete: {script: `(${onDelete.toString()})()`},
           onDisable: {script: `(${onDisable.toString()})()`}
-        },
-        core: {statusId: item.name.slugify({strict: true})}
+        }
       }, flags ?? {})
     }];
   }
@@ -137,9 +138,9 @@ export class ItemMacroHelpers {
   /**
    * Helper function to construct an effect that grants a detection mode to a token.
    * Reverts the array by deleting only what was added, when the effect is deleted.
-   * @param {object[]} modes      The array of objects of detection modes to add to the token.
-   * @param {Item} item           The item being used.
-   * @returns {object[]}          An array of length 1 with the effect data.
+   * @param {object[]} [modes=[]]     The array of objects of detection modes to add to the token.
+   * @param {Item} item               The item being used.
+   * @returns {object[]}              An array of length 1 with the effect data.
    */
   static _constructDetectionModeEffectData({modes = [], item}) {
     const onCreate = async function() {
@@ -157,16 +158,18 @@ export class ItemMacroHelpers {
 
     return [{
       icon: item.img,
-      label: item.name,
+      name: item.name,
       origin: item.uuid,
       duration: ItemMacroHelpers._getItemDuration(item),
-      "flags.core.statusId": item.name.slugify({strict: true}),
-      "flags.effectmacro": {
-        "onCreate.script": `(${onCreate.toString()})()`,
-        "onEnable.script": `(${onCreate.toString()})()`,
-        "onDelete.script": `(${onDelete.toString()})()`,
-        "onDisable.script": `(${onDelete.toString()})()`,
-        "data.modes": modes
+      statuses: [item.name.slugify({strict: true})],
+      flags: {
+        [DEPEND.EM]: {
+          "onCreate.script": `(${onCreate.toString()})()`,
+          "onEnable.script": `(${onCreate.toString()})()`,
+          "onDelete.script": `(${onDelete.toString()})()`,
+          "onDisable.script": `(${onDelete.toString()})()`,
+          "data.modes": modes
+        }
       }
     }];
   }
@@ -174,21 +177,21 @@ export class ItemMacroHelpers {
   /**
    * Helper function to create basic effect data, showing that some temporary item is active,
    * which does not require concentration.
-   * Returns an array of effect data.
+   * @param {Item} item               The item being used.
+   * @param {number} [level=null]     The optional level of the spell, for upcasting.
+   * @param {string[]} types          The types of buttons to show in VAE for this item.
+   * @returns {object[]}              An array of ActiveEffect data.
    */
   static _constructGenericEffectData({item, level = null, types}) {
+    const itemData = item.clone({"system.level": level}, {keepId: true}).toObject();
+    types ??= ["redisplay"];
     return [{
-      label: item.name,
+      name: item.name,
       icon: item.img,
       duration: ItemMacroHelpers._getItemDuration(item),
-      "flags.core.statusId": item.name.slugify({strict: true}),
-      "flags.visual-active-effects.data": {
-        content: item.system.description.value
-      },
-      [`flags.${MODULE}`]: {
-        itemData: item.clone({"system.level": level}, {keepId: true}).toObject(),
-        types: types ? types : ["redisplay"]
-      }
+      statuses: [item.name.slugify({strict: true})],
+      [`flags.${[DEPEND.VAE]}.data.content`]: item.system.description.value,
+      [`flags.${MODULE}`]: {itemData, types}
     }];
   }
 
@@ -292,7 +295,8 @@ export class ItemMacroHelpers {
 
   /**
    * Helper function to get spell level of the returned value from Item5e#use.
-   * Returns an integer.
+   * @param {ChatMessage|object} use      The returned value from an item usage.
+   * @returns {number}                    The level at which an item was used.
    */
   static _getSpellLevel(use) {
     return use.flags?.dnd5e?.use?.spellLevel ?? 0;
@@ -314,17 +318,18 @@ export class ItemMacroHelpers {
       "number": `<input type="number" ${auto}>`
     }[type] ?? `<input type="text" ${auto}>`;
     return `
-  <form class="dnd5e">
-    <div class="form-group">
-      ${lab}
-      <div class="form-fields">${inp}</div>
-    </div>
-  </form>`;
+    <form class="dnd5e">
+      <div class="form-group">
+        ${lab}
+        <div class="form-fields">${inp}</div>
+      </div>
+    </form>`;
   }
 
   /**
    * Helper function to get duration in seconds from an item's duration.
-   * Returns an object.
+   * @param {Item} item     The item from which to retrieve data.
+   * @returns {object}      An object with either 'turns' or 'seconds'.
    */
   static _getItemDuration(item) {
     const duration = item.system.duration;
@@ -354,16 +359,19 @@ export class ItemMacroHelpers {
 
   /**
    * Helper function to get the damage bonus from a blade cantrip.
+   * @param {Item} item     The item being upscaled.
+   * @returns {object}      An object with two strings (the formula and the damage type).
    */
   static _bladeCantripDamageBonus(item) {
-    const [part, type] = item.system.damage.parts[0];
-    const level = item.parent.system.details.level ?? Math.floor(item.parent.system.details.cr);
+    const part = item.system.damage.parts[0];
+    const level = item.actor.system.details.level ?? Math.floor(item.actor.system.details.cr);
     const add = Math.floor((level + 1) / 6);
-    const {formula} = new Roll(part).alter(0, add);
-    return {formula, type};
+    return {
+      formula: new Roll(part[0]).alter(0, add).formula,
+      type: part[1]
+    };
   }
 
-  //
   /**
    * Draw a circle around a token placeable.
    * @param {Token} token         A token placeable.

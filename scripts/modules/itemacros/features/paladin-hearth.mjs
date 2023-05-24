@@ -6,7 +6,8 @@ export const hearth = {BURNING_WEAPON, WARMING_RESPITE};
 async function BURNING_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.BAB, DEPEND.VAE)) return item.use();
 
-  const effect = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const status = item.name.slugify({strict: true});
+  const effect = actor.effects.find(e => e.statuses.has(status));
   if (effect) return effect.delete();
 
   const weapons = actor.items.filter(i => (i.type === "weapon") && i.system.equipped);
@@ -56,17 +57,14 @@ async function BURNING_WEAPON(item, speaker, actor, token, character, event, arg
       color: "#e05d06",
       animation: {type: "torch", speed: 1}
     };
-    const babonusData = babonus.createBabonus({
+    const data = babonus.createBabonus({
       type: "damage",
       name: item.name,
       description: item.system.description.value,
       bonuses: {bonus: `@abilities.cha.mod[fire]`},
       filters: {customScripts: `return item.id === "${id}";`}
     }).toObject();
-    const flags = {
-      [`babonus.bonuses.${babonusData.id}`]: babonusData,
-      "flags.core.statusId": item.name.slugify({strict: true})
-    };
+    const flags = {[`${DEPEND.BAB}.bonuses.${data.id}`]: data};
     const effectData = ItemMacroHelpers._constructLightEffectData({item, lightData, flags});
     return actor.createEmbeddedDocuments("ActiveEffect", effectData);
   }

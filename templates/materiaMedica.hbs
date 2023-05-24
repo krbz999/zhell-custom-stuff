@@ -29,15 +29,17 @@
     <div class="tab" data-tab="potion" editable="{{editable}}">
       <div class="description">{{localize "ZHELL.CraftingDescriptionPotions"}}</div>
       <div class="selections">
-        {{#each potionItems as |item|}}
+        {{#each potionItems}}
         <div class="selection">
           <div class="item">
-            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
-            {{#if item.scaling}}
-            <select id="scale-potion">{{{item.scaling}}}</select>
+            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
+            {{#if scaling}}
+            <select id="scale-potion">
+              {{{selectOptions scaling selected=../healIdx nameAttr="value" labelAttr="label"}}}
+            </select>
             {{/if}}
           </div>
-          <div class="item-description">{{{item.description}}}</div>
+          <div class="item-description">{{{description}}}</div>
         </div>
         {{/each}}
       </div>
@@ -57,15 +59,17 @@
         <div class="method-description">{{{initMethod}}}</div>
       </form>
       <div class="selections">
-        {{#each poisonItems as |item|}}
+        {{#each poisonItems}}
         <div class="selection">
           <div class="item">
-            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
-            {{#if item.scaling}}
-            <select id="scale-poison">{{{item.scaling}}}</select>
+            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
+            {{#if scaling}}
+            <select id="scale-poison">
+              {{selectOptions scaling selected=../poisIdx nameAttr="value" labelAttr="label"}}
+            </select>
             {{/if}}
           </div>
-          <div class="item-description">{{{item.description}}}</div>
+          <div class="item-description">{{{description}}}</div>
         </div>
         {{/each}}
       </div>
@@ -74,15 +78,17 @@
     <div class="tab" data-tab="misc" editable="{{editable}}">
       <div class="description">{{localize "ZHELL.CraftingDescriptionMisc"}}</div>
       <div class="selections">
-        {{#each miscItems as |item|}}
+        {{#each miscItems}}
         <div class="selection">
           <div class="item">
-            <button data-uuid="{{item.uuid}}">{{item.button}} ({{item.cost}})</button>
-            {{#if item.scaling}}
-            <select id="{{item.button}}">{{{item.scaling}}}</select>
+            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
+            {{#if scaling}}
+            <select id="{{button}}">
+              {{selectOptions scaling selected=../miscIdx nameAttr="value" labelAttr="label"}}
+            </select>
             {{/if}}
           </div>
-          <div class="item-description">{{{item.description}}}</div>
+          <div class="item-description">{{{description}}}</div>
         </div>
         {{/each}}
       </div>

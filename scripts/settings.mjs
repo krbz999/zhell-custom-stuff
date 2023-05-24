@@ -1,8 +1,4 @@
-import {
-  COLOR_DEFAULTS,
-  MODULE,
-  WORLD_DEFAULTS
-} from "./const.mjs";
+import {COLOR_DEFAULTS, MODULE, WORLD_DEFAULTS} from "./const.mjs";
 import {ColorationMenu, GameChangesMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 import {SheetEdits} from "./modules/applications/sheetEdits.mjs";
 
@@ -59,7 +55,7 @@ function _registerSettings() {
 }
 
 function _registerSettingsMenus() {
-  // game additions, replacements, and tweaks.
+  // Game additions, replacements, and tweaks.
   game.settings.register(MODULE, "worldSettings", {
     scope: "world",
     config: false,
@@ -77,7 +73,7 @@ function _registerSettingsMenus() {
     restricted: true
   });
 
-  // sheet color settings.
+  // Settings that change the colors on character sheets.
   game.settings.register(MODULE, "colorSettings", {
     scope: "client",
     config: false,
@@ -95,6 +91,7 @@ function _registerSettingsMenus() {
     restricted: false
   });
 
+  // Settings for various keys, ids, and uuids.
   game.settings.register(MODULE, "identifierSettings", {
     scope: "world",
     config: false,

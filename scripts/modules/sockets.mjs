@@ -3,7 +3,6 @@ import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 export class SocketsHandler {
   static socketsOn() {
     game.socket.on(`world.${game.world.id}`, function(request) {
-      console.log("REQUEST:", request);
       return SocketsHandler[request.action](request.data, false);
     });
   }
@@ -115,9 +114,8 @@ export class SocketsHandler {
         data: {tokenId, amount, temp, userId}
       });
     } else if (game.user.id === userId) {
-      const func = temp ? "applyTempHP" : "applyDamage";
-      const heal = temp ? Math.abs(amount) : -Math.abs(amount);
-      return canvas.scene.tokens.get(tokenId).actor[func](heal);
+      if (temp) return canvas.scene.tokens.get(tokenId).actor.applyTempHP(Math.abs(amount));
+      return canvas.scene.tokens.get(tokenId).actor.applyDamage(Math.abs(amount), -1);
     }
   }
 
@@ -138,7 +136,8 @@ export class SocketsHandler {
       const names = itemData.map(i => i.name).join(", ");
       const actor = canvas.scene.tokens.get(tokenId).actor;
       const content = `${names} ${itemData.length > 1 ? "were" : "was"} added to ${actor.name}'s inventory.`;
-      await ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor}), whisper: [userId]});
+      const whisper = _getOwnerIds(actor);
+      await ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor}), whisper});
       return actor.createEmbeddedDocuments("Item", itemData);
     }
   }
@@ -162,7 +161,7 @@ export class SocketsHandler {
     if (!grant) return;
     ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
     const valid = await tokens[0].actor.sheet._onDropSingleItem(itemData);
-    if (!valid) return;
+    if (!valid) return; // The above method returns falsy if the item is invalid or otherwise handled.
     return SocketsHandler.grantItems({itemData: [itemData], tokenId: tokens[0].id});
   }
 }
@@ -204,4 +203,17 @@ async function _pickTokenTarget(tokens, itemData) {
     return SocketsHandler.grantItems({itemData: [itemData], tokenId});
   }
   return new ImageAnchorPicker({top, title, callback}).render(true);
+}
+
+/**
+ * Get the ids of all owners of an actor.
+ * @param {Actor} actor     The actor.
+ * @returns {string[]}      The user ids.
+ */
+function _getOwnerIds(actor) {
+  return game.users.reduce((acc, u) => {
+    const owner = actor.testUserPermission(u, "OWNER");
+    if (owner) acc.push(u.id);
+    return acc;
+  }, []);
 }

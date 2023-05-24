@@ -6,7 +6,8 @@ export const stars = {STARRY_FORM};
 async function STARRY_FORM(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE, DEPEND.CN, DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const status = item.name.slugify({strict: true});
+  const has = actor.effects.find(e => e.statuses(status));
   if (has) return has.delete();
 
   const use = await item.use();
@@ -60,7 +61,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "radiant"]]}
       }
     }
-    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    effectData.description = intro[form];
     foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["use", "attack", "damage"]});
   } else if (form === "chalice") {
     const itemData = {
@@ -75,14 +76,14 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "healing"]]}
       }
     }
-    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    effectData.description = intro[form];
     foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["healing"]});
   } else if (form === "dragon") {
-    foundry.utils.setProperty(effectData, "flags.visual-active-effects.data.intro", intro[form]);
+    effectData.description = intro[form];
     effectData.changes = [{key: "flags.dnd5e.concentrationReliable", mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: true}];
   } else return;
   // Delete any pre-existing starry form and create the new one.
-  await actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}))?.delete();
+  await actor.effects.find(e => e.statuses.has(status))?.delete();
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
 
   const file = "jb2a.markers.circle_of_stars.blue";

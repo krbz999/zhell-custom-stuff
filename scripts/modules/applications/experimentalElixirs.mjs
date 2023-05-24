@@ -164,17 +164,14 @@ export class ExperimentalElixir extends Application {
     return types.reduce((acc, type) => {
       const {data, name} = this.elixirTypes[type];
       if (data.changes) {
-        const intro = game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, {mod});
         acc.push({
           changes: data.changes,
           transfer: false,
           icon: data.icon,
           duration: data.duration,
-          label: `Experimental Elixir: ${name}`,
-          flags: {
-            [DEPEND.VAE]: {data: {intro: `<p>${intro}</p>`}},
-            [DEPEND.ET]: {transferBlock: {button: false, chat: false, displayCard: false}}
-          }
+          name: `Experimental Elixir: ${name}`,
+          description: game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, {mod}),
+          flags: {[DEPEND.ET]: {transferBlock: {button: false, chat: false, displayCard: false}}}
         });
       }
       return acc;
@@ -342,7 +339,7 @@ export class ExperimentalElixir extends Application {
       ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.item.name}));
       return;
     }
-    const roll = await new Roll("(@scale.alchemist.elixirs)d8x8rr8", this.rollData).evaluate({async: true});
+    const roll = await new Roll("(@scale.alchemist.elixirs)d8x8rr8", this.rollData).evaluate();
     await roll.toMessage({
       speaker: this.speaker,
       flavor: game.i18n.format("ZHELL.ExperimentalElixirRollRandom", {name: this.actor.name})

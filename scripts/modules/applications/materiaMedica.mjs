@@ -34,29 +34,33 @@ export class MateriaMedica extends Application {
   }
 
   get uuids() {
-    return {
+    if (this._uuids) return this._uuids;
+
+    const pack = game.packs.get("zhell-catalogs.materia-medica");
+    this._uuids = {
       potions: {
-        2: "Compendium.zhell-catalogs.materia-medica.KwysQnHpErP39QsZ",
-        4: "Compendium.zhell-catalogs.materia-medica.gFTlhdY6vtVsXU8C",
-        6: "Compendium.zhell-catalogs.materia-medica.Cg4a3MOxqOyGvKDK",
-        8: "Compendium.zhell-catalogs.materia-medica.myWY2Xy0GWsS2MEh",
-        10: "Compendium.zhell-catalogs.materia-medica.AkbBxDOPcEsQFpN1"
+        2: pack.getUuid("KwysQnHpErP39QsZ"),
+        4: pack.getUuid("gFTlhdY6vtVsXU8C"),
+        6: pack.getUuid("Cg4a3MOxqOyGvKDK"),
+        8: pack.getUuid("myWY2Xy0GWsS2MEh"),
+        10: pack.getUuid("AkbBxDOPcEsQFpN1")
       },
       poisons: {
-        2: "Compendium.zhell-catalogs.materia-medica.kwBcsGI3dMLuG96M",
-        4: "Compendium.zhell-catalogs.materia-medica.r3OcEJjhhpNIlxFo",
-        6: "Compendium.zhell-catalogs.materia-medica.pZs5VWxoNQWQMTL7",
-        8: "Compendium.zhell-catalogs.materia-medica.IFFhdKPlSbsCMc7z",
-        10: "Compendium.zhell-catalogs.materia-medica.DWtLIZLw11liaYW9"
+        2: pack.getUuid("kwBcsGI3dMLuG96M"),
+        4: pack.getUuid("r3OcEJjhhpNIlxFo"),
+        6: pack.getUuid("pZs5VWxoNQWQMTL7"),
+        8: pack.getUuid("IFFhdKPlSbsCMc7z"),
+        10: pack.getUuid("DWtLIZLw11liaYW9")
       },
       misc: {
-        2: "Compendium.zhell-catalogs.materia-medica.MBhPt5wCZcQYuZIW",
-        4: "Compendium.zhell-catalogs.materia-medica.hYdmn5QbDdZeCRAb",
-        6: "Compendium.zhell-catalogs.materia-medica.WOESrV6nTY6vJE8O",
-        8: "Compendium.zhell-catalogs.materia-medica.ZUkFIwTYMIcJfZUh",
-        10: "Compendium.zhell-catalogs.materia-medica.BtV0RgISbFQeKh4u"
+        2: pack.getUuid("MBhPt5wCZcQYuZIW"),
+        4: pack.getUuid("hYdmn5QbDdZeCRAb"),
+        6: pack.getUuid("WOESrV6nTY6vJE8O"),
+        8: pack.getUuid("ZUkFIwTYMIcJfZUh"),
+        10: pack.getUuid("BtV0RgISbFQeKh4u")
       }
     };
+    return this._uuids;
   }
 
   getCost(uuid) {
@@ -110,24 +114,26 @@ export class MateriaMedica extends Application {
     const {potions, poisons, misc} = this.uuids;
     for (const n of [2, 4, 6, 8, 10]) {
       const [itemA, itemB, itemC] = await Promise.all([fromUuid(potions[n]), fromUuid(poisons[n]), fromUuid(misc[n])]);
-      const scalingH = n === 2 ? this._getScalingHealing(materials, this.speedCrafting) : null;
-      const scalingD = n === 2 ? this._getScalingDamage(materials) : null;
-      const costA = n === 2 ? "varies" : n;
-      const costB = `${n === 2 ? "varies" : n} + method`;
+      const scalingH = (n === 2) ? this._getScalingHealing(materials, this.speedCrafting) : null;
+      const scalingD = (n === 2) ? this._getScalingDamage(materials) : null;
+      const costA = (n === 2) ? "varies" : n;
+      const costB = `${(n === 2) ? "varies" : n} + method`;
       potionItems.push({button: itemA.name, uuid: potions[n], scaling: scalingH, description: itemA.system.description.value, cost: costA});
       poisonItems.push({button: itemB.name, uuid: poisons[n], scaling: scalingD, description: itemB.system.description.value, cost: costB});
       miscItems.push({button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n});
     }
 
-
     /* POISONS */
     const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({value: cost, label: `${label} (${cost})`}));
 
     /* FORAGING */
-    const forageOptions = this.actor.items.filter(item => {
-      return (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
-    }).map(tool => ({id: tool.id, label: tool.name})).concat([
-      {id: "nat", label: "Nature"}, {id: "sur", label: "Survival"}
+    const forageOptions = this.actor.items.reduce((acc, item) => {
+      const valid = (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
+      if (valid) acc.push({id: item.id, label: item.name});
+      return acc;
+    }, [
+      {id: "nat", label: CONFIG.DND5E.skills.nat.label},
+      {id: "sur", label: CONFIG.DND5E.skills.sur.label}
     ]);
 
     return foundry.utils.mergeObject(data, {
@@ -137,7 +143,9 @@ export class MateriaMedica extends Application {
       max: this.maxRolls,
       potionItems,
       poisonItems,
-      miscItems
+      miscItems,
+      healIdx: this.healIdx,
+      poisIdx: this.poisIdx
     });
   }
 
@@ -159,13 +167,13 @@ export class MateriaMedica extends Application {
       return;
     }
     const type = target.closest(".tab").querySelector("#forage-tool").value;
-    const fumble = null;
-    const critical = null;
     const tool = this.actor.items.get(type);
 
     const rollConfig = {
       targetValue: this.targetValue,
-      fumble, critical, event,
+      fumble: null,
+      critical: null,
+      event,
       dialogOptions: {
         left: event.clientX - 200,
         top: event.clientY - 180
@@ -391,41 +399,50 @@ export class MateriaMedica extends Application {
   }
 
   _refreshDropdowns() {
-    const heal = this.element[0].querySelector("#scale-potion");
-    const healI = heal.selectedIndex;
-    heal.innerHTML = this._getScalingHealing(this.materials, this.speedCrafting);
-    heal.selectedIndex = Math.clamped(healI, 0, heal.childElementCount - 1);
+    const tab = this.element[0].querySelector("[data-tab].active").dataset.tab;
+    const healIdx = this.element[0].querySelector("#scale-potion").value;
+    const poisIdx = this.element[0].querySelector("#scale-poison").value;
+    return this.render(true, {tab, healIdx, poisIdx});
+  }
 
-    const dmg = this.element[0].querySelector("#scale-poison");
-    const dmgI = dmg.selectedIndex;
-    dmg.innerHTML = this._getScalingDamage(this.materials);
-    dmg.selectedIndex = Math.clamped(dmgI, 0, dmg.childElementCount - 1);
+  /** @override */
+  async render(force, options = {}) {
+    this.healIdx = options.healIdx;
+    this.poisIdx = options.poisIdx;
+    this.initial = options.initial;
+    return super.render(force, options);
+  }
+
+  /** @override */
+  async _renderInner(data) {
+    if (this.initial) this._tabs[0].active = this.initial;
+    return super._renderInner(data);
   }
 
   _getScalingDamage(materials) {
-    let scalingDamage = "<option value=''>&mdash;</option>";
+    const options = [{value: null, label: "-"}];
     let mult = 1;
     let roll = new Roll("2d6 + 2");
     while (2 * mult <= materials) {
-      scalingDamage += `<option value="${2 * mult}">${roll.formula}</option>`;
+      options.push({value: 2 * mult, label: roll.formula});
       mult++;
       roll = new Roll("2d6 + 2").alter(mult, 0, {multiplyNumeric: true});
     }
-    return scalingDamage;
+    return options;
   }
 
   /* Helper methods to create the select options. */
   _getScalingHealing(materials, speedCrafting = false) {
-    let scalingHeal = "<option value=''>&mdash;</option>";
+    const options = [{value: null, label: "-"}];
     let power = 1;
     let roll = new Roll("2d4 + 2");
     const upperBound = materials * (speedCrafting ? 2 : 1);
     while (2 ** power <= upperBound) {
-      scalingHeal += `<option value="${2 ** power}">${roll.formula}</option>`;
+      options.push({value: 2 ** power, label: roll.formula});
       power++;
       roll = roll.alter(2, 0, {multiplyNumeric: true});
     }
-    return scalingHeal;
+    return options;
   }
 
   static setUpCharacterFlag() {

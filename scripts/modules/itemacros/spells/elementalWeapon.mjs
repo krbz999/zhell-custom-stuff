@@ -5,7 +5,8 @@ import {ItemMacroHelpers} from "../../itemMacros.mjs";
 export async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.BAB, DEPEND.VAE, DEPEND.CN)) return item.use();
 
-  const has = actor.effects.find(e => e.flags.core?.statusId === item.name.slugify({strict: true}));
+  const status = item.name.slugify({strict: true});
+  const has = actor.effects.find(e => e.statuses.has(status));
   if (has) {
     await CN.isActorConcentratingOnItem(actor, item)?.delete();
     return has.delete();
@@ -33,11 +34,17 @@ export async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, e
   const weapon = actor.items.get(weaponId);
 
   const atk = babonus.createBabonus({
-    type: "attack", name: "atk", bonuses: {bonus}, description: item.system.description.value,
+    type: "attack",
+    name: "atk",
+    bonuses: {bonus},
+    description: item.system.description.value,
     filters: {customScripts: `return item.id === "${weaponId}";`}
   }).toObject();
-  const dmg = api.createBabonus({
-    type: "damage", name: "dmg", bonuses: {bonus: `${dice}[${type}]`}, description: item.system.description.value,
+  const dmg = babonus.createBabonus({
+    type: "damage",
+    name: "dmg",
+    bonuses: {bonus: `${dice}[${type}]`},
+    description: item.system.description.value,
     filters: {customScripts: `return item.id === "${weaponId}";`}
   }).toObject();
 
@@ -45,11 +52,11 @@ export async function ELEMENTAL_WEAPON(item, speaker, actor, token, character, e
 
   const effectData = [{
     icon: item.img,
-    label: `${item.name} (${weapon.name})`,
+    name: `${item.name} (${weapon.name})`,
     duration: foundry.utils.deepClone(conc.duration),
-    "flags.core.statusId": item.name.slugify({strict: true}),
-    "flags.babonus.bonuses": {[atk.id]: atk, [dmg.id]: dmg},
-    "flags.visual-active-effects.data.intro": `<p>You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.</p>`
+    statuses: [status],
+    description: `You have a +${bonus} to attack rolls made with the chosen weapon (${weapon.name}) and it deals an additional ${dice} ${type} damage on a hit.`,
+    [`flags.${DEPEND.BAB}.bonuses`]: {[atk.id]: atk, [dmg.id]: dmg}
   }];
 
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);

@@ -5,20 +5,22 @@
   </div>
 
   <div class="utils">
-    {{#each currencies as |currency|}}
-    <div class="util" data-currency="{{currency.label}}">
+    {{#each currencies}}
+    <div class="util" data-currency="{{label}}">
       <a data-action="adjust-up"><i class="fa-solid fa-arrow-up"></i></a>
       <div class="currency">
         <div class="value">0</div>
-        <div class="label">{{currency.label}}</div>
+        <div class="label">{{label}}</div>
       </div>
       <a data-action="adjust-down"><i class="fa-solid fa-arrow-down"></i></a>
-      <div class="current">({{currency.value}})</div>
+      <div class="current">({{value}})</div>
     </div>
     {{/each}}
   </div>
 
   <div class="footer">
-    <button data-action="submit"><i class="fa-solid fa-coins"></i> Save</button>
+    <button data-action="submit">
+      <i class="fa-solid fa-coins"></i> {{localize "Save"}}
+    </button>
   </div>
 </div>

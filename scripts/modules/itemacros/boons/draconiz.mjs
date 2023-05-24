@@ -50,14 +50,12 @@ async function SHOW_OF_FORCE(item, speaker, actor, token, character, event, args
   // when create effect, trigger sequence and mutation. When delete effect, remove mutation and end sequences.
   const effectData = [{
     icon: item.img,
-    label: item.name,
+    name: item.name,
     duration: {seconds: 60},
     origin: item.uuid,
+    statuses: [item.name.slugify({strict: true})],
+    description: "<p>Your size is increased to Large, your movement speed increases by 10 feet, you deal an additional <strong>1d4</strong> damage with melee weapons, and your melee weapon attacks are critical hits on a roll of 19 or 20.</p>",
     flags: {
-      "core.statusId": item.name.slugify({strict: true}),
-      "visual-active-effects.data": {
-        intro: "<p>Your size is increased to Large, your movement speed increases by 10 feet, you deal an additional <strong>1d4</strong> damage with melee weapons, and your melee weapon attacks are critical hits on a roll of 19 or 20.</p>"
-      },
       effectmacro: {
         onCreate: {script: `(${onCreate.toString()})()`},
         onDelete: {script: `(${onDelete.toString()})()`},
@@ -83,9 +81,13 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
 
   const target = game.user.targets.first();
   if (!target?.actor) {
-    ui.notifications.warn("If you had a target, you'd know immediately.");
-    return;
+    return ui.notifications.warn("If you had a target, you'd know immediately.");
   }
+
+  if (["vehicle", "group"].includes(target.actor.type)) {
+    return ui.notifications.warn("You can only compare your abilities to that of another creature.");
+  }
+
   const mine = actor.system.abilities;
   const theirs = target.actor.system.abilities;
 

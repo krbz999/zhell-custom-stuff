@@ -3,7 +3,7 @@
   <div class="form-group">
     <label for="{{id}}">{{localize name}}</label>
     <div class="form-fields">
-      <input type="checkbox" name="{{id}}" id="{{id}}" {{checked value}}>
+      <input type="checkbox" name="checks.{{id}}" id="{{id}}" {{checked value}}>
     </div>
     <p class="notes">{{localize hint}}</p>
   </div>
@@ -14,8 +14,8 @@
   <div class="form-group">
     <label>{{localize name}}</label>
     <div class="form-fields">
-      <input type="color" value="{{value}}" data-edit="{{id}}">
-      <input type="text" name="{{id}}" value="{{value}}" placeholder="{{placeholder}}">
+      <input type="color" value="{{value}}" data-edit="sheetColors.{{id}}">
+      <input type="text" name="sheetColors.{{id}}" value="{{value}}" placeholder="{{placeholder}}">
     </div>
     <p class="notes">{{localize hint}}</p>
   </div>
@@ -26,8 +26,8 @@
   <div class="form-group">
     <label>{{localize name}}</label>
     <div class="form-fields">
-      <input type="color" value="{{value}}" data-edit="{{id}}">
-      <input type="text" name="{{id}}" value="{{value}}" placeholder="{{placeholder}}">
+      <input type="color" value="{{value}}" data-edit="rarityColors.{{id}}">
+      <input type="text" name="rarityColors.{{id}}" value="{{value}}" placeholder="{{placeholder}}">
     </div>
   </div>
   {{/each}}

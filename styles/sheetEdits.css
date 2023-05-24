@@ -1,19 +1,4 @@
-/* Default colors */
-:root {
-  --usesUnexpended: #b33737;
-  --itemAttuned: #7a7971;
-  --itemNotAttuned: #44191A;
-  --spellPrepared: #7a7971;
-  --spellNotPrepared: #44191A;
-  --spellAlwaysPrepared: #7F7F7F;
-  --rarityUncommon: #008000;
-  --rarityRare: #0000ff;
-  --rarityVeryRare: #800080;
-  --rarityLegendary: #ffa500;
-  --rarityArtifact: #d2691e;
-}
-
-/* Style of the dots */
+/* Style of the dots. */
 .zhell-custom-stuff.dot-container .dot {
   height: 15px;
   width: 15px;
@@ -36,12 +21,12 @@
   transform: scale(1.2);
 }
 
-/* Style of the expended dots */
+/* Style of the expended dots. */
 .zhell-custom-stuff.dot-container .dot.empty {
   background-color: lightgray;
 }
 
-/* style of the 'not all dots shown' dot */
+/* Style of the 'not all dots shown' dot. */
 .zhell-custom-stuff.dot-container .dot.empty.has-more {
   mix-blend-mode: color-burn;
 }
@@ -54,7 +39,7 @@
   padding-left: 5px;
 }
 
-/* dot container */
+/* Dot container. */
 .zhell-custom-stuff.dot-container {
   flex-direction: row-reverse;
   gap: 2px;
@@ -62,12 +47,12 @@
   flex: 0;
 }
 
-/* show shadow overflow */
+/* Show shadow overflow. */
 .dnd5e .items-list .items-header.spellbook-header .item-name {
   overflow: visible;
 }
 
-/* Attunement icon */
+/* Attunement icon. */
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement {
   filter: drop-shadow(0 0 1px black);
 }
@@ -80,7 +65,7 @@
   color: var(--itemNotAttuned) !important;
 }
 
-/* Prepared icon */
+/* Prepared icon. */
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
   color: var(--spellPrepared) !important;
   filter: drop-shadow(0 0 1px black);
@@ -96,12 +81,12 @@
   filter: drop-shadow(0 0 1px black);
 }
 
-/* HP colors if below 33% */
+/* HP colors if below 33%. */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
   color: red;
 }
 
-/* HP colors if below 66% */
+/* HP colors if below 66%. */
 .dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
   color: peru;
 }
@@ -127,12 +112,12 @@
   color: var(--rarityArtifact) !important;
 }
 
-/* nuke resources */
+/* Nuke resources. */
 .dnd5e.sheet.actor .tab.attributes.flexrow .center-pane .attributes {
   display: none;
 }
 
-/* Fix overflow in sheet header (race, background, alignment, proficiency) */
+/* Fix overflow in sheet header (race, background, alignment, proficiency). */
 .dnd5e.sheet.actor .sheet-header .summary {
   white-space: nowrap;
   /* TODO: not needed after 2.2.x */
@@ -142,7 +127,7 @@
   padding-right: 0.5em;
 }
 
-/* Rest buttons and 'new day' button */
+/* Rest buttons and 'new day' button. */
 .dnd5e.sheet.actor.character .attributes .attribute.hit-dice .attribute-footer {
   display: flex;
   line-height: 15px;
@@ -157,36 +142,47 @@
   margin: 0;
 }
 
-/* collapsible items and effect headers */
+/* collapsible items and effect headers. */
 .dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover {
   text-shadow: 0 0 8px var(--color-shadow-primary) !important;
   cursor: pointer;
 }
 
-/* Make collapsed header gray text color */
+/* Make collapsed header gray text color. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create,
 .dnd5e.sheet.actor .items-header.flexrow.no-create * {
   color: darkgray;
 }
 
-/* Hide spell school from actor sheets */
+/* Hide spell school from actor sheets. */
 .dnd5e.sheet.actor .spell-school {
   display: none;
 }
 
-/* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons */
+/* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
-.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control,
-.dnd5e.sheet.actor .characteristics label.no-edit + textarea {
+.dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control {
   display: none;
 }
 
-/* The materia medica counter on the character sheets */
+/* The materia medica counter on the character sheets. */
 .dnd5e.sheet.actor .counters .counter.materia-medica input {
   max-width: 40px;
   width: fit-content;
   text-align: right;
   padding-right: 5px;
+}
+
+/* Character sheet attunement tracker. */
+.sheet .attunement-tracker [name="system.attributes.attunement.max"] {
+  display: inline;
+  max-width: 23px;
+  text-align: center;
+}
+
+.sheet .attunement-tracker {
+  color: #7a7971;
+  font-size: 12px;
 }

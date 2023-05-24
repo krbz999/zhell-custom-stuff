@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import {DEPEND, MODULE} from "../../const.mjs";
 
 export class MurkScroller extends Application {
   constructor(options = {}) {
@@ -26,7 +26,7 @@ export class MurkScroller extends Application {
   /** @override */
   async getData() {
     const data = await super.getData();
-    data.options = this._createNewRow();
+    data.options = this.spellOptions;
     data.max = Math.ceil(this.actor.system.details.level / 2);
     return data;
   }
@@ -34,16 +34,16 @@ export class MurkScroller extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelector("select").addEventListener("change", this._onChangeSelect.bind(this));
+    html[0].querySelector("select").addEventListener("change", this._updateTotal.bind(this));
     html[0].querySelector("[data-action='add-row']").addEventListener("click", this._renderNewRow.bind(this));
+    html[0].querySelector("[data-action='delete']").addEventListener("click", this._deleteRow.bind(this));
     html[0].querySelector("[data-action='create']").addEventListener("click", this.createScrolls.bind(this));
   }
 
   /**
    * Update the tracked total and tooltip when a dropdown has its value changed.
-   * @param {PointerEvent} event      The initiating change event.
    */
-  _onChangeSelect(event) {
+  _updateTotal() {
     let level = 0;
     this.element[0].querySelectorAll("select").forEach(n => {
       const item = this.actor.items.get(n.value);
@@ -54,11 +54,12 @@ export class MurkScroller extends Application {
   }
 
   /**
-   * Gather the options and create one new row for the form.
+   * Gather and return the options from the actor's available spells.
    * This method does not append it, simply returns the string.
-   * @returns {string}      The new row to add.
+   * @returns {string}      The options for a new select.
    */
-  _createNewRow() {
+  get spellOptions() {
+    if (this._spellOptions) return this._spellOptions;
     const options = this.actor.items.filter(item => {
       return (item.type === "spell")
         && item.system.level.between(1, 5)
@@ -70,6 +71,7 @@ export class MurkScroller extends Application {
     }).reduce((acc, item) => {
       return acc + `<option value="${item.id}">[${item.system.level}] ${item.name}</option>`;
     }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
+    this._spellOptions = options;
     return options;
   }
 
@@ -83,11 +85,22 @@ export class MurkScroller extends Application {
     <div class="form-group" data-tooltip-direction="LEFT">
       <label>Spell:</label>
       <div class="form-fields">
-        <select>${this._createNewRow()}</select>
+        <select>${this.spellOptions}</select>
+        <a data-action="delete"><i class="fa-solid fa-trash"></i></a>
       </div>
     </div>`;
-    div.querySelector("select").addEventListener("change", this._onChangeSelect.bind(this));
+    div.querySelector("select").addEventListener("change", this._updateTotal.bind(this));
+    div.querySelector("[data-action='delete']").addEventListener("click", this._deleteRow.bind(this));
     this.element[0].querySelector(".spells").appendChild(div.firstElementChild);
+  }
+
+  /**
+   * Remove a row in the form.
+   * @param {PointerEvent} event      The initiating click event.
+   */
+  _deleteRow(event) {
+    event.currentTarget.closest(".form-group").remove();
+    this._updateTotal();
   }
 
   /**
@@ -152,7 +165,7 @@ export class MurkScroller extends Application {
 
     // Add concentration info.
     if (item.system.components.concentration) {
-      const path = "flags.concentrationnotifier.data.requiresConcentration";
+      const path = `flags.${DEPEND.CN}.data.requiresConcentration`;
       foundry.utils.setProperty(scrollData, path, true);
     }
     scrollData.name = scrollData.name.replace("Spell Scroll:", "Murk Scroll:");

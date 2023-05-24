@@ -8,14 +8,21 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
     ui.notifications.warn("You have no spell slots remaining.");
     return;
   }
+
+  const type = game.user.targets.first()?.actor?.system.details.type?.value;
+  const isEvil = ["fiend", "undead"].includes(type);
   const content = `
-  <form>
+  <form class="dnd5e">
     <div class="form-group">
-      <label>Spell Slot:</label>
+      <label>Spell Slot</label>
       <div class="form-fields">
-        <select id="divine-smite-slot" autofocus>${options}</select>
-        <input type="checkbox" id="divine-smite-extra">
-        <label for="divine-smite-extra" style="white-space: nowrap;">Extra die</label>
+        <select name="level" autofocus>${options}</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Extra Die</label>
+      <div class="form-fields">
+        <input type="checkbox" name="evil" ${isEvil ? "checked" : ""}>
       </div>
     </div>
   </form>`;
@@ -33,16 +40,20 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
   }).render(true);
 
   async function rollDamage(html, event) {
-    const slot = html[0].querySelector("#divine-smite-slot").value;
-    const extra = html[0].querySelector("#divine-smite-extra").checked;
-    const level = slot === "pact" ? actor.system.spells["pact"].level : Number(slot.at(-1));
+    const form = html[0].querySelector("form");
+    const slot = form.level.value;
+    const extra = form.evil.checked;
+    const level = (slot === "pact") ? actor.system.spells["pact"].level : Number(slot.at(-1));
     const dice = Math.min(5, 1 + level) + (extra ? 1 : 0);
     const formula = `${dice}d8`;
 
     const roll = await new Item.implementation({
       type: "feat",
       name: item.name,
-      system: {damage: {parts: [[formula, "radiant"]]}}
+      system: {
+        actionType: "other",
+        damage: {parts: [[formula, "radiant"]]}
+      }
     }, {parent: actor}).rollDamage({event});
     if (!roll) return;
     const value = actor.system.spells[slot].value - 1;
@@ -62,10 +73,9 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
   });
 
   const content = `
-  ${item.system.description.value}
-  <form>
+  <form class="dnd5e">
     <div class="form-group">
-      <label>Hit points to restore:</label>
+      <label>Hit points to restore</label>
       <div class="form-fields">${range}</div>
     </div>
   </form>`;
@@ -81,7 +91,7 @@ async function LAY_ON_HANDS(item, speaker, actor, token, character, event, args)
       label: "Cure! (5)",
       callback: cure
     }
-  }
+  };
   if (value < 5) delete buttons.cure;
 
   return new Dialog({

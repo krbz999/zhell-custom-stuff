@@ -2,7 +2,6 @@ import {MODULE} from "../const.mjs";
 import {SPELL_EFFECTS, STATUS_EFFECTS} from "../../sources/conditions.mjs";
 
 export class GameChangesHandler {
-
   // hooks on setup.
   static _setUpGameChanges() {
     const settings = game.settings.get(MODULE, "worldSettings");
@@ -16,7 +15,6 @@ export class GameChangesHandler {
     if (settings.replaceWeapons) GameChangesHandler._weapons();
     if (settings.replaceTokenConditions) GameChangesHandler._conditions();
   }
-
 
   static _addEquipment() {
     const toAdd = {wand: "Wand"};
@@ -32,59 +30,48 @@ export class GameChangesHandler {
   static _addConditions() {
     const toAdd = {turned: "Turned"};
     foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, toAdd);
+
+    CONFIG.DND5E.conditionTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.conditionTypes).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _addPiety() {
-    CONFIG.DND5E.abilities["pty"] = "Piety";
-    CONFIG.DND5E.abilityAbbreviations["pty"] = "pty";
-    CONFIG.DND5E.featureTypes.boon = {label: "Divine Boon"};
+    // Ability scores.
+    CONFIG.DND5E.abilities.pty = {
+      label: "Piety",
+      abbreviation: "pty",
+      type: "mental",
+      defaults: {vehicle: 0}
+    };
+
+    // Feature types.
+    const toAdd = {
+      boon: {label: "DND5E.Feature.DivineBoon"},
+      curse: {label: "DND5E.Feature.Curse"}
+    };
+    foundry.utils.mergeObject(CONFIG.DND5E.featureTypes, toAdd);
+    CONFIG.DND5E.featureTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.featureTypes).sort((a, b) => {
+      return a[1].label.localeCompare(b[1].label, game.i18n.lang);
+    }));
   }
 
   static _consumables() {
-    // the new consumable types.
-    const addedConsumableTypes = {
-      drink: "Drink",
-      elixir: "Elixir",
-      bomb: "Bomb",
-      trap: "Trap"
-    }
+    const toDelete = ["rod", "wand"];
+    for (const d of toDelete) delete CONFIG.DND5E.consumableTypes[d];
 
-    // delete unwanted consumable types.
-    const deletedConsumableTypes = ["rod", "wand"];
-    const oldObject = foundry.utils.deepClone(CONFIG.DND5E.consumableTypes);
-    for (const del of deletedConsumableTypes) delete oldObject[del];
+    const toAdd = {drink: "Drink", elixir: "Elixir", bomb: "Bomb", trap: "Trap"};
+    foundry.utils.mergeObject(CONFIG.DND5E.consumableTypes, toAdd);
 
-    // merge remaining with new types to add.
-    const newArray = Object.entries(addedConsumableTypes)
-      .concat(Object.entries(oldObject))
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-
-    CONFIG.DND5E.consumableTypes = Object.fromEntries(newArray);
+    CONFIG.DND5E.consumableTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.consumableTypes).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _languages() {
-    CONFIG.DND5E.languages = {
-      common: "Common",
-      cait: "Cait",
-      draconic: "Draconic",
-      dwarvish: "Dwarvish",
-      elvish: "Elvish",
-      infernal: "Infernal",
-      orc: "Orcish",
-      aarakocra: "Aarakocra",
-      abyssal: "Abyssal",
-      celestial: "Celestial",
-      giant: "Giant",
-      primordial: "Primordial",
-      aquan: "Aquan",
-      auran: "Auran",
-      ignan: "Ignan",
-      terran: "Terran",
-      sylvan: "Sylvan",
-      undercommon: "Undercommon",
-      cant: "Thieves' Cant",
-      druidic: "Druidic"
-    }
+    const toDelete = ["gnomish", "halfling"];
+    for (const lang of toDelete) delete CONFIG.DND5E.languages[lang];
+
+    const toAdd = {cait: "Cait", orc: "Orcish"};
+    foundry.utils.mergeObject(CONFIG.DND5E.languages, toAdd);
+
+    CONFIG.DND5E.languages = Object.fromEntries(Object.entries(CONFIG.DND5E.languages).sort((a, b) => a[1].localeCompare(b[1])));
   }
 
   static _tools() {
@@ -190,10 +177,8 @@ export class GameChangesHandler {
     };
 
     // delete some weapon properties.
-    const del = ["fir", "rel"];
-    del.forEach(property => {
-      delete CONFIG.DND5E.weaponProperties[property];
-    });
+    const toDelete = ["fir", "rel"];
+    for (const d of toDelete) delete CONFIG.DND5E.weaponProperties[d];
   }
 
   static _conditions() {
@@ -203,7 +188,6 @@ export class GameChangesHandler {
     });
     CONFIG.statusEffects = statusEffects;
   }
-
 
   // Add 'View' button to scene headers for the GM.
   static _sceneHeaderView(app, array) {
@@ -237,14 +221,18 @@ export class GameChangesHandler {
 
   // delete items after a rest.
   static async _restItemDeletion(actor, data) {
-    if (!data.longRest) return;
-    const ids = actor.items.filter(item => {
-      return item.flags[MODULE]?.longRestDestroy;
-    }).map(i => i.id);
+    const property = data.longRest ? "longRestDestroy" : "shortRestDestroy";
+    const {ids, content} = actor.items.reduce((acc, item) => {
+      if (item.flags[MODULE]?.[property]) {
+        acc.ids.push(item.id);
+        acc.content += `<li>${item.name}</li>`;
+      }
+      return acc;
+    }, {ids: [], content: ""});
     if (!ids.length) return;
     await actor.deleteEmbeddedDocuments("Item", ids);
     return ChatMessage.create({
-      content: `${actor.name}'s experimental elixirs evaporated.`,
+      content: `Some of ${actor.name}'s items were destroyed:<ul>${content}</ul>`,
       speaker: ChatMessage.getSpeaker({actor})
     });
   }
@@ -337,14 +325,14 @@ export class GameChangesHandler {
    * @param {HTMLElement} html      The sheet's element.
    */
   static async _itemStatusCondition(sheet, html) {
-    if (sheet.document.actor || !sheet.isEditable) return;
+    if (!sheet.isEditable) return;
     const list = html[0].querySelector(".items-list.effects-list");
     if (!list) return;
 
     const options = CONFIG.statusEffects.filter(s => {
-      return !sheet.document.effects.find(e => e.flags.core?.statusId === s.id);
-    }).sort((a, b) => a.label.localeCompare(b.label)).reduce(function(acc, s) {
-      return acc + `<option value="${s.id}">${game.i18n.localize(s.label)}</option>`;
+      return !sheet.document.effects.find(e => e.statuses.has(s.id));
+    }).sort((a, b) => a.name.localeCompare(b.name)).reduce(function(acc, s) {
+      return acc + `<option value="${s.id}">${game.i18n.localize(s.name)}</option>`;
     }, "");
 
     if (!options.length) return;
@@ -359,14 +347,14 @@ export class GameChangesHandler {
       const effId = await Dialog.wait({
         title: "Add Status Condition",
         content: `
-      <form class="dnd5e">
-        <div class="form-group">
-          <label>Status Condition:</label>
-          <div class="form-fields">
-            <select autofocus>${options}</select>
+        <form class="dnd5e">
+          <div class="form-group">
+            <label>Status Condition:</label>
+            <div class="form-fields">
+              <select autofocus>${options}</select>
+            </div>
           </div>
-        </div>
-      </form>`,
+        </form>`,
         buttons: {
           ok: {
             label: "Add",
@@ -379,12 +367,12 @@ export class GameChangesHandler {
       if (!effId) return;
       const eff = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === effId));
       const data = foundry.utils.mergeObject(eff, {
-        "flags.core.statusId": eff.id,
+        statuses: [eff.id],
         transfer: false,
         origin: sheet.document.uuid,
         "flags.effective-transferral.transferrable.self": false,
         "flags.effective-transferral.transferrable.target": true,
-        label: game.i18n.localize(eff.label)
+        name: game.i18n.localize(eff.name)
       });
       return sheet.document.createEmbeddedDocuments("ActiveEffect", [data]);
     });
@@ -407,26 +395,25 @@ export class GameChangesHandler {
   }
 
   /**
-   * When an effect is created in an item, set its icon and label to be the item's img
-   * and name unless a different and non-default icon and label are provided.
+   * When an effect is created in an item, set its icon and name to be the item's img
+   * and name unless a different and non-default icon and name are provided.
    * @param {ActiveEffect} effect     The effect to be created.
    * @param {object} effectData       The data object used to create the effect.
    */
   static _preCreateActiveEffect(effect, effectData) {
-    if (!(effect.parent instanceof Item)) return;
     const data = {};
     if ((effectData.icon === "icons/svg/aura.svg") || !effectData.icon) {
       data.icon = effect.parent.img;
     }
-    if ((effectData.label === "New Effect") || !effectData.label) {
-      data.label = effect.parent.name;
+    if ((effectData.name === "New Effect") || !effectData.name) {
+      data.name = effect.parent.name;
     }
     effect.updateSource(data);
   }
 
   /**
    * Hook function to replace the token HUD condition selector with a new one
-   * that has images and labels, as well as tooltips.
+   * that has images and names, as well as tooltips.
    * @param {TokenHUD} hud          The token HUD.
    * @param {HTML} html             The element of the HUD.
    * @param {object} tokenData      The data of the token related to the HUD.
@@ -442,12 +429,13 @@ export class GameChangesHandler {
       const condition = CONFIG.statusEffects.find(e => e.id === eff.id) ?? {};
       const clss = "status-effect effect-control";
       const atts = (eff.isActive ? "active" : "") + " " + (eff.isOverlay ? "overlay" : "");
-      const tooltip = foundry.utils.getProperty(condition, "flags.visual-active-effects.data.intro") ?? "";
+      const tooltip = condition.description;
+      const name = game.i18n.localize(`ZHELL.StatusCondition${eff.id.capitalize()}`);
       return acc + `
-    <div src="${eff.src}" class="${clss} ${atts}" data-status-id="${eff.id}" data-tooltip="${tooltip}">
-      <img class="status-effect-img" src="${eff.src}">
-      <div class="status-effect-label">${eff.title}</div>
-    </div>`;
+      <div src="${eff.src}" class="${clss} ${atts}" data-status-id="${eff.id}" data-tooltip="${tooltip}">
+        <img class="status-effect-img" src="${eff.src}">
+        <div class="status-effect-name">${name}</div>
+      </div>`;
     }, "");
     html[0].querySelector(".status-effects").innerHTML = innerHTML;
   }
@@ -531,7 +519,6 @@ export class GameChangesHandler {
     }
   }
 
-  // ROTATE TOKENS WHEN THEY MOVE.
   /**
    * Rotate tokens when they move, unless their rotation is locked.
    * @param {TokenDocument} doc     The token document being updated.

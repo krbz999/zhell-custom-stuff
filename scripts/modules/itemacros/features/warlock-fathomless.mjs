@@ -5,13 +5,13 @@ export const fathomless = {TENTACLE_OF_THE_DEEPS};
 
 async function TENTACLE_OF_THE_DEEPS(item, speaker, actor, token, character, event, args) {
   if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.WG)) return item.use();
-  const isActive = actor.effects.find(e => {
-    return e.flags.core?.statusId === item.name.slugify({strict: true});
-  });
+
+  const isActive = actor.statuses.has(item.name.slugify({strict: true}));
   if (isActive) return item.displayCard();
 
   const use = await item.use();
   if (!use) return;
+
   const effectData = ItemMacroHelpers._constructGenericEffectData({item, types: ["redisplay", "attack", "damage"]});
   const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", effectData);
   const updates = {token: {name: `${actor.name.split(" ")[0]}'s Fathomless Tentacle`}};

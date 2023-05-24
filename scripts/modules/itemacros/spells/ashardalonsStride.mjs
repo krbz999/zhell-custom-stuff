@@ -12,7 +12,7 @@ export async function ASHARDALONS_STRIDE(item, speaker, actor, token, character,
   if (!use) return;
 
   const conc = await CN.waitForConcentrationStart(actor, {item});
-  const value = conc.flags.concentrationnotifier.data.castData.castLevel * 5 + 5
+  const value = conc.flags[DEPEND.CN].data.castData.castLevel * 5 + 5
   const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
 
   const changes = Object.keys(CONFIG.DND5E.movementTypes).reduce((acc, type) => {
