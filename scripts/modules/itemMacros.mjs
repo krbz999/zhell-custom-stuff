@@ -363,11 +363,13 @@ export class ItemMacroHelpers {
    * @returns {object}      An object with two strings (the formula and the damage type).
    */
   static _bladeCantripDamageBonus(item) {
-    const [part, type] = item.system.damage.parts[0];
+    const part = item.system.damage.parts[0];
     const level = item.actor.system.details.level ?? Math.floor(item.actor.system.details.cr);
     const add = Math.floor((level + 1) / 6);
-    const {formula} = new Roll(part).alter(0, add);
-    return {formula, type};
+    return {
+      formula: new Roll(part[0]).alter(0, add).formula,
+      type: part[1]
+    };
   }
 
   /**

@@ -3,7 +3,6 @@ import {AID} from "./spells/aid.mjs";
 import {ARMOR_OF_AGATHYS} from "./spells/armorOfAgathys.mjs";
 import {ASHARDALONS_STRIDE} from "./spells/ashardalonsStride.mjs";
 import {FATHOMLESS_EVARDS_BLACK_TENTACLES} from "./spells/blackTentaclesFathomless.mjs";
-import {BLADE_CANTRIP} from "./spells/bladeCantrip.mjs";
 import {BORROWED_KNOWLEDGE} from "./spells/borrowedKnowledge.mjs";
 import {BREATH_WEAPON} from "./spells/breathWeapon.mjs";
 import {CALL_LIGHTNING} from "./spells/callLightning.mjs";
@@ -30,7 +29,6 @@ export const spells = {
   AID,
   ARMOR_OF_AGATHYS,
   ASHARDALONS_STRIDE,
-  BLADE_CANTRIP,
   BORROWED_KNOWLEDGE,
   BREATH_WEAPON,
   CALL_LIGHTNING,
