@@ -60,7 +60,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         attackBonus: "",
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "radiant"]]}
       }
-    }
+    };
     effectData.description = intro[form];
     foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["use", "attack", "damage"]});
   } else if (form === "chalice") {
@@ -75,7 +75,7 @@ async function STARRY_FORM(item, speaker, actor, token, character, event, args) 
         actionType: "heal",
         damage: {parts: [["@scale.stars.starry-form-die + @mod", "healing"]]}
       }
-    }
+    };
     effectData.description = intro[form];
     foundry.utils.setProperty(effectData, `flags.${MODULE}`, {itemData, types: ["healing"]});
   } else if (form === "dragon") {
