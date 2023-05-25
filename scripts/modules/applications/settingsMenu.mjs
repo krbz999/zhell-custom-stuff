@@ -93,13 +93,13 @@ export class ColorationMenu extends SettingsMenu {
   /** @override */
   async _updateObject(event, formData) {
     formData = foundry.utils.expandObject(formData);
-    return game.settings.set(MODULE, "colorSettings", formData, {diff: false});
+    return game.settings.set(MODULE, "colorationSettings", formData, {diff: false});
   }
 
   /** @override */
   async getData() {
     const data = {};
-    const curr = game.settings.get(MODULE, "colorSettings");
+    const curr = game.settings.get(MODULE, "colorationSettings");
     const defs = foundry.utils.deepClone(COLOR_DEFAULTS);
     const _data = foundry.utils.mergeObject(defs, curr, {insertKeys: false});
 
@@ -109,8 +109,8 @@ export class ColorationMenu extends SettingsMenu {
       data[section].push({
         id: entry,
         value: val,
-        name: `ZHELL.SettingsColor${entry.capitalize()}Name`,
-        hint: `ZHELL.SettingsColor${entry.capitalize()}Hint`,
+        name: `ZHELL.SettingsColoration${entry.capitalize()}Name`,
+        hint: `ZHELL.SettingsColoration${entry.capitalize()}Hint`,
         placeholder: COLOR_DEFAULTS[section][entry]
       });
     }

@@ -74,7 +74,7 @@ function _registerSettingsMenus() {
   });
 
   // Settings that change the colors on character sheets.
-  game.settings.register(MODULE, "colorSettings", {
+  game.settings.register(MODULE, "colorationSettings", {
     scope: "client",
     config: false,
     type: Object,
@@ -82,10 +82,10 @@ function _registerSettingsMenus() {
     onChange: SheetEdits.refreshColors
   });
 
-  game.settings.registerMenu(MODULE, "colorSettings", {
-    name: "ZHELL.SettingsMenuColorSettingsName",
-    hint: "ZHELL.SettingsMenuColorSettingsHint",
-    label: "ZHELL.SettingsMenuColorSettingsName",
+  game.settings.registerMenu(MODULE, "colorationSettings", {
+    name: "ZHELL.SettingsMenuColorationSettingsName",
+    hint: "ZHELL.SettingsMenuColorationSettingsHint",
+    label: "ZHELL.SettingsMenuColorationSettingsName",
     icon: "fa-solid fa-paint-roller",
     type: ColorationMenu,
     restricted: false

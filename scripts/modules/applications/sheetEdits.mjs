@@ -11,7 +11,7 @@ export class SheetEdits {
   async render() {
     this.settings = {
       ...game.settings.get(MODULE, "worldSettings"),
-      ...game.settings.get(MODULE, "colorSettings")
+      ...game.settings.get(MODULE, "colorationSettings")
     };
     const isChar = this.sheet.document.type === "character";
     const isGroup = this.sheet.document.type === "group";
@@ -415,7 +415,7 @@ export class SheetEdits {
    * such as limited uses, prepared spells, and the color of rarities on magic items.
    */
   static refreshColors() {
-    const colors = game.settings.get(MODULE, "colorSettings");
+    const colors = game.settings.get(MODULE, "colorationSettings");
     const stl = document.querySelector(":root").style;
     for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors.sheetColors[key]);
     for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors.rarityColors[key]);
