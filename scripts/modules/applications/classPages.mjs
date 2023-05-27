@@ -1956,7 +1956,6 @@ export class ClassPageRenderer extends Application {
     for (const c of classes) {
       const identifier = c.name.slugify();
       const _spells = this.spellIds[identifier].map(id => spells.get(id)).sort((a, b) => a.name.localeCompare(b.name));
-      const _subclasses = this.subclassIds[identifier].map(id => subclasses.get(id)).sort((a, b) => a.name.localeCompare(b.name));
 
       const _data = {};
       _data.identifier = identifier;
@@ -1968,23 +1967,31 @@ export class ClassPageRenderer extends Application {
       _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
 
       // Add all subclasses to the class.
-      _data.subclassIds = _subclasses.map(s => ({
-        id: s._id,
-        name: s.name,
-        pack: packs.subclass.metadata.id,
-        img: s.img,
-        uuid: packs.subclass.getUuid(s._id)
-      }));
+      _data.subclassIds = this.subclassIds[identifier].reduce((acc, id) => {
+        const sub = subclasses.get(id);
+        acc.push({
+          id: id,
+          name: sub.name,
+          pack: packs.subclass.metadata.id,
+          img: sub.img,
+          uuid: packs.subclass.getUuid(id)
+        });
+        return acc;
+      }, []).sort((a, b) => a.name.localeCompare(b.name));
 
       // Add all spells to the class.
       _data.spellLists = Array.fromRange(10).map(n => ({
         label: (n === 0) ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`,
-        spells: _spells.filter(s => (s.system.level === n)).map(s => ({
-          id: s._id,
-          name: s.name,
-          pack: packs.spell.metadata.id,
-          uuid: packs.spell.getUuid(s._id)
-        }))
+        spells: _spells.reduce((acc, s) => {
+          if (s.system.level !== n) return acc;
+          acc.push({
+            id: s._id,
+            name: s.name,
+            pack: packs.spell.metadata.id,
+            uuid: packs.spell.getUuid(s._id)
+          });
+          return acc;
+        }, [])
       }));
       _data.hasSpells = _data.spellLists.some(list => list.spells.length > 0);
       data.classes.push(_data);
