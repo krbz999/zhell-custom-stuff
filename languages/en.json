@@ -90,8 +90,6 @@
   "ZHELL.SettingsWorldCreateForagingName": "Create Foraging",
   "ZHELL.SettingsWorldCreateMoneySpenderHint": "Create a 'Spend Money' button on the sheet.",
   "ZHELL.SettingsWorldCreateMoneySpenderName": "Create Money Spender",
-  "ZHELL.SettingsWorldRemoveAlignmentHint": "Remove the Alignment field from character sheets.",
-  "ZHELL.SettingsWorldRemoveAlignmentName": "Remove Alignment",
   "ZHELL.SettingsWorldReplaceConsumablesHint": "Replace the selection of available consumable types.",
   "ZHELL.SettingsWorldReplaceConsumablesName": "Replace Consumables",
   "ZHELL.SettingsWorldReplaceLanguagesHint": "Replace the selection of available languages.",

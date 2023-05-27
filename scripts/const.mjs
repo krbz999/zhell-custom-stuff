@@ -18,7 +18,6 @@ export const WORLD_DEFAULTS = {
   collapsibleHeaders: true,
   createForaging: true,
   createMoneySpender: true,
-  removeAlignment: true,
   replaceConsumables: true,
   replaceLanguages: true,
   replaceTokenConditions: true,

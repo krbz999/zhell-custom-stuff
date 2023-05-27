@@ -17,7 +17,6 @@ export class SheetEdits {
     const isGroup = this.sheet.document.type === "group";
     const isNPC = this.sheet.document.type === "npc";
 
-    if (this.settings.removeAlignment && isChar) this._removeAlignment();
     this._setMagicItemsColor();
     if (!isGroup) this._setHealthColor();
     if (this.settings.collapsibleHeaders) this._collapsibleHeaders();
@@ -45,12 +44,6 @@ export class SheetEdits {
    */
   async _onClickInspiration(event) {
     return this.document.update({"system.attributes.inspiration": !this.document.system.attributes.inspiration});
-  }
-
-  /** Remove the 'alignment' input. */
-  _removeAlignment() {
-    const par = this.html[0].querySelector("[name='system.details.alignment']")?.parentElement;
-    if (par) par.style.display = "none";
   }
 
   /** Set the color of magic items by adding css classes to them. */
