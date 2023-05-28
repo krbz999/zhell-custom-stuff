@@ -15,7 +15,6 @@ import {FIND_STEED} from "./spells/findSteed.mjs";
 import {FLAMING_SPHERE} from "./spells/flamingSphere.mjs";
 import {MISTY_STEP} from "./spells/mistyStep.mjs";
 import {MOONBEAM} from "./spells/moonbeam.mjs";
-import {RAINBOW_RECURVE} from "./spells/rainbowRecurve.mjs";
 import {SEE_INVISIBILITY} from "./spells/seeInvisibility.mjs";
 import {SPIRIT_SHROUD} from "./spells/spiritShroud.mjs";
 import {SPIRITUAL_WEAPON} from "./spells/spiritualWeapon.mjs";
@@ -41,7 +40,6 @@ export const spells = {
   FLAMING_SPHERE,
   MISTY_STEP,
   MOONBEAM,
-  RAINBOW_RECURVE,
   SEE_INVISIBILITY,
   SPIRIT_SHROUD,
   SPIRITUAL_WEAPON,
