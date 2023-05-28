@@ -23,7 +23,7 @@ export class GameChangesHandler {
   }
 
   static _addDivine() {
-    const toAdd = {divine: "Divine"};
+    const toAdd = {divine: "DND5E.SchoolDivine"};
     foundry.utils.mergeObject(CONFIG.DND5E.spellSchools, toAdd);
   }
 
@@ -37,21 +37,11 @@ export class GameChangesHandler {
   static _addPiety() {
     // Ability scores.
     CONFIG.DND5E.abilities.pty = {
-      label: "Piety",
+      label: "DND5E.AbilityPty",
       abbreviation: "pty",
       type: "mental",
       defaults: {vehicle: 0}
     };
-
-    // Feature types.
-    const toAdd = {
-      boon: {label: "DND5E.Feature.DivineBoon"},
-      curse: {label: "DND5E.Feature.Curse"}
-    };
-    foundry.utils.mergeObject(CONFIG.DND5E.featureTypes, toAdd);
-    CONFIG.DND5E.featureTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.featureTypes).sort((a, b) => {
-      return a[1].label.localeCompare(b[1].label, game.i18n.lang);
-    }));
   }
 
   static _consumables() {
