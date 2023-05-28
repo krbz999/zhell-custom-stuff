@@ -1,4 +1,4 @@
-/* Token HUD status effects */
+/* TOKEN HUD STATUS EFFECTS */
 #token-hud .col.right .status-effects {
   width: max-content;
   column-gap: 0.1em;
@@ -75,56 +75,6 @@
   transform: scale(1.0);
 }
 
-/* COLLAPSIBLES */
-section.zhell-collapsible {
-  width: 100%;
-  margin: 0.5rem 0;
-  cursor: pointer;
-}
-
-section.zhell-collapsible .zhell-collapsible-header {
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  background-color: #411a13;
-  border: 1px solid #000;
-  border-radius: 4px 4px 0 0;
-  color: #efe6d8;
-  font-weight: bold;
-  margin-bottom: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-section.zhell-collapsible .zhell-collapsible-header::after {
-  content: "\02795";
-  font-size: 13px;
-  float: right;
-  margin-left: 0.5rem;
-  color: #f7f3e8;
-}
-
-section.zhell-collapsible.active .zhell-collapsible-header::after {
-  content: "\2796";
-}
-
-section.zhell-collapsible div.zhell-collapsible-content {
-  max-height: 0;
-  padding: 0.5rem 1rem;
-  overflow: hidden;
-  opacity: 0;
-  border: 1px solid #000;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
-}
-
-section.zhell-collapsible.active div.zhell-collapsible-content {
-  opacity: 1;
-  max-height: 600px;
-  overflow-y: scroll;
-}
-
 /* BUTTON FEEL */
 button:active:not(.pm-dropdown, :disabled),
 :not(:disabled) a:active {
@@ -133,16 +83,6 @@ button:active:not(.pm-dropdown, :disabled),
 
 .tab#chat {
   margin: -5px 0 0;
-}
-
-/* APPLY DAMAGE */
-span.flavor-text.zhell-apply-damage-flavor:hover {
-  text-shadow: 0 0 8px red;
-  cursor: pointer;
-}
-
-span.flavor-text.zhell-apply-damage-flavor {
-  font-weight: bold;
 }
 
 /* MONSTER STAT BLOCKS */
@@ -533,18 +473,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   padding: 0 0.5em;
 }
 
-/* Vertical dialog */
-.zhell-custom-stuff.vertical-dialog {
-  height: auto !important;
-}
-
-.zhell-custom-stuff.vertical-dialog .buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-}
-
-/* Column Dialog */
+/* COLUMN DIALOG */
 .dialog.column-dialog {
   height: auto !important;
 }
@@ -1031,7 +960,7 @@ span.flavor-text.zhell-apply-damage-flavor {
   margin: 0.5em;
 }
 
-.murk-scroller .form-group .form-fields {
+.zhell-custom-stuff.murk-scroller .form-group .form-fields {
   flex-wrap: nowrap;
 }
 
