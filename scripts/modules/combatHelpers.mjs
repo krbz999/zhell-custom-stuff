@@ -1,9 +1,9 @@
 export class CombatEnhancements {
   /**
    * Mark a non-player-owned and unlinked combatant's token as defeated when it reaches zero hit points.
-   * @param {Actor} actor         The actor that was updated.
-   * @param {object} updates      The update performed on the actor.
-   * @returns {Combatant}         The combatant that was updated.
+   * @param {Actor} actor               The actor that was updated.
+   * @param {object} updates            The update performed on the actor.
+   * @returns {Promise<Combatant>}      The combatant that was updated.
    */
   static async _markDefeatedCombatant(actor, updates) {
     if (actor.hasPlayerOwner || !actor.inCombat) return;
@@ -18,10 +18,10 @@ export class CombatEnhancements {
   /**
    * Display the chat card of an ammo item being fired from a weapon when that weapon makes
    * an attack roll, but only if the ammo has a saving throw associated with it.
-   * @param {Item} weapon             The item making the attack roll.
-   * @param {D20Roll} roll            The roll result.
-   * @param {object[]} ammoUpdate     The updates to consumed ammo item(s).
-   * @returns {ChatMessage}           The displayed chat message.
+   * @param {Item} weapon                 The item making the attack roll.
+   * @param {D20Roll} roll                The roll result.
+   * @param {object[]} ammoUpdate         The updates to consumed ammo item(s).
+   * @returns {Promise<ChatMessage>}      The displayed chat message.
    */
   static async _displaySavingThrowAmmo(weapon, roll, ammoUpdate) {
     if (!ammoUpdate.length) return;
@@ -53,11 +53,11 @@ export class CombatEnhancements {
   /**
    * Recharge monster features with a d6 during combat. The script is only executed
    * if the combat is advanced forward in the turns or rounds.
-   * @param {Combat} combat       The combat document being updated.
-   * @param {object} update       The update object used to update the combat document.
-   * @param {object} context      Object of update options.
-   * @param {string} userId       The id of the user performing the update.
-   * @returns {ChatMessage}       The created chat message notification.
+   * @param {Combat} combat               The combat document being updated.
+   * @param {object} update               The update object used to update the combat document.
+   * @param {object} context              Object of update options.
+   * @param {string} userId               The id of the user performing the update.
+   * @returns {Promise<ChatMessage>}      The created chat message notification.
    */
   static async _rechargeMonsterFeatures(combat, update, context, userId) {
     if (!game.user.isGM || (context.direction !== 1)) return;

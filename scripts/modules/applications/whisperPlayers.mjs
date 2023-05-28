@@ -49,8 +49,8 @@ export class WhisperPlayers extends Application {
 
   /**
    * Send the message.
-   * @param {PointerEvent} event      The initiating click event.
-   * @returns {ChatMessage}           The whispered chat message.
+   * @param {PointerEvent} event          The initiating click event.
+   * @returns {Promise<ChatMessage>}      The whispered chat message.
    */
   async _whisperPlayers(event) {
     const content = this.element[0].querySelector("textarea").value.split("\n").reduce((acc, e) => {
@@ -69,7 +69,11 @@ export class WhisperPlayers extends Application {
     return ChatMessage.create({content, whisper});
   }
 
-  static async whisperPlayers() {
+  /**
+   * Render this application.
+   * @returns {WhisperPlayers}      An instance of this application.
+   */
+  static whisperPlayers() {
     return new WhisperPlayers().render(true);
   }
 }

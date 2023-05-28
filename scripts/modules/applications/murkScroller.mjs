@@ -106,7 +106,7 @@ export class MurkScroller extends Application {
   /**
    * Create the Murk scrolls from the selections.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Item[]}                The array of created scrolls.
+   * @returns {Promise<Item[]>}       The array of created scrolls.
    */
   async createScrolls(event) {
     const target = event.currentTarget;
@@ -153,8 +153,8 @@ export class MurkScroller extends Application {
 
   /**
    * Construct one specific object of scroll data. This method returns false if invalid.
-   * @param {string} id     The id of the spell on the actor.
-   * @returns {object}      The object of item data for the scroll.
+   * @param {string} id             The id of the spell on the actor.
+   * @returns {Promise<object>}     The object of item data for the scroll.
    */
   async _createScroll(id) {
     const item = this.actor.items.get(id);

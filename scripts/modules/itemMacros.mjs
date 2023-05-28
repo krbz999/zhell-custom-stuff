@@ -197,9 +197,9 @@ export class ItemMacroHelpers {
 
   /**
    * Helper function to add warpgate dismissal to an effect, which is triggered when the effect is deleted.
-   * @param {ActiveEffect|object} effect      The effect or an object of effect data to update or modify.
-   * @param {string} tokenId                  The id of the token to dismiss when the effect is deleted.
-   * @returns {ActiveEffect|object}           The updated effect or the modified object.
+   * @param {ActiveEffect|object} effect          The effect or an object of effect data to update or modify.
+   * @param {string} tokenId                      The id of the token to dismiss when the effect is deleted.
+   * @returns {Promise<ActiveEffect|object>}      The updated effect or the modified object.
    */
   static async _addTokenDismissalToEffect(effect, tokenId) {
     const command = `await warpgate.dismiss("${tokenId}");`;
@@ -214,12 +214,12 @@ export class ItemMacroHelpers {
   /**
    * Helper function for any teleportation scripts, requiring two jb2a
    * effects (for vanishing and appearing), and the maximum radius.
-   * @param {Item} item           The item being used.
-   * @param {Actor} actor         The actor who owns the item.
-   * @param {Token} token         The token of the actor owning the item.
-   * @param {string} vanish       The jb2a asset used for the vanishing effect.
-   * @param {string} appear       The jb2a asset used for the appearing effect.
-   * @param {number} distance     The maximum distance the token can teleport.
+   * @param {Item} item                     The item being used.
+   * @param {Actor} actor                   The actor who owns the item.
+   * @param {Token} token                   The token of the actor owning the item.
+   * @param {string} vanish                 The jb2a asset used for the vanishing effect.
+   * @param {string} appear                 The jb2a asset used for the appearing effect.
+   * @param {Promise<number>} distance      The maximum distance the token can teleport.
    */
   static async _teleportationHelper({item, actor, token, vanish, appear, distance}) {
     let cachedDistance = 0;
@@ -284,7 +284,7 @@ export class ItemMacroHelpers {
    * @param {object} [updates={}]       An object of updates to the spawned token, actor, and embedded.
    * @param {object} [callbacks={}]     An object of callback functions.
    * @param {object} [options={}]       An object of additional options for the spawning.
-   * @returns {string[]}                The ids of spawned tokens.
+   * @returns {Promise<string[]>}       The ids of spawned tokens.
    */
   static async _spawnHelper(name, updates = {}, callbacks = {}, options = {}) {
     const images = await game.actors.getName(name).getTokenImages();

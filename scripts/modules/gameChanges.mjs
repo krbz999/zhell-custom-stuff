@@ -219,7 +219,12 @@ export class GameChangesHandler {
     });
   }
 
-  // delete items after a rest.
+  /**
+   * Delete items after a rest.
+   * @param {Actor} actor                 The actor taking a rest.
+   * @param {object} data                 The rest data.
+   * @returns {Promise<ChatMessage>}      A created chat message with updates.
+   */
   static async _restItemDeletion(actor, data) {
     const property = data.longRest ? "longRestDestroy" : "shortRestDestroy";
     const {ids, content} = actor.items.reduce((acc, item) => {
@@ -253,7 +258,12 @@ export class GameChangesHandler {
     TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
   }
 
-  // Drop folder of actors.
+  /**
+   * Drop folder of actors.
+   * @param {Canvas} canvas                   The targeted canvas.
+   * @param {object} data                     The dragged data.
+   * @returns {Promise<TokenDocument[]>}      The created token documents.
+   */
   static async _dropActorFolder(canvas, data) {
     if ((data.type !== "Folder") || (data.documentName !== "Actor")) return;
     const folder = await fromUuid(data.uuid);

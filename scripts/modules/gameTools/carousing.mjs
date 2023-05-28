@@ -3,7 +3,7 @@
  * @param {string} [folderId]         The folder that contains all the actors to use for the level bonus.
  * @param {string} [tableName]        The name of the table to draw from.
  * @param {string} [catalogName]      The name of the compendium that contains the rolltable.
- * @returns {object}                  The object with the roll and drawn results.
+ * @returns {Promise<object>}         The object with the roll and drawn results.
  */
 export async function carousing({
   folderId = "v0ikCyAle4wCJBFk",

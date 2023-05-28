@@ -107,7 +107,7 @@ export class MoneySpender extends Application {
   /**
    * Adjust the currencies on the actor with the values in this application.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Actor}                 The updated actor.
+   * @returns {Promise<Actor>}        The updated actor.
    */
   async _spendMoney(event) {
     const currency = this.actor.system.currency;

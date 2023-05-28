@@ -5,7 +5,7 @@ import {MODULE} from "../const.mjs";
  * @param {string[]} types      The different damage types.
  * @param {string} content      The content of the dialog.
  * @param {string} title        The title for the dialog.
- * @returns {*}                 Whatever is returned from the respective button clicked.
+ * @returns {Promise<*>}        Whatever is returned from the respective button clicked.
  */
 export async function elementalDialog({types = [], content, title}) {
   const icon = {

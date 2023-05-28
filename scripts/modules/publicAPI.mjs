@@ -5,7 +5,7 @@ export class PublicAPI {
    * Get a document from a compendium.
    * @param {string} documentName     Name of the document.
    * @param {string} catalog          Key of the compendium, or suffix of the catalog.
-   * @returns {Document}              The retrieved document.
+   * @returns {Promise<Document>}     The retrieved document.
    */
   static async _getDocumentFromCompendium(documentName, catalog) {
     const key = `zhell-catalogs.${catalog}`;
@@ -18,8 +18,8 @@ export class PublicAPI {
 
   /**
    * Set the current foraging DC programmatically.
-   * @param {number} number     The new foraging DC
-   * @returns {Setting}         The updated setting.
+   * @param {number} number           The new foraging DC.
+   * @returns {Promise<Setting>}      The updated setting.
    */
   static async _setForageDC(number) {
     if (!game.user.isGM) return ui.notifications.warn("Excuse me?");
@@ -31,7 +31,7 @@ export class PublicAPI {
    * @param {object} [crosshairsConfig={}]      Options for the warpgate crosshairs.
    * @param {boolean} [fade=true]               Whether or not to use Sequencer to fade in and out.
    * @param {number} [fadeDuration=500]         The duration of the fade in and out.
-   * @returns {TokenDocument[]}                 The array of updated token documents.
+   * @returns {Promise<TokenDocument[]>}        The array of updated token documents.
    */
   static async _teleportTokens(crosshairsConfig = {}, fade = true, fadeDuration = 500) {
     const config = foundry.utils.mergeObject({
@@ -90,7 +90,7 @@ export class PublicAPI {
   /**
    * Target all tokens within an area.
    * @param {object} crosshairsConfig     Options for the warpgate crosshairs.
-   * @returns {string[]}                  The array of token ids.
+   * @returns {Promise<string[]>}         The array of token ids.
    */
   static async _targetTokens(crosshairsConfig = {}) {
     const config = foundry.utils.mergeObject({
@@ -151,6 +151,7 @@ export class PublicAPI {
    * Show text on the screen for all users.
    * @param {string} text               The text to display.
    * @param {number} [fontSize=80]      The font size of the text.
+   * @returns {Promise<Sequence>}       The played Sequence.
    */
   static async _titleCard(text, fontSize = 80) {
     if (!text) {

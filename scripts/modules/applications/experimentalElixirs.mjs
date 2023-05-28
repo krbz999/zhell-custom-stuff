@@ -147,7 +147,7 @@ export class ExperimentalElixir extends Application {
 
   /**
    * Get a random image for an elixir using the default potion images.
-   * @returns {string}      The image.
+   * @returns {Promise<string>}     The image.
    */
   async _getRandomImage() {
     const {files} = await FilePicker.browse("public", "icons/consumables/potions");
@@ -234,8 +234,8 @@ export class ExperimentalElixir extends Application {
 
   /**
    * Get data for an elixir.
-   * @param {string[]} types      The types of elixir.
-   * @returns {object}            The item data for the elixir.
+   * @param {string[]} types        The types of elixir.
+   * @returns {Promise<object>}     The item data for the elixir.
    */
   async getElixirItemData(types) {
     const name = this._getRandomName();
@@ -288,7 +288,7 @@ export class ExperimentalElixir extends Application {
   /**
    * Gather the checked boxes to get the elixir types, then create the elixir.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Item[]}                The array with the created elixir.
+   * @returns {Promise<Item[]>}       The array with the created elixir.
    */
   async _onSubmit(event) {
     const types = [];
@@ -331,7 +331,7 @@ export class ExperimentalElixir extends Application {
 
   /**
    * Create one or more random elixirs, each with just one effect.
-   * @returns {Item[]}      The created elixirs.
+   * @returns {Promise<Item[]>}     The created elixirs.
    */
   async experiment() {
     const value = this.item.system.uses.value;

@@ -40,7 +40,7 @@ export class SheetEdits {
   /**
    * Toggle inspiration on or off when clicking the 'label'.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Actor}                 The updated actor.
+   * @returns {Promise<Actor>}        The updated actor.
    */
   async _onClickInspiration(event) {
     return this.document.update({"system.attributes.inspiration": !this.document.system.attributes.inspiration});
@@ -185,8 +185,8 @@ export class SheetEdits {
 
   /**
    * Handle clicking a dot.
-   * @param {PointerEvent} event      The initiating click event.
-   * @returns {Actor5e|Item5e}        The updated actor or item.
+   * @param {PointerEvent} event            The initiating click event.
+   * @returns {Promise<Actor5e|Item5e>}     The updated actor or item.
    */
   async _onClickDot(event) {
     const {dataset: data, classList: list} = event.currentTarget;
@@ -203,8 +203,8 @@ export class SheetEdits {
 
   /**
    * Handle using the mouse wheel when hovering over the "has more" dot.
-   * @param {WheelEvent} event      The initiating mouse wheel event.
-   * @returns {Actor|Item}          The updated actor or item.
+   * @param {WheelEvent} event          The initiating mouse wheel event.
+   * @returns {Promise<Actor|Item>}     The updated actor or item.
    */
   async _onWheelDot(event) {
     const data = event.currentTarget.dataset;
@@ -345,7 +345,7 @@ export class SheetEdits {
   /**
    * Roll limited uses recharge of all items that recharge on a new day.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Item5e[]}              The array of updated items.
+   * @returns {Promise<Item5e[]>}     The array of updated items.
    */
   async _onClickNewDay(event) {
     const conf = await Dialog.confirm({

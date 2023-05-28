@@ -3,8 +3,8 @@ import {MODULE} from "../const.mjs";
 export class ExhaustionHandler {
   /**
    * Set exhaustion to a specific level, or adjust it up or down.
-   * @param {number} [num=0]      The level to set exhaustion to.
-   * @returns {ActiveEffect}      The active effect that is updated, created, or deleted.
+   * @param {number} [num=0]              The level to set exhaustion to.
+   * @returns {Promise<ActiveEffect>}     The active effect that is updated, created, or deleted.
    */
   static async applyExhaustion(num = 0) {
     // Get current exhaustion effect, if any.
@@ -51,7 +51,12 @@ export class ExhaustionHandler {
     Actor.prototype.applyExhaustion = ExhaustionHandler.applyExhaustion;
   }
 
-  // Reduce exhaustion on a long rest.
+  /**
+   * Reduce exhaustion on a long rest.
+   * @param {Actor} actor                 The actor taking a rest.
+   * @param {object} data                 The rest data.
+   * @returns {Promise<ActiveEffect>}     The updated or deleted active effect.
+   */
   static async _longRestExhaustionReduction(actor, data) {
     if (!data.longRest) return;
 

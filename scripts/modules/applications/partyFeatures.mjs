@@ -105,7 +105,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Reset the remaining uses on the party features to their maximum.
-   * @returns {Actor}     The group actor having their flags updated.
+   * @returns {Promise<Actor>}      The group actor having their flags updated.
    */
   async resetFeatures() {
     await this.close();
@@ -122,7 +122,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Perform Divine Intervention.
-   * @returns {Actor}     The group actor having its flags altered.
+   * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async intervention() {
     const usage = this.canUseFeature("intervention");
@@ -151,7 +151,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Perform Divine Inspiration.
-   * @returns {Actor}     The group actor having its flags altered.
+   * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async inspiration() {
     const usage = this.canUseFeature("inspiration");
@@ -176,7 +176,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Perform Time Fragment.
-   * @returns {Actor}     The group actor having its flags altered.
+   * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async fragment() {
     const usage = this.canUseFeature("fragment");
@@ -202,6 +202,10 @@ export class PartyFeatures extends Application {
     return this.groupActor.setFlag(MODULE, "partyFeatureUses.fragment.value", uses.value - 1);
   }
 
+  /**
+   * Render this application.
+   * @returns {PartyFeatures}     An instance of this application.
+   */
   static renderPartyFeatures() {
     return new PartyFeatures().render(true);
   }
