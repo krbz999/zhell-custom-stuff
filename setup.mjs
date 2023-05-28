@@ -1,7 +1,7 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
-import {AnimationsHandler, _equipmentPageListeners, _initD20, _setupCollapsibles} from "./scripts/modules/animations.mjs";
+import {AnimationsHandler, _equipmentPageListeners, _initD20} from "./scripts/modules/animations.mjs";
 import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
 import {MODULE} from "./scripts/const.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
@@ -23,7 +23,6 @@ Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);
 Hooks.once("ready", SheetEdits.refreshColors);
 Hooks.once("ready", SocketsHandler.socketsOn);
 Hooks.on("dropCanvasData", SocketsHandler._onDropData);
-Hooks.once("ready", _setupCollapsibles);
 
 Hooks.on("renderItemSheet", GameChangesHandler._itemStatusCondition);
 Hooks.on("renderActorSheet", SheetEdits._performSheetEdits);

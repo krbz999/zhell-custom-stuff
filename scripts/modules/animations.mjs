@@ -335,13 +335,6 @@ export class AnimationsHandler {
   }
 }
 
-// COLLAPSIBLES.
-export function _setupCollapsibles() {
-  document.addEventListener("click", (event) => {
-    event.target.closest(".zhell-collapsible-header")?.closest(".zhell-collapsible")?.classList.toggle("active");
-  });
-}
-
 // ADD DICE.
 export function _initD20(dice3d) {
   dice3d.addSystem({id: MODULE, name: "The Rollsmith - Package Jam 2022"}, false);
