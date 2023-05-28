@@ -23,6 +23,8 @@
   "ZHELL.CraftingTypeInhaled": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",
   "ZHELL.CraftingTypeInjury": "This poison can be applied to weapons, ammunition, trap components, and other objects that deal piercing or slashing damage and remains potent until delivered through a wound or washed off.",
   "ZHELL.CraftingWentForaging": "{name} went foraging for {hours} hours and found {amount} lbs of forageable goods.",
+  "ZHELL.DescriptionAbsorbElements": "You have {type} resistance and deal {level}d6 additional {type} damage on your first melee attack before this effect expires.",
+  "ZHELL.DescriptionElementalWeapon": "You have a +{bonus} to attack rolls made with the chosen weapon ({weaponName}) and it deals an additional {dice} {type} damage on a hit.",
   "ZHELL.ExperimentalElixirBoundedWarning": "You must pick between 1 and {max} options.",
   "ZHELL.ExperimentalElixirCreatedRandomElixirs": "{name} created {n} random elixirs.",
   "ZHELL.ExperimentalElixirExpendedSlots": "{name} expended a {level} spell slot and created an elixir.",

@@ -6,11 +6,9 @@ export async function BREATH_WEAPON(item, speaker, actor, token, character, even
   const options = [["cone", "Cone (30ft)"], ["line", "Line (60ft)"]].reduce((acc, e) => {
     return acc + `<option value="${e[0]}">${e[1]}</option>`;
   }, "");
-  const content = ItemMacroHelpers._basicFormContent({label: "Template Type:", type: "select", options});
-
   const template = await Dialog.prompt({
     title: item.name,
-    content,
+    content: ItemMacroHelpers._basicFormContent({label: "Template Type:", type: "select", options}),
     rejectClose: false,
     label: "Continue",
     callback: (html) => html[0].querySelector("select").value
@@ -32,7 +30,7 @@ export async function BREATH_WEAPON(item, speaker, actor, token, character, even
       lightning: "jb2a.breath_weapons.fire.cone.blue.02",
       poison: "jb2a.breath_weapons.poison.cone.green"
     }
-  }
+  };
 
   const type = await elementalDialog({
     types: Object.keys(breaths.line),
@@ -43,11 +41,10 @@ export async function BREATH_WEAPON(item, speaker, actor, token, character, even
 
   const file = breaths[template][type];
   await item.setFlag(MODULE, "breathWeapon", {type: file, template});
-  const target = (template === "line") ? {
-    value: 60, units: "ft", type: template, width: 5
-  } : {
-    value: 30, units: "ft", type: template, width: ""
-  };
+  const target = {
+    line: {value: 60, units: "ft", type: "line", width: 5},
+    cone: {value: 30, units: "ft", type: "cone", width: ""}
+  }[template];
   const clone = item.clone({"system.target": target}, {keepId: true});
   clone.prepareFinalAttributes();
   return clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});

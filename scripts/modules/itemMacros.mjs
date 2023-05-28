@@ -102,7 +102,7 @@ export class ItemMacroHelpers {
       const prototype = await actor.getTokenDocument();
       const protoData = foundry.utils.flattenObject(prototype.light);
       for (const key of Object.keys(protoData)) {
-        if (foundry.utils.getProperty(config, key) === undefined) {
+        if (!foundry.utils.hasProperty(config, key)) {
           delete protoData[key];
         }
       }
@@ -120,7 +120,7 @@ export class ItemMacroHelpers {
       icon: item.img,
       name: item.name,
       origin: item.uuid,
-      duration: {seconds: (value ? value : 1) * (units === "minute" ? 60 : units === "hour" ? 3600 : 1)},
+      duration: {seconds: (value ? value : 1) * ((units === "minute") ? 60 : (units === "hour") ? 3600 : 1)},
       statuses: [item.name.slugify({strict: true})],
       description: intro ?? "You are lit up!",
       flags: foundry.utils.mergeObject({

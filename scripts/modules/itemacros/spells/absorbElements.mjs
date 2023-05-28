@@ -27,7 +27,7 @@ export async function ABSORB_ELEMENTS(item, speaker, actor, token, character, ev
     origin: item.uuid,
     duration: {rounds: 1},
     statuses: [item.name.slugify({strict: true})],
-    description: `You have ${type} resistance and deal ${level}d6 additional ${type} damage on your first melee attack before this effect expires.`,
+    description: game.i18n.format("ZHELL.DescriptionAbsorbElements", {type, level}),
     [`flags.${DEPEND.VAE}.data.content`]: item.system.description.value
   }];
   return actor.createEmbeddedDocuments("ActiveEffect", effectData);
