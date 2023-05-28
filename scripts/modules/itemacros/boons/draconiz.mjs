@@ -94,7 +94,7 @@ async function SIZE_UP(item, speaker, actor, token, character, event, args) {
   let content = "";
 
   for (const abi of ["str", "con"]) {
-    const name = CONFIG.DND5E.abilities[abi];
+    const name = CONFIG.DND5E.abilities[abi].label;
     if (mine[abi].value === theirs[abi].value) content += `<p>Your ${name} scores are equal.</p>`;
     else if (mine[abi].value > theirs[abi].value) content += `<p>Your ${name} score is highest.</p>`;
     else content += `<p>Their ${name} score is highest.</p>`;

@@ -46,7 +46,7 @@ export async function RAINBOW_RECURVE(item, speaker, actor, token, character, ev
       <button data-tooltip="${text}" data-tooltip-direction="LEFT" data-arrow="${color}">
         ${color.capitalize()}
       </button>`;
-    }, "<div class='buttons'>") + "</div>";
+    }, "<div class='dialog-buttons'>") + "</div>";
 
     d = new Dialog({
       title: item.name,
@@ -55,7 +55,7 @@ export async function RAINBOW_RECURVE(item, speaker, actor, token, character, ev
       render: (html) => {
         html[0].querySelectorAll("[data-arrow]").forEach(n => n.addEventListener("click", shootArrow));
       }
-    }, {classes: [MODULE, "vertical-dialog"]});
+    }, {classes: ["dialog", "column-dialog"]});
     return d.render(true);
   }
 
@@ -89,7 +89,7 @@ export async function RAINBOW_RECURVE(item, speaker, actor, token, character, ev
       const oldSave = div.querySelector("button[data-action=save]");
       const dc = actor.system.attributes.spelldc;
 
-      const saveType = CONFIG.DND5E.abilities[addSave];
+      const saveType = CONFIG.DND5E.abilities[addSave].label;
       const newSaveButton = document.createElement("button");
       newSaveButton.setAttribute("data-action", "save");
       newSaveButton.setAttribute("data-ability", addSave);

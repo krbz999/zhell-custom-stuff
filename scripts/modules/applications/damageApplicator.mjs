@@ -97,8 +97,8 @@ export class DamageApplicator extends Application {
       data.save = {
         ability: this.saveData.ability,
         dc: this.saveData.dc, // todo: babonus bonus to save dc?
-        label: CONFIG.DND5E.abilities[this.saveData.ability]
-      }
+        label: CONFIG.DND5E.abilities[this.saveData.ability].label
+      };
     }
 
     return data;
