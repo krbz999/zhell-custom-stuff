@@ -358,21 +358,6 @@ export class ItemMacroHelpers {
   }
 
   /**
-   * Helper function to get the damage bonus from a blade cantrip.
-   * @param {Item} item     The item being upscaled.
-   * @returns {object}      An object with two strings (the formula and the damage type).
-   */
-  static _bladeCantripDamageBonus(item) {
-    const part = item.system.damage.parts[0];
-    const level = item.actor.system.details.level ?? Math.floor(item.actor.system.details.cr);
-    const add = Math.floor((level + 1) / 6);
-    return {
-      formula: new Roll(part[0]).alter(0, add).formula,
-      type: part[1]
-    };
-  }
-
-  /**
    * Draw a circle around a token placeable.
    * @param {Token} token         A token placeable.
    * @param {number} radius       The radius of the circle (in ft).
