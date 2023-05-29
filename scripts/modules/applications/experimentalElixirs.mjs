@@ -1,12 +1,18 @@
 import {DEPEND, MODULE} from "../../const.mjs";
 
 export class ExperimentalElixir extends Application {
-  constructor(data) {
-    super(data);
-    this.actor = data.actor;
-    this.item = data.item;
+  /**
+   * @constructor
+   * @param {Actor} actor         The actor using the item.
+   * @param {Item} item           The item being used.
+   * @param {object} speaker      The speaker object from Item Macro, for convenience.
+   */
+  constructor({actor, item, speaker}) {
+    super({actor, item, speaker});
+    this.actor = actor;
+    this.item = item;
     this.rollData = this.actor.getRollData();
-    this.speaker = data.speaker;
+    this.speaker = speaker;
 
     for (const [key, data] of Object.entries(this.actor.system.spells)) {
       if (!(data.value > 0)) continue;
@@ -206,9 +212,17 @@ export class ExperimentalElixir extends Application {
    * @returns {object}          The flag data.
    */
   _getFlagData(parts) {
-    const useRollGroups = parts.length > 1;
     const flags = {[MODULE]: {longRestDestroy: true}};
-    if (useRollGroups) flags.rollgroups = {config: {groups: [{parts: [0], label: "Healing"}, {parts: [1], label: "Temporary HP"}]}};
+    if (parts.length > 1) {
+      flags.rollgroups = {
+        config: {
+          groups: [
+            {parts: [0], label: "Healing"},
+            {parts: [1], label: "Temporary HP"}
+          ]
+        }
+      };
+    }
     return flags;
   }
 
@@ -234,22 +248,18 @@ export class ExperimentalElixir extends Application {
 
   /**
    * Get data for an elixir.
-   * @param {string[]} types        The types of elixir.
-   * @returns {Promise<object>}     The item data for the elixir.
+   * @param {string[]} types          The types of elixir.
+   * @returns {Promise<object[]>}     An array of item data for the elixir.
    */
   async getElixirItemData(types) {
-    const name = this._getRandomName();
     const flavor = this._getRandomFlavor();
-    const img = await this._getRandomImage();
-    const effects = this._getEffectData(types);
     const parts = this._getDamageParts(types);
-    const flags = this._getFlagData(parts);
     const desc = this._getDescription(types);
 
     return [{
-      name,
+      name: this._getRandomName(),
       type: "consumable",
-      img,
+      img: await this._getRandomImage(),
       system: {
         description: {value: `<p><em>${flavor}</em></p> <hr> ${desc}`},
         weight: 0.5,
@@ -259,8 +269,8 @@ export class ExperimentalElixir extends Application {
         damage: {parts},
         actionType: parts.length > 0 ? "heal" : ""
       },
-      effects,
-      flags
+      effects: this._getEffectData(types),
+      flags: this._getFlagData(parts)
     }];
   }
 
@@ -282,7 +292,9 @@ export class ExperimentalElixir extends Application {
   /** @override */
   activateListeners(html) {
     html[0].querySelector("[data-action='submit']").addEventListener("click", this._onSubmit.bind(this));
-    html[0].querySelectorAll("[type='checkbox']").forEach(n => n.addEventListener("change", this._onChangeCheckbox.bind(this)));
+    html[0].querySelectorAll("[type='checkbox']").forEach(n => {
+      n.addEventListener("change", this._onChangeCheckbox.bind(this));
+    });
   }
 
   /**
