@@ -135,51 +135,6 @@ img.zhell-holy-symbol.thrizur:hover {
   color: black;
 }
 
-/* EQUIPMENT TABLES */
-.zhell-equipment-tables table > thead > tr {
-  height: 40px;
-}
-
-.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3) {
-  text-align: center;
-  border-top: 2px groove darkslategray;
-  border-bottom: 2px groove darkslategray;
-  user-select: none;
-  cursor: pointer;
-}
-
-.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3):hover {
-  text-shadow: 0 0 14px red;
-}
-
-.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3).collapsed {
-  color: gray;
-}
-
-.sheet.journal-entry .journal-entry-page .zhell-equipment-tables :is(h1, h2, h3).collapsed + section {
-  display: none;
-}
-
-.zhell-equipment-tables table > tbody > tr > td {
-  padding: 0;
-  min-height: 30px;
-  align-items: center;
-}
-
-.zhell-equipment-tables table > tbody > tr > td:not(:first-child) {
-  text-align: center;
-}
-
-.zhell-equipment-tables table > tbody > tr > td:first-child {
-  display: flex;
-  white-space: pre;
-}
-
-.zhell-equipment-tables table > tbody > tr > td > a.content-link {
-  width: 100%;
-  padding: 5px;
-}
-
 /* RACES */
 h1.havilon-race-header {
   text-align: center;

@@ -1,7 +1,7 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
-import {AnimationsHandler, _equipmentPageListeners, _initD20} from "./scripts/modules/animations.mjs";
+import {AnimationsHandler, _initD20} from "./scripts/modules/animations.mjs";
 import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
 import {MODULE} from "./scripts/const.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
@@ -26,7 +26,6 @@ Hooks.on("dropCanvasData", SocketsHandler._onDropData);
 
 Hooks.on("renderItemSheet", GameChangesHandler._itemStatusCondition);
 Hooks.on("renderActorSheet", SheetEdits._performSheetEdits);
-Hooks.on("renderJournalPageSheet", _equipmentPageListeners);
 Hooks.on("preUpdateToken", GameChangesHandler._rotateTokensOnMovement);
 Hooks.on("renderTokenHUD", GameChangesHandler._replaceTokenHUD);
 Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);

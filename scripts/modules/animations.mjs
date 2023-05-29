@@ -345,11 +345,3 @@ export function _initD20(dice3d) {
     system: MODULE
   });
 }
-
-export function _equipmentPageListeners(app, html) {
-  if (app.object.parent.name !== "Index: Table Rules") return;
-  if (app.object.name !== "Equipment") return;
-  html[0].querySelectorAll(".zhell-equipment-tables :is(h1, h2, h3)").forEach(n => {
-    n.addEventListener("click", e => e.currentTarget.classList.toggle("collapsed"));
-  });
-}
