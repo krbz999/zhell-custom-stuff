@@ -9,14 +9,14 @@ export class SocketsHandler {
 
   static async socketTemplateFunction({userId, stuff}, push = true) {
     // Find a user who can do the thing unless one is provided.
-    userId ??= _getFirstGM();
+    userId ??= _getUserId(someTarget);
 
     // If no one can do the thing, cry about it.
     if (!userId) return ui.notifications.warn("No user found, wah!");
 
     // If someone ELSE can do it, push to them.
-    if (game.user.id !== userId) {
-      if (push) game.socket.emit(`world.${game.world.id}`, {
+    if ((game.user.id !== userId) && push) {
+      game.socket.emit(`world.${game.world.id}`, {
         action: "socketTemplateFunction",
         data: {stuff}
       });
@@ -138,31 +138,53 @@ export class SocketsHandler {
       const content = `${names} ${itemData.length > 1 ? "were" : "was"} added to ${actor.name}'s inventory.`;
       const whisper = _getOwnerIds(actor);
       await ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor}), whisper});
-      return actor.createEmbeddedDocuments("Item", itemData);
+      const valid = await actor.sheet._onDropSingleItem(itemData[0]);
+      if (valid) return actor.createEmbeddedDocuments("Item", itemData);
     }
   }
 
+  /**
+   * When dropping an item on the canvas, find a token at the target area and transfer the item to their sheet. If more
+   * one token is found, pick one of them using a prompt, and then emit a socket event to create the item on their sheet.
+   * @param {Canvas} canvas     The canvas.
+   * @param {object} data       The drop data.
+   */
   static async _onDropData(canvas, data) {
     if (data.type !== "Item") return;
     const item = await fromUuid(data.uuid);
-    if (!["weapon", "equipment", "consumable", "tool", "backpack", "loot"].includes(item.type)) return;
+
+    // Must be a physical item.
+    if (!foundry.utils.hasProperty(item, "system.quantity")) return;
     const itemData = game.items.fromCompendium(item);
+
+    // Find valid tokens at the drop area.
     const tokens = canvas.tokens.placeables.filter(t => {
       const tb = t.bounds.contains(data.x, data.y) && (t.actor !== item.actor);
       if (game.user.isGM) return tb;
       return tb && (t.document.disposition !== CONST.TOKEN_DISPOSITIONS.HOSTILE);
     });
     if (!tokens.length) return;
-    if (tokens.length > 1) return _pickTokenTarget(tokens, itemData);
+
+    let token;
+
+    // If more than one token, pick one.
+    if (tokens.length > 1) {
+      const tokenId = await _pickTokenTarget(tokens, itemData);
+      token = canvas.scene.tokens.get(tokenId);
+    } else {
+      token = tokens[0].document;
+    }
+
+    if (!token) return;
+
+    // Confirm the transfer.
     const grant = await Dialog.confirm({
       title: "Grant Item",
-      content: `<p>Grant ${itemData.name} to ${tokens[0].document.name}?</p>`
+      content: `<p>Grant ${itemData.name} to ${token.name}?</p>`
     });
     if (!grant) return;
-    ui.notifications.info(`Adding item to ${tokens[0].document.name}!`);
-    const valid = await tokens[0].actor.sheet._onDropSingleItem(itemData);
-    if (!valid) return; // The above method returns falsy if the item is invalid or otherwise handled.
-    return SocketsHandler.grantItems({itemData: [itemData], tokenId: tokens[0].id});
+    ui.notifications.info(`Adding item to ${token.name}!`);
+    return SocketsHandler.grantItems({itemData: [itemData], tokenId: token.id});
   }
 }
 
@@ -197,10 +219,7 @@ async function _pickTokenTarget(tokens, itemData) {
   const top = tokens.map(t => ({name: t.document.id, src: t.document.texture.src}));
   const title = `Pick Target for ${itemData.name}`;
   const callback = async function(event, {top, middle, bottom}) {
-    const tokenId = top[0];
-    const target = canvas.scene.tokens.get(tokenId);
-    ui.notifications.info(`Adding item to ${target.name}!`);
-    return SocketsHandler.grantItems({itemData: [itemData], tokenId});
+    return top[0];
   }
   return new ImageAnchorPicker({top, title, callback}).render(true);
 }
