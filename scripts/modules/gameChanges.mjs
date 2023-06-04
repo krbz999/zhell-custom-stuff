@@ -255,9 +255,11 @@ export class GameChangesHandler {
    * @returns {Promise<TokenDocument[]>}      The created token documents.
    */
   static async _dropActorFolder(canvas, data) {
-    if ((data.type !== "Folder") || (data.documentName !== "Actor")) return;
-    const folder = await fromUuid(data.uuid);
+    if (data.type !== "Folder") return;
+    const folder = fromUuidSync(data.uuid);
+    if (folder.type !== "Actor") return;
     const [x, y] = canvas.grid.getTopLeft(data.x, data.y);
+    ui.notifications.info(`Dropping actors of '${folder.name}' folder.`);
     const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
     return canvas.scene.createEmbeddedDocuments("Token", tokenData);
   }
