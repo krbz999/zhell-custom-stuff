@@ -10,6 +10,7 @@ import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
 import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
+import {HeartContainers} from "./scripts/modules/applications/heartContainers.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -22,6 +23,7 @@ Hooks.once("diceSoNiceReady", _initD20);
 Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);
 Hooks.once("ready", SheetEdits.refreshColors);
 Hooks.once("ready", SocketsHandler.socketsOn);
+Hooks.once("ready", HeartContainers.createApplication);
 Hooks.on("dropCanvasData", SocketsHandler._onDropData);
 
 Hooks.on("renderItemSheet", GameChangesHandler._itemStatusCondition);
