@@ -33,8 +33,8 @@ export class DamageApplicator extends Application {
       dragDrop: [],
       closeOnSubmit: false,
       template: `modules/${MODULE}/templates/damageApplicator.hbs`,
-      top: 0,
-      left: 0
+      top: 50,
+      left: 150
     });
   }
 
@@ -96,7 +96,7 @@ export class DamageApplicator extends Application {
     if (data.hasSave) {
       data.save = {
         ability: this.saveData.ability,
-        dc: this.saveData.dc, // todo: babonus bonus to save dc?
+        dc: Math.max(this.saveData.dc, this.message.flags.babonus?.saveDC || 0),
         label: CONFIG.DND5E.abilities[this.saveData.ability].label
       };
     }
@@ -107,15 +107,18 @@ export class DamageApplicator extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelectorAll("[data-action='toggle-trait']").forEach(n => n.addEventListener("click", this._onToggleTrait.bind(this)));
-    html[0].querySelectorAll("[data-action='saving-throw']").forEach(n => n.addEventListener("click", this._onRollSave.bind(this)));
-    html[0].querySelectorAll("[data-action='toggle-throw']").forEach(n => n.addEventListener("click", this._onToggleSuccess.bind(this)));
-    html[0].querySelectorAll("[data-action='remove-actor']").forEach(n => n.addEventListener("click", this._onRemoveActor.bind(this)));
-    html[0].querySelectorAll("[data-action='pan-to-token']").forEach(n => n.addEventListener("click", this._onPanToken.bind(this)));
-    html[0].querySelectorAll("[data-action='apply-damage']").forEach(n => n.addEventListener("click", this._onApplyDamage.bind(this)));
-    html[0].querySelectorAll("[data-action='render-actor']").forEach(n => n.addEventListener("click", this._onRenderActor.bind(this)));
-    html[0].querySelector("[data-action='apply-damage-all']").addEventListener("click", this._onApplyDamageAll.bind(this));
-    html[0].querySelector("[data-action='saving-throw-all']")?.addEventListener("click", this._onRollSaveAll.bind(this));
+    html[0].querySelectorAll("[data-action]").forEach(n => {
+      const action = n.dataset.action;
+      if (action === "toggle-trait") n.addEventListener("click", this._onToggleTrait.bind(this));
+      else if (action === "saving-throw") n.addEventListener("click", this._onRollSave.bind(this));
+      else if (action === "toggle-throw") n.addEventListener("click", this._onToggleSuccess.bind(this));
+      else if (action === "remove-actor") n.addEventListener("click", this._onRemoveActor.bind(this));
+      else if (action === "pan-to-token") n.addEventListener("click", this._onPanToken.bind(this));
+      else if (action === "apply-damage") n.addEventListener("click", this._onApplyDamage.bind(this));
+      else if (action === "render-actor") n.addEventListener("click", this._onRenderActor.bind(this));
+      else if (action === "apply-damage-all") n.addEventListener("click", this._onApplyDamageAll.bind(this));
+      else if (action === "saving-throw-all") n.addEventListener("click", this._onRollSaveAll.bind(this));
+    });
   }
 
   /** @override */
@@ -187,7 +190,9 @@ export class DamageApplicator extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   async _onApplyDamageAll(event) {
-    this.element[0].querySelectorAll(".actor [data-action='apply-damage']").forEach(n => n.dispatchEvent(new PointerEvent("click", event)));
+    this.element[0].querySelectorAll(".actor [data-action='apply-damage']").forEach(n => {
+      n.dispatchEvent(new PointerEvent("click", event));
+    });
   }
 
   /**
@@ -417,6 +422,9 @@ export class DamageApplicator extends Application {
 
     const roll = message.rolls[0];
     const values = {};
+
+    const damageLabels = Object.values(CONFIG.DND5E.damageTypes);
+
     for (const term of roll.terms) {
       if (!(term instanceof Die) && !(term instanceof NumericTerm)) continue;
 
@@ -433,12 +441,19 @@ export class DamageApplicator extends Application {
       const fl = term.options.flavor;
       let type;
       if (!fl) {
+        // No flavor, use the type of the previous term.
         type = currentType;
       } else {
-        // If a term has valid damage type, update the current type. If it is not valid, use the default type.
-        const dType = CONFIG.DND5E.damageTypes[fl];
-        type = dType ? fl : indices[0];
-        if (dType) currentType = type;
+        const slg = fl.slugify({strict: true});
+
+        // If the type exists, use that.
+        if (fl in CONFIG.DND5E.damageTypes) type = fl;
+        // If the type slugified exists, use that.
+        else if (slg in CONFIG.DND5E.damageTypes) type = slg;
+        // If the type is a proper label instead, use the type that corresponds to it.
+        else if (damageLabels.includes(fl)) type = Object.entries(CONFIG.DND5E.damageTypes).find(dt => dt[1] === fl)[0];
+        // Default to the default type.
+        else type = indices[0];
       }
       values[type] = (values[type] ?? 0) + term.total;
       idx++;
