@@ -24,8 +24,12 @@ export class ClassPageRenderer extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelectorAll("[data-action='toggle-description']").forEach(n => n.addEventListener("click", this._onToggleDescription.bind(this)));
-    html[0].querySelectorAll("[data-action='toggle-collapse']").forEach(n => n.addEventListener("click", this._onToggleCollapse.bind(this)));
+    html[0].querySelectorAll("[data-action='toggle-description']").forEach(n => {
+      n.addEventListener("click", this._onToggleDescription.bind(this));
+    });
+    html[0].querySelectorAll("[data-action='toggle-collapse']").forEach(n => {
+      n.addEventListener("click", this._onToggleCollapse.bind(this));
+    });
   }
 
   /**
