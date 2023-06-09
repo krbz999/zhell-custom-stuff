@@ -1,11 +1,32 @@
-/*
-  1000: Bless
-  1100: Bane
-  1200: Haste
-  1300: Slow
-  1400: Fly
-  1500: Invisible
-*/
+/**
+ * <-- Conditions -->
+ * 100: Dead,
+ * 200: Charmed,
+ * 250: Frightened,
+ * 280: Poisoned,
+ * 300: Blinded,
+ * 330: Deafened,
+ * 360: Muted,
+ * 400: Prone,
+ * 430: Grappled,
+ * 450: Restrained,
+ * 500: Incapacitated,
+ * 540: Stunned,
+ * 560: Unconscious,
+ * 600: Paralyzed,
+ * 650: Petrified,
+ * 700: Invisible,
+ * 750: Flying,
+ * <-- Spell Effects -->
+ * 1000: Bless,
+ * 1100: Bane,
+ * 1200: Haste,
+ * 1300: Slow,
+ * 1400: Fly,
+ * 1500: Invisible,
+ * <-- Other -->
+ * 1600: Reaction,
+ */
 export const SPELL_EFFECTS = [
   {
     id: "bane", name: "ZHELL.StatusConditionBane", sort: 1100,
@@ -85,16 +106,6 @@ export const SPELL_EFFECTS = [
     ]
   }
 ];
-/*
-  100: Dead
-  200: Charmed, Frightened (250), Poisoned (280)
-  300: Blinded, Deafened (330), Muted (360)
-  400: Prone, Grappled (430), Restrained (450)
-  500: Incapacitated, Stunned (540), Unconscious (560)
-  600: Paralyzed, Petrified (650)
-  700: Invisible, Flying (750)
-  1600: Reaction
-*/
 export const STATUS_EFFECTS = [
   {
     id: "blind", name: "ZHELL.StatusConditionBlind", sort: 300,

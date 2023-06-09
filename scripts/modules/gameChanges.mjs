@@ -339,9 +339,9 @@ export class GameChangesHandler {
 
     if (!options.length) return;
 
-    const DIV = document.createElement("DIV");
-    DIV.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/statusConditionSelect.hbs");
-    list.append(...DIV.children);
+    const div = document.createElement("DIV");
+    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/statusConditionSelect.hbs");
+    list.append(...div.children);
 
     const add = html[0].querySelector("[data-effect-type='statusCondition'] a[data-action='statusCondition']");
     if (add) add.addEventListener("click", async function() {
