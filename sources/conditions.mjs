@@ -25,7 +25,9 @@
  * 1400: Fly,
  * 1500: Invisible,
  * <-- Other -->
+ * 1550: Rimed,
  * 1600: Reaction,
+ * 2000: Target,
  */
 export const SPELL_EFFECTS = [
   {
@@ -242,5 +244,15 @@ export const STATUS_EFFECTS = [
         onTurnStart: {script: "return effect.delete();"}
       }
     }
+  },
+  {
+    id: "rimed", name: "ZHELL.StatusConditionRimed", sort: 1550,
+    icon: "icons/magic/water/barrier-ice-water-cube.webp",
+    description: "<p>Your movement speed has been reduced by 10 feet.</p>",
+    changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10}]
+  },
+  {
+    id: "target", name: "ZHELL.StatusConditionTarget", sort: 2000,
+    icon: "icons/svg/target.svg"
   }
 ];
