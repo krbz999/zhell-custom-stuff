@@ -50,7 +50,7 @@ export class HeartContainers extends Application {
     }
     const tempHearts = Array(Math.ceil(this.hp.temp / 10)).fill(0);
 
-    return {hearts, tempHearts, active: this.active};
+    return {hearts, tempHearts, active: this.active ? "active" : ""};
   }
 
   /** @override */
@@ -70,8 +70,7 @@ export class HeartContainers extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   _onToggle(event) {
-    event.currentTarget.classList.toggle("active");
-    this.active = event.currentTarget.classList.contains("active");
+    this.active = event.currentTarget.classList.toggle("active");
   }
 
   /**
