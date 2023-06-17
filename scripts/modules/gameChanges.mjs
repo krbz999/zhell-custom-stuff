@@ -246,6 +246,9 @@ export class GameChangesHandler {
 
     // Adjust the time it takes for tooltips to fade in and out.
     TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
+
+    // Set note display to always on.
+    game.settings.set("core", NotesLayer.TOGGLE_SETTING, true);
   }
 
   /**
@@ -532,5 +535,36 @@ export class GameChangesHandler {
     if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
     const ray = new Ray(doc, {x: update.x ?? doc.x, y: update.y ?? doc.y});
     update.rotation = ray.angle * 180 / Math.PI - 90;
+  }
+
+  /**
+   * Add a listener to the canvas to show journal page contents when clicking a dummy note.
+   * @returns {Dialog}      A created dialog with the page's contents.
+   */
+  static _addNoteListeners() {
+    canvas.app.stage.addEventListener("click", async function(event) {
+      const object = event.interactionData?.object;
+      if (!object) return;
+      const isHover = object.interactionState === 1;
+      if (!isHover) return;
+      const isNote = object instanceof Note;
+      if (!isNote) return;
+      const isActual = object.document.entryId || object.document.pageId;
+      if (isActual) return;
+      const src = object.document.flags[MODULE]?.source;
+      if (!src) return;
+
+      const page = await fromUuid(src);
+      const id = object.document.uuid.replaceAll(".", "-");
+      const isOpen = Object.values(ui.windows).find(e => e.id === id);
+      if (isOpen) return;
+      return Dialog.prompt({
+        content: page.text.content,
+        rejectClose: false,
+        title: page.name,
+        label: "Close",
+        options: {width: 800, height: 1200, id}
+      });
+    });
   }
 }

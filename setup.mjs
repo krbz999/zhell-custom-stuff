@@ -39,6 +39,7 @@ Hooks.on("renderChatMessage", DamageApplicator._appendToDamageRolls);
 Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
 Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
 Hooks.on("getSceneControlButtons", sceneControls);
+Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
