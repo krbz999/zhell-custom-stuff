@@ -60,13 +60,10 @@ export class SheetEdits {
     const hp = this.sheet.document.system.attributes.hp;
     const a = (hp.value ?? 0) + (hp.temp ?? 0);
     const b = (hp.max ?? 0) + (hp.tempmax ?? 0);
-    if (!b) return;
-    const nearDeath = a / b < 0.33;
-    const bloodied = (a / b < 0.66) && !nearDeath;
+    if (!b || (a / b > 0.65)) return;
 
     const node = this.html[0].querySelector("[name='system.attributes.hp.value']");
-    node.classList.toggle("near-death", nearDeath);
-    node.classList.toggle("bloodied", bloodied);
+    node.style.color = dnd5e.documents.Actor5e.getHPColor(a, b).css;
   }
 
   /** Make embedded document headers collapsible. */

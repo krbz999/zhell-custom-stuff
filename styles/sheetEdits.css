@@ -81,16 +81,6 @@
   filter: drop-shadow(0 0 1px black);
 }
 
-/* HP colors if below 33%. */
-.dnd5e.sheet.actor input[name="system.attributes.hp.value"].near-death {
-  color: red;
-}
-
-/* HP colors if below 66%. */
-.dnd5e.sheet.actor input[name="system.attributes.hp.value"].bloodied {
-  color: peru;
-}
-
 /* RARITY COLORS */
 .dnd5e.sheet.actor .item.uncommon .item-name h4 {
   color: var(--rarityUncommon) !important;
