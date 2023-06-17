@@ -1133,3 +1133,14 @@ button:active:not(.pm-dropdown, :disabled),
 .zhell-custom-stuff.heart-containers .temp .heart {
   color: rgb(79, 79, 233);
 }
+
+.dialog.note-util {
+  min-width: 692px;
+  max-width: 692px;
+  min-height: 800px;
+  max-height: 800px;
+}
+
+.dialog.note-util .dialog-buttons {
+  display: none;
+}

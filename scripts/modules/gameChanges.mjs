@@ -559,11 +559,11 @@ export class GameChangesHandler {
       const isOpen = Object.values(ui.windows).find(e => e.id === id);
       if (isOpen) return;
       return Dialog.prompt({
-        content: page.text.content,
+        content: `<h1>${page.name}</h1>` + page.text.content,
         rejectClose: false,
         title: page.name,
         label: "Close",
-        options: {width: 800, height: 1200, id}
+        options: {id, classes: ["dialog", "note-util"]}
       });
     });
   }
