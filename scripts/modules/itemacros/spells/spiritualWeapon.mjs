@@ -13,7 +13,7 @@ export async function SPIRITUAL_WEAPON(item, speaker, actor, token, character, e
   const use = await item.use();
   if (!use) return;
 
-  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Spiritual Weapon`}}
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Spiritual Weapon`}};
   const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:

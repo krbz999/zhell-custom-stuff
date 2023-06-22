@@ -10,7 +10,7 @@ export async function MOONBEAM(item, speaker, actor, token, character, event, ar
   const use = await item.use();
   if (!use) return;
 
-  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Moonbeam`}}
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Moonbeam`}};
   const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:

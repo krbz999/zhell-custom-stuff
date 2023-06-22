@@ -10,7 +10,7 @@ export async function FLAMING_SPHERE(item, speaker, actor, token, character, eve
   const use = await item.use();
   if (!use) return;
 
-  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Flaming Sphere`}}
+  const updates = {token: {name: `${actor.name.split(" ")[0]}'s Flaming Sphere`}};
   const options = {crosshairs: {drawIcon: false, icon: "icons/svg/dice-target.svg", interval: -1}};
 
   // then spawn the actor:
