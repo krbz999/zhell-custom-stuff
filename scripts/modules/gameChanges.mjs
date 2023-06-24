@@ -190,25 +190,6 @@ export class GameChangesHandler {
     array.unshift(viewBtn);
   }
 
-  // replace Darkvision with a slightly modified one that respects range.
-  static _visionModes() {
-    CONFIG.Canvas.visionModes.darkvision = new VisionMode({
-      id: "darkvision",
-      label: "VISION.ModeDarkvision",
-      canvas: {
-        shader: ColorAdjustmentsSamplerShader,
-        uniforms: {enable: true, contrast: 0, saturation: -1.0, brightness: 0},
-      },
-      lighting: {
-        background: {visibility: VisionMode.LIGHTING_VISIBILITY.REQUIRED},
-      },
-      vision: {
-        darkness: {adaptive: true},
-        defaults: {contrast: 0, saturation: -1.0, brightness: 0.65},
-      },
-    });
-  }
-
   /**
    * Delete items after a rest.
    * @param {Actor} actor                 The actor taking a rest.

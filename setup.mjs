@@ -15,7 +15,6 @@ import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
-Hooks.once("init", GameChangesHandler._visionModes);
 Hooks.once("init", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", GameChangesHandler._miscAdjustments);
