@@ -11,6 +11,7 @@ import {sceneControls} from "./scripts/modules/sceneControls.mjs";
 import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {HeartContainers} from "./scripts/modules/applications/heartContainers.mjs";
+import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -40,6 +41,9 @@ Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
 Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
 Hooks.on("getSceneControlButtons", sceneControls);
 Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
+
+Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
+Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");

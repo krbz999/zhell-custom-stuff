@@ -30,6 +30,9 @@ export function setupAPI() {
       showClassPages: ClassPageRenderer.renderClassPages,
       renderPartyFeatures: PartyFeatures.renderPartyFeatures,
       healToken: SocketsHandler.healToken,
+      toggleBossBar: PublicAPI.toggleBossBar,
+      updateBossBar: PublicAPI.updateBossBar,
+      updateBossBarDialog: PublicAPI.updateBossBarDialog,
       ...gameTools
     },
     ITEMACRO

@@ -214,4 +214,65 @@ export class PublicAPI {
     canvas.tokens.releaseAll();
     tokens.forEach(token => token.control({releaseOthers: false}));
   }
+
+  /**
+   * Toggle the boss bar application for all users.
+   * @returns {Promise<Scene>}      The scene of the token document after being updated.
+   */
+  static async toggleBossBar() {
+    if (!game.user.isGM) return null;
+    const path = `flags.${MODULE}.bossBar.active`;
+    return canvas.scene.update({[path]: !foundry.utils.getProperty(canvas.scene, path)}, {bossBar: true});
+  }
+
+  /**
+   * Update the boss bar application for all users.
+   * @param {string} tokenId      The id of a token to use as the boss.
+   * @param {string} title        An optional title to display.
+   * @param {boolean} active      Whether the boss bar is shown.
+   */
+  static async updateBossBar({tokenId, title, active} = {}) {
+    if (!game.user.isGM) return null;
+    const update = {};
+    if (tokenId !== undefined) update.tokenId = tokenId;
+    if (title !== undefined) update.title = title;
+    if (active !== undefined) update.active = active;
+    return canvas.scene.update({[`flags.${MODULE}.bossBar`]: update}, {bossBar: true});
+  }
+
+  static async updateBossBarDialog() {
+    if (!game.user.isGM) return null;
+    const data = canvas.scene.flags[MODULE]?.bossBar ?? {};
+    return Dialog.prompt({
+      content: `
+      <form class="dnd5e">
+        <div class="form-group">
+          <label>Token ID</label>
+          <div class="form-fields">
+            <input type="text" name="tokenId" value="${data.tokenId ?? canvas.tokens.controlled[0]?.id ?? ""}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <div class="form-fields">
+            <input type="text" name="title" value="${data.title ?? ""}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Active</label>
+          <div class="form-fields">
+            <input type="checkbox" name="active" ${data.active ? "checked" : ""}>
+          </div>
+        </div>
+      </form>`,
+      label: "Update",
+      title: "Boss Bar",
+      rejectClose: false,
+      callback: (html) => {
+        const update = new FormDataExtended(html[0].querySelector("form")).object;
+        for (const key in update) if (typeof update[key] === "string") update[key] ||= null;
+        return PublicAPI.updateBossBar(update);
+      }
+    });
+  }
 }

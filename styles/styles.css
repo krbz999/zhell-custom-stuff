@@ -1106,7 +1106,7 @@ button:active:not(.pm-dropdown, :disabled),
 
 .zhell-custom-stuff.heart-containers .hearts {
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   opacity: 1;
   transition: 250ms;
 }
@@ -1143,4 +1143,56 @@ button:active:not(.pm-dropdown, :disabled),
 
 .dialog.note-util .dialog-buttons {
   display: none;
+}
+
+.zhell-custom-stuff.bossbar {
+  position: absolute;
+  top: 5em;
+  left: 34em;
+  pointer-events: none;
+  display: flex;
+  transition: 2s;
+  opacity: 0;
+  flex-direction: column;
+}
+
+.zhell-custom-stuff.bossbar .bar {
+  position: relative;
+  height: 4em;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10em;
+  border: inset 2px grey;
+  display: flex;
+  box-shadow: 5px 5px 10px black;
+}
+
+.zhell-custom-stuff.bossbar .progress {
+  height: 100%;
+  transition: 2s;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.zhell-custom-stuff.bossbar .name {
+  font-family: "Modesto Condensed";
+  font-size: 40px;
+  position: relative;
+  width: 100%;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+}
+
+#bossbar .title {
+  font-family: 'Modesto Condensed';
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  margin-top: 5px;
+  font-style: italic;
 }
