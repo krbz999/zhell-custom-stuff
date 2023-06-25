@@ -8,7 +8,6 @@ export class HeartContainers extends Application {
   constructor(user) {
     super();
     this.user = user;
-    this.active = true;
   }
 
   /** @override */
@@ -34,6 +33,9 @@ export class HeartContainers extends Application {
   async getData() {
     this.hp = foundry.utils.deepClone(this.actor.system.attributes.hp);
 
+    // Whether to initially show.
+    const active = game.settings.get(MODULE, "showHeartContainers");
+
     /** The total number of hearts. */
     const total = Math.ceil((this.hp.max + this.hp.tempmax) / 10);
     const hearts = [];
@@ -50,7 +52,7 @@ export class HeartContainers extends Application {
     }
     const tempHearts = Array(Math.ceil(this.hp.temp / 10)).fill(0);
 
-    return {hearts, tempHearts, active: this.active ? "active" : ""};
+    return {hearts, tempHearts, active};
   }
 
   /** @override */
@@ -70,7 +72,7 @@ export class HeartContainers extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   _onToggle(event) {
-    this.active = event.currentTarget.classList.toggle("active");
+    game.settings.set(MODULE, "showHeartContainers", event.currentTarget.classList.toggle("active"));
   }
 
   /**

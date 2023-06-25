@@ -99,6 +99,14 @@ function _registerSettingsMenus() {
     default: {}
   });
 
+  // Invisible setting to remember if heart containers are toggled on.
+  game.settings.register(MODULE, "showHeartContainers", {
+    scope: "client",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.registerMenu(MODULE, "identifierSettings", {
     name: "ZHELL.SettingsMenuIdentifierSettingsName",
     hint: "ZHELL.SettingsMenuIdentifierSettingsHint",
