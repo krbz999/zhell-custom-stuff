@@ -38,18 +38,19 @@ function _registerSettings() {
     requiresReload: true
   });
 
+  // Whether to track reactions.
   game.settings.register(MODULE, "trackReactions", {
     name: "ZHELL.SettingsTrackReactionsName",
     hint: "ZHELL.SettingsTrackReactionsHint",
     scope: "world",
     config: true,
-    type: String,
-    default: "all",
+    type: Number,
+    default: 1,
     requiresReload: true,
     choices: {
-      disabled: "Do not track reactions",
-      gm: "Track reactions for the GM",
-      all: "Track reactions for all actors"
+      0: "ZHELL.SettingsTrackReactionsChoice0", // none
+      1: "ZHELL.SettingsTrackReactionsChoice1", // gm only
+      2: "ZHELL.SettingsTrackReactionsChoice2"  // all
     }
   });
 }
