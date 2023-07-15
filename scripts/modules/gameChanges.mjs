@@ -526,7 +526,7 @@ export class GameChangesHandler {
     canvas.app.stage.addEventListener("click", async function(event) {
       const object = event.interactionData?.object;
       if (!object) return;
-      const isHover = object.interactionState === 1;
+      const isHover = object.interactionState === MouseInteractionManager.INTERACTION_STATES.HOVER;
       if (!isHover) return;
       const isNote = object instanceof Note;
       if (!isNote) return;
