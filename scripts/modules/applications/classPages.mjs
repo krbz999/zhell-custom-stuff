@@ -1746,16 +1746,18 @@ export class ClassPageRenderer extends Application {
 
   /** @override */
   async getData() {
+    const keys = {class: "zhell-catalogs.classes", subclass: "zhell-catalogs.subclasses", spell: "zhell-catalogs.spells"};
     const packs = {
-      class: game.packs.get("zhell-catalogs.classes"),
-      subclass: game.packs.get("zhell-catalogs.subclasses"),
-      spell: game.packs.get("zhell-catalogs.spells")
+      class: await game.packs.get(keys.class).getIndex({fields: ["system.identifier"]}),
+      subclass: await game.packs.get(keys.subclass).getIndex({fields: ["system.classIdentifier"]}),
+      spell: await game.packs.get(keys.spell).getIndex({fields: ["system.level"]})
     };
-    const classes = Array.from(packs.class.index);
-    classes.sort((a, b) => a.name.localeCompare(b.name));
-    const spells = await packs.spell.getIndex({fields: ["system.level"]});
-    const subclasses = await packs.subclass.getIndex({fields: ["system.classIdentifier"]});
-    const subclassIds = subclasses.reduce((acc, idx) => {
+
+    // Array of classes, sorted alphabetically.
+    const classes = Array.from(packs.class).sort((a, b) => a.name.localeCompare(b.name));
+
+    // Subclasses split by class identifier.
+    const subclassIds = packs.subclass.reduce((acc, idx) => {
       const key = idx.system.classIdentifier || "unknown";
       acc[key] ??= [];
       acc[key].push(idx);
@@ -1766,45 +1768,31 @@ export class ClassPageRenderer extends Application {
     data.classes = [];
 
     for (const c of classes) {
-      const identifier = c.name.slugify();
-      const _spells = this.spellIds[identifier].map(id => spells.get(id)).sort((a, b) => a.name.localeCompare(b.name));
-
+      const identifier = c.system.identifier;
       const _data = {};
       _data.identifier = identifier;
-      _data.uuid = packs.class.getUuid(c._id);
+      _data.uuid = c.uuid;
       _data.name = c.name;
-      _data.pack = packs.class.metadata.id;
+      _data.pack = keys.class;
       _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
       _data.id = c._id;
       _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
 
       // Add all subclasses to the class.
-      _data.subclassIds = subclassIds[identifier].reduce((acc, idx) => {
-        acc.push({
-          id: idx._id,
-          name: idx.name,
-          pack: packs.subclass.metadata.id,
-          img: idx.img,
-          uuid: idx.uuid
-        });
-        return acc;
-      }, []).sort((a, b) => a.name.localeCompare(b.name));
+      _data.subclassIds = subclassIds[identifier].map(idx => ({
+        id: idx._id, name: idx.name, pack: keys.subclass, img: idx.img, uuid: idx.uuid
+      })).sort((a, b) => a.name.localeCompare(b.name));
 
       // Add all spells to the class.
+      const _spells = this.spellIds[identifier].map(id => packs.spell.get(id)).sort((a, b) => a.name.localeCompare(b.name));
       _data.spellLists = Array.fromRange(10).map(n => ({
-        label: (n === 0) ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`,
-        spells: _spells.reduce((acc, s) => {
-          if (s.system.level !== n) return acc;
-          acc.push({
-            id: s._id,
-            name: s.name,
-            pack: packs.spell.metadata.id,
-            uuid: packs.spell.getUuid(s._id)
-          });
-          return acc;
-        }, [])
+        label: !n ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`, spells: []
       }));
-      _data.hasSpells = _data.spellLists.some(list => list.spells.length > 0);
+      for (const spell of _spells) _data.spellLists[spell.system.level].spells.push({
+        id: spell._id, name: spell.name, pack: keys.spell, uuid: spell.uuid
+      });
+
+      _data.hasSpells = _spells.length > 0;
       data.classes.push(_data);
     }
 
