@@ -35,7 +35,7 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"],
-      "paths": []
+      "paths": ["styles/styles.css"]
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",
