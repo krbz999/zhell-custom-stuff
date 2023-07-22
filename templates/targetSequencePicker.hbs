@@ -1,0 +1,21 @@
+<div class="content">
+  <div class="levels">
+    <div class="level" data-level="0">
+      <span class="label">Source Target</span>
+      <div class="images">
+        <img src="{{src.document.texture.src}}" data-tooltip="{{src.name}}" data-token-id="{{src.id}}" class="active">
+      </div>
+    </div>
+    <div class="level" data-level="1">
+      <span class="label">1st Target</span>
+      <div class="images">
+        {{#each targets}}<img src="{{texture.src}}" data-tooltip="{{name}}" data-token-id="{{id}}">{{/each}}
+      </div>
+    </div>
+  </div>
+  <div class="utils">
+    <button data-action="submit">
+      <i class="fa-solid fa-check"></i> All Gucci
+    </button>
+  </div>
+</div>

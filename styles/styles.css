@@ -1134,6 +1134,7 @@ button:active:not(.pm-dropdown, :disabled),
   color: rgb(79, 79, 233);
 }
 
+/** NOTE UTIL */
 .dialog.note-util {
   min-width: 692px;
   max-width: 692px;
@@ -1145,6 +1146,7 @@ button:active:not(.pm-dropdown, :disabled),
   display: none;
 }
 
+/** BOSS BAR */
 .zhell-custom-stuff.bossbar {
   position: absolute;
   top: 5em;
@@ -1195,4 +1197,70 @@ button:active:not(.pm-dropdown, :disabled),
   font-size: 2em;
   margin-top: 5px;
   font-style: italic;
+}
+
+/** TARGET SEQUENCE PICKER */
+.zhell-custom-stuff.target-sequence {
+  height: auto !important;
+  width: auto !important;
+  transition: width 250ms, height 250ms;
+}
+
+.zhell-custom-stuff.target-sequence .level {
+  justify-content: center;
+  margin: 0 1em;
+  padding-bottom: 1em;
+}
+
+.zhell-custom-stuff.target-sequence .level:not(:last-of-type) {
+  border-bottom: 2px groove;
+}
+
+.zhell-custom-stuff.target-sequence .images {
+  display: flex;
+  flex-direction: row;
+  justify-content: inherit;
+}
+
+.zhell-custom-stuff.target-sequence img {
+  width: 100px !important;
+  height: 100px !important;
+  border: none;
+  margin-left: 1em;
+  margin-right: 1em;
+  transition: 250ms;
+}
+
+.zhell-custom-stuff.target-sequence img:first-of-type {
+  margin-left: 0;
+}
+
+.zhell-custom-stuff.target-sequence img:last-of-type {
+  margin-right: 0;
+}
+
+.zhell-custom-stuff.target-sequence img {
+  opacity: 0.5;
+}
+
+.zhell-custom-stuff.target-sequence img.active {
+  opacity: 1;
+  margin: 0;
+}
+
+.zhell-custom-stuff.target-sequence img.inactive {
+  width: 0 !important;
+  opacity: 0 !important;
+  margin: 0;
+}
+
+.zhell-custom-stuff.target-sequence img:hover {
+  opacity: 1;
+}
+
+.zhell-custom-stuff.target-sequence .label {
+  display: flex;
+  justify-content: inherit;
+  align-items: center;
+  height: var(--form-field-height);
 }
