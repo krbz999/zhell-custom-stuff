@@ -59,204 +59,6 @@ export class ClassPageRenderer extends Application {
   }
 
   /**
-   * The ids of every subclass available for a given class.
-   * @returns {object}      An object of class identifiers and subclass id arrays.
-   */
-  get subclassIds() {
-    return {
-      artificer: [
-        "jzKeqWOvkCQqADfM",
-        "VRfWvfUtHS44Bz2b",
-        "iKFGielRWjLIARZ6",
-        "dmkycaHlJMxzlFYp",
-        "jvAIC57M4u88LiX2",
-        "qGdryY4CItCUO4EM",
-        "ORhqv9snY1l2AcoI",
-        "PqbjpKf4oc5NbeaJ"
-      ],
-      barbarian: [
-        "UMcPYSQMD0vpCDNO",
-        "q2kVXLzeBtQOmMEm",
-        "5v4zPCBOMVRxZgni",
-        "n00RozuFMnyJ3q8b",
-        "y3Hc310XezgBfC3N",
-        "8qTmYGS35lkxCzuo",
-        "HcVZyE8Cr9nNhkwr",
-        "VlhxVsUzoNZwSoC3",
-        "WS0Ou5o2M4fOijJ5",
-        "RtcwhMRB2kR3jxdQ",
-        "hzCxTTq5RUMvohs5",
-        "XMOXeRDEv2R1DfX6",
-        "DGd8Ugqk395udTl7",
-        "0S99gZgOu0w8pjP1",
-        "ZRGXYVWWhk5mi09A"
-      ],
-      bard: [
-        "fbZFyJjZjfhvN9yK",
-        "VgsFlw6TToIzOATf",
-        "g9o0d1t5NnfT3Wej",
-        "wj9NcbD1KqPmwBed",
-        "CMYfkKCzzoGOq15A",
-        "zhcjtOTxP43sOn74",
-        "YMxueQKfaVY8XET9",
-        "fG2FrtyBbhiUcB38",
-        "RHa6KNi6WiyLAiXc",
-        "KVgCxXMVR5us5f8a",
-        "8pnn818MsioRqiOe"
-      ],
-      cleric: [
-        "N0aCL1TjBR1mg7AI",
-        "cjM4HrtRbKVWOhMj",
-        "lbTSVD7AKC1XAAaT",
-        "6KiYftOM6evCPYlf",
-        "iYlShDW8imcbipcz",
-        "K98UZiG5VxiP2DEF",
-        "32W85VWSGDmYG2V3",
-        "3xrbvCLVwV6Ov9hU",
-        "xJ3iYI6Iv3rgf9vv",
-        "0ryQHRnRUM0ecFsA",
-        "qKSdY8PUqppw8FLZ",
-        "xXNe9HYONoTKc7HN",
-        "pb9Mu1JegqBvRIiX",
-        "Bdg2N2Oktu2VZYJ4",
-        "gUWtj0V4sIsSGYqH"
-      ],
-      druid: [
-        "GXfhlENwtXi5zDVt",
-        "IiQJwJjCprp8cOxj",
-        "Xt4tmyLg6GlO4ti5",
-        "uZTTl8VA7RC2HZAz",
-        "0c3zRxR9EEPimVJt",
-        "hkJUm1agYonsmTT2",
-        "I9g1oAT4TZubeDOF",
-        "xMdaMc28l5w2NOrb",
-        "dKGI1PfHRMvVDWXI",
-        "xCoDCgQYzOqOqvVp"
-      ],
-      fighter: [
-        "ghZF6Wel8DhvWnzO",
-        "Kpkuc0V8lvhlOFaa",
-        "7wXzjfzIJY7b20CX",
-        "N5x3WYt4AI0VBCQK",
-        "Y7wHbeD79EF9TdhW",
-        "6H8GXqpGftZZ5USD",
-        "99zgPbtxCdNYxaeG",
-        "cwiR833pVt7y8aDP",
-        "yJv7RvxYiiFRgvhg",
-        "IGCrZqESE3xD0EyU",
-        "OjXkirTvU4BLqXFH"
-      ],
-      monk: [
-        "OXIkyf7dBazkTxEt",
-        "tuF4WL17H2Ed2g6D",
-        "mgkhA2bFj8YdapZJ",
-        "NKHH55l3iFreBp8G",
-        "SkR3B6ryeHyUSWDf",
-        "hmCqcuNKIUr2jYLB",
-        "RgAnMfk5mtJMuU6h",
-        "Lkd0f1odUVS4aeXM",
-        "KjG8ug2qE7nstVAH",
-        "PtKGdGnAI8o5R5zv",
-        "AcFPPekuADVjOYgv",
-        "Fv3rZsD0LFPPYDml",
-        "T9eTtEigA88pwhxQ",
-        "t5mbYpOk7NEdpmmo",
-        "Z2veP3og9HnrtbpM",
-        "BRimxIn4PjKvJdXY",
-        "eV8ukCVzVF47uJrJ"
-      ],
-      paladin: [
-        "4NyE8VRPTJmAldrO",
-        "UKGQHovlGUDxxzvP",
-        "NsW30HutMHoq5zV8",
-        "IFqzrERS093Ad4rT",
-        "jCXa4PSWNEetLQh9",
-        "dro7rwHMhGEkEQUG",
-        "8Liwvax1n2CJoAn2",
-        "b3xNGSquWK98Wiq8",
-        "P45toL2Tv7uQt6xg",
-        "WWjz1r0YAXdRifbU",
-        "rV4PH6RpXUaDNbm8",
-        "nlPo4wPK5CLBo4Ys",
-        "UVrOWkYW3ws5joo4"
-      ],
-      ranger: [
-        "9rdw1nXbjEhOCyKX",
-        "HouH7KqJJRzajYne",
-        "giiN1rKn06ts1aJb",
-        "NaTUgW8cfm7A8LtI",
-        "WWVjCpJhN5ur3sVb",
-        "gYksTIyORqSDgnE2",
-        "VEtymRUyJB1Lfyah",
-        "Cb2lavZxjRApeIls",
-        "8nW6HBHzWAX4GMOO"
-      ],
-      rogue: [
-        "1RI3I7uQhTiz1ISM",
-        "WsrEa6sISsFq4adR",
-        "2BitOi335Kvlw0AX",
-        "eWX6o7nUfvez0Jsj",
-        "FJF5MKlj9rH49z61",
-        "LeQLzuFCvdaKkEhe",
-        "dhdvM0hpJaE6to2p",
-        "no2zjDIb1jyyGJB1",
-        "GiCEV6LeCmjnWjbB",
-        "tsDJB4WFJDBxjXdp",
-        "xqNjEfVUQ9cc09rl",
-        "pfUgKjYaXVhzHhLo",
-        "YQfBq1hN9egBRHQ1"
-      ],
-      sorcerer: [
-        "CtX6tB6ONYt0mjyP",
-        "V671tln5lGFAaU4U",
-        "gZyvfpJzONzl79eB",
-        "cKvxm0dhOLnaRxDl",
-        "JFjR5tbTkU9qPs6D",
-        "54tKUkJHOxw3NwR4",
-        "vYTD9rNNOpREHvI1",
-        "cDCJNZK2tvr6bHoy",
-        "ugsVinyrMYjC9TtZ",
-        "K0GNhFNKj79lKFXc",
-        "ydeHvJzr23WP3elH",
-        "oRtzl9M9WIrPkKh5",
-        "XRAybSSP3gufMZDw",
-        "zdfFSYUf3ECYltfy"
-      ],
-      warlock: [
-        "WbxXMWqkFeDRiS1P",
-        "2txkHbwgC87cO4B3",
-        "2F7JfWc8onyHnoBo",
-        "J7s2ZDiectkuW4XF",
-        "pqxBAxQV0nN2DujH",
-        "lg0IKiILceeF52Uk",
-        "ObuE4E2ydB2IxNbQ",
-        "YnLdklLCf7DxJ8Wd",
-        "nUvddmmDpaVDZCKL",
-        "klaFl39kMYBBeVhC",
-        "o2Sox6VMwRkXCLhK",
-        "OL2yTkPhiRyEcHIs",
-        "VpNeBcV7wiLu5oXz",
-        "lpn5tAB3oGLunyoP"
-      ],
-      wizard: [
-        "6kOhsouLDEU1rOhM",
-        "TMv1USUACvegUhae",
-        "mm30PsmFHLdEsMKC",
-        "zuljnhuuE4emmMGB",
-        "PvmliARP52cijMoE",
-        "aw76Vkp9EVnr9dTp",
-        "pyNeIcc03cnPutgm",
-        "Cef9PN6ETJU0jGzK",
-        "TNmZ39NmOTNSoGfv",
-        "FWjT0ODy8W5V7Jn6",
-        "FZbaDEaLRq7RistV",
-        "WLz6QMZGBKQYriw0",
-        "mTmTQQUfD9GzGnfH"
-      ]
-    };
-  }
-
-  /**
    * The ids of every spell available for a given class.
    * @returns {object}      An object of class identifiers and spell id arrays.
    */
@@ -1952,7 +1754,13 @@ export class ClassPageRenderer extends Application {
     const classes = Array.from(packs.class.index);
     classes.sort((a, b) => a.name.localeCompare(b.name));
     const spells = await packs.spell.getIndex({fields: ["system.level"]});
-    const subclasses = packs.subclass.index;
+    const subclasses = await packs.subclass.getIndex({fields: ["system.classIdentifier"]});
+    const subclassIds = subclasses.reduce((acc, idx) => {
+      const key = idx.system.classIdentifier || "unknown";
+      acc[key] ??= [];
+      acc[key].push(idx);
+      return acc;
+    }, {});
 
     const data = await super.getData();
     data.classes = [];
@@ -1971,14 +1779,13 @@ export class ClassPageRenderer extends Application {
       _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
 
       // Add all subclasses to the class.
-      _data.subclassIds = this.subclassIds[identifier].reduce((acc, id) => {
-        const sub = subclasses.get(id);
+      _data.subclassIds = subclassIds[identifier].reduce((acc, idx) => {
         acc.push({
-          id: id,
-          name: sub.name,
+          id: idx._id,
+          name: idx.name,
           pack: packs.subclass.metadata.id,
-          img: sub.img,
-          uuid: packs.subclass.getUuid(id)
+          img: idx.img,
+          uuid: idx.uuid
         });
         return acc;
       }, []).sort((a, b) => a.name.localeCompare(b.name));
