@@ -275,4 +275,49 @@ export class PublicAPI {
       }
     });
   }
+
+  /**
+   * Return whether token A can see token B.
+   * @param {Token} tokenA      The token whose sight is being tested.
+   * @param {Token} tokenB      The token you are trying to spot.
+   * @returns {boolean}         Whether the targeted token is visible to the first token.
+   */
+  static canSeeOtherToken(tokenA, tokenB) {
+    if (!tokenA.scene.tokenVision) return true;
+    const origin = tokenB.center;
+    return canvas.effects.visibility.testVisibility(origin, {object: tokenA});
+  }
+
+  /**
+   * Get the highlighted, top-left grid space that is furthest away from an origin, within a template.
+   * @param {object} origin                         The origin to evaluate from, usually a grid center.
+   * @param {MeasuredTemplateDocument} template     The template on the scene.
+   * @param {string} [type="move"]                  The scene obstruction to use for evaluation.
+   * @returns {number[]}                            An array with x and y coordinates.
+   */
+  static getFurthestPointOnTemplateFromPosition(origin, template, type = "move") {
+    const moveableArea = CONFIG.Canvas.polygonBackends[type].create(origin, {type});
+    const positions = canvas.grid.highlightLayers[`MeasuredTemplate.${template.id}`].positions;
+    const pos = positions.reduce((acc, str) => {
+      const [x, y] = str.split(".");
+      const center = canvas.grid.getCenter(x, y);
+      if (!moveableArea.contains(...center)) return acc;
+
+      const dist = new Ray(origin, {x, y}).distance;
+      if (acc.distance < dist) return {distance: dist, pos: center};
+      return acc;
+    }, {distance: 0, pos: Object.values(origin)});
+    return canvas.grid.getTopLeft(...pos.pos);
+  }
+
+  /**
+   * Get the furthest point along a ray template, a top-left position on a grid.
+   * @param {MeasuredTemplateDocument} template     The ray template.
+   * @param {string} [type="move"]                  The scene obstruction to use for evaluation.
+   * @returns {number[]}                            An array with x and y coordinates.
+   */
+  static getFurthestPointAlongRay(template, type = "move") {
+    const origin = template.object.ray.A;
+    return PublicAPI.getFurthestPointOnTemplateFromPosition(origin, template, type);
+  }
 }

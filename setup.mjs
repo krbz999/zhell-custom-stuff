@@ -1,7 +1,7 @@
 import {registerSettings} from "./scripts/settings.mjs";
 import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
-import {AnimationsHandler, _initD20} from "./scripts/modules/animations.mjs";
+import {AnimationsHandler} from "./scripts/modules/animations.mjs";
 import {GameChangesHandler} from "./scripts/modules/gameChanges.mjs";
 import {MODULE} from "./scripts/const.mjs";
 import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
@@ -12,6 +12,7 @@ import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {HeartContainers} from "./scripts/modules/applications/heartContainers.mjs";
 import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
+import {TargetSequencePicker} from "./scripts/modules/applications/targetSequencePicker.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -19,7 +20,7 @@ Hooks.once("init", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", GameChangesHandler._miscAdjustments);
 Hooks.once("setup", ExhaustionHandler._appendActorMethods);
-Hooks.once("diceSoNiceReady", _initD20);
+Hooks.once("diceSoNiceReady", AnimationsHandler._initD20);
 Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);
 Hooks.once("ready", SheetEdits.refreshColors);
 Hooks.once("ready", SocketsHandler.socketsOn);
@@ -45,6 +46,7 @@ Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
 Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
 
 Hooks.once("ready", function() {
+  window.test = TargetSequencePicker;
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
   if (((reactionSetting === 1) && game.user.isGM) || (reactionSetting === 2)) {
     Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);

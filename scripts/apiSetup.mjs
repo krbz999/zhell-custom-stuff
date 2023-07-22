@@ -13,7 +13,12 @@ export function setupAPI() {
       target: PublicAPI._targetTokens,
       getOwnerIds: PublicAPI._getTokenOwnerIds,
       contained: PublicAPI._checkTokenInTemplate,
-      selectContained: PublicAPI._selectContained
+      selectContained: PublicAPI._selectContained,
+      detection: {
+        canSeeOtherToken: PublicAPI.canSeeOtherToken,
+        getFurthestPointOnTemplateFromPosition: PublicAPI.getFurthestPointOnTemplateFromPosition,
+        getFurthestPointAlongRay: PublicAPI.getFurthestPointAlongRay
+      }
     },
     utils: {
       setForageDC: PublicAPI._setForageDC,

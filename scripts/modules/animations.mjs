@@ -2,18 +2,19 @@ import {database} from "../../sources/animations.mjs";
 import {MODULE} from "../const.mjs";
 
 export class AnimationsHandler {
-  static onCreateMeasuredTemplate(templateDoc, _, userId) {
+  static async onCreateMeasuredTemplate(templateDoc, _, userId) {
     if (userId !== game.user.id) return;
 
     const uuid = templateDoc.flags.dnd5e?.origin;
     if (!uuid) return;
 
-    const item = fromUuidSync(uuid);
+    const item = await fromUuid(uuid);
     if (!item || !(item instanceof Item)) return;
 
     const token = item.actor.token?.object ?? item.actor.getActiveTokens()[0];
 
     let check;
+    while (!templateDoc.object) await new Promise(r => setTimeout(r, 50));
 
     // BREATH WEAPON.
     check = item.flags[MODULE]?.breathWeapon?.type;
@@ -46,9 +47,12 @@ export class AnimationsHandler {
     check = item.name.includes("Jewel of the Living Lightning");
     if (check) {
       const file = "zhell.effects.spells.lightningBolt.yellow.0";
-      return new Sequence()
+      await new Sequence()
         .effect().file(file).fadeIn(200).fadeOut(200).duration(2000).atLocation(templateDoc).stretchTo(templateDoc)
         .play({remote: true});
+      if (!token) return;
+      const [x, y] = ZHELL.token.detection.getFurthestPointOnTemplateFromPosition(token.center, templateDoc, "move");
+      return token.document.update({x, y});
     }
 
     // BURNING HANDS.
@@ -333,15 +337,15 @@ export class AnimationsHandler {
   static _sequencerSetup() {
     Sequencer.Database.registerEntries("zhell", database);
   }
-}
 
-// ADD DICE.
-export function _initD20(dice3d) {
-  dice3d.addSystem({id: MODULE, name: "The Rollsmith - Package Jam 2022"}, false);
-  dice3d.addDicePreset({
-    type: "d20",
-    labels: "",
-    modelFile: "assets/animations/dice/dice_20.gltf",
-    system: MODULE
-  });
+  // ADD DICE.
+  static _initD20(dice3d) {
+    dice3d.addSystem({id: MODULE, name: "The Rollsmith - Package Jam 2022"}, false);
+    dice3d.addDicePreset({
+      type: "d20",
+      labels: "",
+      modelFile: "assets/animations/dice/dice_20.gltf",
+      system: MODULE
+    });
+  }
 }
