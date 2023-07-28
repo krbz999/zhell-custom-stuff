@@ -1,14 +1,14 @@
 <div class="content">
   <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
     <a class="item" data-tab="forage"><i class="fa-solid fa-leaf"></i> Foraging</a>
-    <a class="item" data-tab="potion"><i class="fa-solid fa-flask"></i> Potions</a>
-    <a class="item" data-tab="poison"><i class="fa-solid fa-skull"></i> Poisons</a>
-    <a class="item" data-tab="misc"><i class="fa-solid fa-bomb"></i> Misc</a>
+    {{#each itemTypes}}
+    <a class="item" data-tab="{{type}}"><i class="fa-solid fa-flask"></i> {{localize label}}</a>
+    {{/each}}
   </nav>
 
   <div class="content-tabs">
     <div class="tab" data-tab="forage">
-      <div class="description">{{{localize "ZHELL.CraftingDescriptionForaging" dc=dc max=max}}}</div>
+      <div class="description">{{{localize "ZHELL.CraftingDescriptionForaging" dc=targetValue max=maxRolls}}}</div>
       <form class="dnd5e">
         <div class="form-group">
           <label>Select skill or tool:</label>
@@ -26,72 +26,37 @@
       </div>
     </div>
 
-    <div class="tab" data-tab="potion" editable="{{editable}}">
+    {{#each itemTypes}}
+    <div class="tab" data-tab="{{type}}" editable="{{editable}}">
       <div class="description">{{localize "ZHELL.CraftingDescriptionPotions"}}</div>
-      <div class="selections">
-        {{#each potionItems}}
-        <div class="selection">
-          <div class="item">
-            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
-            {{#if scaling}}
-            <select id="scale-potion">
-              {{{selectOptions scaling selected=../healIdx nameAttr="value" labelAttr="label"}}}
-            </select>
-            {{/if}}
-          </div>
-          <div class="item-description">{{{description}}}</div>
-        </div>
-        {{/each}}
-      </div>
-    </div>
-
-    <div class="tab" data-tab="poison" editable="{{editable}}">
-      <div class="description">{{localize "ZHELL.CraftingDescriptionPoisons"}}</div>
+      {{#if (eq type "poison")}}
       <form class="dnd5e">
         <div class="form-group">
           <label>Delivery Method</label>
           <div class="form-fields">
-            <select id="poison-delivery-method">
-              {{selectOptions poisonOptions nameAttr="value" labelAttr="label"}}
+            <select data-action="delivery-method">
+              {{selectOptions ../poisonOptions selected=../methodOption labelAttr="label"}}
             </select>
           </div>
         </div>
-        <div class="method-description">{{{initMethod}}}</div>
       </form>
+      {{/if}}
       <div class="selections">
-        {{#each poisonItems}}
+        {{#each items}}
         <div class="selection">
-          <div class="item">
-            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
-            {{#if scaling}}
-            <select id="scale-poison">
-              {{selectOptions scaling selected=../poisIdx nameAttr="value" labelAttr="label"}}
+          <div class="item" data-item-id="{{item.id}}">
+            <button data-action="craft">{{item.name}}</button>
+            {{#if scales}}
+            <select class="scale-option">
+              {{selectOptions options selected=selected}}
             </select>
             {{/if}}
           </div>
-          <div class="item-description">{{{description}}}</div>
+          <div class="item-description">{{{item.system.description.value}}}</div>
         </div>
         {{/each}}
       </div>
     </div>
-
-    <div class="tab" data-tab="misc" editable="{{editable}}">
-      <div class="description">{{localize "ZHELL.CraftingDescriptionMisc"}}</div>
-      <div class="selections">
-        {{#each miscItems}}
-        <div class="selection">
-          <div class="item">
-            <button data-uuid="{{uuid}}">{{button}} ({{cost}})</button>
-            {{#if scaling}}
-            <select id="{{button}}">
-              {{selectOptions scaling selected=../miscIdx nameAttr="value" labelAttr="label"}}
-            </select>
-            {{/if}}
-          </div>
-          <div class="item-description">{{{description}}}</div>
-        </div>
-        {{/each}}
-      </div>
-    </div>
+    {{/each}}
   </div>
 </div>

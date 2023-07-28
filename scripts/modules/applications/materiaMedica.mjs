@@ -13,7 +13,7 @@ export class MateriaMedica extends Application {
       height: 700,
       classes: [MODULE, "materia-medica"],
       resizable: true,
-      scrollY: [],
+      scrollY: [".tab .selections"],
       tabs: [{navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage"}],
       dragDrop: [],
       closeOnSubmit: false,
@@ -32,102 +32,99 @@ export class MateriaMedica extends Application {
   get targetValue() {
     return game.settings.get(MODULE, "foragingDC");
   }
-
-  get uuids() {
-    if (this._uuids) return this._uuids;
-
-    const pack = game.packs.get("zhell-catalogs.materia-medica");
-    this._uuids = {
-      potions: {
-        2: pack.getUuid("KwysQnHpErP39QsZ"),
-        4: pack.getUuid("gFTlhdY6vtVsXU8C"),
-        6: pack.getUuid("Cg4a3MOxqOyGvKDK"),
-        8: pack.getUuid("myWY2Xy0GWsS2MEh"),
-        10: pack.getUuid("AkbBxDOPcEsQFpN1")
-      },
-      poisons: {
-        2: pack.getUuid("kwBcsGI3dMLuG96M"),
-        4: pack.getUuid("r3OcEJjhhpNIlxFo"),
-        6: pack.getUuid("pZs5VWxoNQWQMTL7"),
-        8: pack.getUuid("IFFhdKPlSbsCMc7z"),
-        10: pack.getUuid("DWtLIZLw11liaYW9")
-      },
-      misc: {
-        2: pack.getUuid("MBhPt5wCZcQYuZIW"),
-        4: pack.getUuid("hYdmn5QbDdZeCRAb"),
-        6: pack.getUuid("WOESrV6nTY6vJE8O"),
-        8: pack.getUuid("ZUkFIwTYMIcJfZUh"),
-        10: pack.getUuid("BtV0RgISbFQeKh4u")
-      }
-    };
-    return this._uuids;
-  }
-
-  getCost(uuid) {
-    const {potions, poisons, misc} = this.uuids;
-    const [cost] = [
-      ...Object.entries(potions),
-      ...Object.entries(poisons),
-      ...Object.entries(misc)
-    ].find(([c, u]) => u === uuid);
-    return Number(cost);
+  get #pack() {
+    return game.packs.get("zhell-catalogs.materia-medica") ?? null;
   }
 
   /**
-   * Get the type of poison from the cost of the application method.
-   * @returns {object}      A mapping of cost-to-method.
+   * If 'scaling' is set to '*', each iteration will double the number of dice and the modifiers.
+   * If 'scaling' is set to '+', each iteration will add '2' to dice and modifiers.
    */
-  get methods() {
+  get #craftingTable() {
+    return [
+      // potions
+      {id: "KwysQnHpErP39QsZ", cost: 2, scaling: "*"},
+      {id: "gFTlhdY6vtVsXU8C", cost: 4, magical: true},
+      {id: "Cg4a3MOxqOyGvKDK", cost: 6, magical: true},
+      {id: "myWY2Xy0GWsS2MEh", cost: 8, magical: true},
+      {id: "AkbBxDOPcEsQFpN1", cost: 10, magical: true},
+      // poisons
+      {id: "kwBcsGI3dMLuG96M", cost: 2, scaling: "+"},
+      {id: "r3OcEJjhhpNIlxFo", cost: 4},
+      {id: "pZs5VWxoNQWQMTL7", cost: 6},
+      {id: "IFFhdKPlSbsCMc7z", cost: 8},
+      {id: "DWtLIZLw11liaYW9", cost: 10},
+      // misc
+      {id: "MBhPt5wCZcQYuZIW", cost: 2},
+      {id: "hYdmn5QbDdZeCRAb", cost: 4},
+      {id: "WOESrV6nTY6vJE8O", cost: 6},
+      {id: "ZUkFIwTYMIcJfZUh", cost: 8},
+      {id: "BtV0RgISbFQeKh4u", cost: 10}
+    ];
+  }
+
+  /** Get data relevant to the poison application method. */
+  get #methods() {
     return {
-      0: "Ingested",
-      1: "Contact",
-      2: "Injury",
-      3: "Inhaled"
+      ingested: {label: "Ingested", cost: 0, appendix: "ZHELL.CraftingTypeIngested"},
+      contact: {label: "Contact", cost: 1, appendix: "ZHELL.CraftingTypeContact"},
+      injury: {label: "Injury", cost: 2, appendix: "ZHELL.CraftingTypeInjury"},
+      inhaled: {label: "Inhaled", cost: 3, appendix: "ZHELL.CraftingTypeInhaled"}
     };
   }
 
-  get descriptionAppend() {
-    return {
-      0: game.i18n.localize("ZHELL.CraftingTypeIngested"),
-      1: game.i18n.localize("ZHELL.CraftingTypeContact"),
-      2: game.i18n.localize("ZHELL.CraftingTypeInjury"),
-      3: game.i18n.localize("ZHELL.CraftingTypeInhaled")
-    }
-  }
-
-  get speedCrafting() {
-    return !!this.actor.flags.dnd5e?.speedCrafting;
+  /**
+   * Determine if the item should be crafted at half cost.
+   * @param {Item} item     The item to create.
+   * @returns {number}      Either 0.5 or 1.
+   */
+  speedCrafting(item) {
+    const speed = !!this.actor.flags.dnd5e?.speedCrafting;
+    if (!speed) return 1;
+    const isMagical = this.#craftingTable.find(e => e.id === item.id).magical;
+    if (isMagical && ["common", "uncommon"].includes(item.system.rarity)) return 0.5;
+    return 1;
   }
 
   get materials() {
-    return Number(this.actor.flags[MODULE]?.["materia-medica"]?.value ?? 0);
+    return foundry.utils.getProperty(this.actor, `flags.${MODULE}.materia-medica.value`) ?? 0;
   }
 
   async getData() {
-    const data = await super.getData();
-    const materials = this.materials;
+    const data = {itemTypes: {}};
 
-    /* SETTING UP BUTTONS */
-    const potionItems = [];
-    const poisonItems = [];
-    const miscItems = [];
-    const {potions, poisons, misc} = this.uuids;
-    for (const n of [2, 4, 6, 8, 10]) {
-      const [itemA, itemB, itemC] = await Promise.all([fromUuid(potions[n]), fromUuid(poisons[n]), fromUuid(misc[n])]);
-      const scalingH = (n === 2) ? this._getScalingHealing(materials, this.speedCrafting) : null;
-      const scalingD = (n === 2) ? this._getScalingDamage(materials) : null;
-      const costA = (n === 2) ? "varies" : n;
-      const costB = `${(n === 2) ? "varies" : n} + method`;
-      potionItems.push({button: itemA.name, uuid: potions[n], scaling: scalingH, description: itemA.system.description.value, cost: costA});
-      poisonItems.push({button: itemB.name, uuid: poisons[n], scaling: scalingD, description: itemB.system.description.value, cost: costB});
-      miscItems.push({button: itemC.name, uuid: misc[n], description: itemC.system.description.value, cost: n});
+    this.collection = new foundry.utils.Collection();
+
+    // Gather craftable item data. Group by `system.consumableType`.
+    for (const idx of this.#craftingTable) {
+      const item = await this.#pack?.getDocument(idx.id);
+      const type = item?.system.consumableType;
+      if (!type) continue;
+
+      idx.item = item;
+      idx.scales = ["+", "*"].includes(idx.scaling);
+      if (idx.scales) {
+        idx.options = {};
+        const min = idx.cost;
+        const max = this.materials;
+        const base = item.system.damage.parts[0][0];
+        const iter = {
+          "+": (x) => x + 1,
+          "*": (x) => x * 2
+        }[idx.scaling];
+        for (let i = 1; i <= max; i = iter(i)) {
+          idx.options[min * i] = new Roll(base).alter(i, 0, {multiplyNumeric: true}).formula;
+        }
+        idx.selected = this._selectPositions?.[item.id];
+      }
+      data.itemTypes[type] ??= {type, label: `DND5E.Consumable${type.capitalize()}`, items: []};
+      data.itemTypes[type].items.push(idx);
+      this.collection.set(item.id, idx);
     }
-
-    /* POISONS */
-    const poisonOptions = Object.entries(this.methods).map(([cost, label]) => ({value: cost, label: `${label} (${cost})`}));
+    data.itemTypes = Object.values(data.itemTypes);
 
     /* FORAGING */
-    const forageOptions = this.actor.items.reduce((acc, item) => {
+    data.forageOptions = this.actor.items.reduce((acc, item) => {
       const valid = (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
       if (valid) acc.push({id: item.id, label: item.name});
       return acc;
@@ -136,26 +133,18 @@ export class MateriaMedica extends Application {
       {id: "sur", label: CONFIG.DND5E.skills.sur.label}
     ]);
 
-    return foundry.utils.mergeObject(data, {
-      forageOptions,
-      poisonOptions,
-      dc: this.targetValue,
-      max: this.maxRolls,
-      potionItems,
-      poisonItems,
-      miscItems,
-      healIdx: this.healIdx,
-      poisIdx: this.poisIdx
-    });
+    data.poisonOptions = this.#methods;
+    data.methodOption = this._methodOption;
+    data.targetValue = this.targetValue;
+    data.maxRolls = this.maxRolls;
+    return data;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
     html[0].querySelector("#forage-initiate").addEventListener("click", this._onForage.bind(this));
     html[0].querySelector("#forage-accept").addEventListener("click", this._onAcceptForage.bind(this));
-    html[0].querySelectorAll("button[data-uuid]").forEach(n => n.addEventListener("click", this._onCraftingButton.bind(this)));
-    html[0].querySelector("#poison-delivery-method").addEventListener("change", this._onDeliveryMethodChange.bind(this));
-    html[0].querySelector("#poison-delivery-method").dispatchEvent(new Event("change"));
+    html[0].querySelectorAll("[data-action=craft]").forEach(n => n.addEventListener("click", this._onCraftingButton.bind(this)));
   }
 
   async _onForage(event) {
@@ -230,219 +219,125 @@ export class MateriaMedica extends Application {
     return this._refreshDropdowns();
   }
 
-  _onCraftingButton(event) {
-    const uuid = event.currentTarget.dataset.uuid;
-    const tab = event.currentTarget.closest(".tab.active").dataset.tab;
-    const baseCost = this.getCost(uuid);
-    const itemScales = (baseCost === 2) && ["potion", "poison"].includes(tab);
-    const scale = !itemScales ? null : Number(event.currentTarget.closest(".item").querySelector("select").value);
-    if (!scale && (scale !== null)) {
-      ui.notifications.warn("ZHELL.CraftingMustSelectScale", {localize: true});
-      return;
-    }
-    if (tab === "potion") return this._createPotion(uuid, baseCost, scale);
-    else if (tab === "poison") {
-      const method = event.currentTarget.closest(".tab").querySelector("#poison-delivery-method").value;
-      return this._createPoison(uuid, baseCost, scale, Number(method));
-    }
-    else if (tab === "misc") return this._createMisc(uuid, baseCost);
-  }
+  async _onCraftingButton(event) {
+    const select = event.currentTarget.closest(".item").querySelector(".scale-option");
 
-  _onDeliveryMethodChange(event) {
-    const c = event.currentTarget.value;
-    event.currentTarget.closest("form").querySelector(".method-description").innerText = this.descriptionAppend[c];
-  }
+    const idx = this.collection.get(event.currentTarget.closest("[data-item-id]").dataset.itemId);
+    const itemData = game.items.fromCompendium(idx.item);
+    const cost = idx.scales ? Number(select.value) : idx.cost;
+    const formula = idx.scales ? idx.options[cost] : null;
+    const hasDeliveryMethod = itemData.system.consumableType === "poison";
+    const method = hasDeliveryMethod ? event.currentTarget.closest(".tab").querySelector("[data-action='delivery-method']") : null;
+    const methodCost = method ? this.#methods[method.value].cost : 0;
+    const total = ((cost || idx.cost) + methodCost) * this.speedCrafting(idx.item);
+    console.warn({cost, idxCost: idx.cost, methodValue: method?.value, method, total, thisMat: this.materials});
 
-  async _createPotion(uuid, baseCost, scale = false) {
-    const item = await fromUuid(uuid);
-    const itemData = game.items.fromCompendium(item);
-    const cost = (scale ? scale : baseCost) * (this.speedCrafting ? 0.5 : 1);
-    if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
-      return;
+    if (total > this.materials) {
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost: total}));
+      return null;
     }
 
-    // if scaling item, handle individually. Does not stack.
-    if (scale) {
-      const formula = `${scale}d4 + ${scale}`;
+    if (itemData.system.consumableType === "poison") this._applyDeliveryMethod(itemData, method.value);
+
+    // Replace damage formula and determine if the item should be stacked onto another item.
+    if (formula) {
+      const base = itemData.system.damage.parts[0][0];
       itemData.system.damage.parts[0][0] = formula;
-      itemData.system.description.value = itemData.system.description.value.replace("2d4 + 2", formula);
-      const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      return this._finalize(created, cost);
+      itemData.system.description.value = itemData.system.description.value.replace(base, formula);
     }
+    const stack = this.actor.items.find(i => {
+      return i.flags.core?.sourceId === itemData.flags.core.sourceId
+        && i.system.description.value === itemData.system.description.value
+        && (!formula || (i.system.damage.parts[0][0] === formula))
+        && i.name === itemData.name;
+    });
 
-    // find existing item and add to quantity.
-    const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
-    if (found) {
-      const quantity = found.system.quantity;
-      const created = await found.update({"system.quantity": quantity + 1});
-      return this._finalize(created, cost);
+    let created;
+    if (stack) {
+      created = await stack.update({"system.quantity": stack.system.quantity + 1}, {render: false});
+    } else {
+      created = await Item.create(itemData, {parent: this.actor, render: false});
     }
+    await this._displayMessage(created, total);
 
-    // create new item if no existing item is found.
-    const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-    return this._finalize(created, cost);
+    return this.actor.update({[`flags.${MODULE}.materia-medica.value`]: this.materials - total});
   }
 
-  async _createPoison(uuid, baseCost, scale = false, method) {
+  /** Mutate poisons with delivery method, system data, name, and itemacro. */
+  async _applyDeliveryMethod(itemData, method) {
     const deliveryMethod = {
-      0: {
+      ingested: {
         system: {
           activation: {condition: "", cost: null, type: "special"},
-          consumableType: "poison",
           range: {value: null, long: null, units: ""},
           target: {value: 1, width: null, units: "", type: "creature"}
         }
       },
-      1: {
+      contact: {
         system: {
           activation: {condition: "", cost: 1, type: "action"},
-          consumableType: "poison",
           range: {value: null, long: null, units: ""},
           target: {value: 1, width: null, units: "", type: "object"}
         }
       },
-      2: {
+      injury: {
         system: {
           activation: {condition: "", cost: 1, type: "action"},
-          consumableType: "poison",
           range: {value: null, long: null, units: ""},
           target: {value: 1, width: null, units: "", type: "object"}
         }
       },
-      3: {
+      inhaled: {
         system: {
           activation: {condition: "", cost: 1, type: "action"},
-          consumableType: "poison",
           range: {value: null, long: null, units: "self"},
           target: {value: 5, width: null, units: "ft", type: "cube"}
         }
       }
     }[method];
 
-    const append = this.descriptionAppend[method];
-
-    const item = await fromUuid(uuid);
-    const itemData = game.items.fromCompendium(item);
-    const cost = method + (scale ? scale : baseCost);
-    if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
-      return;
+    const {label, appendix} = this.#methods[method];
+    itemData.name = `${itemData.name} (${label})`;
+    itemData.system.description.value += `<p>${game.i18n.localize(appendix)}</p>`;
+    foundry.utils.mergeObject(itemData.system, deliveryMethod.system);
+    if (method === "injury") {
+      foundry.utils.mergeObject(itemData.flags, {
+        "itemacro.macro.type": "script",
+        "itemacro.macro.command": "ZHELL.ITEMACRO.INJURY_POISON(...arguments);",
+        "itemacro.macro.name": itemData.name
+      });
     }
-    itemData.system.description.value += `<p>${append}</p>`;
-    foundry.utils.mergeObject(itemData, {...deliveryMethod, [`flags.${MODULE}.poisonType`]: method});
-    itemData.name = `${itemData.name} (${this.methods[method]})`;
-
-    // Setup itemacro for injury poisons.
-    if (method === 2) {
-      itemData.flags.itemacro = {
-        macro: {
-          type: "script",
-          command: "ZHELL.ITEMACRO.INJURY_POISON(...arguments);",
-          name: itemData.name
-        }
-      }
-    }
-
-    // if scaling item, handle individually. Does not stack.
-    if (scale) {
-      const formula = `${scale}d6 + ${scale}`;
-      itemData.system.damage.parts[0][0] = formula;
-      itemData.system.description.value = itemData.system.description.value.replace("2d6 + 2", formula);
-      const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      return this._finalize(created, cost);
-    }
-
-    // find existing item and add to quantity.
-    const found = this.actor.items.find(i => {
-      return (i.flags.core?.sourceId === uuid) && (i.flags[MODULE]?.poisonType === method);
-    });
-    if (found) {
-      const quantity = found.system.quantity;
-      const created = await found.update({"system.quantity": quantity + 1});
-      return this._finalize(created, cost);
-    }
-    // create new item if no existing item is found.
-    const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-    return this._finalize(created, cost);
   }
 
-  async _createMisc(uuid, baseCost) {
-    const item = await fromUuid(uuid);
-    const itemData = game.items.fromCompendium(item);
-    const cost = baseCost;
-    if (cost > this.materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost}));
-      return;
-    }
-
-    // find existing item and add to quantity.
-    const found = this.actor.items.find(i => i.flags.core?.sourceId === uuid);
-    if (found) {
-      const quantity = found.system.quantity;
-      const created = await found.update({"system.quantity": quantity + 1});
-      return this._finalize(created, cost);
-    }
-    // create new item if no existing item is found.
-    const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-    return this._finalize(created, cost);
-  }
-
-  async _finalize(item, cost) {
+  async _displayMessage(item, cost) {
     const content = game.i18n.format("ZHELL.CraftingComplete", {
       name: this.actor.name, amount: cost, link: item.link
     });
     const speaker = ChatMessage.getSpeaker({actor: this.actor});
-    await ChatMessage.create({content, speaker});
-    await this.actor.setFlag(MODULE, "materia-medica.value", this.materials - cost);
-    return this._refreshDropdowns();
+    return ChatMessage.create({content, speaker});
   }
 
-  _refreshDropdowns() {
-    const tab = this.element[0].querySelector("[data-tab].active").dataset.tab;
-    const healIdx = this.element[0].querySelector("#scale-potion").value;
-    const poisIdx = this.element[0].querySelector("#scale-poison").value;
-    return this.render(true, {tab, healIdx, poisIdx});
-  }
+  /*RENDERING METHODS */
 
-  /** @override */
-  async render(force, options = {}) {
-    this.healIdx = options.healIdx;
-    this.poisIdx = options.poisIdx;
-    this.initial = options.initial;
-    return super.render(force, options);
+  _saveScrollPositions(html) {
+    super._saveScrollPositions(html);
+    this._selectPositions = {};
+    html[0].querySelectorAll(".scale-option").forEach(s => {
+      const id = s.closest("[data-item-id]").dataset.itemId;
+      this._selectPositions[id] = s.value;
+    });
+    this._methodOption = html[0].querySelector("[data-action='delivery-method']")?.value;
   }
 
   /** @override */
-  async _renderInner(data) {
-    if (this.initial) this._tabs[0].active = this.initial;
-    return super._renderInner(data);
+  async render(...args) {
+    this.actor.apps[this.appId] = this;
+    return super.render(...args);
   }
 
-  _getScalingDamage(materials) {
-    const options = [{value: null, label: "-"}];
-    let mult = 1;
-    let roll = new Roll("2d6 + 2");
-    while (2 * mult <= materials) {
-      options.push({value: 2 * mult, label: roll.formula});
-      mult++;
-      roll = new Roll("2d6 + 2").alter(mult, 0, {multiplyNumeric: true});
-    }
-    return options;
-  }
-
-  /* Helper methods to create the select options. */
-  _getScalingHealing(materials, speedCrafting = false) {
-    const options = [{value: null, label: "-"}];
-    let power = 1;
-    let roll = new Roll("2d4 + 2");
-    const upperBound = materials * (speedCrafting ? 2 : 1);
-    while (2 ** power <= upperBound) {
-      options.push({value: 2 ** power, label: roll.formula});
-      power++;
-      roll = roll.alter(2, 0, {multiplyNumeric: true});
-    }
-    return options;
+  async close(...args) {
+    delete this.actor.apps[this.appId];
+    return super.close(...args);
   }
 
   static setUpCharacterFlag() {
