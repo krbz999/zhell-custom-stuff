@@ -14,9 +14,7 @@ export class PartyFeatures extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: [MODULE, "party-features", "closing"],
       template: "modules/zhell-custom-stuff/templates/partyFeatures.hbs",
-      id: "zhell-custom-stuff-party-features",
-      minimizable: false,
-      minimizeable: false,
+      id: "zhell-custom-stuff-party-features"
     });
   }
 
