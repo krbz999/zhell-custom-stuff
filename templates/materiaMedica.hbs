@@ -1,43 +1,65 @@
 <div class="content">
-  <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
-    <a class="item" data-tab="forage"><i class="fa-solid fa-leaf"></i> Foraging</a>
-    {{#each itemTypes}}
-    <a class="item" data-tab="{{type}}"><i class="fa-solid fa-flask"></i> {{localize label}}</a>
-    {{/each}}
+
+  <nav class="sheet-tabs tabs" data-group="main" aria-role="Form Tab Navigation">
+    <a class="item" data-tab="forage" data-group="main"><i class="fa-solid fa-leaf"></i> Foraging</a>
+    <a class="item" data-tab="craft" data-group="main"><i class="fa-solid fa-hammer"></i> Crafting</a>
   </nav>
 
-  <div class="content-tabs">
-    <div class="tab" data-tab="forage">
-      <div class="description">{{{localize "ZHELL.CraftingDescriptionForaging" dc=targetValue max=maxRolls}}}</div>
-      <form class="dnd5e">
-        <div class="form-group">
-          <label>Select skill or tool:</label>
-          <div class="form-fields">
-            <select id="forage-tool">
-              {{selectOptions forageOptions nameAttr="id" labelAttr="label"}}
-            </select>
-          </div>
+  <div class="tab" data-group="main" data-tab="forage">
+    <div class="description">{{{localize "ZHELL.CraftingDescriptionForaging" dc=targetValue max=maxRolls}}}</div>
+    <form class="dnd5e">
+      <div class="form-group">
+        <label>Select skill or tool:</label>
+        <div class="form-fields">
+          <select data-action="forage-method">
+            {{selectOptions forageOptions nameAttr="id" labelAttr="label"}}
+          </select>
         </div>
-      </form>
-      <div class="foraging">
-        <button id="forage-initiate"><i class="fa-solid fa-leaf"></i> Forage!</button>
-        <div class="results"></div>
-        <button id="forage-accept"><i class="fa-solid fa-boxes-stacked"></i> Accept</button>
       </div>
+    </form>
+    <div class="foraging">
+      <button data-action="forage-initiate"><i class="fa-solid fa-leaf"></i> Forage!</button>
+      <div class="results">
+
+        {{#each forages}}
+        <div class="result" data-forage-id="{{id}}">
+          <div class="type" data-tooltip="{{type}}">{{type}}</div>
+          <a class="formula" data-tooltip="{{formula}}">
+            <i class="fa-solid fa-dice-d20"></i> {{total}}
+          </a>
+          <a class="add-forageables {{#if success}}active{{/if}}" data-action="success-toggle">
+            <i class="fa-solid fa-check"></i>
+          </a>
+        </div>
+        {{/each}}
+
+      </div>
+      <button data-action="forage-accept" {{#unless forages.size}}disabled{{/unless}}>
+        <i class="fa-solid fa-boxes-stacked"></i> Accept
+      </button>
     </div>
+  </div>
+
+  <div class="tab" data-group="main" data-tab="craft">
+
+    <nav class="sheet-tabs tabs" data-group="craft" aria-role="Form Tab Navigation">
+      {{#each itemTypes}}
+      <a class="item" data-tab="{{type}}" data-group="craft"> {{localize label}}</a>
+      {{/each}}
+    </nav>
 
     {{#each itemTypes}}
-    <div class="tab" data-tab="{{type}}" editable="{{editable}}">
-      <div class="description">{{localize "ZHELL.CraftingDescriptionPotions"}}</div>
+    <div class="tab" data-tab="{{type}}" data-group="craft">
       {{#if (eq type "poison")}}
       <form class="dnd5e">
         <div class="form-group">
           <label>Delivery Method</label>
           <div class="form-fields">
             <select data-action="delivery-method">
-              {{selectOptions ../poisonOptions selected=../methodOption labelAttr="label"}}
+              {{selectOptions ../poisonOptions labelAttr="label"}}
             </select>
           </div>
+          <i class="fa-solid fa-circle-question" data-action="delivery-method-tooltip"></i>
         </div>
       </form>
       {{/if}}
@@ -45,18 +67,22 @@
         {{#each items}}
         <div class="selection">
           <div class="item" data-item-id="{{item.id}}">
+            <img src="{{item.img}}" class="item-img">
             <button data-action="craft">{{item.name}}</button>
             {{#if scales}}
             <select class="scale-option">
-              {{selectOptions options selected=selected}}
+              {{selectOptions options}}
             </select>
             {{/if}}
           </div>
           <div class="item-description">{{{item.system.description.value}}}</div>
+          <div class="note">Cost: {{cost}}</div>
         </div>
         {{/each}}
       </div>
     </div>
     {{/each}}
+
   </div>
+
 </div>

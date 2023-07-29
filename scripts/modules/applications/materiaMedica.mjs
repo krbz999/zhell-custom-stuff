@@ -7,6 +7,7 @@ export class MateriaMedica extends Application {
     this.maxRolls = 20;
   }
 
+  /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       width: 420,
@@ -14,24 +15,38 @@ export class MateriaMedica extends Application {
       classes: [MODULE, "materia-medica"],
       resizable: true,
       scrollY: [".tab .selections"],
-      tabs: [{navSelector: ".tabs", contentSelector: ".content-tabs", initial: "forage"}],
+      tabs: [
+        {navSelector: ".tabs[data-group='main']", contentSelector: ".content", initial: "forage"},
+        {navSelector: ".tabs[data-group='craft']", contentSelector: ".tab[data-tab='craft']", initial: "potion"}
+      ],
       dragDrop: [],
       closeOnSubmit: false,
       template: `modules/${MODULE}/templates/materiaMedica.hbs`
     });
   }
 
+  /** @override */
   get title() {
     return `Materia Medica: ${this.actor.name}`;
   }
 
+  /** @override */
   get id() {
     return `${MODULE}-materia-medica-${this.actor.uuid.replaceAll(".", "-")}`;
   }
 
-  get targetValue() {
+  /**
+   * The current dc for foraging checks, read from the game settings.
+   * @returns {number}
+   */
+  get #targetValue() {
     return game.settings.get(MODULE, "foragingDC");
   }
+
+  /**
+   * The compendium to extract the craftable items from.
+   * @returns {CompendiumCollection|null}
+   */
   get #pack() {
     return game.packs.get("zhell-catalogs.materia-medica") ?? null;
   }
@@ -39,11 +54,12 @@ export class MateriaMedica extends Application {
   /**
    * If 'scaling' is set to '*', each iteration will double the number of dice and the modifiers.
    * If 'scaling' is set to '+', each iteration will add '2' to dice and modifiers.
+   * @returns {object[]}
    */
   get #craftingTable() {
     return [
       // potions
-      {id: "KwysQnHpErP39QsZ", cost: 2, scaling: "*"},
+      {id: "KwysQnHpErP39QsZ", cost: 2, magical: true, scaling: "*"},
       {id: "gFTlhdY6vtVsXU8C", cost: 4, magical: true},
       {id: "Cg4a3MOxqOyGvKDK", cost: 6, magical: true},
       {id: "myWY2Xy0GWsS2MEh", cost: 8, magical: true},
@@ -63,7 +79,10 @@ export class MateriaMedica extends Application {
     ];
   }
 
-  /** Get data relevant to the poison application method. */
+  /**
+   * Get data relevant to the poison application method.
+   * @returns {object}
+   */
   get #methods() {
     return {
       ingested: {label: "Ingested", cost: 0, appendix: "ZHELL.CraftingTypeIngested"},
@@ -78,22 +97,34 @@ export class MateriaMedica extends Application {
    * @param {Item} item     The item to create.
    * @returns {number}      Either 0.5 or 1.
    */
-  speedCrafting(item) {
+  #speedCrafting(item) {
     const speed = !!this.actor.flags.dnd5e?.speedCrafting;
     if (!speed) return 1;
     const isMagical = this.#craftingTable.find(e => e.id === item.id).magical;
+    console.warn({isMagical, rarity: item.system.rarity});
     if (isMagical && ["common", "uncommon"].includes(item.system.rarity)) return 0.5;
     return 1;
   }
 
-  get materials() {
-    return foundry.utils.getProperty(this.actor, `flags.${MODULE}.materia-medica.value`) ?? 0;
+  /**
+   * The amount of materials available on the actor.
+   * @returns {number}
+   */
+  get #materials() {
+    const materials = foundry.utils.getProperty(this.actor, `flags.${MODULE}.materia-medica.value`) ?? 0;
+    return dnd5e.utils.simplifyBonus(materials);
   }
 
+  /** @override */
   async getData() {
     const data = {itemTypes: {}};
 
     this.collection = new foundry.utils.Collection();
+    this.forageData ??= new foundry.utils.Collection();
+    data.forages = this.forageData;
+    data.poisonOptions = this.#methods;
+    data.targetValue = this.#targetValue;
+    data.maxRolls = this.maxRolls;
 
     // Gather craftable item data. Group by `system.consumableType`.
     for (const idx of this.#craftingTable) {
@@ -102,17 +133,19 @@ export class MateriaMedica extends Application {
       if (!type) continue;
 
       idx.item = item;
+      idx.cost = Math.floor(idx.cost * this.#speedCrafting(item));
       idx.scales = ["+", "*"].includes(idx.scaling);
       if (idx.scales) {
         idx.options = {};
         const min = idx.cost;
-        const max = this.materials;
+        const max = this.#materials;
         const base = item.system.damage.parts[0][0];
         const iter = {
           "+": (x) => x + 1,
           "*": (x) => x * 2
         }[idx.scaling];
         for (let i = 1; i <= max; i = iter(i)) {
+          if (min * i > max) continue;
           idx.options[min * i] = new Roll(base).alter(i, 0, {multiplyNumeric: true}).formula;
         }
         idx.selected = this._selectPositions?.[item.id];
@@ -128,25 +161,34 @@ export class MateriaMedica extends Application {
       const valid = (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
       if (valid) acc.push({id: item.id, label: item.name});
       return acc;
-    }, [
+    }, []).concat([
       {id: "nat", label: CONFIG.DND5E.skills.nat.label},
       {id: "sur", label: CONFIG.DND5E.skills.sur.label}
     ]);
-
-    data.poisonOptions = this.#methods;
-    data.methodOption = this._methodOption;
-    data.targetValue = this.targetValue;
-    data.maxRolls = this.maxRolls;
     return data;
   }
 
+  /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelector("#forage-initiate").addEventListener("click", this._onForage.bind(this));
-    html[0].querySelector("#forage-accept").addEventListener("click", this._onAcceptForage.bind(this));
-    html[0].querySelectorAll("[data-action=craft]").forEach(n => n.addEventListener("click", this._onCraftingButton.bind(this)));
+    html[0].querySelector("[data-action='forage-initiate']").addEventListener("click", this._onForage.bind(this));
+    html[0].querySelector("[data-action='forage-accept']").addEventListener("click", this._onAcceptForage.bind(this));
+    html[0].querySelectorAll("[data-action=craft]").forEach(n => {
+      n.addEventListener("click", this._onCraftingButton.bind(this));
+    });
+    html[0].querySelectorAll("[data-action='delivery-method-tooltip']").forEach(n => {
+      n.addEventListener("mouseover", this._showDeliveryMethodTooltip.bind(this));
+    });
+    html[0].querySelectorAll("[data-action='success-toggle']").forEach(n => {
+      n.addEventListener("click", this._onToggleForageResult.bind(this));
+    });
   }
 
+  /**
+   * Handle clicking the button to go foraging.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {MateriaMedica}
+   */
   async _onForage(event) {
     const target = event.currentTarget;
     target.disabled = true;
@@ -155,11 +197,11 @@ export class MateriaMedica extends Application {
       ui.notifications.warn("ZHELL.CraftingCannotRollMore", {localize: true});
       return;
     }
-    const type = target.closest(".tab").querySelector("#forage-tool").value;
+    const type = target.closest(".tab").querySelector("[data-action='forage-method']").value;
     const tool = this.actor.items.get(type);
 
     const rollConfig = {
-      targetValue: this.targetValue,
+      targetValue: this.#targetValue,
       fumble: null,
       critical: null,
       event,
@@ -180,45 +222,64 @@ export class MateriaMedica extends Application {
       return;
     }
     const data = {
+      id: foundry.utils.randomID(),
       total: roll.total,
       formula: roll.formula,
       type: tool ? tool.name : game.i18n.format("DND5E.SkillPromptTitle", {
         skill: CONFIG.DND5E.skills[type].label
       }),
-      success: roll.total >= this.targetValue
+      success: roll.total >= this.#targetValue
     };
-    const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate(`modules/${MODULE}/templates/materiaMedicaForageResult.hbs`, data);
-    div.querySelector(".add-forageables").addEventListener("click", this._onToggleForageResult.bind(this));
-    target.closest(".foraging").querySelector(".results").appendChild(div.firstChild);
-    target.disabled = false;
+    this.forageData.set(data.id, data);
+    return this.render();
   }
 
+  /**
+   * Handle toggling the success state of a foraging roll.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {MateriaMedica}
+   */
   _onToggleForageResult(event) {
-    event.currentTarget.classList.toggle("active");
+    const data = this.forageData.get(event.currentTarget.closest("[data-forage-id]").dataset.forageId);
+    data.success = !data.success;
+    return this.render();
   }
 
+  /**
+   * Handle accepting all the foraging results.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {ChatMessage}
+   */
   async _onAcceptForage(event) {
-    const target = event.currentTarget;
-    const results = target.closest(".foraging").querySelector(".results");
-    const attempts = results.querySelectorAll(".result").length;
-    if (!attempts) {
-      ui.notifications.warn("ZHELL.CraftingMustRollOnce", {localize: true});
-      return;
-    }
-    const foraged = results.querySelectorAll(".result .active").length;
-    await ChatMessage.create({
+    const attempts = this.forageData.size;
+    const foraged = this.forageData.filter(r => r.success).length;
+    this.forageData.clear();
+    if (!foraged) this.render();
+    await this.actor.setFlag(MODULE, "materia-medica.value", this.#materials + foraged);
+    return ChatMessage.create({
       content: game.i18n.format("ZHELL.CraftingWentForaging", {
-        name: this.actor.name, hours: attempts, amount: foraged
+        name: this.actor.name,
+        hours: attempts,
+        amount: foraged
       }),
       speaker: ChatMessage.getSpeaker({actor: this.actor})
     });
-    results.innerHTML = "";
-    target.closest(".foraging").querySelector("#forage-initiate").disabled = false;
-    await this.actor.setFlag(MODULE, "materia-medica.value", this.materials + foraged);
-    return this._refreshDropdowns();
   }
 
+  /**
+   * Show a tooltip to detail the poison application method selected.
+   * @param {PointerEvent} event      The initiating hover event.
+   */
+  _showDeliveryMethodTooltip(event) {
+    const method = event.currentTarget.closest(".form-group").querySelector("[data-action='delivery-method']").value;
+    game.tooltip.activate(event.currentTarget, {text: game.i18n.localize(this.#methods[method].appendix)});
+  }
+
+  /**
+   * Handle clicking a button to craft a specific item.
+   * @param {PointerEvent} event      The initiating click event.
+   * @returns {Actor}
+   */
   async _onCraftingButton(event) {
     const select = event.currentTarget.closest(".item").querySelector(".scale-option");
 
@@ -229,10 +290,9 @@ export class MateriaMedica extends Application {
     const hasDeliveryMethod = itemData.system.consumableType === "poison";
     const method = hasDeliveryMethod ? event.currentTarget.closest(".tab").querySelector("[data-action='delivery-method']") : null;
     const methodCost = method ? this.#methods[method.value].cost : 0;
-    const total = ((cost || idx.cost) + methodCost) * this.speedCrafting(idx.item);
-    console.warn({cost, idxCost: idx.cost, methodValue: method?.value, method, total, thisMat: this.materials});
+    const total = (cost || idx.cost) + methodCost;
 
-    if (total > this.materials) {
+    if (total > this.#materials) {
       ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost: total}));
       return null;
     }
@@ -258,12 +318,19 @@ export class MateriaMedica extends Application {
     } else {
       created = await Item.create(itemData, {parent: this.actor, render: false});
     }
-    await this._displayMessage(created, total);
+    await ChatMessage.create({
+      content: game.i18n.format("ZHELL.CraftingComplete", {name: this.actor.name, amount: total, link: created.link}),
+      speaker: ChatMessage.getSpeaker({actor: this.actor})
+    });
 
-    return this.actor.update({[`flags.${MODULE}.materia-medica.value`]: this.materials - total});
+    return this.actor.update({[`flags.${MODULE}.materia-medica.value`]: this.#materials - total});
   }
 
-  /** Mutate poisons with delivery method, system data, name, and itemacro. */
+  /**
+   * Mutate poisons with delivery method, system data, name, and itemacro.
+   * @param {object} itemData     The item data to mutate.
+   * @param {string} method       The delivery method for the poison.
+   */
   async _applyDeliveryMethod(itemData, method) {
     const deliveryMethod = {
       ingested: {
@@ -309,16 +376,9 @@ export class MateriaMedica extends Application {
     }
   }
 
-  async _displayMessage(item, cost) {
-    const content = game.i18n.format("ZHELL.CraftingComplete", {
-      name: this.actor.name, amount: cost, link: item.link
-    });
-    const speaker = ChatMessage.getSpeaker({actor: this.actor});
-    return ChatMessage.create({content, speaker});
-  }
-
   /*RENDERING METHODS */
 
+  /** @override */
   _saveScrollPositions(html) {
     super._saveScrollPositions(html);
     this._selectPositions = {};
@@ -327,6 +387,23 @@ export class MateriaMedica extends Application {
       this._selectPositions[id] = s.value;
     });
     this._methodOption = html[0].querySelector("[data-action='delivery-method']")?.value;
+    this._forageOption = html[0].querySelector("[data-action='forage-method']")?.value;
+  }
+
+  /** @override */
+  _restoreScrollPositions(html) {
+    super._restoreScrollPositions(html);
+
+    for (const [id, value] of Object.entries(this._selectPositions ?? {})) {
+      const select = html[0].querySelector(`[data-item-id="${id}"] .scale-option`);
+      if (select && [...select.options].some(o => o.value === value)) select.value = value;
+    }
+
+    const method = html[0].querySelector("[data-action='delivery-method']");
+    if (method && this._methodOption) method.value = this._methodOption;
+
+    const forage = html[0].querySelector("[data-action='forage-method']");
+    if (forage && this._forageOption) forage.value = this._forageOption;
   }
 
   /** @override */
@@ -335,11 +412,13 @@ export class MateriaMedica extends Application {
     return super.render(...args);
   }
 
+  /** @override */
   async close(...args) {
     delete this.actor.apps[this.appId];
     return super.close(...args);
   }
 
+  /** Create the character flag in Special Traits for speed crafting. */
   static setUpCharacterFlag() {
     CONFIG.DND5E.characterFlags.speedCrafting = {
       name: "Speed Crafting",
