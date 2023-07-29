@@ -12,7 +12,6 @@ import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {HeartContainers} from "./scripts/modules/applications/heartContainers.mjs";
 import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
-import {TargetSequencePicker} from "./scripts/modules/applications/targetSequencePicker.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -46,7 +45,6 @@ Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
 Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
 
 Hooks.once("ready", function() {
-  window.test = TargetSequencePicker;
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
   if (((reactionSetting === 1) && game.user.isGM) || (reactionSetting === 2)) {
     Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);
