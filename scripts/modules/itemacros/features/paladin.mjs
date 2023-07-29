@@ -40,12 +40,9 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
   }).render(true);
 
   async function rollDamage(html, event) {
-    const form = html[0].querySelector("form");
-    const slot = form.level.value;
-    const extra = form.evil.checked;
-    const level = (slot === "pact") ? actor.system.spells["pact"].level : Number(slot.at(-1));
-    const dice = Math.min(5, 1 + level) + (extra ? 1 : 0);
-    const formula = `${dice}d8`;
+    const data = new FormDataExtended(html[0].querySelector("form")).object;
+    const level = (data.level === "pact") ? actor.system.spells.pact.level : Number(data.level.at(-1));
+    const formula = `${Math.min(5, 1 + level) + Number(data.evil)}d8`;
 
     const roll = await new Item.implementation({
       type: "feat",
@@ -56,8 +53,8 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
       }
     }, {parent: actor}).rollDamage({event});
     if (!roll) return;
-    const value = actor.system.spells[slot].value - 1;
-    return actor.update({[`system.spells.${slot}.value`]: value});
+    const value = actor.system.spells[data.level].value - 1;
+    return actor.update({[`system.spells.${data.level}.value`]: value});
   }
 }
 

@@ -26,12 +26,12 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
   const optionsC = ["cold", "fire", "lightning"].reduce((acc, e) => acc += `<option value="${e}">${CONFIG.DND5E.damageTypes[e]}</option>`, "");
   const content = `
   <p>Select what you are rerolling.</p>
-  <form>
+  <form class="dnd5e">
     <div class="form-group">
       <div class="form-fields">
-        <select id="amulet-a">${optionsA}</select>
-        <select id="amulet-b">${optionsB}</select>
-        <select id="amulet-c">${optionsC}</select>
+        <select name="number">${optionsA}</select>
+        <select name="faces">${optionsB}</select>
+        <select name="type">${optionsC}</select>
       </div>
     </div>
   </form>`;
@@ -42,11 +42,9 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
     rejectClose: false,
     label: "Roll",
     callback: async (html, event) => {
-      const a = html[0].querySelector("#amulet-a").value;
-      const b = html[0].querySelector("#amulet-b").value;
-      const c = html[0].querySelector("#amulet-c").value;
-      await item.update({"system.uses.value": value - Number(a)});
-      return item.clone({"system.damage.parts": [[`${a}${b}`, c]]}, {keepId: true}).rollDamage({event});
+      const {number, faces, type} = new FormDataExtended(html[0].querySelector("form")).object;
+      await item.update({"system.uses.value": value - Number(number)});
+      return item.clone({"system.damage.parts": [[`${number}${faces}`, type]]}, {keepId: true}).rollDamage({event});
     }
   });
 }
