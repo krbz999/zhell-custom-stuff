@@ -796,13 +796,6 @@ button:active:not(.pm-dropdown, :disabled),
   aspect-ratio: 3/5 !important;
   background: none;
   box-shadow: none;
-  opacity: 1;
-  transition: 1000ms;
-}
-
-.zhell-custom-stuff.party-features.closing {
-  pointer-events: none;
-  opacity: 0;
 }
 
 .zhell-custom-stuff.party-features .window-header {
@@ -850,13 +843,24 @@ button:active:not(.pm-dropdown, :disabled),
   border-style: inset;
 }
 
-.zhell-custom-stuff.party-features [data-action] > * {
+.zhell-custom-stuff.party-features [data-action] .fa-solid {
   align-self: center;
   transition: 0.3s;
 }
 
-.zhell-custom-stuff.party-features [data-action]:hover > * {
+.zhell-custom-stuff.party-features [data-action]:hover .fa-solid {
   transform: scale(1.25);
+}
+
+.zhell-custom-stuff.party-features [data-action] label {
+  display: flex;
+  flex-direction: column;
+}
+
+.zhell-custom-stuff.party-features [data-action] label .uses {
+  font-size: 15px;
+  color: gray;
+  height: 15px;
 }
 
 /* Font of Magic */

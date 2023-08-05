@@ -1,18 +1,20 @@
 <div class="content">
-  <button data-action="intervention" data-tooltip="ZHELL.PartyFeatureIntervention" data-tooltip-direction="LEFT">
-    <i class="fa-solid fa-ankh"></i> Intervention
+  {{#each features}}
+  <button data-action="{{key}}" data-tooltip="{{tooltip}}" data-tooltip-direction="LEFT">
+    <i class="{{icon}}"></i>
+    <label>
+      <span class="name">{{label}}</span>
+      <span class="uses">{{uses.value}} / {{uses.max}}</span>
+    </label>
   </button>
-  <button data-action="inspiration" data-tooltip="ZHELL.PartyFeatureInspiration" data-tooltip-direction="LEFT">
-    <i class="fa-solid fa-star-half-alt"></i> Inspiration
-  </button>
-  <button data-action="fragment" data-tooltip="ZHELL.PartyFeatureFragment" data-tooltip-direction="LEFT">
-    <i class="fa-solid fa-hourglass-start"></i> Fragment
-  </button>
+  {{/each}}
+
   {{#if isGM}}
   <button data-action="reset">
     <i class="fa-solid fa-undo"></i> Reset
   </button>
   {{/if}}
+
   <button data-action="close">
     <i class="fa-solid fa-times"></i> Close
   </button>

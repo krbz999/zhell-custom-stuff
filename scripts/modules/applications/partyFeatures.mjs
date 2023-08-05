@@ -8,11 +8,16 @@ export class PartyFeatures extends Application {
     this.groupActor = fromUuidSync("Actor.VRA6OxigX4V5GYn7") ?? fromUuidSync("Actor.YZI1wsS64lScoYZh");
     this.features = ["intervention", "inspiration", "fragment"];
     this.maximums = {intervention: 1, inspiration: 7, fragment: 1};
+    this.icons = {
+      intervention: "fa-solid fa-ankh",
+      inspiration: "fa-solid fa-star-half-alt",
+      fragment: "fa-solid fa-hourglass-start"
+    };
   }
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: [MODULE, "party-features", "closing"],
+      classes: [MODULE, "party-features"],
       template: "modules/zhell-custom-stuff/templates/partyFeatures.hbs",
       id: "zhell-custom-stuff-party-features"
     });
@@ -21,6 +26,20 @@ export class PartyFeatures extends Application {
   /** @override */
   async getData() {
     const data = await super.getData();
+
+    data.features = this.features.map(key => {
+      return {
+        tooltip: `ZHELL.PartyFeature${key.capitalize()}`,
+        label: key.capitalize(),
+        key,
+        icon: this.icons[key],
+        uses: {
+          max: this.maximums[key],
+          value: this.groupActor.flags[MODULE].partyFeatureUses[key].value
+        }
+      };
+    });
+
     data.isGM = game.user.isGM;
     return data;
   }
@@ -32,22 +51,21 @@ export class PartyFeatures extends Application {
   }
 
   /** @override */
-  async close(...args) {
-    this.element[0].classList.toggle("closing", true);
-    await new Promise(r => setTimeout(r, 1000));
-    return super.close(...args);
+  async close(options = {}) {
+    const e = this.element;
+    e[0].style.pointerEvents = "none";
+    return new Promise(resolve => {
+      e.fadeOut(1000, () => {
+        resolve(super.close(options));
+      });
+    });
   }
 
   /** @override */
-  async render(...args) {
-    await super.render(...args);
-    let el = null;
-    while (!el) {
-      el = this.element[0] ?? null;
-      await new Promise(r => setTimeout(r, 100));
-    }
-    el.classList.toggle("closing", false);
-    return this;
+  _injectHTML(html) {
+    $("body").append(html);
+    this._element = html;
+    html.hide().fadeIn(1000);
   }
 
   /**
