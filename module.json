@@ -22,7 +22,8 @@
   "styles": [
     "./styles/styles.css",
     "./styles/sheetEdits.css",
-    "./styles/journalStyles.css"
+    "./styles/journalStyles.css",
+    "./styles/class-pages.css"
   ],
   "languages": [
     {
@@ -35,7 +36,7 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"],
-      "paths": ["styles/styles.css"]
+      "paths": ["styles/*.css"]
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",

@@ -12,7 +12,7 @@ export class ClassPageRenderer extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "class-page-renderer",
       classes: [MODULE, "class-page-renderer"],
-      tabs: [{navSelector: ".tabs", contentSelector: ".content-tabs"}],
+      tabs: [],
       title: "Available Classes",
       template: "modules/zhell-custom-stuff/templates/availableClasses.hbs",
       resizable: true,
@@ -24,38 +24,6 @@ export class ClassPageRenderer extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelectorAll("[data-action='toggle-description']").forEach(n => {
-      n.addEventListener("click", this._onToggleDescription.bind(this));
-    });
-    html[0].querySelectorAll("[data-action='toggle-collapse']").forEach(n => {
-      n.addEventListener("click", this._onToggleCollapse.bind(this));
-    });
-  }
-
-  /**
-   * Toggle the collapsed state of a section.
-   * @param {PointerEvent} event      The initiating click event.
-   */
-  _onToggleCollapse(event) {
-    event.currentTarget.closest(".collapsible").classList.toggle("active");
-  }
-
-  /**
-   * Show or hide the description of a spell.
-   * @param {PointerEvent} event      The initiating click event.
-   */
-  async _onToggleDescription(event) {
-    const target = event.currentTarget;
-    const shown = target.closest(".spell").querySelector(".spell-description");
-    if (shown) {
-      shown.remove();
-    } else {
-      const spell = await fromUuid(target.closest(".spell").dataset.uuid);
-      const div = document.createElement("DIV");
-      div.innerHTML = spell.system.description.value;
-      div.classList.add("spell-description");
-      target.after(div);
-    }
   }
 
   /**
@@ -1747,11 +1715,14 @@ export class ClassPageRenderer extends Application {
   /** @override */
   async getData() {
     const keys = {class: "zhell-catalogs.classes", subclass: "zhell-catalogs.subclasses", spell: "zhell-catalogs.spells"};
+    const desc = "system.description.value";
     const packs = {
-      class: await game.packs.get(keys.class).getIndex({fields: ["system.identifier"]}),
-      subclass: await game.packs.get(keys.subclass).getIndex({fields: ["system.classIdentifier"]}),
-      spell: await game.packs.get(keys.spell).getIndex({fields: ["system.level"]})
+      class: await game.packs.get(keys.class).getIndex({fields: ["system.identifier", desc]}),
+      subclass: await game.packs.get(keys.subclass).getIndex({fields: ["system.classIdentifier", desc]}),
+      spell: await game.packs.get(keys.spell).getIndex({fields: ["system.level", desc]})
     };
+
+    this._classes = packs.class.map(cls => cls.system.identifier);
 
     // Array of classes, sorted alphabetically.
     const classes = Array.from(packs.class).sort((a, b) => a.name.localeCompare(b.name));
@@ -1777,19 +1748,32 @@ export class ClassPageRenderer extends Application {
       _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
       _data.id = c._id;
       _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
+      _data.desc = await TextEditor.enrichHTML(c.system.description.value);
 
       // Add all subclasses to the class.
       _data.subclassIds = subclassIds[identifier].map(idx => ({
-        id: idx._id, name: idx.name, pack: keys.subclass, img: idx.img, uuid: idx.uuid
+        id: idx._id,
+        name: idx.name,
+        pack: keys.subclass,
+        img: idx.img,
+        uuid: idx.uuid,
+        desc: idx.system.description.value
       })).sort((a, b) => a.name.localeCompare(b.name));
 
       // Add all spells to the class.
       const _spells = this.spellIds[identifier].map(id => packs.spell.get(id)).sort((a, b) => a.name.localeCompare(b.name));
       _data.spellLists = Array.fromRange(10).map(n => ({
-        label: !n ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]} Spells`, spells: []
+        label: !n ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]}`,
+        spells: [],
+        level: n
       }));
       for (const spell of _spells) _data.spellLists[spell.system.level].spells.push({
-        id: spell._id, name: spell.name, pack: keys.spell, uuid: spell.uuid
+        id: spell._id,
+        name: spell.name,
+        pack: keys.spell,
+        uuid: spell.uuid,
+        desc: await TextEditor.enrichHTML(spell.system.description.value),
+        img: spell.img
       });
 
       _data.hasSpells = _spells.length > 0;
@@ -1801,7 +1785,28 @@ export class ClassPageRenderer extends Application {
 
   /** @override */
   async _renderInner(data) {
-    if (this.initial) this._tabs[0].active = this.initial;
+    const tabs = [{
+      group: "page",
+      navSelector: ".tabs[data-group=page]",
+      contentSelector: ".page",
+      initial: this.initial
+    }];
+    for (const cls of this._classes) {
+      tabs.push({
+        group: cls,
+        navSelector: `[data-tab='${cls}'] .tabs[data-group=subpage]`,
+        contentSelector: `[data-group=page][data-tab='${cls}'] .subpage`
+      });
+      for (let i = 0; i < 10; i++) {
+        tabs.push({
+          group: `${cls}-${i}`,
+          navSelector: `[data-group=page][data-tab='${cls}'] .subpage .tabs[data-group=subsubpage]`,
+          contentSelector: `[data-tab='${cls}'] .subsubpage`
+        });
+      }
+    }
+    this.options.tabs = tabs;
+    this._tabs = this._createTabHandlers();
     return super._renderInner(data);
   }
 
@@ -1811,6 +1816,8 @@ export class ClassPageRenderer extends Application {
    * @returns {ClassPageRenderer}       The rendered application.
    */
   static renderClassPages(initial = null) {
+    const active = Object.values(ui.windows).find(w => w instanceof ClassPageRenderer);
+    if (active) return active.render();
     return new ClassPageRenderer(initial).render(true);
   }
 }

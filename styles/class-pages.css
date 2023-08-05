@@ -1,0 +1,134 @@
+.zhell-custom-stuff.class-page-renderer {
+  min-width: 800px;
+  min-height: 200px;
+}
+.zhell-custom-stuff.class-page-renderer .content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+.zhell-custom-stuff.class-page-renderer nav {
+  font-family: 'Modesto Condensed';
+  height: 30px;
+  align-items: center;
+  flex: none;
+}
+.zhell-custom-stuff.class-page-renderer nav .item {
+  flex: 1;
+}
+.zhell-custom-stuff.class-page-renderer nav[data-group="page"] {
+  font-size: 20px;
+  border-style: groove hidden;
+}
+.zhell-custom-stuff.class-page-renderer nav[data-group="page"] .item {
+  padding: 4px 0;
+}
+.zhell-custom-stuff.class-page-renderer nav[data-group="subpage"] {
+  border-style: hidden hidden groove hidden;
+  font-size: 25px;
+}
+.zhell-custom-stuff.class-page-renderer nav[data-group="subsubpage"] {
+  border-style: hidden hidden groove hidden;
+  font-size: 16px;
+}
+.zhell-custom-stuff.class-page-renderer nav[data-group="subsubpage"] .item {
+  padding: 6px 0;
+}
+.zhell-custom-stuff.class-page-renderer .page {
+  margin: 0 0.5rem 0 0;
+}
+.zhell-custom-stuff.class-page-renderer .page,
+.zhell-custom-stuff.class-page-renderer .subpage,
+.zhell-custom-stuff.class-page-renderer .subsubpage,
+.zhell-custom-stuff.class-page-renderer .tab[data-group].active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.zhell-custom-stuff.class-page-renderer .page,
+.zhell-custom-stuff.class-page-renderer .subpage,
+.zhell-custom-stuff.class-page-renderer .subsubpage,
+.zhell-custom-stuff.class-page-renderer .tab[data-group="page"].active,
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active {
+  overflow: hidden;
+}
+.zhell-custom-stuff.class-page-renderer .item .content-link {
+  border: none;
+  background: none;
+  font-family: 'Modesto Condensed';
+}
+.zhell-custom-stuff.class-page-renderer .class .item .content-link {
+  font-size: 100px;
+  height: 100px;
+}
+.zhell-custom-stuff.class-page-renderer .subclass .item .content-link {
+  font-size: 50px;
+  height: 100px;
+  align-items: center;
+  display: flex;
+}
+.zhell-custom-stuff.class-page-renderer .spell .item .content-link {
+  font-size: 20px;
+  height: 30px;
+}
+.zhell-custom-stuff.class-page-renderer .image {
+  border: none;
+  border-radius: 5px;
+  pointer-events: none;
+}
+.zhell-custom-stuff.class-page-renderer .class .image {
+  position: absolute;
+  left: 25px;
+}
+.zhell-custom-stuff.class-page-renderer .class .image,
+.zhell-custom-stuff.class-page-renderer .subclass .image {
+  max-width: 100px;
+  min-width: 100px;
+  max-height: 100px;
+  min-height: 100px;
+}
+.zhell-custom-stuff.class-page-renderer .spell .image {
+  max-height: 30px;
+  max-width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class {
+  position: relative;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class .item {
+  display: flex;
+  justify-content: center;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class .description {
+  margin: 0 1rem;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass {
+  border: 4px inset;
+  padding: 1rem 1rem 0 1rem;
+  transition: 200ms;
+  margin: 0 1rem;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass .item {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .spell-level .spell {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .spell-level .spell:nth-child(even) {
+  background: rgba(0, 0, 0, 0.05);
+}
+.zhell-custom-stuff.class-page-renderer .tab[data-group].active.class,
+.zhell-custom-stuff.class-page-renderer .tab[data-group].active.subclasses,
+.zhell-custom-stuff.class-page-renderer .tab[data-group].active.spell-level {
+  overflow: auto;
+  margin-top: 1rem;
+}

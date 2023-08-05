@@ -1,62 +1,81 @@
 <div class="content">
 
-  <nav class="sheet-tabs tabs" aria-role="Form Tab Navigation">
+  <nav class="sheet-tabs tabs" data-group="page" aria-role="Form Tab Navigation">
     {{#each classes}}
     <a class="item" data-tab="{{identifier}}">{{name}}</a>
     {{/each}}
   </nav>
 
-  <div class="content-tabs">
+  <div class="page">
     {{#each classes}}
 
-    <div class="tab" data-tab="{{identifier}}">
-      <section class="class-section">
-        <img class="class-image" src="{{img}}">
-        <div class="class-item">
-          <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
-            {{name}}
-          </a>
-        </div>
-      </section>
+    <div class="tab" data-group="page" data-tab="{{identifier}}">
 
-      <section class="subclass-section collapsible active">
-        <h2 data-action="toggle-collapse">{{subclassLabel}}</h2>
-        <div class="subclass-list collapsible-content">
+      <nav class="sheet-tabs tabs" data-group="subpage" aria-role="Form Tab Navigation">
+        <a class="item" data-tab="class">{{name}}</a>
+        <a class="item" data-tab="subclasses">{{subclassLabel}}</a>
+        {{#if hasSpells}}<a class="item" data-tab="spells">Spell List</a>{{/if}}
+      </nav>
+
+      <div class="subpage">
+        <!-- Class page -->
+        <div class="class tab" data-group="subpage" data-tab="class">
+          <div class="class">
+            <img class="image" src="{{img}}">
+            <div class="item">
+              <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
+                {{name}}
+              </a>
+            </div>
+            <div class="description">{{{desc}}}</div>
+          </div>
+        </div>
+
+        <!-- Subclasses -->
+        <div class="subclasses tab" data-group="subpage" data-tab="subclasses">
           {{#each subclassIds}}
-          <div class="subclass-item">
-            <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
-              {{name}}
-            </a>
+          <div class="subclass">
+            <div class="item">
+              <img class="image" src="{{img}}">
+              <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
+                {{name}}
+              </a>
+            </div>
+            <div class="description">{{{desc}}}</div>
           </div>
           {{/each}}
         </div>
-      </section>
 
-      {{#if hasSpells}}
-      <section class="spell-section">
-        <div class="spell-lists">
-          {{#each spellLists}}
-          {{#if spells.length}}
-          <section class="spell-list collapsible active">
-            <h3 data-action="toggle-collapse">{{label}}</h3>
-            <div class="collapsible-content">
-            {{#each spells}}
-            <div class="spell" data-uuid="{{uuid}}">
-              <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
-                <i class="fas fa-wand-magic-sparkles"></i> {{name}}
-              </a>
-              <a data-action="toggle-description" data-tooltip="Toggle Details">
-                <i class="fa-solid fa-plus"></i>
-              </a>
-            </div>
+        <!-- Spell list -->
+        {{#if hasSpells}}
+        <div class="spells tab" data-group="subpage" data-tab="spells">
+          <nav class="sheet-tabs tabs" data-group="subsubpage" aria-role="Form Tab Navigation">
+            {{#each spellLists}}
+            {{#if spells.length}}<a class="item" data-tab="{{../identifier}}-{{level}}">{{label}}</a>{{/if}}
             {{/each}}
+          </nav>
+
+          <div class="subsubpage">
+            {{#each spellLists}}
+            {{#if spells.length}}
+            <div class="tab spell-level" data-group="subsubpage" data-tab="{{../identifier}}-{{level}}">
+              {{#each spells}}
+              <div class="spell">
+                <img class="image" src="{{img}}">
+                <div class="item">
+                  <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
+                    {{name}}
+                  </a>
+                </div>
+              </div>
+              {{/each}}
             </div>
-          </section>
-          {{/if}}
-          {{/each}}
+            {{/if}}
+            {{/each}}
+          </div>
         </div>
-      </section>
-      {{/if}}
+        {{/if}}
+      </div>
     </div>
     {{/each}}
   </div>
