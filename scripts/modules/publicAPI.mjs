@@ -316,8 +316,30 @@ export class PublicAPI {
    * @param {string} [type="move"]                  The scene obstruction to use for evaluation.
    * @returns {number[]}                            An array with x and y coordinates.
    */
-  static getFurthestPointAlongRay(template, type = "move") {
+  static getFurthestPointAlongRayTemplate(template, type = "move") {
     const origin = template.object.ray.A;
     return PublicAPI.getFurthestPointOnTemplateFromPosition(origin, template, type);
   }
+
+  /*static async getFurthestPointAlongRay(ray) {
+    const template = await MeasuredTemplateDocument.create({
+      t: "ray",
+      x: ray.A.x,
+      y: ray.A.y,
+      distance: ray.distance / canvas.dimensions.distancePixels + canvas.dimensions.distance/2,
+      direction: Math.toDegrees(ray.angle),
+      width: 5,
+      hidden: true
+    }, {parent: canvas.scene});
+    await new Promise(r => setTimeout(r, 100));
+    template.object.refresh();
+    return PublicAPI.getFurthestPointAlongRayTemplate(template);
+  }
+
+  static _computeShape(ray) {
+    const width = 5 * canvas.dimensions.distancePixels;
+    const direction = ray.angle;
+    const distance = ray.distance;
+    return MeasuredTemplate.getRayShape(direction, distance, width);
+  }*/
 }
