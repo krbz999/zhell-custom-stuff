@@ -106,6 +106,12 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     callback: _onMutate
   }).render(true);
 
+  /**
+   * Get the `changes` array for the actor's effect and the warpgate updates for the shape and steed.
+   * @param {string} nameSteed                        The name of the steed.
+   * @param {string} nameShape                        The name of the shape.
+   * @returns {object<object[], object, object>}      The returned values.
+   */
   function _generateUpdateObjects(nameSteed, nameShape) {
     // movement speeds.
     const shapeMovement = {
@@ -121,17 +127,7 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       octopus: {walk: 5, fly: 0, swim: 30, climb: 5},
       raccoon: {walk: 30, fly: 0, swim: 0, climb: 20}
     };
-    // updates to the shape and steed that are constant no matter the choice.
-    const constantShape = {
-      actor: {
-        system: {
-          attributes: {hp: {value: 4, max: 4}, ac: {calc: "natural", flat: 12}},
-          traits: {size: "tiny"},
-          abilities: {str: {value: 2}, dex: {value: 14}, con: {value: 10}}
-        }
-      },
-      token: {width: 0.5, height: 0.5}
-    };
+    // updates to the steed that are constant no matter the choice.
     const constantSteed = {
       token: {
         alpha: 0,
@@ -179,17 +175,34 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       }
     }, constantSteed);
 
-    const updatesShape = foundry.utils.mergeObject({
-      token: {
-        texture: {src: `${prefix}${nameShape}.webp`, scaleX: 1, scaleY: 1},
-      },
-      actor: {
-        system: {attributes: {movement: shapeMovement[nameShape]}},
-        img: `${prefix}${nameShape}.webp`
-      }
-    }, constantShape);
+    /* Construct the changes array for the actor's effect. */
+    const changes = [];
+    const mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+    // actor img
+    changes.push({key: "img", mode, value: `${prefix}${nameShape}.webp`});
+    // movement speeds
+    for (const [key, value] of Object.entries(shapeMovement[nameShape])) {
+      changes.push({key: `system.attributes.movement.${key}`, mode, value: value});
+    }
+    // hit points
+    changes.push({key: "system.attributes.hp.max", mode, value: 4});
+    // armor class
+    changes.push({key: "system.attributes.ac.calc", mode, value: "natural"});
+    changes.push({key: "system.attributes.ac.flat", mode, value: 12});
+    // size
+    changes.push({key: "system.traits.size", mode, value: "tiny"});
+    // abilities
+    changes.push({key: "system.abilities.str.value", mode, value: 2});
+    changes.push({key: "system.abilities.dex.value", mode, value: 14});
+    changes.push({key: "system.abilities.con.value", mode, value: 10});
 
-    return {updatesSteed, updatesShape};
+    /* Construct the warpgate update for the shape. */
+    const updatesShape = {
+      token: {width: 0.5, height: 0.5, texture: {src: `${prefix}${nameShape}.webp`, scaleX: 1, scaleY: 1}},
+      actor: {system: {attributes: {hp: {value: 4}}}}
+    };
+
+    return {changes, updatesSteed, updatesShape};
   }
 
   async function _onMutate(event, {top, middle, bottom}) {
@@ -203,10 +216,10 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
     if (cancelled) return actor.sheet?.maximize();
 
     // construct updates.
-    const {updatesShape, updatesSteed} = _generateUpdateObjects(nameSteed, nameShape);
+    const {updatesShape, updatesSteed, changes} = _generateUpdateObjects(nameSteed, nameShape);
 
     // spawn steed at:
-    const location = {x, y: y - canvas.grid.size}
+    const location = {x, y: y - canvas.grid.size};
     const [steedId] = await warpgate.spawnAt(location, "Find Friend", updatesSteed);
 
     // steed effects
@@ -234,7 +247,8 @@ async function FIND_FRIEND(item, speaker, actor, token, character, event, args) 
       origin: actor.uuid,
       duration: {seconds: actor.system.attributes.prof * 60 * 60},
       statuses: [item.name.slugify({strict: true})],
-      description: "You are transformed using Find Friend.",
+      changes: changes,
+      description: "<p>You are transformed using Find Friend.</p>",
       "flags.visual-active-effects.data.content": item.system.description.value,
       "flags.effectmacro.onDelete.script": `(${async function() {
         await warpgate.revert(token.document, effect.name);
