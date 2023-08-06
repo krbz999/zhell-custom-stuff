@@ -11,6 +11,7 @@ export function setupAPI() {
     token: {
       teleport: PublicAPI._teleportTokens,
       target: PublicAPI._targetTokens,
+      healToken: SocketsHandler.healToken,
       getOwnerIds: PublicAPI._getTokenOwnerIds,
       contained: PublicAPI._checkTokenInTemplate,
       selectContained: PublicAPI._selectContained,
@@ -34,7 +35,6 @@ export function setupAPI() {
       grantItems: SocketsHandler.grantItems,
       showClassPages: ClassPageRenderer.renderClassPages,
       renderPartyFeatures: PartyFeatures.renderPartyFeatures,
-      healToken: SocketsHandler.healToken,
       toggleBossBar: PublicAPI.toggleBossBar,
       updateBossBar: PublicAPI.updateBossBar,
       updateBossBarDialog: PublicAPI.updateBossBarDialog,

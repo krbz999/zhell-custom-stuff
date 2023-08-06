@@ -49,13 +49,11 @@ async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, arg
 }
 
 async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A, DEPEND.WG)) return item.use();
+  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A)) return item.use();
 
   // Constants.
   const status = item.name.slugify({strict: true});
   const file = "jb2a.markers.circle_of_stars.orangepurple";
-  const error = "Please target a token.";
-  const target = game.user.targets.first();
 
   if (!actor.statuses.has(status)) {
     const use = await item.use();
@@ -79,7 +77,10 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
       .play({remote: true});
   }
 
-  new Dialog({
+  const target = game.user.targets.first();
+  if (!target) return ui.notifications.error("Please target a token.");
+
+  return new Dialog({
     title: item.name,
     content: `<p style="text-align: center;">Current target: <strong><em>${target.document.name}</em></strong></p>`,
     buttons: {
@@ -98,23 +99,17 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
 
 
   async function grantTempHP() {
-    if (!target) return ui.notifications.error(error);
-    const {total} = await item.rollDamage({options: {fastForward: true}}) ?? {};
+    const name = target.document.name.split(" ")[0];
+    const {total} = await item.rollDamage({options: {fastForward: true, flavor: `Temporary hit points for ${name}`}}) ?? {};
     if (!total) return;
     const temp = target.actor.system.attributes.hp.temp ?? 0;
-    const updates = {actor: {"system.attributes.hp.temp": total}};
-    const options = {
-      permanent: true,
-      description: `${actor.name} is granting you ${total} temporary hit points.`
-    };
     if (total > temp) {
-      ui.notifications.info(`Granting temporary hit points to ${target.document.name}!`);
-      return warpgate.mutate(target.document, updates, {}, options);
+      ui.notifications.info(`Granting temporary hit points to ${name}!`);
+      return ZHELL.token.healToken({tokenId: target.id, amount: total, temp: true});
     }
   }
 
   async function removeEffect() {
-    if (!target) return ui.notifications.error(error);
     const content = `${actor.name} ends the charmed or frightened condition on ${target.name}.`;
     return ChatMessage.create({speaker, content});
   }
