@@ -1751,14 +1751,8 @@ export class ClassPageRenderer extends Application {
       _data.desc = await TextEditor.enrichHTML(c.system.description.value);
 
       // Add all subclasses to the class.
-      _data.subclassIds = subclassIds[identifier].map(idx => ({
-        id: idx._id,
-        name: idx.name,
-        pack: keys.subclass,
-        img: idx.img,
-        uuid: idx.uuid,
-        desc: idx.system.description.value
-      })).sort((a, b) => a.name.localeCompare(b.name));
+      const subclasses = await Promise.all(subclassIds[identifier].map(idx => this._subclassData(idx, keys.subclass)));
+      _data.subclassIds = subclasses.sort((a, b) => a.name.localeCompare(b.name));
 
       // Add all spells to the class.
       const _spells = this.spellIds[identifier].map(id => packs.spell.get(id)).sort((a, b) => a.name.localeCompare(b.name));
@@ -1781,6 +1775,17 @@ export class ClassPageRenderer extends Application {
     }
 
     return data;
+  }
+
+  /**
+   * Utility function to batch enrich the subclasses.
+   * @param {CompendiumIndex} idx     One entry from a compendium's index.
+   * @param {string} subclassPack     The key of the pack that has the subclasses.
+   * @returns {Promise<object>}
+   */
+  async _subclassData(idx, subclassPack) {
+    const desc = await TextEditor.enrichHTML(idx.system.description.value, {async: true});
+    return {...idx, id: idx._id, pack: subclassPack, desc};
   }
 
   /** @override */
