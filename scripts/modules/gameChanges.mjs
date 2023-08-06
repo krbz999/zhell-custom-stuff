@@ -31,7 +31,7 @@ export class GameChangesHandler {
     const toAdd = {turned: "Turned"};
     foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, toAdd);
 
-    CONFIG.DND5E.conditionTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.conditionTypes).sort((a, b) => a[1].localeCompare(b[1])));
+    CONFIG.DND5E.conditionTypes = dnd5e.utils.sortObjectEntries(CONFIG.DND5E.conditionTypes);
   }
 
   static _addPiety() {
@@ -51,7 +51,7 @@ export class GameChangesHandler {
     const toAdd = {drink: "Drink", elixir: "Elixir", bomb: "Bomb", trap: "Trap"};
     foundry.utils.mergeObject(CONFIG.DND5E.consumableTypes, toAdd);
 
-    CONFIG.DND5E.consumableTypes = Object.fromEntries(Object.entries(CONFIG.DND5E.consumableTypes).sort((a, b) => a[1].localeCompare(b[1])));
+    CONFIG.DND5E.consumableTypes = dnd5e.utils.sortObjectEntries(CONFIG.DND5E.consumableTypes);
   }
 
   static _languages() {
@@ -61,7 +61,7 @@ export class GameChangesHandler {
     const toAdd = {cait: "Cait", orc: "Orcish"};
     foundry.utils.mergeObject(CONFIG.DND5E.languages, toAdd);
 
-    CONFIG.DND5E.languages = Object.fromEntries(Object.entries(CONFIG.DND5E.languages).sort((a, b) => a[1].localeCompare(b[1])));
+    CONFIG.DND5E.languages = dnd5e.utils.sortObjectEntries(CONFIG.DND5E.languages);
   }
 
   static _tools() {
@@ -216,14 +216,10 @@ export class GameChangesHandler {
   // Miscellaneous adjustments.
   static _miscAdjustments() {
     // Add more feature types.
-    const entries = Object.entries({
-      ...CONFIG.DND5E.featureTypes.class.subtypes,
-      ...{
-        arcaneShot: "Arcane Shot",
-        primordialEffect: "Primordial Effect"
-      }
-    }).sort((a, b) => a[1].localeCompare(b[1]));
-    CONFIG.DND5E.featureTypes.class.subtypes = Object.fromEntries(entries);
+    const types = CONFIG.DND5E.featureTypes.class.subtypes;
+    types.arcaneShot = "Arcane Shot";
+    types.primordialEffect = "Primordial Effect";
+    CONFIG.DND5E.featureTypes.class.subtypes = dnd5e.utils.sortObjectEntries(types);
 
     // Adjust the time it takes for tooltips to fade in and out.
     TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
