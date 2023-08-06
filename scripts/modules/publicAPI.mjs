@@ -321,12 +321,16 @@ export class PublicAPI {
     return PublicAPI.getFurthestPointOnTemplateFromPosition(origin, template, type);
   }
 
-  /*static async getFurthestPointAlongRay(ray) {
+  /* --------------------------------- */
+  /*   WORKS IN PROGRESS               */
+  /* --------------------------------- */
+
+  static async getFurthestPointAlongRay(ray) {
     const template = await MeasuredTemplateDocument.create({
       t: "ray",
       x: ray.A.x,
       y: ray.A.y,
-      distance: ray.distance / canvas.dimensions.distancePixels + canvas.dimensions.distance/2,
+      distance: ray.distance / canvas.dimensions.distancePixels + canvas.dimensions.distance / 2,
       direction: Math.toDegrees(ray.angle),
       width: 5,
       hidden: true
@@ -341,5 +345,48 @@ export class PublicAPI {
     const direction = ray.angle;
     const distance = ray.distance;
     return MeasuredTemplate.getRayShape(direction, distance, width);
-  }*/
+  }
+
+  /**
+   * Push tokens away from a point on the canvas. Does not take walls into account.
+   * All pushed tokens will end up at the perimeter of a circle.
+   * @param {object|Token} origin     Object with x and y coordinates, or a token placeable.
+   * @param {number} ft               The radius to push tokens out to.
+   */
+  static async pushTokensAwayFromPoint(origin, ft) {
+    const shape = MeasuredTemplate.getCircleShape(canvas.dimensions.distancePixels * ft);
+    if (origin instanceof Token) origin = origin.center;
+    shape.x = origin.x;
+    shape.y = origin.y;
+
+    const updates = [];
+    for (const tok of canvas.scene.tokens) {
+      const center = tok.object.center;
+      const ray = new Ray(origin, center);
+      if (!(ray.distance > 0)) continue;
+      const point = shape.pointAtAngle(ray.angle);
+      updates.push({x: point.x - tok.object.w / 2, y: point.y - tok.object.h / 2});
+    }
+    return canvas.scene.updateEmbeddedDocuments("Token", updates);
+  }
+
+  /**
+   * Smack the target away from the origin.
+   * @param {Token} origin      The token to smack away from.
+   * @param {Token} target      The token to smack away.
+   * @param {number} ft         Number of feet to smack away.
+   */
+  static async smackTokenAway(origin, target, ft) {
+    const oc = origin.center;
+    const tc = target.center;
+    const ray = Ray.towardsPoint(oc, tc, ft * canvas.dimensions.distancePixels);
+    canvas.interface.createScrollingText(tc, "Smack!");
+    const [x, y] = await PublicAPI.getFurthestPointAlongRay(ray);
+    canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", [], {deleteAll: true});
+    if (canvas.grid.measureDistance(oc, {x, y}) < canvas.grid.measureDistance(oc, tc)) {
+      ui.notifications.warn("You can't smack someone closer to you.");
+      return null;
+    }
+    return target.document.update({x, y});
+  }
 }
