@@ -432,15 +432,15 @@ export class GameChangesHandler {
     const {itemData, types} = effect.flags[MODULE] ?? {};
     if (!itemData || !types) return;
 
+    const item = new Item.implementation(itemData, {parent: effect.parent});
+    item.prepareData();
+    item.prepareFinalAttributes();
+
     // Use the item embedded.
     if (types.includes("use")) {
       buttons.push({
         label: `${itemData.name} (Use)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          item.prepareFinalAttributes();
-          return item.use({}, {"flags.dnd5e.itemData": itemData});
-        }
+        callback: () => item.use({}, {"flags.dnd5e.itemData": itemData})
       });
     }
 
@@ -448,11 +448,7 @@ export class GameChangesHandler {
     if (types.includes("redisplay")) {
       buttons.push({
         label: `${itemData.name} (Chat)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          item.prepareFinalAttributes();
-          return item.displayCard();
-        }
+        callback: () => item.displayCard()
       });
     }
 
@@ -460,10 +456,7 @@ export class GameChangesHandler {
     if (types.includes("attack")) {
       buttons.push({
         label: `${itemData.name} (Attack)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          return item.rollAttack({event});
-        }
+        callback: () => item.rollAttack({event})
       });
     }
 
@@ -471,10 +464,7 @@ export class GameChangesHandler {
     if (types.includes("damage")) {
       buttons.push({
         label: `${itemData.name} (Damage)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          return item.rollDamage({event});
-        }
+        callback: () => item.rollDamage({event})
       });
     }
 
@@ -482,10 +472,7 @@ export class GameChangesHandler {
     if (types.includes("healing")) {
       buttons.push({
         label: `${itemData.name} (Healing)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          return item.rollDamage({event});
-        }
+        callback: () => item.rollDamage({event})
       });
     }
 
@@ -493,10 +480,7 @@ export class GameChangesHandler {
     if (types.includes("template")) {
       buttons.push({
         label: `${itemData.name} (Template)`,
-        callback: () => {
-          const item = new Item.implementation(itemData, {parent: effect.parent});
-          return dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview();
-        }
+        callback: () => dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview()
       });
     }
   }
