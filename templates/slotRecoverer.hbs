@@ -1,0 +1,24 @@
+<div class="note" style="text-align: center; font-style: italic;">
+  Recovered value: {{recovered}} / {{max}}
+</div>
+<form class="dnd5e">
+  {{#each levels}}
+  <div class="form-group">
+    <label>{{label}} <strong>[{{min}}/{{max}}]</strong></label>
+    <div class="form-fields">
+      <button data-adjust="down" type="button" data-key="{{key}}" {{disabled disableLeft}}>
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <input type="number" name="{{name}}" value="{{value}}" style="text-align: center;">
+      <button data-adjust="up" type="button" data-key="{{key}}" {{disabled disableRight}}>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  {{/each}}
+  <footer>
+    <button type="submit" {{disabled overMax}}>
+      <i class="fa-solid fa-check"></i> {{localize "Save"}}
+    </button>
+  </footer>
+</form>
