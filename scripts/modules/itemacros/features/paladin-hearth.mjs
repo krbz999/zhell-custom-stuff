@@ -83,16 +83,14 @@ async function WARMING_RESPITE(item, speaker, actor, token, character, event, ar
   if (!use) return;
 
   const levels = actor.classes.paladin.system.levels;
-  const updates = {actor: {"system.attributes.hp.temp": levels}};
-  const options = {
-    permanent: true,
-    description: `${actor.name} is granting you ${levels} temporary hit points.`
-  };
 
-  ui.notifications.info("Granting temporary hit points to your targets!");
+  const valids = [];
   for (const target of targets) {
     if (target.actor.system.attributes.hp.temp < levels) {
-      warpgate.mutate(target.document, updates, {}, options);
+      valids.push(target.name);
+      ZHELL.token.healToken({tokenId: target.id, amount: levels, temp: true});
     }
   }
+  const content = `Granting ${levels} temporary hit points to ` + valids.join(", ");
+  return ChatMessage.create({speaker, content});
 }
