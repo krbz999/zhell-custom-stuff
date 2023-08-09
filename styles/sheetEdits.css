@@ -159,15 +159,3 @@
   text-align: right;
   padding-right: 5px;
 }
-
-/* Character sheet attunement tracker. */
-.sheet .attunement-tracker [name="system.attributes.attunement.max"] {
-  display: inline;
-  max-width: 23px;
-  text-align: center;
-}
-
-.sheet .attunement-tracker {
-  color: #7a7971;
-  font-size: 12px;
-}

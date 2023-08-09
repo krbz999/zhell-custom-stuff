@@ -26,7 +26,6 @@ export class SheetEdits {
     if (isChar && this.settings.createMoneySpender) this._createMoneySpender();
     if (isChar) this._createNewDay();
     if (isChar) this._createInspirationToggle();
-    if (isChar) this._createAttunement();
   }
 
   /** Make 'Inspiration' a toggle. */
@@ -358,33 +357,6 @@ export class SheetEdits {
       rolls: []
     });
     return this.document.updateEmbeddedDocuments("Item", updates);
-  }
-
-  _createAttunement() {
-    const att = this.sheet.document.system.attributes.attunement;
-    const content = `
-    <div class="attunement-tracker">
-      <label class="attunement-label">Attunement</label>
-      <span class="attunement-value">${att.value}</span>
-      <span class="sep"> / </span>
-      <span class="attunement-max">${att.max}</span>
-        <a data-action="attunement-max-override" data-tooltip="Override Attunement">
-          <i class="fa-solid fa-edit"></i>
-        </a>
-      </span>
-    </div>`;
-    const div = document.createElement("DIV");
-    div.innerHTML = content;
-    div.querySelector("[data-action]").addEventListener("click", function(event) {
-      const name = "system.attributes.attunement.max";
-      const span = event.currentTarget.parentElement.querySelector(".attunement-max");
-      const div = document.createElement("DIV");
-      div.innerHTML = `<input type="number" data-dtype="Number" name="${name}" value="${att.max}">`;
-      div.querySelector("input").addEventListener("focus", (event) => event.currentTarget.select());
-      span.replaceWith(div.firstElementChild);
-      event.currentTarget.remove();
-    });
-    this.html[0].querySelector(".currency.flexrow").after(div.firstElementChild);
   }
 
   static _performSheetEdits(sheet, html) {
