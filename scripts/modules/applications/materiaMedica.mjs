@@ -158,7 +158,7 @@ export class MateriaMedica extends Application {
 
     /* FORAGING */
     data.forageOptions = this.actor.items.reduce((acc, item) => {
-      const valid = (item.type === "tool") && (item.system.baseItem === "herb") && (item.system.proficient > 0);
+      const valid = (item.type === "tool") && (item.system.baseItem === "herb") && item.system.prof.hasProficiency;
       if (valid) acc.push({id: item.id, label: item.name});
       return acc;
     }, []).concat([
