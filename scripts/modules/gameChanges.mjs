@@ -217,7 +217,6 @@ export class GameChangesHandler {
   static _miscAdjustments() {
     // Add more feature types.
     const types = CONFIG.DND5E.featureTypes.class.subtypes;
-    types.arcaneShot = "Arcane Shot";
     types.primordialEffect = "Primordial Effect";
     CONFIG.DND5E.featureTypes.class.subtypes = dnd5e.utils.sortObjectEntries(types);
 
@@ -291,10 +290,10 @@ export class GameChangesHandler {
       icon: "<i class='fa-solid fa-scroll'></i>",
       callback: async () => {
         const path = "flags.concentrationnotifier.data.requiresConcentration";
-        const scroll = await Item.implementation.createScrollFromSpell(spell);
-        const itemData = game.items.fromCompendium(scroll);
-        foundry.utils.mergeObject(itemData.flags, spell.flags);
-        if (spell.system.components.concentration) foundry.utils.setProperty(itemData, path, true);
+        const data = {flags: {...spell.flags}};
+        if (spell.system.components.concentration) foundry.utils.setProperty(data, path, true);
+        const scroll = await Item.implementation.createScrollFromSpell(spell, data);
+        const itemData = game.items.fromCompendium(scroll, {addFlags: false});
         ui.notifications.info(`Created scroll from ${spell.name}.`);
         return spell.actor.createEmbeddedDocuments("Item", [itemData]);
       }
