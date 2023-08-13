@@ -161,15 +161,7 @@ export class MurkScroller extends Application {
     if (!item) return false;
 
     const data = {flags: item.flags, name: `Murk Scroll: ${item.name}`};
-    // Add concentration info.
-    if (item.system.components.concentration) {
-      const path = `flags.${DEPEND.CN}.data.requiresConcentration`;
-      foundry.utils.setProperty(data, path, true);
-    }
-
     const scroll = await Item.implementation.createScrollFromSpell(item, data);
-    const scrollData = game.items.fromCompendium(scroll, {addFlags: false});
-
-    return scrollData;
+    return game.items.fromCompendium(scroll, {addFlags: false});
   }
 }

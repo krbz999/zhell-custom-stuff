@@ -289,10 +289,7 @@ export class GameChangesHandler {
       name: "Create Scroll",
       icon: "<i class='fa-solid fa-scroll'></i>",
       callback: async () => {
-        const path = "flags.concentrationnotifier.data.requiresConcentration";
-        const data = {flags: {...spell.flags}};
-        if (spell.system.components.concentration) foundry.utils.setProperty(data, path, true);
-        const scroll = await Item.implementation.createScrollFromSpell(spell, data);
+        const scroll = await Item.implementation.createScrollFromSpell(spell, {flags: spell.flags});
         const itemData = game.items.fromCompendium(scroll, {addFlags: false});
         ui.notifications.info(`Created scroll from ${spell.name}.`);
         return spell.actor.createEmbeddedDocuments("Item", [itemData]);
