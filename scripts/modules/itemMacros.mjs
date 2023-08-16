@@ -12,6 +12,7 @@ import {paladin} from "./itemacros/features/paladin.mjs";
 import {races} from "./itemacros/features/races.mjs";
 import {sorcerer} from "./itemacros/features/sorcerer.mjs";
 import {fathomless} from "./itemacros/features/warlock-fathomless.mjs";
+import {warlockLightningDragon} from "./itemacros/features/warlock-lightning-dragon.mjs";
 import {wizard} from "./itemacros/features/wizard.mjs";
 import {items} from "./itemacros/items.mjs";
 import {poisons} from "./itemacros/items/poisons.mjs";
@@ -29,6 +30,7 @@ export const ITEMACRO = {
   ...races,
   ...sorcerer,
   ...fathomless,
+  ...warlockLightningDragon,
   ...wizard,
   // boons
   ...arepo,
@@ -214,49 +216,19 @@ export class ItemMacroHelpers {
   /**
    * Helper function for any teleportation scripts, requiring two jb2a
    * effects (for vanishing and appearing), and the maximum radius.
-   * @param {Item} item                     The item being used.
-   * @param {Actor} actor                   The actor who owns the item.
-   * @param {Token} token                   The token of the actor owning the item.
-   * @param {string} vanish                 The jb2a asset used for the vanishing effect.
-   * @param {string} appear                 The jb2a asset used for the appearing effect.
-   * @param {Promise<number>} distance      The maximum distance the token can teleport.
+   * @param {Item} item           The item being used.
+   * @param {Actor} actor         The actor who owns the item.
+   * @param {Token} token         The token of the actor owning the item.
+   * @param {string} vanish       The jb2a asset used for the vanishing effect.
+   * @param {string} appear       The jb2a asset used for the appearing effect.
+   * @param {number} distance     The maximum distance the token can teleport.
+   * @returns {Promise<void>}     A promise that resolves when a token has been teleported.
    */
   static async _teleportationHelper({item, actor, token, vanish, appear, distance}) {
-    let cachedDistance = 0;
-    const checkDistance = async (crosshairs) => {
-      while (crosshairs.inFlight) {
-        //wait for initial render
-        await warpgate.wait(100);
-        const ray = new Ray(token.center, crosshairs);
-        const [d] = canvas.grid.measureDistances([{ray}], {gridSpaces: false});
-        const dist = Math.round(d / 5) * 5;
-        cachedDistance = dist;
-        if (dist > distance) crosshairs.icon = "icons/svg/hazard.svg";
-        else crosshairs.icon = token.document.texture.src;
-        crosshairs.draw();
-        crosshairs.label = `${dist} ft`;
-      }
-    }
-
     await actor.sheet?.minimize();
     const p = ItemMacroHelpers.drawCircle(token, distance);
 
-    async function _pickTargetLocation() {
-      const pos = await warpgate.crosshairs.show({
-        size: token.document.width,
-        icon: token.document.texture.src,
-        label: "0 ft.",
-        interval: -1
-      }, {show: checkDistance});
-      if (pos.cancelled) return pos;
-      if (cachedDistance > distance) {
-        ui.notifications.error(`${item.name} has a maximum range of ${distance} feet.`);
-        return _pickTargetLocation();
-      }
-      return pos;
-    }
-
-    const {x, y, cancelled} = await _pickTargetLocation();
+    const {x, y, cancelled} = await ItemMacroHelpers.pickTargetLocation(token, distance);
     canvas.app.stage.removeChild(p);
     if (cancelled) return actor.sheet?.maximize();
 
@@ -276,6 +248,46 @@ export class ItemMacroHelpers {
 
     await warpgate.wait(1000);
     return actor.sheet?.maximize();
+  }
+
+  /**
+   * A helper for picking a target location.
+   * @param {Token} token           The origin of the target picker.
+   * @param {number} distance       The maximum range, in feet.
+   * @returns {Promise<object>}     A promise that resolves to an object of x and y coords.
+   */
+  static async pickTargetLocation(token, distance) {
+    let cachedDistance = 0;
+    const checkDistance = async (crosshairs) => {
+      while (crosshairs.inFlight) {
+        //wait for initial render
+        await warpgate.wait(100);
+        const ray = new Ray(token.center, crosshairs);
+        const [d] = canvas.grid.measureDistances([{ray}], {gridSpaces: false});
+        const dist = Math.round(d / 5) * 5;
+        cachedDistance = dist;
+        if (dist > distance) crosshairs.icon = "icons/svg/hazard.svg";
+        else crosshairs.icon = token.document.texture.src;
+        crosshairs.draw();
+        crosshairs.label = `${dist} ft`;
+      }
+    }
+    return pickPos();
+
+    async function pickPos() {
+      const pos = await warpgate.crosshairs.show({
+        size: token.document.width,
+        icon: token.document.texture.src,
+        label: "0 ft.",
+        interval: -1
+      }, {show: checkDistance});
+      if (pos.cancelled) return pos;
+      if (cachedDistance > distance) {
+        ui.notifications.error(`The maximum range is ${distance} feet!`);
+        return pickPos();
+      }
+      return pos;
+    }
   }
 
   /**
