@@ -3,17 +3,24 @@ import {MODULE} from "../../const.mjs";
 export class TargetSequencePicker extends Application {
   /**
    * @constructor
-   * @param {Token|TokenDocument} source      The source token or token document.
-   * @param {number} range                    The max distance between targets.
-   * @param {number} links                    The maximum number of links to make.
-   * @param {Function} [callback]             A function that does something with the token ids.
+   * @param {Token|TokenDocument} source        The source token or token document.
+   * @param {number} range                      The max distance between targets.
+   * @param {number} links                      The maximum number of links to make.
+   * @param {Function} callback                 A function that does something with the token ids.
+   * @param {boolean} [unique=false]            Whether the same target can be picked twice.
+   * @param {boolean} [includeSource=true]      Include the source as the first target?
    */
-  constructor(source, range, links, callback) {
+  constructor({source, range, links, callback, unique = false, includeSource = true}) {
     super();
     this.range = range;
     this.links = links;
     this.callback = callback;
-    this.sequence = [source.id];
+    this.unique = unique;
+    this.includeSource = includeSource;
+    this.source = source;
+
+    const seq = includeSource ? [source.id] : [];
+    this.sequence = unique ? new Set(seq) : seq;
   }
 
   /** @override */
@@ -30,21 +37,20 @@ export class TargetSequencePicker extends Application {
 
   /** @override */
   async getData() {
-    let lastToken;
+    let lastToken = null;
     let valid = 0;
-    const sequence = [];
-    for (let i = 0; i < this.links; i++) {
-      const token = canvas.scene.tokens.get(this.sequence[i]);
+
+    const defaultImg = "icons/magic/symbols/question-stone-yellow.webp";
+    const sequence = this.sequence.reduce((acc, id, idx) => {
+      const token = canvas.scene.tokens.get(id);
       if (token) {
         lastToken = token;
         valid++;
       }
-      sequence.push({
-        token,
-        default: "icons/magic/symbols/question-stone-yellow.webp",
-        next: i < this.links - 1
-      });
-    }
+      acc[idx] = {token, default: defaultImg};
+      return acc;
+    }, new Array(this.links).fill({default: defaultImg}));
+
     const canAdd = valid < this.links;
     const targets = this.gatherWithinRange(lastToken);
     return {sequence, canAdd, targets};
@@ -65,18 +71,9 @@ export class TargetSequencePicker extends Application {
    */
   _addTarget(event) {
     const id = event.currentTarget.dataset.tokenId;
-    this.sequence.push(id);
+    if (this.unique) this.sequence.add(id);
+    else this.sequence.push(id);
     return this.render();
-  }
-
-  /**
-   * Are a and b two different tokens within a certain distance from each other?
-   * @param {Token} a       One token.
-   * @param {Token} b       Another token.
-   * @returns {boolean}     Whether they are within range of each other.
-   */
-  withinRange(a, b) {
-    return (a !== b) && babonus.getMinimumDistanceBetweenTokens(a, b) <= this.range;
   }
 
   /**
@@ -85,8 +82,20 @@ export class TargetSequencePicker extends Application {
    * @returns {TokenDocument[]}         An array of token documents within range.
    */
   gatherWithinRange(a) {
-    a = a.object ?? a;
-    return a.scene.tokens.filter(b => this.withinRange(a, b.object)).sort((a, b) => {
+    if (a !== null) a = a.object ?? a;
+    return canvas.scene.tokens.reduce((acc, token) => {
+      // Do not include the token itself when finding others near it.
+      if (a && (a === token.object)) return acc;
+
+      // Do not include a token already in the sequence.
+      if (this.unique && this.sequence.has(token.id)) return acc;
+
+      // Include a token if it is within range.
+      const range = babonus.getMinimumDistanceBetweenTokens(a ?? this.source, token.object);
+      if (range <= this.range) acc.push(token);
+
+      return acc;
+    }, []).sort((a, b) => {
       return a.name.localeCompare(b.name);
     });
   }
@@ -100,15 +109,23 @@ export class TargetSequencePicker extends Application {
       acc[idx] = id;
       return acc;
     }, {});
+    if (this.callback instanceof Function) this.callback(tokenIds);
     this.close();
-    return (this.callback instanceof Function) ? this.callback(tokenIds) : tokenIds;
+  }
+
+  /** @override */
+  async close() {
+    if (this.callback instanceof Function) this.callback(null);
+    return super.close();
   }
 
   /**
-   * Initial rendering method for this application.
-   * @returns {TargetSequencePicker}      An instance of this application.
+   * Create an instance of this application and wait for the callback.
+   * @returns {Promise<object|null>}      An object of token ids, or null if closed.
    */
-  static createApplication(token, range, links, callback) {
-    if (token && (range > 0) && (links > 0)) return new TargetSequencePicker(token, range, links, callback).render(true);
+  static async wait(config) {
+    return new Promise(resolve => {
+      new TargetSequencePicker({...config, callback: resolve}).render(true);
+    });
   }
 }
