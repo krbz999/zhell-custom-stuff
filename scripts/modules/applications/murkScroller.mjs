@@ -1,4 +1,4 @@
-import {DEPEND, MODULE} from "../../const.mjs";
+import {MODULE} from "../../const.mjs";
 
 export class MurkScroller extends Application {
   constructor(options = {}) {

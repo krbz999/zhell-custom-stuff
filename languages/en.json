@@ -139,5 +139,6 @@
   "ZHELL.SubclassLabelRogue": "Roguish Archetypes",
   "ZHELL.SubclassLabelSorcerer": "Sorcerous Origins",
   "ZHELL.SubclassLabelWarlock": "Otherworldly Patrons",
-  "ZHELL.SubclassLabelWizard": "Arcane Traditions"
+  "ZHELL.SubclassLabelWizard": "Arcane Traditions",
+  "ZHELL.TargetSequencePicker": "Sequence of Targets"
 }

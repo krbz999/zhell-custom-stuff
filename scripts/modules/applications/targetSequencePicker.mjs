@@ -10,11 +10,10 @@ export class TargetSequencePicker extends Application {
    */
   constructor(source, range, links, callback) {
     super();
-    this.source = source.object ?? source;
     this.range = range;
     this.links = links;
-    this.link = 1;
     this.callback = callback;
+    this.sequence = [source.id];
   }
 
   /** @override */
@@ -31,13 +30,32 @@ export class TargetSequencePicker extends Application {
 
   /** @override */
   async getData() {
-    return {src: this.source, targets: this.gatherWithinRange(this.source)};
+    let lastToken;
+    let valid = 0;
+    const sequence = [];
+    for (let i = 0; i < this.links; i++) {
+      const token = canvas.scene.tokens.get(this.sequence[i]);
+      if (token) {
+        lastToken = token;
+        valid++;
+      }
+      sequence.push({
+        token,
+        default: "icons/magic/symbols/question-stone-yellow.webp",
+        next: i < this.links - 1
+      });
+    }
+    const canAdd = valid < this.links;
+    const targets = this.gatherWithinRange(lastToken);
+    return {sequence, canAdd, targets};
   }
 
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].addEventListener("click", this._onToggle.bind(this));
+    html[0].querySelectorAll("[data-action='add-target']").forEach(n => {
+      n.addEventListener("click", this._addTarget.bind(this));
+    });
     html[0].querySelector("[data-action='submit']").addEventListener("click", this.submit.bind(this));
   }
 
@@ -45,13 +63,10 @@ export class TargetSequencePicker extends Application {
    * Handle clicking an inactive img.
    * @param {PointerEvent} event      The initiating click event.
    */
-  _onToggle(event) {
-    const img = event.target.closest("img:not(.active)");
-    if (!img) return;
-    img.classList.toggle("active");
-    img.closest(".level").querySelectorAll("img:not(.active)").forEach(i => i.classList.toggle("inactive"));
-    const tokens = this.gatherWithinRange(this.source.scene.tokens.get(img.dataset.tokenId));
-    return this.constructLevel(tokens);
+  _addTarget(event) {
+    const id = event.currentTarget.dataset.tokenId;
+    this.sequence.push(id);
+    return this.render();
   }
 
   /**
@@ -71,24 +86,9 @@ export class TargetSequencePicker extends Application {
    */
   gatherWithinRange(a) {
     a = a.object ?? a;
-    return a.scene.tokens.filter(b => this.withinRange(a, b.object));
-  }
-
-  /**
-   * Construct and inject a new 'level' in the application.
-   * @param {TokenDocument[]} tokens      An array of token documents to show at this level.
-   */
-  constructLevel(tokens) {
-    const level = this.element[0].querySelector(`[data-level="${this.link}"]`);
-    this.link++;
-    if (this.link >= this.links) return;
-    const div = document.createElement("DIV");
-    div.dataset.level = this.link;
-    div.classList.add("level");
-    div.innerHTML = tokens.reduce((acc, token) => {
-      return acc + `<img src="${token.texture.src}" data-tooltip="${token.name}" data-token-id="${token.id}">`;
-    }, `<span class="label">${this.link.ordinalString()} Target</span><div class="images">`) + "</div>";
-    level.after(div);
+    return a.scene.tokens.filter(b => this.withinRange(a, b.object)).sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
   }
 
   /**
@@ -96,11 +96,10 @@ export class TargetSequencePicker extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   submit(event) {
-    const tokenIds = {};
-    for (const level of this.element[0].querySelectorAll("[data-level]")) {
-      const id = level.querySelector(".active")?.dataset.tokenId;
-      if (id) tokenIds[level.dataset.level] = id;
-    }
+    const tokenIds = this.sequence.reduce((acc, id, idx) => {
+      acc[idx] = id;
+      return acc;
+    }, {});
     this.close();
     return (this.callback instanceof Function) ? this.callback(tokenIds) : tokenIds;
   }

@@ -1,18 +1,25 @@
 <div class="content">
-  <div class="levels">
-    <div class="level" data-level="0">
-      <span class="label">Source Target</span>
-      <div class="images">
-        <img src="{{src.document.texture.src}}" data-tooltip="{{src.name}}" data-token-id="{{src.id}}" class="active">
-      </div>
-    </div>
-    <div class="level" data-level="1">
-      <span class="label">1st Target</span>
-      <div class="images">
-        {{#each targets}}<img src="{{texture.src}}" data-tooltip="{{name}}" data-token-id="{{id}}">{{/each}}
-      </div>
-    </div>
+  <span class="label">Target Sequence</span>
+  <div class="sequence row">
+    {{#each sequence}}
+    {{#if token}}
+    <img src="{{token.texture.src}}" data-tooltip="{{token.name}}" data-token-id="{{token.id}}">
+    {{else}}
+    <img src="icons/magic/symbols/question-stone-yellow.webp" class="default">
+    {{/if}}
+    {{#if next}}
+    <i class="fa-solid fa-arrow-right"></i>
+    {{/if}}
+    {{/each}}
   </div>
+  {{#if canAdd}}
+  <span class="label">Next Target</span>
+  <div class="target row">
+    {{#each targets}}
+    <img src="{{texture.src}}" data-tooltip="{{name}}" data-token-id="{{id}}" data-action="add-target">
+    {{/each}}
+  </div>
+  {{/if}}
   <div class="utils">
     <button data-action="submit">
       <i class="fa-solid fa-check"></i> All Gucci
