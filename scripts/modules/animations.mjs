@@ -14,7 +14,15 @@ export class AnimationsHandler {
     const token = item.actor.token?.object ?? item.actor.getActiveTokens()[0];
 
     let check;
-    while (!templateDoc.object) await new Promise(r => setTimeout(r, 50));
+    let x = 0;
+    let y = 0;
+    let wait = 0;
+    while ((!templateDoc.object || !x) && (wait < 2000)) {
+      await new Promise(r => setTimeout(r, 50));
+      x = templateDoc.object.x;
+      y = templateDoc.object.y;
+      wait += 50;
+    }
 
     // BREATH WEAPON.
     check = item.flags[MODULE]?.breathWeapon?.type;
@@ -22,7 +30,7 @@ export class AnimationsHandler {
       const file = check;
       return new Sequence()
         .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
-        .play({remote: true});
+        .play();
     }
 
     // SCORCHING CLEAVER.
@@ -31,16 +39,14 @@ export class AnimationsHandler {
       const file = "jb2a.fire_jet.orange";
       return new Sequence()
         .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
-        .play({remote: true});
+        .play();
     }
 
     // CALL LIGHTNING.
     check = item.name.includes("Call Lightning");
     if (check) {
       const file = "jb2a.lightning_strike.blue.0";
-      return new Sequence()
-        .effect().file(file).atLocation(templateDoc).scale(2)
-        .play({remote: true});
+      return new Sequence().effect().file(file).atLocation({x, y}).scale(2).play();
     }
 
     // JEWEL OF THE LIVING LIGHTNING.
@@ -49,7 +55,7 @@ export class AnimationsHandler {
       const file = "zhell.effects.spells.lightningBolt.yellow.0";
       await new Sequence()
         .effect().file(file).fadeIn(200).fadeOut(200).duration(2000).atLocation(templateDoc).stretchTo(templateDoc)
-        .play({remote: true});
+        .play();
       if (!token) return;
       const [x, y] = ZHELL.token.detection.getFurthestPointOnTemplateFromPosition(token.center, templateDoc, "move");
       return token.document.update({x, y});
@@ -59,18 +65,14 @@ export class AnimationsHandler {
     check = item.name.includes("Burning Hands");
     if (check) {
       const file = "jb2a.burning_hands.01.orange";
-      return new Sequence()
-        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
-        .play({remote: true});
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
 
     // STAR DUST.
     check = item.name.includes("Star Dust");
     if (check) {
       const file = "jb2a.side_impact.part.slow.star.pinkyellow";
-      return new Sequence()
-        .effect().file(file).atLocation(templateDoc).stretchTo(templateDoc)
-        .play({remote: true});
+      return new Sequence().effect().file(file).atLocation(templateDoc).stretchTo(templateDoc).play();
     }
 
     // EVARD'S BLACK TENTACLES.
@@ -79,7 +81,7 @@ export class AnimationsHandler {
       const file = "jb2a.arms_of_hadar.dark_purple";
       return new Sequence()
         .effect().file(file).fadeIn(200).fadeOut(200).attachTo(templateDoc).tieToDocuments(templateDoc).persist().belowTokens()
-        .play({remote: true});
+        .play();
     }
 
     // FIREBALL.
@@ -90,7 +92,7 @@ export class AnimationsHandler {
 
       const seq = new Sequence();
       if (token) seq.effect().file(beam).atLocation(token).stretchTo(templateDoc).playbackRate(2).waitUntilFinished();
-      return seq.effect().file(expl).atLocation(templateDoc).play({remote: true});
+      return seq.effect().file(expl).atLocation(templateDoc).play();
     }
   }
 
@@ -108,9 +110,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.eldritch_blast";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // FIRE BOLT.
@@ -118,9 +118,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.fire_bolt.orange";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // RADIANT FLAME.
@@ -128,9 +126,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.chain_lightning.secondary.yellow";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // BOW OF THE OUTCAST.
@@ -138,9 +134,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.arrow.physical";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // GUIDING BOLT.
@@ -148,9 +142,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.bullet";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // BOWS in general.
@@ -158,9 +150,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.arrow.physical.white.01";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // CROSSBOWS in general.
@@ -168,9 +158,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.bolt.physical.white02";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
 
     // ICE KNIFE.
@@ -178,9 +166,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.spell_projectile.ice_shard.blue";
-      return new Sequence()
-        .effect().file(file).atLocation(token).stretchTo(target)
-        .play({remote: true});
+      return new Sequence().effect().file(file).atLocation(token).stretchTo(target).play();
     }
 
     // PAST KNOWLEDGE.
@@ -189,9 +175,7 @@ export class AnimationsHandler {
       if (!target || !token) return;
       const type = item.system.damage.parts[0][1] === "necrotic" ? "dark_bluewhite" : "red";
       const file = `jb2a.guiding_bolt.02.${type}`;
-      return new Sequence()
-        .effect().file(file).playbackRate(1.5).atLocation(token.center).stretchTo(target)
-        .play({remote: true});
+      return new Sequence().effect().file(file).playbackRate(1.5).atLocation(token.center).stretchTo(target).play();
     }
   }
 
@@ -215,11 +199,11 @@ export class AnimationsHandler {
             .effect().attachTo(t).file(file1).scaleIn(0, 500)
             .effect().attachTo(t).file(file2).scaleIn(0, 500).fadeOut(500);
         }
-        return seq.play({remote: true});
+        return seq.play();
       } else if (token) {
         return new Sequence()
           .effect().attachTo(token).file(file2).scaleIn(0, 500).fadeOut(500)
-          .play({remote: true});
+          .play();
       }
     }
 
@@ -229,10 +213,8 @@ export class AnimationsHandler {
       if (!target) return;
       const file = "jb2a.cure_wounds.400px.red";
       const seq = new Sequence();
-      for (const t of game.user.targets) {
-        seq.effect().attachTo(t).file(file).scaleIn(0, 500);
-      }
-      return seq.play({remote: true});
+      for (const t of game.user.targets) seq.effect().attachTo(t).file(file).scaleIn(0, 500);
+      return seq.play();
     }
 
     // ELDRITCH SMITE.
@@ -240,9 +222,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.purplepink";
-      return new Sequence()
-        .effect().attachTo(target).file(file)
-        .play({remote: true});
+      return new Sequence().effect().attachTo(target).file(file).play();
     }
 
     // DIVINE SMITE.
@@ -250,9 +230,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target) return;
       const file = "jb2a.divine_smite.target.greenyellow";
-      return new Sequence()
-        .effect().attachTo(target).file(file)
-        .play({remote: true});
+      return new Sequence().effect().attachTo(target).file(file).play();
     }
 
     // LIGHTNING TENDRIL.
@@ -260,9 +238,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target || !token) return;
       const file = "jb2a.chain_lightning.secondary.blue";
-      return new Sequence()
-        .effect().stretchTo(target).atLocation(token).file(file)
-        .play({remote: true});
+      return new Sequence().effect().stretchTo(target).atLocation(token).file(file).play();
     }
   }
 
@@ -283,7 +259,7 @@ export class AnimationsHandler {
       return new Sequence()
         .effect().stretchTo(target).atLocation(token).file(file).fadeIn(200).fadeOut(200).waitUntilFinished()
         .effect().attachTo(target).file(file2).scaleToObject(1.5, {uniform: true, considerTokenScale: true})
-        .play({remote: true});
+        .play();
     }
 
     // CALL OF THE PACK/CLUTCH.
@@ -293,7 +269,7 @@ export class AnimationsHandler {
       const file = "assets/images/tiles/symbols/holy/hav_draconiz_gold.webp";
       return new Sequence()
         .effect().file(file).duration(2000).atLocation(token).scaleIn(.5, 2000).size(2.5, {gridUnits: true}).fadeIn(500).fadeOut(500)
-        .play({remote: true});
+        .play();
     }
 
     // SPOTLIGHT.
@@ -301,9 +277,7 @@ export class AnimationsHandler {
     if (check) {
       if (!token) return;
       const file = "jb2a.template_circle.out_pulse.01.burst.bluewhite";
-      return new Sequence()
-        .effect().file(file).atLocation(token).scale(0.75)
-        .play({remote: true});
+      return new Sequence().effect().file(file).atLocation(token).scale(0.75).play();
     }
 
     // TOLL THE DEAD.
@@ -311,9 +285,7 @@ export class AnimationsHandler {
     if (check) {
       if (!target) return;
       const file = "jb2a.toll_the_dead.purple.complete";
-      return new Sequence()
-        .effect().file(file).scale(0.5).atLocation(target)
-        .play({remote: true});
+      return new Sequence().effect().file(file).scale(0.5).atLocation(target).play();
     }
 
     // PALADIN AURA.
@@ -324,9 +296,7 @@ export class AnimationsHandler {
       const file = "jb2a.extras.tmfx.border.circle.outpulse.01.normal";
       const has = Sequencer.EffectManager.getEffects({name}).length > 0;
       if (has) return Sequencer.EffectManager.endEffects({name});
-      return new Sequence()
-        .effect().attachTo(token).file(file).persist().name(name).tint("#ff7300")
-        .play({remote: true});
+      return new Sequence().effect().attachTo(token).file(file).persist().name(name).tint("#ff7300").play();
     }
   }
 
@@ -339,9 +309,7 @@ export class AnimationsHandler {
     if (check) {
       if (!token) return;
       const file = "jb2a.sneak_attack.";
-      return new Sequence()
-        .effect().file(file).attachTo(token)
-        .play({remote: true});
+      return new Sequence().effect().file(file).attachTo(token).play();
     }
   }
 
