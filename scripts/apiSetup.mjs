@@ -43,6 +43,7 @@ export function setupAPI() {
       toggleBossBar: PublicAPI.toggleBossBar,
       updateBossBar: PublicAPI.updateBossBar,
       updateBossBarDialog: PublicAPI.updateBossBarDialog,
+      pickPosition: ItemMacroHelpers.pickPosition,
       ...gameTools
     },
     applications: {

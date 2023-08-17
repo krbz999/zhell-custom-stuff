@@ -386,4 +386,52 @@ export class ItemMacroHelpers {
     canvas.app.stage.addChild(p);
     return p;
   }
+
+  /**
+   * Pick a position within a certain number of feet from a token.
+   * @param {Token} token                 The token origin.
+   * @param {number} radius               The maximum radius, in feet.
+   * @param {string} [type="move"]        The type of restriction ('move' or 'sight').
+   * @returns {Promise<object|null>}      A promise that resolves to an object of coordinates, or null if cancelled.
+   */
+  static async pickPosition(token, radius, type = "move") {
+    return new Promise(resolve => {
+      const c = token.center;
+      const pixels = radius * canvas.scene.dimensions.distancePixels + Math.abs(token.document.x - c.x);
+      const red = 0xFF0000;
+      const grn = 0x00FF00;
+
+      async function onClick() {
+        const x = canvas.mousePosition.x - Math.abs(token.document.x - c.x);
+        const y = canvas.mousePosition.y - Math.abs(token.document.y - c.y);
+        const targetLoc = canvas.grid.getSnappedPosition(x, y);
+        resolve(targetLoc);
+        drawing.destroy();
+      }
+
+      function cancel() {
+        resolve(null)
+        drawing.destroy();
+      }
+
+      const drawing = new PIXI.Graphics();
+
+      const movePoly = CONFIG.Canvas.polygonBackends[type].create(c, {
+        type, hasLimitedRadius: true, radius: pixels
+      });
+
+      drawing.eventMode = "dynamic";
+      drawing.beginFill(0xFFFFFF, 0.2);
+      drawing.drawShape(movePoly);
+      drawing.endFill();
+      drawing.tint = drawing.containsPoint(canvas.mousePosition) ? grn : red;
+      drawing.cursor = "pointer";
+      drawing.alpha = 0.5;
+      drawing.on('click', onClick);
+      drawing.on('pointerover', () => drawing.tint = grn);
+      drawing.on('pointerout', () => drawing.tint = red);
+      drawing.on('rightclick', cancel);
+      canvas.tokens.addChild(drawing);
+    });
+  }
 }
