@@ -758,21 +758,18 @@ button:active:not(.pm-dropdown, :disabled),
   height: auto !important;
 }
 
-.zhell-custom-stuff.murk-scroller .level-track {
-  font-size: 1.5em;
+.zhell-custom-stuff.murk-scroller .track {
+  font-size: 25px;
   text-align: center;
-  padding: 0.25em 0 0.5em 0;
+  padding-bottom: 0.25em;
+  font-family: "Modesto Condensed";
 }
 
-.zhell-custom-stuff.murk-scroller .level-track span {
-  font-weight: bold;
+.zhell-custom-stuff.murk-scroller form {
+  padding: 0.5em;
 }
 
-.zhell-custom-stuff.murk-scroller .spells {
-  margin: 0.5em;
-}
-
-.zhell-custom-stuff.murk-scroller .form-group .form-fields {
+.zhell-custom-stuff.murk-scroller .form-fields {
   flex-wrap: nowrap;
 }
 

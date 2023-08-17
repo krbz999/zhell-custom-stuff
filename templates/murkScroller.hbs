@@ -1,23 +1,32 @@
 <div class="content">
-  <div class="level-track">
-    Total Level: <span class="current">0</span> / <span class="max">{{max}}</span>
-  </div>
+  <div class="track">Total Level: {{total}} / {{max}}</div>
 
   <button data-action="add-row">
-    <i class="fa-solid fa-plus"></i> Add One More
+    <i class="fa-solid fa-plus"></i> Add Scroll
   </button>
 
-  <form class="dnd5e spells">
-    <div class="form-group" data-tooltip-direction="LEFT">
+  <form class="dnd5e">
+    {{#each selects}}
+    <div class="form-group" data-tooltip-direction="LEFT" data-tooltip="{{tooltip}}" data-idx="{{idx}}">
       <label>Spell:</label>
       <div class="form-fields">
-        <select>{{{options}}}</select>
+        <select data-action="spell-select">
+          {{#select selected}}
+          <option value="">-</option>
+          {{#each optgroups}}
+          <optgroup label="{{label}}">
+            {{selectOptions items sort=true nameAttr="id" labelAttr="name"}}
+          </optgroup>
+          {{/each}}
+          {{/select}}
+        </select>
         <a data-action="delete"><i class="fa-solid fa-trash"></i></a>
       </div>
     </div>
+    {{/each}}
   </form>
 
-  <button data-action="create">
+  <button data-action="submit" {{disabled disableSubmit}}>
     <i class="fa-solid fa-scroll"></i> Create Scrolls
   </button>
 </div>

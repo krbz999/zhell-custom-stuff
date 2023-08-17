@@ -1,22 +1,20 @@
 import {MODULE} from "../../const.mjs";
 
 export class MurkScroller extends Application {
-  constructor(options = {}) {
-    super(options);
+  constructor(options) {
+    super();
     this.actor = options.actor;
-    this.item = options.item;
-    this.speaker = options.speaker;
+    this.max = options.max;
+    this.itemIds = [null];
+    this.callback = options.callback;
   }
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: [MODULE, "murk-scroller"],
-      template: "modules/zhell-custom-stuff/templates/murkScroller.hbs"
+      template: "modules/zhell-custom-stuff/templates/murkScroller.hbs",
+      title: "Murk Scrolls"
     });
-  }
-
-  get title() {
-    return "Murk Scrolls";
   }
 
   get id() {
@@ -26,142 +24,108 @@ export class MurkScroller extends Application {
   /** @override */
   async getData() {
     const data = await super.getData();
-    data.options = this.spellOptions;
-    data.max = Math.ceil(this.actor.system.details.level / 2);
+
+    data.optgroups = this.actor.items.reduce((acc, item) => {
+      if (item.type !== "spell") return acc;
+      if (!item.system.level.between(1, 5)) return acc;
+      if (item.system.activation.type !== "action") return acc;
+      acc[item.system.level] ??= {items: [], label: CONFIG.DND5E.spellLevels[item.system.level]};
+      acc[item.system.level].items.push(item);
+      return acc;
+    }, {});
+
+    data.max = Number.isNumeric(this.max) ? Number(this.max) : Math.ceil(this.actor.system.details.level / 2);
+    data.total = this.itemIds.reduce((acc, id) => acc + (this.actor.items.get(id)?.system.level ?? 0), 0);
+    data.disableSubmit = !data.total || !data.max || (data.total > data.max);
+
+    // Allow for pushing 'null' into the item ids array.
+    data.selects = this.itemIds.map((id, idx) => {
+      const item = this.actor.items.get(id);
+      const tooltip = item ? item.system.description.value : null;
+      return {selected: id, optgroups: data.optgroups, tooltip, idx};
+    });
+
     return data;
   }
 
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelector("select").addEventListener("change", this._updateTotal.bind(this));
-    html[0].querySelector("[data-action='add-row']").addEventListener("click", this._renderNewRow.bind(this));
-    html[0].querySelector("[data-action='delete']").addEventListener("click", this._deleteRow.bind(this));
-    html[0].querySelector("[data-action='create']").addEventListener("click", this.createScrolls.bind(this));
-  }
-
-  /**
-   * Update the tracked total and tooltip when a dropdown has its value changed.
-   */
-  _updateTotal() {
-    let level = 0;
-    this.element[0].querySelectorAll("select").forEach(n => {
-      const item = this.actor.items.get(n.value);
-      level += (item?.system.level ?? 0);
-      n.closest(".form-group").setAttribute("data-tooltip", item?.system.description.value || "");
+    html[0].querySelectorAll("[data-action]").forEach(n => {
+      const action = n.dataset.action;
+      switch (action) {
+        case "spell-select":
+          n.addEventListener("change", this.onChange.bind(this));
+          break;
+        case "add-row":
+          n.addEventListener("click", this.addRow.bind(this));
+          break;
+        case "delete":
+          n.addEventListener("click", this.deleteRow.bind(this));
+          break;
+        case "submit":
+          n.addEventListener("click", this.submit.bind(this));
+          break;
+      }
     });
-    this.element[0].querySelector(".level-track .current").innerText = level;
   }
 
   /**
-   * Gather and return the options from the actor's available spells.
-   * This method does not append it, simply returns the string.
-   * @returns {string}      The options for a new select.
+   * Handle changing the value of a select.
+   * @param {PointerEvent} event      The initiating change event.
    */
-  get spellOptions() {
-    if (this._spellOptions) return this._spellOptions;
-    const options = this.actor.items.filter(item => {
-      return (item.type === "spell")
-        && item.system.level.between(1, 5)
-        && (item.system.activation.type === "action");
-    }).sort((a, b) => {
-      return a.name.localeCompare(b.name);
-    }).sort((a, b) => {
-      return a.system.level - b.system.level;
-    }).reduce((acc, item) => {
-      return acc + `<option value="${item.id}">[${item.system.level}] ${item.name}</option>`;
-    }, "<option value=''>&mdash; Choose a spell &mdash;</option>");
-    this._spellOptions = options;
-    return options;
+  onChange(event) {
+    const idx = event.currentTarget.closest("[data-idx]").dataset.idx;
+    const id = event.currentTarget.value || null;
+    this.itemIds[idx] = id;
+    this.render();
   }
 
   /**
-   * Append one new row to the form.
+   * Handling addition of a row.
    * @param {PointerEvent} event      The initiating click event.
    */
-  _renderNewRow(event) {
-    const div = document.createElement("DIV");
-    div.innerHTML = `
-    <div class="form-group" data-tooltip-direction="LEFT">
-      <label>Spell:</label>
-      <div class="form-fields">
-        <select>${this.spellOptions}</select>
-        <a data-action="delete"><i class="fa-solid fa-trash"></i></a>
-      </div>
-    </div>`;
-    div.querySelector("select").addEventListener("change", this._updateTotal.bind(this));
-    div.querySelector("[data-action='delete']").addEventListener("click", this._deleteRow.bind(this));
-    this.element[0].querySelector(".spells").appendChild(div.firstElementChild);
+  addRow(event) {
+    this.itemIds.push(null);
+    this.render();
   }
 
   /**
-   * Remove a row in the form.
+   * Handle removal of a row.
    * @param {PointerEvent} event      The initiating click event.
    */
-  _deleteRow(event) {
-    event.currentTarget.closest(".form-group").remove();
-    this._updateTotal();
+  deleteRow(event) {
+    const idx = event.currentTarget.closest("[data-idx]").dataset.idx;
+    this.itemIds.splice(idx, 1);
+    this.render();
   }
 
   /**
-   * Create the Murk scrolls from the selections.
+   * Handle clicking the finalize button.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {Promise<Item[]>}       The array of created scrolls.
    */
-  async createScrolls(event) {
-    const target = event.currentTarget;
-    target.disabled = true;
-    const [v, m] = this.element[0].querySelectorAll(".level-track span");
-    const value = Number(v.innerText.trim());
-    const max = Number(m.innerText.trim());
+  submit(event) {
+    const ids = this.itemIds.filter(id => this.actor.items.get(id));
+    if (this.callback instanceof Function) this.callback(ids);
+    this.close();
+  }
 
-    if (!(value > 0)) {
-      ui.notifications.warn("You must create at least one scroll.");
-      target.disabled = false;
-      return null;
-    }
+  /** @override */
+  async close() {
+    if (this.callback instanceof Function) this.callback(null);
+    return super.close();
+  }
 
-    if (value > max) {
-      ui.notifications.warn("The combined spell level is too high.");
-      target.disabled = false;
-      return null;
-    }
-
-    const selects = Array.from(this.element[0].querySelectorAll("select"));
-    const itemData = await Promise.all(selects.map(s => this._createScroll(s.value)));
-
-    if (!itemData.length) {
-      ui.notifications.warn("The selections were somehow invalid.");
-      target.disabled = false;
-      return null;
-    }
-
-    const use = await this.item.use({}, {configureDialog: false});
-    if (!use) {
-      target.disabled = false;
-      return null;
-    }
-
-    await this.close();
-
-    await ChatMessage.create({
-      speaker: this.speaker,
-      content: `${this.actor.name.split(" ")[0]} created ${itemData.length} scrolls of Murk.`
+  /**
+   * Create an instance of this application and wait for the callback.
+   * @param {object} config
+   * @param {Actor} config.actor          The actor who has the spells.
+   * @param {number} [config.max]         The maximum combined level, otherwise half character level rounded up.
+   * @returns {Promise<object|null>}      An object of item ids, or null if closed.
+   */
+  static async wait(config) {
+    return new Promise(resolve => {
+      new this({...config, callback: resolve}).render(true);
     });
-    return this.actor.createEmbeddedDocuments("Item", itemData);
-  }
-
-  /**
-   * Construct one specific object of scroll data. This method returns false if invalid.
-   * @param {string} id             The id of the spell on the actor.
-   * @returns {Promise<object>}     The object of item data for the scroll.
-   */
-  async _createScroll(id) {
-    const item = this.actor.items.get(id);
-    if (!item) return false;
-
-    const data = {flags: item.flags, name: `Murk Scroll: ${item.name}`};
-    const scroll = await Item.implementation.createScrollFromSpell(item, data);
-    return game.items.fromCompendium(scroll, {addFlags: false});
   }
 }

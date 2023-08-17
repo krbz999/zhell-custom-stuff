@@ -1,5 +1,6 @@
 import {ClassPageRenderer} from "./modules/applications/classPages.mjs";
 import {ImageAnchorPicker} from "./modules/applications/imageAnchorPicker.mjs";
+import {MurkScroller} from "./modules/applications/murkScroller.mjs";
 import {PartyFeatures} from "./modules/applications/partyFeatures.mjs";
 import {SlotRecoverer} from "./modules/applications/slotRecoverer.mjs";
 import {TargetSequencePicker} from "./modules/applications/targetSequencePicker.mjs";
@@ -47,7 +48,8 @@ export function setupAPI() {
     applications: {
       imagePicker: ImageAnchorPicker,
       slotRecoverer: SlotRecoverer,
-      sequencePicker: TargetSequencePicker
+      sequencePicker: TargetSequencePicker,
+      murkScroller: MurkScroller
     },
     ITEMACRO
   }
