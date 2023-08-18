@@ -92,14 +92,19 @@ export class TargetSequencePicker extends Application {
       // Do not include a token already in the sequence.
       if (this.unique && this.sequence.has(token.id)) return acc;
 
-      if (Number.isFinite(this.maxDistance) && (this.maxDistance > 0)) {
+      const isFin = Number.isFinite(this.maxDistance);
+
+      if (isFin) {
         const range = babonus.getMinimumDistanceBetweenTokens(this.source, token.object);
         if (range > this.maxDistance) return acc;
       }
 
       // Include a token if it is within range.
       const range = babonus.getMinimumDistanceBetweenTokens(a ?? this.source, token.object);
-      if (range <= this.range) acc.push(token);
+
+      // The max range is the max distance if used and the first in the sequence.
+      const maxRange = Math.max(this.range, (isFin && foundry.utils.isEmpty(this.sequence)) ? this.maxDistance : 0);
+      if (range <= maxRange) acc.push(token);
 
       return acc;
     }, []).sort((a, b) => {
