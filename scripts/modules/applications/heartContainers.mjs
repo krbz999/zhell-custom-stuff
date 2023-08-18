@@ -80,9 +80,7 @@ export class HeartContainers extends Application {
    * @returns {HeartContainers}     An instance of this application.
    */
   static createApplication() {
-    const user = game.user;
-    if (user.character) {
-      return new HeartContainers(user).render(true);
-    }
+    if (!game.settings.get(MODULE, "enableHeartContainers")) return;
+    if (game.user.character) return new HeartContainers(game.user).render(true);
   }
 }

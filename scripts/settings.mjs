@@ -108,6 +108,17 @@ function _registerSettingsMenus() {
     default: true
   });
 
+  // Client-side setting to permanently disable heart containers.
+  game.settings.register(MODULE, "enableHeartContainers", {
+    name: "ZHELL.SettingsEnableHeartContainers",
+    hint: "ZHELL.SettingsEnableHeartContainersHint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    requiresReload: true
+  });
+
   game.settings.registerMenu(MODULE, "identifierSettings", {
     name: "ZHELL.SettingsMenuIdentifierSettingsName",
     hint: "ZHELL.SettingsMenuIdentifierSettingsHint",
