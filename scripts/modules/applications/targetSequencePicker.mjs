@@ -9,18 +9,20 @@ export class TargetSequencePicker extends Application {
    * @param {Function} callback                 A function that does something with the token ids.
    * @param {boolean} [unique=false]            Whether the same target can be picked twice.
    * @param {boolean} [includeSource=true]      Include the source as the first target?
+   * @param {number} [maxDistance=Infinity]     The maximum distance from the source.
    */
-  constructor({source, range, links, callback, unique = false, includeSource = true}) {
+  constructor(config) {
     super();
-    this.range = range;
-    this.links = links;
-    this.callback = callback;
-    this.unique = unique;
-    this.includeSource = includeSource;
-    this.source = source;
+    this.range = config.range;
+    this.links = config.links;
+    this.callback = config.callback;
+    this.unique = config.unique ?? false;
+    this.includeSource = config.includeSource ?? true;
+    this.source = config.source;
+    this.maxDistance = config.maxDistance ?? Infinity;
 
-    const seq = includeSource ? [source.id] : [];
-    this.sequence = unique ? new Set(seq) : seq;
+    const seq = this.includeSource ? [this.source.id] : [];
+    this.sequence = this.unique ? new Set(seq) : seq;
   }
 
   /** @override */
@@ -89,6 +91,11 @@ export class TargetSequencePicker extends Application {
 
       // Do not include a token already in the sequence.
       if (this.unique && this.sequence.has(token.id)) return acc;
+
+      if (Number.isFinite(this.maxDistance) && (this.maxDistance > 0)) {
+        const range = babonus.getMinimumDistanceBetweenTokens(this.source, token.object);
+        if (range > this.maxDistance) return acc;
+      }
 
       // Include a token if it is within range.
       const range = babonus.getMinimumDistanceBetweenTokens(a ?? this.source, token.object);
