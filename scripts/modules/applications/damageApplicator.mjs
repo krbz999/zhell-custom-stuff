@@ -96,7 +96,7 @@ export class DamageApplicator extends Application {
     if (data.hasSave) {
       data.save = {
         ability: this.saveData.ability,
-        dc: Math.max(this.saveData.dc, this.message.flags.babonus?.saveDC || 0),
+        dc: this.message.flags.babonus?.saveDC ?? this.saveData.dc ?? 0,
         label: CONFIG.DND5E.abilities[this.saveData.ability].label
       };
     }
