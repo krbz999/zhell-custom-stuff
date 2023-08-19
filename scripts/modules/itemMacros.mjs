@@ -389,47 +389,108 @@ export class ItemMacroHelpers {
 
   /**
    * Pick a position within a certain number of feet from a token.
-   * @param {Token} token                 The token origin.
-   * @param {number} radius               The maximum radius, in feet.
-   * @param {string} [type="move"]        The type of restriction ('move' or 'sight').
-   * @returns {Promise<object|null>}      A promise that resolves to an object of coordinates, or null if cancelled.
+   * @param {Token} token                   The token origin.
+   * @param {number} radius                 The maximum radius, in feet.
+   * @param {object} config                 Additional options to configure the workflow.
+   * @param {string} config.type            The type of restriction ('move' or 'sight').
+   * @param {boolean} config.showToken      Show the token's image on the cursor.
+   * @param {color} config.red              The color used for invalid positions.
+   * @param {color} config.grn              The color used for valid positions.
+   * @param {number} config.alpha           The opacity of the drawn shapes.
+   * @param {boolean} config.highlight     Highlight the gridspace of the current position.
+   * @returns {Promise<object|null>}        A promise that resolves to an object of coordinates.
    */
-  static async pickPosition(token, radius, type = "move") {
+  static async pickPosition(token, radius, config = {}) {
+    config = foundry.utils.mergeObject({
+      type: "move",
+      showToken: true,
+      red: 0xFF0000,
+      grn: 0x00FF00,
+      alpha: 0.5,
+      highlight: true
+    }, config);
+
+    const pointerSprite = new PIXI.Sprite(await loadTexture(token.document.texture.src));
+    const name = `pick-position.${token.id}`;
+    const layer = canvas.grid.addHighlightLayer(name);
+
+    const getPosition = (x, y) => {
+      const types = CONST.GRID_TYPES;
+      if (canvas.scene.grid.type === types.GRIDLESS) {
+        return {x: Math.roundDecimals(x, 2), y: Math.roundDecimals(y, 2)};
+      } else return canvas.grid.getSnappedPosition(x, y);
+    };
+
     return new Promise(resolve => {
       const c = token.center;
       const pixels = radius * canvas.scene.dimensions.distancePixels + Math.abs(token.document.x - c.x);
-      const red = 0xFF0000;
-      const grn = 0x00FF00;
 
       async function onClick() {
         const x = canvas.mousePosition.x - Math.abs(token.document.x - c.x);
         const y = canvas.mousePosition.y - Math.abs(token.document.y - c.y);
-        const targetLoc = canvas.grid.getSnappedPosition(x, y);
+        const targetLoc = getPosition(x, y);
         resolve(targetLoc);
         drawing.destroy();
+        canvas.app.ticker.remove(pointerImage);
+        canvas.grid.clearHighlightLayer(name);
+        pointerSpriteContainer.destroy();
+      }
+
+      function pointerImage(delta) {
+
+        const x = canvas.mousePosition.x - pointerSprite.width / 2;
+        const y = canvas.mousePosition.y - pointerSprite.height / 2;
+        const pos = getPosition(x, y);
+        canvas.grid.clearHighlightLayer(name);
+
+        if (config.showToken) {
+          pointerSpriteContainer.x = pos.x;
+          pointerSpriteContainer.y = pos.y;
+        }
+
+        if (config.highlight) canvas.grid.highlightPosition(name, pos);
       }
 
       function cancel() {
         resolve(null)
         drawing.destroy();
+        canvas.app.ticker.remove(pointerImage);
+        pointerSpriteContainer.destroy();
+        canvas.grid.clearHighlightLayer(name);
       }
 
       const drawing = new PIXI.Graphics();
+      const pointerSpriteContainer = new PIXI.Container();
 
-      const movePoly = CONFIG.Canvas.polygonBackends[type].create(c, {
-        type, hasLimitedRadius: true, radius: pixels
+      pointerSprite.width = token.w;
+      pointerSprite.height = token.h;
+      pointerSprite.alpha = config.alpha;
+      pointerSpriteContainer.addChild(pointerSprite);
+      pointerSpriteContainer.visible = config.showToken;
+      pointerSpriteContainer.eventMode = "none"
+      canvas.controls.addChild(pointerSpriteContainer);
+      canvas.app.ticker.add(pointerImage);
+
+      const movePoly = CONFIG.Canvas.polygonBackends[config.type].create(c, {
+        type: config.type, hasLimitedRadius: true, radius: pixels
       });
 
       drawing.eventMode = "dynamic";
       drawing.beginFill(0xFFFFFF, 0.2);
       drawing.drawShape(movePoly);
       drawing.endFill();
-      drawing.tint = drawing.containsPoint(canvas.mousePosition) ? grn : red;
+      drawing.tint = drawing.containsPoint(canvas.mousePosition) ? config.grn : config.red;
       drawing.cursor = "pointer";
-      drawing.alpha = 0.5;
+      drawing.alpha = config.alpha;
       drawing.on('click', onClick);
-      drawing.on('pointerover', () => drawing.tint = grn);
-      drawing.on('pointerout', () => drawing.tint = red);
+      drawing.on('pointerover', () => {
+        drawing.tint = config.grn;
+        pointerSpriteContainer.visible = config.showToken;
+      });
+      drawing.on('pointerout', () => {
+        drawing.tint = config.red;
+        pointerSpriteContainer.visible = false;
+      });
       drawing.on('rightclick', cancel);
       canvas.tokens.addChild(drawing);
     });
