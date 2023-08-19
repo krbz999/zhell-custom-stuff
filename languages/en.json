@@ -62,8 +62,6 @@
   "ZHELL.SettingsCombatantDefeatedName": "Mark Combatants Defeated",
   "ZHELL.SettingsDisplayAmmoHint": "If ammunition has a saving throw, it will be displayed when a weapon makes an attack roll.",
   "ZHELL.SettingsDisplayAmmoName": "Show Saving Throw Ammo",
-  "ZHELL.SettingsEnableHeartContainers": "Heart Containers",
-  "ZHELL.SettingsEnableHeartContainersHint": "Show the heart containers in the ui when you have a character assigned to your user.",
   "ZHELL.SettingsForagingDifficultyHint": "The current DC for foraging.",
   "ZHELL.SettingsForagingDifficultyName": "Foraging DC",
   "ZHELL.SettingsMenuColorationSettingsHint": "Settings for the colors that are applied to the actor sheets.",
