@@ -3,20 +3,22 @@ export class SlotRecoverer extends FormApplication {
    * @constructor
    *
    * @param {Actor} actor                           The actor to recover spell slots.
-   * @param {boolean} [valueEqualToLevel=true]      Whether the value of a slot should be equal to its level, otherwise 1.
-   * @param {number} [maxLevel=Infinity]            The maximum level a spell slot can be.
-   * @param {number} [minLevel=1]                   The minimum level a spell slot can be.
-   * @param {number} [maxValue=1]                   The maximum combined value of the slots to recover.
+   * @param {object} config
+   * @param {boolean} config.valueEqualToLevel      Whether the value of a slot should be equal to its level, otherwise 1.
+   * @param {number} config.maxLevel                The maximum level a spell slot can be.
+   * @param {number} config.minLevel                The minimum level a spell slot can be.
+   * @param {number} config.maxValue                The maximum combined value of the slots to recover.
    */
-  constructor(actor, {valueEqualToLevel = true, maxLevel = Infinity, minLevel = 1, maxValue = 1} = {}) {
+  constructor(actor, config = {}) {
     super(actor);
     this.clone = actor.clone({}, {keepId: true});
     this.actor = actor;
-
-    this.valueEqualToLevel = valueEqualToLevel;
-    this.maxLevel = maxLevel;
-    this.minLevel = minLevel;
-    this.maxValue = maxValue;
+    this.config = foundry.utils.mergeObject({
+      valueEqualToLevel: true,
+      maxLevel: Infinity,
+      minLevel: 1,
+      maxValue: 1
+    }, config, {insertKeys: false, enforceTypes: true});
   }
 
   /** @override */
@@ -29,26 +31,21 @@ export class SlotRecoverer extends FormApplication {
 
   /** @override */
   async getData() {
-    const levels = this.constructor.#getLevels(this.actor, {
-      valueEqualToLevel: this.valueEqualToLevel,
-      maxLevel: this.maxLevel,
-      minLevel: this.minLevel,
-      maxValue: this.maxValue
-    });
+    const levels = this.constructor.#getLevels(this.actor, this.config);
 
     let recovered = 0;
     for (const level of levels) {
       level.value = Math.clamped(this.clone.system.spells[level.key].value, level.min, level.max);
       level.disableLeft = level.value === level.min;
       level.disableRight = level.value === level.max;
-      recovered += (level.value - level.min) * (this.valueEqualToLevel ? level.level : 1);
+      recovered += (level.value - level.min) * (this.config.valueEqualToLevel ? level.level : 1);
     }
     levels.sort((a, b) => a.label.localeCompare(b.label));
     return {
       levels,
       recovered,
-      max: this.maxValue,
-      overMax: recovered > this.maxValue
+      max: this.config.maxValue,
+      overMax: recovered > this.config.maxValue
     };
   }
 
@@ -83,7 +80,10 @@ export class SlotRecoverer extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
     this.form.querySelectorAll("[data-adjust]").forEach(n => {
-      n.addEventListener("click", this.adjust.bind(this));
+      n.addEventListener("click", this.#adjust.bind(this));
+    });
+    this.form.querySelectorAll("input").forEach(n => {
+      n.addEventListener("focus", event => event.currentTarget.select());
     });
   }
 
@@ -91,7 +91,7 @@ export class SlotRecoverer extends FormApplication {
    * Handle clicking a button to adjust the input value.
    * @param {PointerEvent} event      The initiating click event.
    */
-  adjust(event) {
+  #adjust(event) {
     const key = event.currentTarget.dataset.key;
     const diff = {up: 1, down: -1}[event.currentTarget.dataset.adjust];
     const update = new FormDataExtended(this.form).object;
@@ -115,14 +115,21 @@ export class SlotRecoverer extends FormApplication {
 
   /**
    * Is this actor missing any spell slots?
-   * @param {Actor} actor     The actor to check for missing spell slots.
-   * @param {boolean} [valueEqualToLevel=true]      Whether the value of a slot should be equal to its level, otherwise 1.
-   * @param {number} [maxLevel=Infinity]            The maximum level a spell slot can be.
-   * @param {number} [minLevel=1]                   The minimum level a spell slot can be.
-   * @param {number} [maxValue=1]                   The maximum combined value of the slots to recover.
+   * @param {Actor} actor                           The actor to check for missing spell slots.
+   * @param {object} config
+   * @param {boolean} config.valueEqualToLevel      Whether the value of a slot should be equal to its level, otherwise 1.
+   * @param {number} config.maxLevel                The maximum level a spell slot can be.
+   * @param {number} config.minLevel                The minimum level a spell slot can be.
+   * @param {number} config.maxValue                The maximum combined value of the slots to recover.
    */
-  static missingSlots(actor, {valueEqualToLevel = true, maxLevel = Infinity, minLevel = 1, maxValue = 1} = {}) {
-    const levels = this.#getLevels(actor, {valueEqualToLevel, maxLevel, minLevel, maxValue});
+  static missingSlots(actor, config = {}) {
+    config = foundry.utils.mergeObject({
+      valueEqualToLevel: true,
+      maxLevel: Infinity,
+      minLevel: 1,
+      maxValue: 1
+    }, config, {insertKeys: false, enforceTypes: true});
+    const levels = this.#getLevels(actor, config);
     return levels.length > 0;
   }
 }
