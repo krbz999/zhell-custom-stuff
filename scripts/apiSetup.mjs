@@ -1,4 +1,5 @@
 import {ClassPageRenderer} from "./modules/applications/classPages.mjs";
+import {ContestRoll} from "./modules/applications/contest-roll.mjs";
 import {ImageAnchorPicker} from "./modules/applications/imageAnchorPicker.mjs";
 import {MurkScroller} from "./modules/applications/murkScroller.mjs";
 import {PartyFeatures} from "./modules/applications/partyFeatures.mjs";
@@ -50,7 +51,8 @@ export function setupAPI() {
       imagePicker: ImageAnchorPicker,
       slotRecoverer: SlotRecoverer,
       sequencePicker: TargetSequencePicker,
-      murkScroller: MurkScroller
+      murkScroller: MurkScroller,
+      contestRoll: ContestRoll
     },
     ITEMACRO
   }

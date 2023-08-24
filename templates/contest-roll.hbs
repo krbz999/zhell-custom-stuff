@@ -1,0 +1,7 @@
+<div class="content">
+  {{#each users}}
+  <button data-action="roll" {{disabled isNotMe}}>
+    <i class="fa-solid fa-die-20"></i> Roll {{#if total}}({{total}}){{/if}}
+  </button>
+  {{/each}}
+</div>

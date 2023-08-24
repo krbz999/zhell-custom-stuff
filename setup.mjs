@@ -12,6 +12,7 @@ import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
 import {Lucian} from "./scripts/lucian.mjs";
+import {ContestRoll} from "./scripts/modules/applications/contest-roll.mjs";
 
 Hooks.once("init", registerSettings);
 Hooks.once("init", setupAPI);
@@ -77,3 +78,5 @@ Hooks.once("ready", function() {
     Hooks.on("dnd5e.rollSkill", AnimationsHandler.onRollSkill);
   }
 });
+
+Hooks.once("ready", ContestRoll.setupSockets);
