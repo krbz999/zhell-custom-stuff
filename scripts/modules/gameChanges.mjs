@@ -40,7 +40,8 @@ export class GameChangesHandler {
       label: "DND5E.AbilityPty",
       abbreviation: "pty",
       type: "mental",
-      defaults: {vehicle: 0}
+      defaults: {vehicle: 0},
+      improvement: false
     };
   }
 
