@@ -24,6 +24,30 @@ export class ClassPageRenderer extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
+    html[0].querySelectorAll("[data-action='toggle-item']").forEach(n => {
+      n.addEventListener("click", this._onToggleItem.bind(this));
+    });
+  }
+
+  /**
+   * Toggle the description of an item.
+   * @param {PointerEvent} event      The initiating click event.
+   */
+  async _onToggleItem(event) {
+    const target = event.currentTarget;
+    const uuid = target.dataset.uuid;
+    if (target.classList.contains("expanded")) {
+      const summary = target.parentNode.querySelector(".item-summary");
+      if (summary) summary.remove();
+    } else {
+      const item = await fromUuid(uuid);
+      const data = await item.getChatData();
+      const div = document.createElement("DIV");
+      div.innerHTML = await renderTemplate("systems/dnd5e/templates/items/parts/item-summary.hbs", data);
+      div.firstElementChild.setAttribute("data-uuid", uuid);
+      target.after(div.firstElementChild);
+    }
+    target.classList.toggle("expanded");
   }
 
   /**

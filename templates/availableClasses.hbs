@@ -61,12 +61,14 @@
             <div class="tab spell-level" data-group="subsubpage" data-tab="{{../identifier}}-{{level}}">
               {{#each spells}}
               <div class="spell">
-                <img class="image" src="{{img}}">
-                <div class="item">
-                  <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
-                    {{name}}
-                  </a>
-                </div>
+                <h4 data-uuid="{{uuid}}" data-action="toggle-item">
+                  <img class="image" src="{{img}}">
+                  <div class="item">
+                    <a class="content-link" draggable="true" data-uuid="{{uuid}}" data-id="{{id}}" data-pack="{{pack}}">
+                      {{name}}
+                    </a>
+                  </div>
+                </h4>
               </div>
               {{/each}}
             </div>
