@@ -1,19 +1,21 @@
-<div class="form">
-  <div class="tally">
-    <div class="label">Spending:</div>
-    <a data-action="change-denom" data-value="0" data-denom="gp">0.00</a>
-  </div>
+<div class="content">
+  <a data-action="change-denom">
+    <span>Spending:</span>
+    <span>{{displayValue}} {{denom}}</span>
+  </a>
 
-  <div class="utils">
+  <div class="currencies">
     {{#each currencies}}
-    <div class="util" data-currency="{{label}}">
-      <a data-action="adjust-up"><i class="fa-solid fa-arrow-up"></i></a>
-      <div class="currency">
-        <div class="value">0</div>
-        <div class="label">{{label}}</div>
-      </div>
-      <a data-action="adjust-down"><i class="fa-solid fa-arrow-down"></i></a>
-      <div class="current">({{value}})</div>
+    <div class="currency" data-denom="{{key}}">
+      <button data-action="adjust" data-dir="1" {{disabled disableUp}}>
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+      <span class="spent">{{spent}}</span>
+      <a class="label" data-action="set-denom">{{abbreviation}}</a>
+      <button data-action="adjust" data-dir="-1" {{disabled disableDown}}>
+        <i class="fa-solid fa-arrow-down"></i>
+      </button>
+      <span class="remaining">({{remaining}})</span>
     </div>
     {{/each}}
   </div>

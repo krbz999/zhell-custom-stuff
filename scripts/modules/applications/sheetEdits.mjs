@@ -309,7 +309,7 @@ export class SheetEdits {
    * @returns {MoneySpender}          The rendered money spending app.
    */
   _onClickMoneySpender(event) {
-    return new MoneySpender({}, this.sheet.document).render(true);
+    return new MoneySpender(this.sheet.document).render(true);
   }
 
   /**

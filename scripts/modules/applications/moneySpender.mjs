@@ -1,9 +1,11 @@
 import {MODULE} from "../../const.mjs";
 
 export class MoneySpender extends Application {
-  constructor(options = {}, actor) {
-    super(options);
+  constructor(actor, config = {}) {
+    super();
     this.actor = actor;
+    this.clone = actor.clone({}, {keepId: true});
+    this.config = config;
   }
 
   /** @override */
@@ -28,47 +30,63 @@ export class MoneySpender extends Application {
   }
 
   /**
-   * The number of decimals, as a function of the conversion rate of currency.
-   * @returns {number}      The number of decimals.
+   * The key of the default currency, which is the config entry with conversion rate 1.
+   * @returns {string}
    */
-  get precision() {
-    const denom = this.element[0].querySelector("[data-action='change-denom']").dataset.denom;
-    const conversion = CONFIG.DND5E.currencies[denom].conversion;
-    return (conversion < 1) ? 3 : (conversion < 10) ? 2 : (conversion < 100) ? 1 : 0;
+  get defaultDenomination() {
+    const [key] = Object.entries(CONFIG.DND5E.currencies).find(c => c[1].conversion === 1);
+    return key;
   }
 
   /** @override */
   async getData() {
+    const config = CONFIG.DND5E.currencies;
     const data = await super.getData();
-    data.currencies = Object.entries(this.actor.system.currency).map(([label, value]) => {
-      return {value, label};
-    });
-    return data;
-  }
 
-  /**
-   * Change the displayed total to a new amount and new decimal position.
-   */
-  _displayTotal() {
-    const node = this.element[0].querySelector("[data-action='change-denom']");
-    const value = Number(node.dataset.value);
-    const denom = node.dataset.denom;
-    node.innerText = (value * CONFIG.DND5E.currencies[denom].conversion).toFixed(this.precision);
+    data.denom = this.denom ??= this.defaultDenomination;
+    data.inBase = 0;
+    data.currencies = Object.keys(this.clone.system.currency).map(key => {
+      const remaining = this.clone.system.currency[key];
+      const spent = this.actor.system.currency[key] - remaining;
+      if (config[key].conversion) data.inBase += spent / config[key].conversion;
+      return {
+        ...config[key],
+        key,
+        remaining,
+        spent,
+        disableUp: remaining === 0,
+        disableDown: spent === 0
+      };
+    }).sort((a, b) => {
+      return config[a.key].conversion - config[b.key].conversion;
+    });
+
+    const conv = config[this.denom].conversion;
+    const precision = (conv < 1) ? 3 : (conv < 10) ? 2 : (conv < 100) ? 1 : 0;
+    data.displayValue = (data.inBase * conv).toFixed(precision);
+    return data;
   }
 
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
 
-    // up and down arrows.
-    html[0].querySelectorAll("[data-action^='adjust']").forEach(n => n.addEventListener("click", this._onClickAdjustment.bind(this)));
+    // Adjust currency up and down.
+    html[0].querySelectorAll("[data-action=adjust]").forEach(n => {
+      n.addEventListener("click", this._onClickAdjustment.bind(this));
+    });
 
-    // save button.
-    html[0].querySelector("[data-action='submit']").addEventListener("click", this._spendMoney.bind(this));
+    // Save button.
+    html[0].querySelector("[data-action=submit]").addEventListener("click", this._spendMoney.bind(this));
 
-    // change denom.
-    const node = html[0].querySelector("[data-action='change-denom']");
+    // Cycle displayed denomination.
+    const node = this.node = html[0].querySelector("[data-action='change-denom']");
     ["click", "contextmenu"].forEach(type => node.addEventListener(type, this._changeDenomination.bind(this)));
+
+    // Set displayed denomination.
+    html[0].querySelectorAll("[data-action='set-denom']").forEach(n => {
+      n.addEventListener("click", this._onSetDenomination.bind(this));
+    });
   }
 
   /**
@@ -76,32 +94,12 @@ export class MoneySpender extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   _onClickAdjustment(event) {
-    const adjustment = event.currentTarget.dataset.action;
-    const currentNode = event.currentTarget.closest(".util").querySelector(".value");
-    const currentValue = Number(currentNode.innerText.trim());
-    const totNode = this.element[0].querySelector("[data-action='change-denom']");
-    const totValue = Number(totNode.dataset.value);
-    const cu = event.currentTarget.closest(".util").dataset.currency;
-
-    if (adjustment === "adjust-up") {
-      // adjust UP and ADD TO counter.
-      const max = this.actor.system.currency[cu];
-      const diff = event.ctrlKey ? Math.min(100, max - currentValue) : event.shiftKey ? Math.min(5, max - currentValue) : 1;
-      if (currentValue + diff > max) return;
-      const newTotal = totValue + diff / CONFIG.DND5E.currencies[cu].conversion;
-      totNode.setAttribute("data-value", Number(newTotal).toFixed(2));
-      this._displayTotal();
-      currentNode.innerText = currentValue + diff;
-    } else if (adjustment === "adjust-down") {
-      // adjust DOWN and REMOVE FROM counter.
-      const min = 0;
-      const diff = event.ctrlKey ? Math.min(100, currentValue - min) : event.shiftKey ? Math.min(5, currentValue - min) : 1;
-      if ((currentValue - diff) < min) return;
-      const newTotal = totValue - diff / CONFIG.DND5E.currencies[cu].conversion;
-      totNode.setAttribute("data-value", Number(newTotal).toFixed(2));
-      this._displayTotal();
-      currentNode.innerText = currentValue - diff;
-    }
+    const denom = event.currentTarget.closest("[data-denom]").dataset.denom;
+    const diff = (event.ctrlKey ? 100 : event.shiftKey ? 5 : 1) * Number(event.currentTarget.dataset.dir);
+    const oldValue = this.clone.system.currency[denom];
+    const newValue = Math.clamped(oldValue - diff, 0, this.actor.system.currency[denom]);
+    this.clone.updateSource({[`system.currency.${denom}`]: newValue});
+    this.render();
   }
 
   /**
@@ -111,24 +109,22 @@ export class MoneySpender extends Application {
    */
   async _spendMoney(event) {
     const currency = this.actor.system.currency;
-    const diffs = {};
-    const update = {};
-    this.element[0].querySelectorAll(".util").forEach(n => {
-      const denom = n.dataset.currency;
-      const spend = Number(n.querySelector(".value").innerText.trim());
+    const update = foundry.utils.deepClone(this.clone.system.currency);
+    const {diffs, content} = Object.entries(update).reduce((acc, [key, value]) => {
+      const spend = currency[key] - value;
       if (spend > 0) {
-        diffs[denom] = spend;
-        update[denom] = currency[denom] - spend;
+        acc.diffs[key] = spend;
+        acc.content += `<br>${CONFIG.DND5E.currencies[key].label}: ${spend}`;
       }
+      return acc;
+    }, {diffs: {}, content: "Spent some money:"});
+    this.close();
+    if (foundry.utils.isEmpty(diffs)) return;
+    await ChatMessage.create({
+      content: content,
+      speaker: ChatMessage.getSpeaker({actor: this.actor})
     });
-    await this.close();
-    if (!foundry.utils.isEmpty(diffs)) {
-      const content = Object.entries(diffs).reduce((acc, [denom, spent]) => {
-        return acc + `<br>${denom.toUpperCase()}: ${spent}`;
-      }, `Spent some money:`);
-      await ChatMessage.create({content, speaker: ChatMessage.getSpeaker({actor: this.actor})});
-      return this.actor.update({"system.currency": update});
-    }
+    return this.actor.update({"system.currency": update});
   }
 
   /**
@@ -136,11 +132,19 @@ export class MoneySpender extends Application {
    * @param {PointerEvent} event      The initiating click event.
    */
   _changeDenomination(event) {
-    const value = event.currentTarget.dataset.denom;
     const denoms = Object.keys(CONFIG.DND5E.currencies);
-    const idx = denoms.indexOf(value);
+    const idx = denoms.indexOf(this.denom ??= this.defaultDenomination);
     const next = idx + ((event.type === "click") ? 1 : (denoms.length - 1));
-    event.currentTarget.setAttribute("data-denom", denoms[next % denoms.length]);
-    this._displayTotal();
+    this.denom = denoms[next % denoms.length];
+    return this.render();
+  }
+
+  /**
+   * Set denomination to a specific value.
+   * @param {PointerEvent} event      The initiating click event.
+   */
+  _onSetDenomination(event) {
+    this.denom = event.currentTarget.closest("[data-denom]").dataset.denom;
+    return this.render();
   }
 }

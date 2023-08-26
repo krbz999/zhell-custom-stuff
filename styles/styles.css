@@ -508,87 +508,53 @@ button:active:not(.pm-dropdown, :disabled),
 }
 
 /* MONEY SPENDER */
-.zhell-custom-stuff.money-spender .form {
-  display: grid;
-  grid-template-rows: 1fr 2fr 0fr;
-  grid-template-columns: 1fr;
-}
-
-.zhell-custom-stuff.money-spender .tally {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 30px;
-  margin: 0 1em;
-}
-
-.zhell-custom-stuff.money-spender [data-denom] {
-  display: flex;
-  gap: 0.25em;
-}
-
-.zhell-custom-stuff.money-spender [data-denom=pp]:after {
-  content: "pp";
-}
-
-.zhell-custom-stuff.money-spender [data-denom=gp]:after {
-  content: "gp";
-}
-
-.zhell-custom-stuff.money-spender [data-denom=ep]:after {
-  content: "ep";
-}
-
-.zhell-custom-stuff.money-spender [data-denom=sp]:after {
-  content: "sp";
-}
-
-.zhell-custom-stuff.money-spender [data-denom=cp]:after {
-  content: "cp";
-}
-
-.zhell-custom-stuff.money-spender .utils {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.zhell-custom-stuff.money-spender .util {
+.zhell-custom-stuff.money-spender .content {
   display: flex;
   flex-direction: column;
+  margin: 5px;
+  justify-content: space-between;
+}
+
+.zhell-custom-stuff.money-spender .content [data-action="change-denom"] {
+  display: inherit;
+  font-size: 30px;
+  justify-content: inherit;
+  padding: 0 2rem;
+}
+
+.zhell-custom-stuff.money-spender .content .currencies {
+  display: inherit;
+  justify-content: space-around;
+}
+
+.zhell-custom-stuff.money-spender .content .currencies .currency {
+  display: inherit;
+  flex-direction: column;
   align-items: center;
+  width: 4em;
 }
 
-.zhell-custom-stuff.money-spender .currency {
-  border-left: 2px groove;
-  width: 4em;
-  max-width: 4em;
-  border-right: 2px groove;
-  text-align: center;
-}
-
-.zhell-custom-stuff.money-spender [data-action^="adjust"] {
-  width: 4em;
-  max-width: 4em;
-  text-align: center;
-  border: 2px groove;
+.zhell-custom-stuff.money-spender .content .currencies .currency [data-action="adjust"] {
   background-color: cornsilk;
 }
 
-.zhell-custom-stuff.money-spender [data-action^="adjust"]:hover {
-  text-shadow: none;
+.zhell-custom-stuff.money-spender .content .currencies .currency [data-action="adjust"]:disabled {
+  color: lightgray;
+  cursor: default;
 }
 
-.zhell-custom-stuff.money-spender .currency > * {
-  margin: 0.5em 0;
+.zhell-custom-stuff.money-spender .content .currencies .currency .spent {
+  padding: 5px 0;
+}
+
+.zhell-custom-stuff.money-spender .content .currencies .currency .label {
+  padding: 5px 0;
   text-transform: uppercase;
 }
 
-.zhell-custom-stuff.money-spender .current {
+.zhell-custom-stuff.money-spender .content .currencies .currency .remaining {
+  padding: 5px 0;
   font-style: italic;
-  width: 4em;
-  text-align: center;
-  max-width: 4em;
-  padding-top: 0.5em;
 }
 
 /* DAMAGE APPLICATION */
