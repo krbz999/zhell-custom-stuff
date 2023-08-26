@@ -35,8 +35,11 @@
   ],
   "flags": {
     "hotReload": {
-      "extensions": ["css", "hbs", "json"],
-      "paths": ["styles/*.css"]
+      "extensions": ["css"],
+      "paths": [
+        "styles/class-pages.css",
+        "styles/styles.css"
+      ]
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",

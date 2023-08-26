@@ -35,6 +35,7 @@ export class ClassPageRenderer extends Application {
    */
   async _onToggleItem(event) {
     const target = event.currentTarget;
+    if (event.target.closest(".content-link, .item")) return;
     const uuid = target.dataset.uuid;
     if (target.classList.contains("expanded")) {
       const summary = target.parentNode.querySelector(".item-summary");
