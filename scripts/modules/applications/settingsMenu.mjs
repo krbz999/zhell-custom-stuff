@@ -136,13 +136,14 @@ export class IdentifiersMenu extends SettingsMenu {
 
   /** @override */
   async _updateObject(event, formData) {
-    const data = {};
+    const data = foundry.utils.expandObject(formData);
     return game.settings.set(MODULE, "identifierSettings", data);
   }
 
   /** @override */
   async getData() {
-    return game.settings.get(MODULE, "identifierSettings");
+    const data = game.settings.get(MODULE, "identifierSettings") ?? {};
+    return data;
   }
 
   /** @override */

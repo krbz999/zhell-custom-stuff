@@ -3,18 +3,10 @@ import {MODULE} from "../../const.mjs";
 export class PartyFeatures extends Application {
   constructor() {
     super();
-
-    // The group actor with the party in it (second uuid is for test world).
-    this.groupActor = fromUuidSync("Actor.VRA6OxigX4V5GYn7") ?? fromUuidSync("Actor.YZI1wsS64lScoYZh");
-    this.features = ["intervention", "inspiration", "fragment"];
-    this.maximums = {intervention: 1, inspiration: 7, fragment: 1};
-    this.icons = {
-      intervention: "fa-solid fa-ankh",
-      inspiration: "fa-solid fa-star-half-alt",
-      fragment: "fa-solid fa-hourglass-start"
-    };
+    this.groupActor = game.actors.get(game.settings.get(MODULE, "identifierSettings").partyFeatures.actorId);
   }
 
+  /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: [MODULE, "party-features"],
@@ -26,22 +18,43 @@ export class PartyFeatures extends Application {
   /** @override */
   async getData() {
     const data = await super.getData();
+    const model = this.model;
+
+    const icons = {
+      intervention: "fa-solid fa-ankh",
+      inspiration: "fa-solid fa-star-half-alt",
+      fragment: "fa-solid fa-hourglass-start"
+    };
 
     data.features = this.features.map(key => {
       return {
         tooltip: `ZHELL.PartyFeature${key.capitalize()}`,
         label: key.capitalize(),
-        key,
-        icon: this.icons[key],
-        uses: {
-          max: this.maximums[key],
-          value: this.groupActor.flags[MODULE].partyFeatureUses[key].value
-        }
+        icon: icons[key],
+        uses: model[key],
+        key: key,
+        disabled: model[key].value === 0
       };
     });
-
     data.isGM = game.user.isGM;
     return data;
+  }
+
+  /**
+   * Get base data for the party features.
+   * @type {object}
+   */
+  get model() {
+    const flag = foundry.utils.getProperty(this.groupActor, `flags.${MODULE}.partyFeatureUses`);
+    return new PartyFeaturesModel(flag ?? {}).toObject();
+  }
+
+  /**
+   * Get keys for party features.
+   * @type {string[]}
+   */
+  get features() {
+    return Object.keys(this.model);
   }
 
   /** @override */
@@ -70,7 +83,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Get the assigned actors that are in the group actor.
-   * @returns {Set<Actor>}      The assigned actors that are members of this Group.
+   * @type {Set<Actor>}
    */
   get partyMembers() {
     const party = this.groupActor.system.members;
@@ -80,7 +93,7 @@ export class PartyFeatures extends Application {
 
   /**
    * Get the alias used as speaker for chat messages.
-   * @returns {string}      The alias.
+   * @type {string}
    */
   get alias() {
     return "The Pantheon";
@@ -108,14 +121,8 @@ export class PartyFeatures extends Application {
   canUseFeature(feature) {
     if (!this.features.includes(feature)) {
       ui.notifications.warn(`The feature "${feature}" is not a valid party feature key.`);
-      return null;
+      return false;
     }
-
-    if (!(this.groupActor.flags[MODULE].partyFeatureUses[feature].value > 0)) {
-      ui.notifications.warn(`The feature '${this.groupActor.flags[MODULE].partyFeatureUses[feature].label}' has no uses left!`);
-      return null;
-    }
-
     return true;
   }
 
@@ -124,16 +131,12 @@ export class PartyFeatures extends Application {
    * @returns {Promise<Actor>}      The group actor having their flags updated.
    */
   async resetFeatures() {
-    await this.close();
-    await ChatMessage.create({
+    this.close();
+    ChatMessage.create({
       content: "The party's shared features have reset!",
       speaker: {alias: this.alias}
     });
-    return this.groupActor.setFlag(MODULE, "partyFeatureUses", {
-      intervention: {value: this.maximums.intervention, max: this.maximums.intervention, label: "Divine Intervention"},
-      inspiration: {value: this.maximums.inspiration, max: this.maximums.inspiration, label: "Divine Inspiration"},
-      fragment: {value: this.maximums.fragment, max: this.maximums.fragment, label: "Time Fragment"}
-    });
+    return this.groupActor.setFlag(MODULE, "partyFeatureUses", new PartyFeaturesModel({}).toObject());
   }
 
   /**
@@ -141,12 +144,10 @@ export class PartyFeatures extends Application {
    * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async intervention() {
-    const usage = this.canUseFeature("intervention");
-    if (!usage) return null;
-
-    await this.close();
-
-    const uses = this.groupActor.flags[MODULE].partyFeatureUses.intervention;
+    const key = "intervention";
+    if (!this.canUseFeature(key)) return null;
+    this.close();
+    const uses = this.model[key];
     const targetValue = Math.floor(this.partyMembers.reduce((acc, a) => acc + a.system.abilities.pty.value, 0) / 2);
     const data = {
       name: "Divine Intervention",
@@ -170,12 +171,10 @@ export class PartyFeatures extends Application {
    * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async inspiration() {
-    const usage = this.canUseFeature("inspiration");
-    if (!usage) return null;
-
-    await this.close();
-
-    const uses = this.groupActor.flags[MODULE].partyFeatureUses.inspiration;
+    const key = "inspiration";
+    if (!this.canUseFeature(key)) return null;
+    this.close();
+    const uses = this.model[key];
     const data = {
       name: "Divine Inspiration",
       img: "icons/magic/holy/chalice-glowing-gold-water.webp",
@@ -195,12 +194,10 @@ export class PartyFeatures extends Application {
    * @returns {Promise<Actor>}      The group actor having its flags altered.
    */
   async fragment() {
-    const usage = this.canUseFeature("fragment");
-    if (!usage) return null;
-
-    await this.close();
-
-    const uses = this.groupActor.flags[MODULE].partyFeatureUses.fragment;
+    const key = "fragment";
+    if (!this.canUseFeature(key)) return null;
+    this.close();
+    const uses = this.model[key];
     const data = {
       name: "Time Fragment",
       img: "icons/magic/holy/chalice-glowing-gold.webp",
@@ -224,5 +221,25 @@ export class PartyFeatures extends Application {
    */
   static renderPartyFeatures() {
     return new PartyFeatures().render(true);
+  }
+}
+
+/** Utility model for storing keys and maximum uses. */
+class PartyFeaturesModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    return {
+      intervention: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({initial: 1}),
+        max: new foundry.data.fields.NumberField({initial: 1})
+      }),
+      inspiration: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({initial: 7}),
+        max: new foundry.data.fields.NumberField({initial: 7})
+      }),
+      fragment: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({initial: 1}),
+        max: new foundry.data.fields.NumberField({initial: 1})
+      }),
+    };
   }
 }
