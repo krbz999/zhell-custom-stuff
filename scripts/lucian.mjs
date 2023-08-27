@@ -36,10 +36,7 @@ export class Lucian {
   /* ------------------------------ */
 
   static init() {
-    console.warn("INIT LUCIAN!");
     if (!game.user.isGM) return;
-
-    console.warn("INIT LUCIAN!");
 
     globalThis.lucian = {
       init: Lucian.rollLucianInitiative,

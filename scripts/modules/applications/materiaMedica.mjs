@@ -101,7 +101,6 @@ export class MateriaMedica extends Application {
     const speed = !!this.actor.flags.dnd5e?.speedCrafting;
     if (!speed) return 1;
     const isMagical = this.#craftingTable.find(e => e.id === item.id).magical;
-    console.warn({isMagical, rarity: item.system.rarity});
     if (isMagical && ["common", "uncommon"].includes(item.system.rarity)) return 0.5;
     return 1;
   }
