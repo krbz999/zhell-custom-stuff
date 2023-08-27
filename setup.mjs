@@ -1,4 +1,4 @@
-import {registerSettings} from "./scripts/settings.mjs";
+import ModuleSettings from "./scripts/settings.mjs";
 import {SocketsHandler} from "./scripts/modules/sockets.mjs";
 import {CombatEnhancements} from "./scripts/modules/combatHelpers.mjs";
 import {AnimationsHandler} from "./scripts/modules/animations.mjs";
@@ -8,14 +8,16 @@ import {MateriaMedica} from "./scripts/modules/applications/materiaMedica.mjs";
 import {SheetEdits} from "./scripts/modules/applications/sheetEdits.mjs";
 import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.mjs";
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
-import {setupAPI} from "./scripts/apiSetup.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
 import {Lucian} from "./scripts/lucian.mjs";
 import {ContestRoll} from "./scripts/modules/applications/contest-roll.mjs";
+import ActorSheet5eCharacter from "./scripts/modules/documents/character-sheet.mjs";
+import ActorExtension from "./scripts/modules/documents/character.mjs";
+import PublicAPI from "./scripts/modules/publicAPI.mjs";
 
-Hooks.once("init", registerSettings);
-Hooks.once("init", setupAPI);
+Hooks.once("init", ModuleSettings.init);
+Hooks.once("init", PublicAPI.init);
 Hooks.once("init", GameChangesHandler._setUpGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
 Hooks.once("setup", GameChangesHandler._miscAdjustments);
@@ -80,3 +82,7 @@ Hooks.once("ready", function() {
 });
 
 Hooks.once("ready", ContestRoll.setupSockets);
+Hooks.once("init", ActorExtension.init);
+Hooks.once("init", ActorSheet5eCharacter.init);
+Hooks.on("renderItemSheet", ActorSheet5eCharacter.renderFeatureItemSheet);
+Hooks.on("applyActiveEffect", GameChangesHandler.evaluateArmorClassBonus);

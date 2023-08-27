@@ -946,3 +946,14 @@ button:active:not(.pm-dropdown, :disabled),
   font-family: "Modesto Condensed";
   font-size: 35px;
 }
+
+.dnd5e.app.window-app.trait-selector.subconfig form {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dnd5e.app.window-app.trait-selector.subconfig form > .trait-list {
+  overflow: auto;
+  border: 2px inset;
+}

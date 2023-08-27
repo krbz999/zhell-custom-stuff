@@ -1,6 +1,68 @@
 import {MODULE} from "../const.mjs";
+import {ClassPageRenderer} from "./applications/classPages.mjs";
+import {ContestRoll} from "./applications/contest-roll.mjs";
+import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
+import {MurkScroller} from "./applications/murkScroller.mjs";
+import {PartyFeatures} from "./applications/partyFeatures.mjs";
+import {SlotRecoverer} from "./applications/slotRecoverer.mjs";
+import {TargetSequencePicker} from "./applications/targetSequencePicker.mjs";
+import {WhisperPlayers} from "./applications/whisperPlayers.mjs";
+import {gameTools} from "./gameTools/_gameTools.mjs";
+import {ITEMACRO, ItemMacroHelpers} from "./itemMacros.mjs";
+import {SocketsHandler} from "./sockets.mjs";
 
-export class PublicAPI {
+export default class PublicAPI {
+  static init() {
+    globalThis.ZHELL = {
+      token: {
+        teleport: PublicAPI._teleportTokens,
+        target: PublicAPI._targetTokens,
+        healToken: SocketsHandler.healToken,
+        getOwnerIds: PublicAPI._getTokenOwnerIds,
+        contained: PublicAPI._checkTokenInTemplate,
+        selectContained: PublicAPI._selectContained,
+        detection: {
+          canSeeOtherToken: PublicAPI.canSeeOtherToken,
+          getFurthestPointOnTemplateFromPosition: PublicAPI.getFurthestPointOnTemplateFromPosition,
+          getFurthestPointAlongRayTemplate: PublicAPI.getFurthestPointAlongRayTemplate,
+          getFurthestPointAlongRay: PublicAPI.getFurthestPointAlongRay
+        }
+      },
+      utils: {
+        setForageDC: PublicAPI._setForageDC,
+        getDocument: PublicAPI._getDocumentFromCompendium,
+        roman: PublicAPI._romanize,
+        whisperPlayers: WhisperPlayers.whisperPlayers,
+        titleCard: PublicAPI._titleCard,
+        drawCircle: ItemMacroHelpers.drawCircle,
+        loadTextureForAll: SocketsHandler.loadTextureForAll,
+        createTiles: SocketsHandler.createTiles,
+        awardLoot: SocketsHandler.awardLoot,
+        updateToken: SocketsHandler.updateTokens,
+        grantItems: SocketsHandler.grantItems,
+        showClassPages: ClassPageRenderer.renderClassPages,
+        renderPartyFeatures: PartyFeatures.renderPartyFeatures,
+        toggleBossBar: PublicAPI.toggleBossBar,
+        updateBossBar: PublicAPI.updateBossBar,
+        updateBossBarDialog: PublicAPI.updateBossBarDialog,
+        pickPosition: ItemMacroHelpers.pickPosition,
+        ...gameTools
+      },
+      applications: {
+        imagePicker: ImageAnchorPicker,
+        slotRecoverer: SlotRecoverer,
+        sequencePicker: TargetSequencePicker,
+        murkScroller: MurkScroller,
+        contestRoll: ContestRoll
+      },
+      ITEMACRO: ITEMACRO
+    }
+  }
+
+  /* --------------------------------- */
+  /*           FUNCTIONS               */
+  /* --------------------------------- */
+
   /**
    * Get a document from a compendium.
    * @param {string} documentName     Name of the document.
