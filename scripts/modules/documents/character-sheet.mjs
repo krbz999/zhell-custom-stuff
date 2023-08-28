@@ -11,119 +11,11 @@ export default class ActorSheet5eCharacter extends dnd5e.applications.actor.Acto
     });
   }
 
-  static async renderFeatureItemSheet(sheet, [html]) {
-    const subtype = html.querySelector("[name='system.type.subtype']");
-    const fg = subtype?.closest(".form-group");
-    if (!fg || !subtype.value) return;
-    const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/item-section-box.hbs", {
-      checked: !!sheet.document.flags[MODULE]?.sort
-    });
-    fg.after(div.firstElementChild);
-    sheet.setPosition();
-  }
-
-  static async renderInventoryItemSheet(sheet, [html]) {
-    if (!["weapon", "equipment", "consumable", "tool", "loot"].includes(sheet.document.type)) return;
-    const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/item-backpack-select.hbs", {
-      value: sheet.document.flags[MODULE]?.backpack ?? null,
-      options: sheet.document.actor.items.reduce((acc, item) => {
-        if (item.type === "backpack") acc[item.id] = item.name;
-        return acc;
-      }, {})
-    });
-    html.querySelector("[name='system.source']").closest("LI").before(div.firstElementChild);
-  }
-
   /* --------------------------------- */
   /*                                   */
   /*        PREPARATION METHODS        */
   /*                                   */
   /* --------------------------------- */
-
-  _prepareItems(context) {
-    super._prepareItems(context);
-    this._prepareDivineSpellSection(context);
-    this._prepareFeatureSubtypeSections(context);
-  }
-
-  _prepareDivineSpellSection(context) {
-    const divine = {
-      canCreate: false,
-      canPrepare: false,
-      dataset: {type: "spell", "preparation.mode": "atwill"},
-      editable: true,
-      label: "Divine",
-      order: -11,
-      usesSlots: false,
-      spells: [],
-      uses: "-",
-      slots: "-"
-    };
-    for (const book of context.spellbook) {
-      for (const spell of book.spells) {
-        if (spell.system.school === "divine") {
-          book.spells.findSplice(e => e === spell);
-          divine.spells.push(spell);
-        }
-      }
-    }
-    if (divine.spells.length) context.spellbook.push(divine);
-  }
-
-  _prepareFeatureSubtypeSections(context) {
-    const featureSections = [];
-    for (const section of context.features) {
-      if (!["DND5E.FeatureActive", "DND5E.FeaturePassive"].includes(section.label)) continue;
-      for (const item of section.items) {
-        const {value, subtype} = item.system.type ?? {};
-        const sort = item.flags[MODULE]?.sort && value && !!subtype;
-        if (!sort) continue;
-        const label = foundry.utils.getProperty(CONFIG.DND5E.featureTypes, `${value}.subtypes.${subtype}`);
-        if (!label) continue;
-        let featureSection = featureSections.find(s => s.dataset.sort === subtype);
-        if (!featureSection) {
-          featureSection = {
-            dataset: {type: "feat", sort: subtype},
-            hasActions: true,
-            items: [],
-            label: label
-          };
-          featureSections.push(featureSection);
-        }
-        featureSection.items.push(item);
-        section.items.findSplice(e => e === item);
-      }
-    }
-    context.features.push(...featureSections);
-  }
-
-  _prepareBackpackSections(context) {
-    const containers = context.inventory.find(e => e.dataset.type === "backpack").items;
-    const containerSections = [];
-    for (const section of context.inventory) {
-      if (section.dataset.type === "backpack") continue;
-      for (const item of section.items) {
-        const container = containers.find(e => e.id === item.flags[MODULE]?.backpack);
-        if (!container) continue;
-        let containerSection = containerSections.find(s => s.dataset.backpack === container.id);
-        if (!containerSection) {
-          containerSection = {
-            dataset: {backpack: container.id},
-            hasActions: false,
-            items: [],
-            label: container.name
-          };
-          containerSections.push(containerSection);
-        }
-        containerSection.items.push(item);
-        section.items.findSplice(e => e === item);
-      }
-    }
-
-    context.inventory.push(...containerSections);
-  }
 
   /* --------------------------------- */
   /*                                   */
