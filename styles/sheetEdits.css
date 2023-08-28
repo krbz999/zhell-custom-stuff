@@ -142,3 +142,7 @@
   text-align: right;
   padding-right: 5px;
 }
+
+.dnd5e.sheet.actor [data-nocreate] {
+  display: none;
+}

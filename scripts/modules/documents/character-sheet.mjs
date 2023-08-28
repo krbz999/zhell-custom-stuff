@@ -12,24 +12,27 @@ export default class ActorSheet5eCharacter extends dnd5e.applications.actor.Acto
   }
 
   static async renderFeatureItemSheet(sheet, [html]) {
+    return;
     const subtype = html.querySelector("[name='system.type.subtype']");
     const fg = subtype?.closest(".form-group");
     if (!fg || !subtype.value) return;
     const div = document.createElement("DIV");
     div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/item-section-box.hbs", {
-      checked: !!sheet.document.flags[MODULE]?.sort
+      checked: !!sheet.document.flags[MODULE]?.sortIntoSection
     });
     fg.after(div.firstElementChild);
     sheet.setPosition();
   }
 
   static async renderInventoryItemSheet(sheet, [html]) {
-    if (!["weapon", "equipment", "consumable", "tool", "loot"].includes(sheet.document.type)) return;
+    return;
+    if (!sheet.document.isOwner) return;
+    if (!["weapon", "equipment", "consumable", "tool", "loot", "backpack"].includes(sheet.document.type)) return;
     const div = document.createElement("DIV");
     div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/item-backpack-select.hbs", {
-      value: sheet.document.flags[MODULE]?.backpack ?? null,
-      options: sheet.document.actor.items.reduce((acc, item) => {
-        if (item.type === "backpack") acc[item.id] = item.name;
+      value: sheet.document.flags[MODULE]?.inventorySection ?? null,
+      options: sheet.document.actor.flags[MODULE]?.inventorySections?.reduce((acc, label) => {
+        acc[label] = label;
         return acc;
       }, {})
     });
@@ -44,8 +47,10 @@ export default class ActorSheet5eCharacter extends dnd5e.applications.actor.Acto
 
   _prepareItems(context) {
     super._prepareItems(context);
+    return;
     this._prepareDivineSpellSection(context);
     this._prepareFeatureSubtypeSections(context);
+    this._prepareCustomInventorySections(context);
   }
 
   _prepareDivineSpellSection(context) {
@@ -76,53 +81,55 @@ export default class ActorSheet5eCharacter extends dnd5e.applications.actor.Acto
     const featureSections = [];
     for (const section of context.features) {
       if (!["DND5E.FeatureActive", "DND5E.FeaturePassive"].includes(section.label)) continue;
-      for (const item of section.items) {
+      section.items = section.items.filter(item => {
         const {value, subtype} = item.system.type ?? {};
-        const sort = item.flags[MODULE]?.sort && value && !!subtype;
-        if (!sort) continue;
+        const sort = item.flags[MODULE]?.sortIntoSection && value && !!subtype;
+        if (!sort) return true;
         const label = foundry.utils.getProperty(CONFIG.DND5E.featureTypes, `${value}.subtypes.${subtype}`);
-        if (!label) continue;
-        let featureSection = featureSections.find(s => s.dataset.sort === subtype);
+        if (!label) return true;
+        let featureSection = featureSections.find(s => s.dataset.subtypeSection === subtype);
         if (!featureSection) {
-          featureSection = {
-            dataset: {type: "feat", sort: subtype},
-            hasActions: true,
-            items: [],
-            label: label
-          };
+          featureSection = {dataset: {nocreate: "0", subtypeSection: subtype}, hasActions: true, items: [], label: label};
           featureSections.push(featureSection);
         }
         featureSection.items.push(item);
-        section.items.findSplice(e => e === item);
-      }
+        return false;
+      });
     }
     context.features.push(...featureSections);
   }
 
-  _prepareBackpackSections(context) {
-    const containers = context.inventory.find(e => e.dataset.type === "backpack").items;
-    const containerSections = [];
-    for (const section of context.inventory) {
-      if (section.dataset.type === "backpack") continue;
-      for (const item of section.items) {
-        const container = containers.find(e => e.id === item.flags[MODULE]?.backpack);
-        if (!container) continue;
-        let containerSection = containerSections.find(s => s.dataset.backpack === container.id);
-        if (!containerSection) {
-          containerSection = {
-            dataset: {backpack: container.id},
-            hasActions: false,
-            items: [],
-            label: container.name
-          };
-          containerSections.push(containerSection);
-        }
-        containerSection.items.push(item);
-        section.items.findSplice(e => e === item);
-      }
-    }
+  _prepareCustomInventorySections(context) {
+    const sections = this.document.flags[MODULE]?.inventorySections ?? [];
+    const addedSections = [];
 
-    context.inventory.push(...containerSections);
+    if (!sections.length) return;
+    for (const inventory of context.inventory) {
+      inventory.items = inventory.items.filter(item => {
+        const label = item.flags[MODULE]?.inventorySection;
+        if(!label || !sections.includes(label)) return true;
+
+        let section = addedSections.find(s => s.label === label);
+        if (!section) {
+          section = {dataset: {nocreate: 0}, items: [], label: label};
+          addedSections.push(section);
+        }
+        section.items.push(item);
+        return false;
+      });
+    }
+    context.inventory.push(...addedSections);
+  }
+
+  /** @override */
+  _getHeaderButtons() {
+    const buttons = super._getHeaderButtons();
+    buttons.unshift({
+      class: "configure-sections",
+      icon: "fa-solid fa-backpack",
+      onclick: this.document.configureInventorySections.bind(this.document)
+    });
+    return buttons;
   }
 
   /* --------------------------------- */
