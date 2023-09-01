@@ -144,7 +144,10 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
         {label: "Temp HP", parts: [1]}
       ]
     }
-    return item.clone(itemData, {keepId: true});
+    const clone = item.cone(itemData, {keepId: true});
+    clone.prepareData();
+    clone.prepareFinalAttributes();
+    return clone;
   }
 }
 
