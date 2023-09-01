@@ -4,6 +4,12 @@ export default class ActorExtension {
       prepareDerivedData() {
         super.prepareDerivedData();
       }
+
+      get babonus() {
+        const babonus = game.modules.get("babonus")?.api;
+        if (!babonus) return null;
+        return babonus.getCollection(this);
+      }
     }
   }
 }
