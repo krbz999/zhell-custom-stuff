@@ -220,6 +220,7 @@ async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, 
 
   await weapon.update({"system.uses.value": val});
   const clone = item.clone({"system.damage.parts": parts}, {keepId: true});
+  clone.prepareData();
   clone.prepareFinalAttributes();
   return clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
 }
