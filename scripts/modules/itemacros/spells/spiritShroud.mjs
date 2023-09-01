@@ -14,7 +14,7 @@ export async function SPIRIT_SHROUD(item, speaker, actor, token, character, even
   ].reduce((acc, {icon, type}) => {
     acc[type] = {
       icon: `<i class="fa-solid fa-${icon}"></i>`,
-      label: type.capitalize(),
+      label: CONFIG.DND5E.damageTypes[type],
       callback: flagEffect
     };
     return acc;
@@ -32,10 +32,10 @@ export async function SPIRIT_SHROUD(item, speaker, actor, token, character, even
     const level = effect.flags[DEPEND.CN].data.castData.castLevel;
     const value = `+${Math.ceil(level / 2) - 1}d8[${type}]`;
     const mode = CONST.ACTIVE_EFFECT_MODES.ADD;
-    const changes = [
+    const changes = effect.changes.concat([
       {key: "system.bonuses.mwak.damage", mode, value},
       {key: "system.bonuses.msak.damage", mode, value}
-    ];
+    ]);
     return effect.update({changes});
   }
 }
