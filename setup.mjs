@@ -84,5 +84,4 @@ Hooks.once("ready", function() {
 Hooks.once("ready", ContestRoll.setupSockets);
 Hooks.once("init", ActorExtension.init);
 Hooks.once("init", ActorSheet5eCharacter.init);
-Hooks.on("renderItemSheet", ActorSheet5eCharacter.renderFeatureItemSheet);
 Hooks.on("applyActiveEffect", GameChangesHandler.evaluateArmorClassBonus);
