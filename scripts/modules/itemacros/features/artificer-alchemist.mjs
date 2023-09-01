@@ -61,5 +61,7 @@ async function ELIXIR_CANNON(item, speaker, actor, token, character, event, args
 
   const [itemData] = item.flags[MODULE].itemData;
   const elixir = new Item.implementation(itemData, {parent: actor});
+  elixir.prepareData();
+  elixir.prepareFinalAttributes();
   return elixir.use({}, {"flags.dnd5e.itemData": itemData});
 }

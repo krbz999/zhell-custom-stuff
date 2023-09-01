@@ -44,14 +44,18 @@ async function DIVINE_SMITE(item, speaker, actor, token, character, event, args)
     const level = (data.level === "pact") ? actor.system.spells.pact.level : Number(data.level.at(-1));
     const formula = `${Math.min(5, 1 + level) + Number(data.evil)}d8`;
 
-    const roll = await new Item.implementation({
+    const item = new Item.implementation({
       type: "feat",
       name: item.name,
       system: {
         actionType: "other",
         damage: {parts: [[formula, "radiant"]]}
       }
-    }, {parent: actor}).rollDamage({event});
+    }, {parent: actor});
+    item.prepareData();
+    item.prepareFinalAttributes();
+
+    const roll = await item.rollDamage({event});
     if (!roll) return;
     const value = actor.system.spells[data.level].value - 1;
     return actor.update({[`system.spells.${data.level}.value`]: value});
