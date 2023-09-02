@@ -8,6 +8,7 @@
   "DND5E.RestS": "Short",
   "DND5E.SchoolDivine": "Divine",
   "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
+  "DND5E.SpellProgWarden": "Warden",
   "ZHELL.CraftingCannotRollMore": "You cannot roll any more.",
   "ZHELL.CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
   "ZHELL.CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",
