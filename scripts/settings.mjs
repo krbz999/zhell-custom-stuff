@@ -10,7 +10,7 @@ export default class ModuleSettings {
 
   static _registerSettings() {
     game.settings.register(MODULE, "foragingDC", {
-      name: "ZHELL.SettingsForagingDifficultyName",
+      name: "ZHELL.SettingsForagingDifficulty",
       hint: "ZHELL.SettingsForagingDifficultyHint",
       scope: "world",
       config: true,
@@ -20,7 +20,7 @@ export default class ModuleSettings {
     });
 
     game.settings.register(MODULE, "markDefeatedCombatants", {
-      name: "ZHELL.SettingsCombatantDefeatedName",
+      name: "ZHELL.SettingsCombatantDefeated",
       hint: "ZHELL.SettingsCombatantDefeatedHint",
       scope: "world",
       config: true,
@@ -30,7 +30,7 @@ export default class ModuleSettings {
     });
 
     game.settings.register(MODULE, "displaySavingThrowAmmo", {
-      name: "ZHELL.SettingsDisplayAmmoName",
+      name: "ZHELL.SettingsDisplayAmmo",
       hint: "ZHELL.SettingsDisplayAmmoHint",
       scope: "world",
       config: true,
@@ -41,7 +41,7 @@ export default class ModuleSettings {
 
     // Whether to track reactions.
     game.settings.register(MODULE, "trackReactions", {
-      name: "ZHELL.SettingsTrackReactionsName",
+      name: "ZHELL.SettingsTrackReactions",
       hint: "ZHELL.SettingsTrackReactionsHint",
       scope: "world",
       config: true,
@@ -67,9 +67,9 @@ export default class ModuleSettings {
     });
 
     game.settings.registerMenu(MODULE, "worldSettings", {
-      name: "ZHELL.SettingsMenuWorldSettingsName",
+      name: "ZHELL.SettingsMenuWorldSettings",
       hint: "ZHELL.SettingsMenuWorldSettingsHint",
-      label: "ZHELL.SettingsMenuWorldSettingsName",
+      label: "ZHELL.SettingsMenuWorldSettings",
       icon: "fa-solid fa-atlas",
       type: GameChangesMenu,
       restricted: true
@@ -85,9 +85,9 @@ export default class ModuleSettings {
     });
 
     game.settings.registerMenu(MODULE, "colorationSettings", {
-      name: "ZHELL.SettingsMenuColorationSettingsName",
+      name: "ZHELL.SettingsMenuColorationSettings",
       hint: "ZHELL.SettingsMenuColorationSettingsHint",
-      label: "ZHELL.SettingsMenuColorationSettingsName",
+      label: "ZHELL.SettingsMenuColorationSettings",
       icon: "fa-solid fa-paint-roller",
       type: ColorationMenu,
       restricted: false
@@ -102,9 +102,9 @@ export default class ModuleSettings {
     });
 
     game.settings.registerMenu(MODULE, "identifierSettings", {
-      name: "ZHELL.SettingsMenuIdentifierSettingsName",
+      name: "ZHELL.SettingsMenuIdentifierSettings",
       hint: "ZHELL.SettingsMenuIdentifierSettingsHint",
-      label: "ZHELL.SettingsMenuIdentifierSettingsName",
+      label: "ZHELL.SettingsMenuIdentifierSettings",
       icon: "fa-solid fa-key",
       type: IdentifiersMenu,
       restricted: true

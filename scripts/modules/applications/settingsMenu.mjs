@@ -66,7 +66,7 @@ export class GameChangesMenu extends SettingsMenu {
       return {
         id: s[0],
         checked: s[1],
-        name: `ZHELL.SettingsWorld${s[0].capitalize()}Name`,
+        name: `ZHELL.SettingsWorld${s[0].capitalize()}`,
         hint: `ZHELL.SettingsWorld${s[0].capitalize()}Hint`
       }
     });
@@ -109,7 +109,7 @@ export class ColorationMenu extends SettingsMenu {
       data[section].push({
         id: entry,
         value: val,
-        name: `ZHELL.SettingsColoration${entry.capitalize()}Name`,
+        name: `ZHELL.SettingsColoration${entry.capitalize()}`,
         hint: `ZHELL.SettingsColoration${entry.capitalize()}Hint`,
         placeholder: COLOR_DEFAULTS[section][entry]
       });
@@ -131,7 +131,7 @@ export class IdentifiersMenu extends SettingsMenu {
 
   /** @override */
   get title() {
-    return game.i18n.localize("ZHELL.SettingsMenuIdentifierSettingsName");
+    return game.i18n.localize("ZHELL.SettingsMenuIdentifierSettings");
   }
 
   /** @override */
