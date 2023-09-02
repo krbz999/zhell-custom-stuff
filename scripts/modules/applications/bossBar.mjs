@@ -133,16 +133,16 @@ export class BossBar extends Application {
     const data = canvas.scene.flags[MODULE]?.bossBar ?? {};
 
     const options = canvas.scene.tokens.reduce((acc, token) => {
-      acc[token.document.id] = token.document.name;
+      acc[token.id] = token.name;
       return acc;
     }, {});
 
     const hash = {
-      selected: data.tokenId ?? canvas.tokens.controlled[0]?.document.id ?? null,
+      selected: (data.tokenId in options) ? data.tokenId : canvas.tokens.controlled[0]?.document.id ?? null,
       blank: "- Select Token -",
     };
 
-    const selectOptions = HandlebarHelpers.selectOptions(options, {hash});
+    const selectOptions = HandlebarsHelpers.selectOptions(options, {hash});
 
     return Dialog.prompt({
       content: `
@@ -172,7 +172,7 @@ export class BossBar extends Application {
       callback: (html) => {
         const update = new FormDataExtended(html[0].querySelector("form")).object;
         for (const key in update) if (typeof update[key] === "string") update[key] ||= null;
-        return PublicAPI.updateBossBar(update);
+        return BossBar.updateBossBar(update);
       }
     });
   }
