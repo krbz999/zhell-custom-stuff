@@ -1,13 +1,11 @@
 import {COLOR_DEFAULTS, MODULE} from "../../const.mjs";
-import {MateriaMedica} from "./materiaMedica.mjs";
-import {MoneySpender} from "./moneySpender.mjs";
 
 export class SheetEdits {
   constructor() {
     this.headers = new Set();
   }
 
-  /* Amusingly named method to inject the new functionality and elements into the sheet. */
+  // Inject the new functionality and elements into the sheet.
   async render() {
     this.settings = {
       ...game.settings.get(MODULE, "worldSettings"),
@@ -19,11 +17,10 @@ export class SheetEdits {
 
     this._setMagicItemsColor();
     if (!isGroup) this._setHealthColor();
-    if (this.settings.collapsibleHeaders) this._collapsibleHeaders();
+    this._collapsibleHeaders();
     if (isChar || isNPC) this._createDots();
-    if (isChar && this.settings.createForaging) await this._createForaging();
+    if (isChar) await this._createCharacterSheetCounters();
     if (isChar) this._createExhaustion();
-    if (isChar && this.settings.createMoneySpender) this._createMoneySpender();
     if (isChar) this._createNewDay();
     if (isChar) this._createInspirationToggle();
   }
@@ -172,17 +169,31 @@ export class SheetEdits {
   }
 
   /** Create the foraging button and foraged materials input. */
-  async _createForaging() {
+  async _createCharacterSheetCounters() {
     const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate(`modules/${MODULE}/templates/foragingButton.hbs`, {
-      name: `flags.${MODULE}.materia-medica.value`,
-      value: this.sheet.document.flags[MODULE]?.["materia-medica"].value ?? 0
+    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/character-sheet-counters.hbs", {
+      foraged: foundry.utils.getProperty(this.sheet.document, `flags.${MODULE}.materia-medica.value`) || 0,
+      totalCurrency: Object.entries(this.sheet.document.system.currency ?? {}).reduce((acc, [key, value]) => {
+        return acc + Math.floor(value / CONFIG.DND5E.currencies[key].conversion);
+      }, 0)
     });
-    const input = div.querySelector(`[name="flags.${MODULE}.materia-medica.value"]`);
-    input.addEventListener("focus", event => event.currentTarget.select());
-    input.addEventListener("change", this._onChangeInputDeltaCustom.bind(this.sheet));
-    div.querySelector("[data-action]").addEventListener("click", this.sheet._onClickForaging.bind(this.sheet));
-    this.html[0].querySelector("div.counter.flexrow.exhaustion").after(div.firstChild);
+    div.querySelectorAll("[data-dtype=Number]").forEach(n => {
+      n.addEventListener("focus", event => event.currentTarget.select());
+      n.addEventListener("change", this._onChangeInputDeltaCustom.bind(this.sheet));
+    });
+    div.querySelectorAll("[data-action]").forEach(n => {
+      switch(n.dataset.action) {
+        case "forage": {
+          n.addEventListener("click", this.sheet._onClickForaging.bind(this.sheet));
+          break;
+        }
+        case "spend-money": {
+          n.addEventListener("click", this.sheet._onClickMoneySpender.bind(this.sheet));
+          break;
+        }
+      }
+    });
+    this.html[0].querySelector("div.counter.flexrow.exhaustion").after(...div.children);
   }
 
   /** Disable the exhaustion input and add a listener to the label. */
@@ -192,23 +203,6 @@ export class SheetEdits {
     header.classList.add("rollable");
     header.setAttribute("data-action", "updateExhaustion");
     header.addEventListener("click", this.sheet._onClickExhaustion.bind(this.sheet));
-  }
-
-  /**
-   * Create an anchor next to currencies for easily spending money.
-   */
-  _createMoneySpender() {
-    const converter = this.html[0].querySelector(".currency > h3");
-    const template = `
-    <h3>Spend
-      <a data-action="spendMoney" data-tooltip="Spend Money">
-        <i class="fa-solid fa-hand-holding-dollar"></i>
-      </a>
-    </h3>`;
-    const div = document.createElement("DIV");
-    div.innerHTML = template;
-    div.querySelector("[data-action]").addEventListener("click", this.sheet._onClickMoneySpender.bind(this.sheet));
-    converter.after(...div.children);
   }
 
   /**

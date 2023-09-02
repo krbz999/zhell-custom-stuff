@@ -18,9 +18,9 @@ import PublicAPI from "./scripts/modules/publicAPI.mjs";
 
 Hooks.once("init", ModuleSettings.init);
 Hooks.once("init", PublicAPI.init);
-Hooks.once("init", GameChangesHandler._setUpGameChanges);
+Hooks.once("init", GameChangesHandler._initGameChanges);
+Hooks.once("setup", GameChangesHandler._setupGameChanges);
 Hooks.once("setup", MateriaMedica.setUpCharacterFlag);
-Hooks.once("setup", GameChangesHandler._miscAdjustments);
 Hooks.once("setup", ExhaustionHandler._appendActorMethods);
 Hooks.once("diceSoNiceReady", AnimationsHandler._initD20);
 Hooks.once("sequencerReady", AnimationsHandler._sequencerSetup);

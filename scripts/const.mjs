@@ -10,20 +10,7 @@ export const DEPEND = {
   VAE: "visual-active-effects",
   WG: "warpgate"
 };
-export const WORLD_DEFAULTS = {
-  addConditions: true,
-  addDivine: true,
-  addEquipment: true,
-  addPiety: true,
-  collapsibleHeaders: true,
-  createForaging: true,
-  createMoneySpender: true,
-  replaceConsumables: true,
-  replaceLanguages: true,
-  replaceTokenConditions: true,
-  replaceTools: true,
-  replaceWeapons: true
-};
+export const WORLD_DEFAULTS = {};
 export const COLOR_DEFAULTS = {
   sheetColors: {
     itemAttuned: "#21c050",
