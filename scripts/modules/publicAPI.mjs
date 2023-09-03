@@ -1,6 +1,6 @@
 import {MODULE} from "../const.mjs";
 import {BossBar} from "./applications/bossBar.mjs";
-import {ClassPageRenderer} from "./applications/classPages.mjs";
+import {ClassPages} from "./applications/classPages.mjs";
 import {ContestRoll} from "./applications/contest-roll.mjs";
 import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 import {MurkScroller} from "./applications/murkScroller.mjs";
@@ -41,7 +41,7 @@ export default class PublicAPI {
         awardLoot: SocketsHandler.awardLoot,
         updateToken: SocketsHandler.updateTokens,
         grantItems: SocketsHandler.grantItems,
-        showClassPages: ClassPageRenderer.renderClassPages,
+        showClassPages: ClassPages.show,
         renderPartyFeatures: PartyFeatures.renderPartyFeatures,
         toggleBossBar: BossBar.toggleBossBar,
         updateBossBar: BossBar.updateBossBar,

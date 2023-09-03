@@ -1,4 +1,4 @@
-import {ClassPageRenderer} from "./applications/classPages.mjs";
+import {ClassPages} from "./applications/classPages.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -14,7 +14,7 @@ export function sceneControls(array) {
     visible: true,
     onClick: () => {
       const [initial] = Object.keys(game.user.character?.classes ?? {});
-      return ClassPageRenderer.renderClassPages(initial ?? null);
+      return ClassPages.show(initial ?? null);
     }
   });
 

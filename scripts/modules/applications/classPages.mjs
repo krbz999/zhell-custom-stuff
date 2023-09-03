@@ -1,6 +1,6 @@
 import {MODULE} from "../../const.mjs";
 
-export class ClassPageRenderer extends Application {
+export class ClassPages extends Application {
   /** @override */
   constructor(initial) {
     super();
@@ -10,11 +10,11 @@ export class ClassPageRenderer extends Application {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "class-page-renderer",
-      classes: [MODULE, "class-page-renderer"],
+      id: "class-pages",
+      classes: [MODULE, "class-pages"],
       tabs: [],
       title: "Available Classes",
-      template: "modules/zhell-custom-stuff/templates/availableClasses.hbs",
+      template: "modules/zhell-custom-stuff/templates/class-pages.hbs",
       resizable: true,
       height: 1000,
       width: 800
@@ -1738,79 +1738,82 @@ export class ClassPageRenderer extends Application {
   }
 
   /** @override */
-  async getData() {
-    const keys = {class: "zhell-catalogs.classes", subclass: "zhell-catalogs.subclasses", spell: "zhell-catalogs.spells"};
-    const desc = "system.description.value";
-    const packs = {
-      class: await game.packs.get(keys.class).getIndex({fields: ["system.identifier", desc]}),
-      subclass: await game.packs.get(keys.subclass).getIndex({fields: ["system.classIdentifier", desc]}),
-      spell: await game.packs.get(keys.spell).getIndex({fields: ["system.level", desc]})
-    };
+  async getData(options = {}) {
+    const data = await super.getData(options);
 
-    this._classes = packs.class.map(cls => cls.system.identifier);
+    const keys = {class: "zhell-catalogs.classes", subclass: "zhell-catalogs.subclasses", spell: "zhell-catalogs.spells"};
+
+    const getIndex = async (key, fields = []) => game.packs.get(key).getIndex({fields: [...fields, "system.description.value"]});
+    const nameSort = (a, b) => a.name.localeCompare(b.name);
+
+    const indices = await Promise.all([
+      getIndex(keys.class, ["system.identifier"]),
+      getIndex(keys.subclass, ["system.classIdentifier"]),
+      getIndex(keys.spell, ["system.level", "system.school"])
+    ]);
+
+    this._classes = indices[0].map(cls => cls.system.identifier);
 
     // Array of classes, sorted alphabetically.
-    const classes = Array.from(packs.class).sort((a, b) => a.name.localeCompare(b.name));
+    data.classes = await Promise.all(indices[0].map(c => this._enrichData(c, {
+      pack: keys.class,
+      identifier: c.system.identifier,
+      //img: `assets/images/tiles/symbols/classes/class_${c.system.identifier}.webp`,
+      subclassLabel: game.i18n.localize(`ZHELL.SubclassLabel${c.system.identifier.capitalize()}`)
+    })));
 
     // Subclasses split by class identifier.
-    const subclassIds = packs.subclass.reduce((acc, idx) => {
-      const key = idx.system.classIdentifier || "unknown";
+    const subclasses = await Promise.all(indices[1].map(s => this._enrichData(s, {pack: keys.subclass})));
+    const subclassIds = subclasses.reduce((acc, idx) => {
+      const key = idx.system.classIdentifier;
+      if (!this._classes.includes(key)) {
+        console.warn(`The subclass '${idx.name}' has no matching class with class identifier '${key}'.`);
+        return acc;
+      }
       acc[key] ??= [];
       acc[key].push(idx);
       return acc;
     }, {});
 
-    const data = await super.getData();
-    data.classes = [];
-
-    for (const c of classes) {
-      const identifier = c.system.identifier;
-      const _data = {};
-      _data.identifier = identifier;
-      _data.uuid = c.uuid;
-      _data.name = c.name;
-      _data.pack = keys.class;
-      _data.img = `assets/images/tiles/symbols/classes/class_${_data.identifier}.webp`;
-      _data.id = c._id;
-      _data.subclassLabel = game.i18n.localize(`ZHELL.SubclassLabel${_data.identifier.capitalize()}`);
-      _data.desc = await TextEditor.enrichHTML(c.system.description.value);
-
+    for (const c of data.classes) {
       // Add all subclasses to the class.
-      const subclasses = await Promise.all(subclassIds[identifier].map(idx => this._subclassData(idx, keys.subclass)));
-      _data.subclassIds = subclasses.sort((a, b) => a.name.localeCompare(b.name));
+      c.subclasses = subclassIds[c.identifier].sort(nameSort);
 
-      // Add all spells to the class.
-      const _spells = this.spellIds[identifier].map(id => packs.spell.get(id)).sort((a, b) => a.name.localeCompare(b.name));
-      _data.spellLists = Array.fromRange(10).map(n => ({
-        label: !n ? "Cantrips" : `${CONFIG.DND5E.spellLevels[n]}`,
-        spells: [],
-        level: n
-      }));
-      for (const spell of _spells) _data.spellLists[spell.system.level].spells.push({
-        id: spell._id,
-        name: spell.name,
-        pack: keys.spell,
-        uuid: spell.uuid,
-        desc: await TextEditor.enrichHTML(spell.system.description.value),
-        img: spell.img
-      });
+      // Retrieve and enrich spell descriptions.
+      const _spells = this.spellIds[c.identifier].map(id => indices[2].get(id));
 
-      _data.hasSpells = _spells.length > 0;
-      data.classes.push(_data);
+      // Create empty arrays.
+      c.spellLists = Object.entries(CONFIG.DND5E.spellLevels).map(([n, label]) => ({level: n, label, spells: []}));
+
+      // Push to array, partitioned by spell level.
+      for (const spell of _spells) {
+        const {level, school} = spell.system;
+        if (!(level in CONFIG.DND5E.spellLevels) || !(school in CONFIG.DND5E.spellSchools)) {
+          console.warn(`The spell '${spell.name}' has an invalid spell school ('${school}') or spell level ('${level}').`);
+          continue;
+        }
+        c.spellLists[spell.system.level].spells.push(spell);
+      }
+
+      // Sort the spells.
+      for (const key in c.spellLists) c.spellLists[key].spells.sort(nameSort)
+      c.hasSpells = _spells.length > 0;
     }
 
+    // Sort the classes.
+    data.classes.sort(nameSort);
     return data;
   }
 
   /**
-   * Utility function to batch enrich the subclasses.
-   * @param {CompendiumIndex} idx     One entry from a compendium's index.
-   * @param {string} subclassPack     The key of the pack that has the subclasses.
+   * Utility function to batch enrich an index entry.
+   * @param {CompendiumIndex} idx         One entry from a compendium's index.
+   * @param {object} [additional={}]      Additional keys to add.
    * @returns {Promise<object>}
    */
-  async _subclassData(idx, subclassPack) {
-    const desc = await TextEditor.enrichHTML(idx.system.description.value, {async: true});
-    return {...idx, id: idx._id, pack: subclassPack, desc};
+  async _enrichData(idx, additional = {}) {
+    const desc = await TextEditor.enrichHTML(idx.system.description.value);
+    return {...idx, id: idx._id, desc, ...additional};
   }
 
   /** @override */
@@ -1826,14 +1829,12 @@ export class ClassPageRenderer extends Application {
         group: cls,
         navSelector: `[data-tab='${cls}'] .tabs[data-group=subpage]`,
         contentSelector: `[data-group=page][data-tab='${cls}'] .subpage`
+      }, {
+        group: "spells",
+        navSelector: `[data-group=page][data-tab='${cls}'] .subpage .tabs[data-group=subsubpage]`,
+        contentSelector: `[data-tab='${cls}'] .subsubpage`,
+        class: cls
       });
-      for (let i = 0; i < 10; i++) {
-        tabs.push({
-          group: `${cls}-${i}`,
-          navSelector: `[data-group=page][data-tab='${cls}'] .subpage .tabs[data-group=subsubpage]`,
-          contentSelector: `[data-tab='${cls}'] .subsubpage`
-        });
-      }
     }
     this.options.tabs = tabs;
     this._tabs = this._createTabHandlers();
@@ -1843,11 +1844,11 @@ export class ClassPageRenderer extends Application {
   /**
    * Render this application.
    * @param {string} [initial=null]     The initial tab to render.
-   * @returns {ClassPageRenderer}       The rendered application.
+   * @returns {ClassPages}       The rendered application.
    */
-  static renderClassPages(initial = null) {
-    const active = Object.values(ui.windows).find(w => w instanceof ClassPageRenderer);
+  static show(initial = null) {
+    const active = Object.values(ui.windows).find(w => w instanceof ClassPages);
     if (active) return active.render();
-    return new ClassPageRenderer(initial).render(true);
+    return new ClassPages(initial).render(true);
   }
 }

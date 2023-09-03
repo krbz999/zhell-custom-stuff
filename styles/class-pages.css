@@ -1,126 +1,126 @@
-.zhell-custom-stuff.class-page-renderer {
+.zhell-custom-stuff.class-pages {
   min-width: 800px;
   min-height: 400px;
 }
-.zhell-custom-stuff.class-page-renderer nav {
+.zhell-custom-stuff.class-pages nav {
   font-family: 'Modesto Condensed';
   height: 30px;
   align-items: center;
   flex: none;
 }
-.zhell-custom-stuff.class-page-renderer nav .item {
+.zhell-custom-stuff.class-pages nav .item {
   flex: 1;
 }
-.zhell-custom-stuff.class-page-renderer nav[data-group="page"] {
+.zhell-custom-stuff.class-pages nav[data-group="page"] {
   font-size: 20px;
   border-style: groove hidden;
 }
-.zhell-custom-stuff.class-page-renderer nav[data-group="page"] .item {
+.zhell-custom-stuff.class-pages nav[data-group="page"] .item {
   padding: 5px;
 }
-.zhell-custom-stuff.class-page-renderer nav[data-group="subpage"] {
+.zhell-custom-stuff.class-pages nav[data-group="subpage"] {
   border-style: hidden hidden groove hidden;
   font-size: 25px;
 }
-.zhell-custom-stuff.class-page-renderer nav[data-group="subsubpage"] {
+.zhell-custom-stuff.class-pages nav[data-group="subsubpage"] {
   border-style: hidden hidden groove hidden;
   font-size: 16px;
 }
-.zhell-custom-stuff.class-page-renderer nav[data-group="subsubpage"] .item {
+.zhell-custom-stuff.class-pages nav[data-group="subsubpage"] .item {
   padding: 6px 0;
 }
-.zhell-custom-stuff.class-page-renderer .page {
+.zhell-custom-stuff.class-pages .page {
   margin: 0 0.5rem 0 0;
 }
-.zhell-custom-stuff.class-page-renderer .content,
-.zhell-custom-stuff.class-page-renderer .page,
-.zhell-custom-stuff.class-page-renderer .subpage,
-.zhell-custom-stuff.class-page-renderer .subsubpage,
-.zhell-custom-stuff.class-page-renderer .tab[data-group].active {
+.zhell-custom-stuff.class-pages .content,
+.zhell-custom-stuff.class-pages .page,
+.zhell-custom-stuff.class-pages .subpage,
+.zhell-custom-stuff.class-pages .subsubpage,
+.zhell-custom-stuff.class-pages .tab[data-group].active {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow: hidden;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .class {
   position: relative;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class .item {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .class .item {
   display: flex;
   justify-content: center;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .subclass {
   transition: 200ms;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass:hover {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .subclass:hover {
   background: rgba(0, 0, 0, 0.05);
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass .item {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .subclass .item {
   display: flex;
   gap: 1em;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .description {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .description {
   margin-top: 1rem;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .class,
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .subclass,
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .spell-level {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .class,
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .subclass,
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .spell-level {
   border: 4px inset;
   padding: 1rem;
   margin: 0 1rem;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .spell-level .spell {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .spell-level .spell {
   padding: 2px 0;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group="subpage"].active .spell-level .spell:nth-child(odd) h4[data-action] {
+.zhell-custom-stuff.class-pages .tab[data-group="subpage"].active .spell-level .spell:nth-child(odd) h4[data-action] {
   background: rgba(0, 0, 0, 0.05);
 }
-.zhell-custom-stuff.class-page-renderer .item .content-link {
+.zhell-custom-stuff.class-pages .item .content-link {
   border: none;
   background: none;
   font-family: 'Modesto Condensed';
 }
-.zhell-custom-stuff.class-page-renderer .class .item .content-link {
+.zhell-custom-stuff.class-pages .class .item .content-link {
   font-size: 100px;
   height: 100px;
 }
-.zhell-custom-stuff.class-page-renderer .class .image {
+.zhell-custom-stuff.class-pages .class .image {
   position: absolute;
 }
-.zhell-custom-stuff.class-page-renderer .subclass .item .content-link {
+.zhell-custom-stuff.class-pages .subclass .item .content-link {
   font-size: 50px;
   height: 100px;
   align-items: center;
   display: flex;
 }
-.zhell-custom-stuff.class-page-renderer .spell .item .content-link {
+.zhell-custom-stuff.class-pages .spell .item .content-link {
   font-size: 20px;
   height: 30px;
 }
-.zhell-custom-stuff.class-page-renderer .spell .image {
+.zhell-custom-stuff.class-pages .spell .image {
   max-height: 30px;
   max-width: 30px;
   min-height: 30px;
   min-width: 30px;
 }
-.zhell-custom-stuff.class-page-renderer .spell h4[data-action] {
+.zhell-custom-stuff.class-pages .spell h4[data-action] {
   display: flex;
   align-items: center;
   margin: 0;
   width: 100%;
   cursor: pointer;
 }
-.zhell-custom-stuff.class-page-renderer .spell .item-summary {
+.zhell-custom-stuff.class-pages .spell .item-summary {
   font-size: 12px;
   line-height: 16px;
   padding: 0.25em 0.5em;
   border-top: 1px solid #c9c7b8;
   transition: 200ms;
 }
-.zhell-custom-stuff.class-page-renderer .spell .item-summary .item-properties {
+.zhell-custom-stuff.class-pages .spell .item-summary .item-properties {
   margin-top: 3px;
 }
-.zhell-custom-stuff.class-page-renderer .spell .item-summary .item-properties .tag {
+.zhell-custom-stuff.class-pages .spell .item-summary .item-properties .tag {
   display: inline-block;
   margin: 0 2px 0 0;
   padding: 0 3px;
@@ -130,7 +130,7 @@
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.05);
 }
-.zhell-custom-stuff.class-page-renderer .image {
+.zhell-custom-stuff.class-pages .image {
   border: none;
   border-radius: 5px;
   pointer-events: none;
@@ -139,9 +139,9 @@
   max-height: 100px;
   min-height: 100px;
 }
-.zhell-custom-stuff.class-page-renderer .tab[data-group].active.class,
-.zhell-custom-stuff.class-page-renderer .tab[data-group].active.subclasses,
-.zhell-custom-stuff.class-page-renderer .tab[data-group].active.spell-level {
+.zhell-custom-stuff.class-pages .tab[data-group].active.class,
+.zhell-custom-stuff.class-pages .tab[data-group].active.subclasses,
+.zhell-custom-stuff.class-pages .tab[data-group].active.spell-level {
   overflow: auto;
   margin-top: 1rem;
 }
