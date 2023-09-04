@@ -1,5 +1,5 @@
-import {COLOR_DEFAULTS, MODULE, WORLD_DEFAULTS} from "./const.mjs";
-import {ColorationMenu, GameChangesMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
+import {COLOR_DEFAULTS, MODULE} from "./const.mjs";
+import {ColorationMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 import {SheetEdits} from "./modules/applications/sheetEdits.mjs";
 
 export default class ModuleSettings {
@@ -57,24 +57,6 @@ export default class ModuleSettings {
   }
 
   static _registerSettingsMenus() {
-    // Game additions, replacements, and tweaks.
-    game.settings.register(MODULE, "worldSettings", {
-      scope: "world",
-      config: false,
-      type: Object,
-      default: WORLD_DEFAULTS,
-      onChange: () => SettingsConfig.reloadConfirm({world: true})
-    });
-
-    game.settings.registerMenu(MODULE, "worldSettings", {
-      name: "ZHELL.SettingsMenuWorldSettings",
-      hint: "ZHELL.SettingsMenuWorldSettingsHint",
-      label: "ZHELL.SettingsMenuWorldSettings",
-      icon: "fa-solid fa-atlas",
-      type: GameChangesMenu,
-      restricted: true
-    });
-
     // Settings that change the colors on character sheets.
     game.settings.register(MODULE, "colorationSettings", {
       scope: "client",

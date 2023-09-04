@@ -7,10 +7,7 @@ export class SheetEdits {
 
   // Inject the new functionality and elements into the sheet.
   async render() {
-    this.settings = {
-      ...game.settings.get(MODULE, "worldSettings"),
-      ...game.settings.get(MODULE, "colorationSettings")
-    };
+    this.settings = game.settings.get(MODULE, "colorationSettings");
     const isChar = this.sheet.document.type === "character";
     const isGroup = this.sheet.document.type === "group";
 

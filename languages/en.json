@@ -83,8 +83,6 @@
   "ZHELL.SettingsMenuIdentifierSettings": "Identifiers and Keys",
   "ZHELL.SettingsMenuIdentifierSettingsHint": "Menu of various ids, identifiers, uuids, and keys.",
   "ZHELL.SettingsMenuRarityColors": "Rarity Colors",
-  "ZHELL.SettingsMenuWorldSettings": "Additions and Replacements",
-  "ZHELL.SettingsMenuWorldSettingsHint": "A collection of additions and replacements for core and system content.",
   "ZHELL.SettingsTrackReactions": "Track Reactions in Combat",
   "ZHELL.SettingsTrackReactionsChoice0": "Do not track reactions",
   "ZHELL.SettingsTrackReactionsChoice1": "Track reactions for the GM",

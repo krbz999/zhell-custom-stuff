@@ -10,7 +10,6 @@ export const DEPEND = {
   VAE: "visual-active-effects",
   WG: "warpgate"
 };
-export const WORLD_DEFAULTS = {};
 export const COLOR_DEFAULTS = {
   sheetColors: {
     itemAttuned: "#21c050",
