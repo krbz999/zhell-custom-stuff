@@ -13,6 +13,7 @@ import {FAR_STEP} from "./spells/farStep.mjs";
 import {FIND_FAMILIAR} from "./spells/findFamiliar.mjs";
 import {FIND_STEED} from "./spells/findSteed.mjs";
 import {FLAMING_SPHERE} from "./spells/flamingSphere.mjs";
+import {JUMPING_JOLT} from "./spells/jumping-jolt.mjs";
 import {MISTY_STEP} from "./spells/mistyStep.mjs";
 import {MOONBEAM} from "./spells/moonbeam.mjs";
 import {SEE_INVISIBILITY} from "./spells/seeInvisibility.mjs";
@@ -39,6 +40,7 @@ export const spells = {
   FIND_FAMILIAR,
   FIND_STEED,
   FLAMING_SPHERE,
+  JUMPING_JOLT,
   MISTY_STEP,
   MOONBEAM,
   SEE_INVISIBILITY,
