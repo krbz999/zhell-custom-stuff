@@ -22,6 +22,7 @@ export default class PublicAPI {
         getOwnerIds: PublicAPI._getTokenOwnerIds,
         contained: PublicAPI._checkTokenInTemplate,
         selectContained: PublicAPI._selectContained,
+        multipleCombatants: PublicAPI._multipleCombatants,
         detection: {
           canSeeOtherToken: PublicAPI.canSeeOtherToken,
           getFurthestPointOnTemplateFromPosition: PublicAPI.getFurthestPointOnTemplateFromPosition,
@@ -321,6 +322,29 @@ export default class PublicAPI {
   static getFurthestPointAlongRayTemplate(template, type = "move") {
     const origin = template.object.ray.A;
     return PublicAPI.getFurthestPointOnTemplateFromPosition(origin, template, type);
+  }
+
+  /**
+   * Add the selected token to initiative a number of times.
+   * @param {Token|TokenDocument} token     The token from whom to make combatants.
+   * @param {Number} [amount=2]             The amount of combatants to create.
+   * @param {object} [options={}]           Additional parameters that change the combatants.
+   * @returns {Combatant[]}
+   */
+  static async _multipleCombatants(token, amount = 2, options = {}) {
+    const data = [];
+    for (let i = 0; i < amount; i++) {
+      const roll = await token.actor.getInitiativeRoll().evaluate();
+      data.push(foundry.utils.mergeObject({
+        actorId: token.actor.id,
+        defeated: false,
+        hidden: false,
+        initiative: roll.total,
+        sceneId: token.scene.id,
+        tokenId: token.id
+      }, options));
+    }
+    return game.combat.createEmbeddedDocuments("Combatant", data);
   }
 
   /* --------------------------------- */
