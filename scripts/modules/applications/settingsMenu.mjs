@@ -6,7 +6,7 @@ class SettingsMenu extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       popOut: true,
       width: 550,
-      resizable: true,
+      resizable: false,
       classes: [MODULE, "settings-menu"]
     });
   }
