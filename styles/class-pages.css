@@ -24,7 +24,7 @@
 }
 .zhell-custom-stuff.class-pages nav[data-group="subsubpage"] {
   border-style: hidden hidden groove hidden;
-  font-size: 16px;
+  font-size: 20px;
 }
 .zhell-custom-stuff.class-pages nav[data-group="subsubpage"] .item {
   padding: 6px 0;
@@ -96,10 +96,10 @@
   max-width: unset;
   border-radius: 0;
   object-fit: cover;
-  height: 25em;
   object-position: 0 0;
   border: none;
   position: relative;
+  aspect-ratio: 2/1;
 }
 .zhell-custom-stuff.class-pages .subclass .item .content-link {
   font-size: 50px;
