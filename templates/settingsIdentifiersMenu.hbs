@@ -1,12 +1,25 @@
 <form>
-  <h2>{{localize "ZHELL.PartyFeaturesActor"}}</h2>
-  <p class="notes">{{localize "ZHELL.PartyFeaturesActorHint"}}</p>
+
+  <h2>{{localize "ZHELL.SettingsIdentifiersPartyFeatures"}}</h2>
+
   <div class="form-group">
-    <label>{{localize "ZHELL.PartyFeaturesActorLabel"}}</label>
+    <label>{{localize "ZHELL.SettingsIdentifiersPartyFeaturesActorLabel"}}</label>
     <div class="form-fields">
       <input type="text" name="partyFeatures.actorId" value="{{partyFeatures.actorId}}">
     </div>
   </div>
+  <p class="notes">{{localize "ZHELL.SettingsIdentifiersPartyFeaturesActorHint"}}</p>
+
+  <h2>{{localize "ZHELL.SettingsIdentifiersDocumentIds"}}</h2>
+  <p class="notes">{{localize "ZHELL.SettingsIdentifiersDocumentIdsHint"}}</p>
+
+  <div class="form-group">
+    <label>{{localize "ZHELL.SettingsIdentifiersPlayerActorsFolder"}}</label>
+    <div class="form-fields">
+      <input type="text" name="players.folderId" value="{{players.folderId}}">
+    </div>
+  </div>
+  <p class="notes">{{localize "ZHELL.SettingsIdentifiersPlayerActorsFolderHint"}}</p>
 
   <button type="submit">
     <i class="fa-solid fa-save"></i> {{localize "Save"}}

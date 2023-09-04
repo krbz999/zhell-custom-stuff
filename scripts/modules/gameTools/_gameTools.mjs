@@ -1,8 +1,7 @@
 import {advanceTime} from "./advanceTime.mjs";
-import {carousing} from "./carousing.mjs";
+import {playerLanguages, carousing, randomLoot} from "./carousing.mjs";
 import {wallFixer} from "./wallFixer.mjs";
 import {currentCombatant} from "./currentCombatant.mjs";
-import {playerLanguages} from "./playerLanguages.mjs";
 import {mayhem} from "./mayhem.mjs";
 
 export const gameTools = {
@@ -12,4 +11,5 @@ export const gameTools = {
   currentCombatant,
   playerLanguages,
   mayhem,
+  randomLoot
 };

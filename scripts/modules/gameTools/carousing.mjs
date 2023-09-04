@@ -1,20 +1,106 @@
+import {MODULE} from "../../const.mjs";
+
 /**
  * Roll on the carousing table.
- * @param {string} [folderId]         The folder that contains all the actors to use for the level bonus.
  * @param {string} [tableName]        The name of the table to draw from.
  * @param {string} [catalogName]      The name of the compendium that contains the rolltable.
  * @returns {Promise<object>}         The object with the roll and drawn results.
  */
-export async function carousing({
-  folderId = "v0ikCyAle4wCJBFk",
-  tableName = "Carousing",
-  catalogName = "rolltables"
-} = {}) {
+export async function carousing({tableName, catalogName} = {}) {
+  tableName ??= "Carousing";
+  catalogName ??= "rolltables";
   const table = await ZHELL.utils.getDocument(tableName, catalogName, false);
-  const players = game.actors.filter(a => a.folder?.id === folderId);
-  const combinedLevel = players.reduce((acc, a) => acc + (a.system.details.level || 0), 0);
-  const partyLevel = Math.floor(combinedLevel / players.length);
-  const roll = new Roll("1d100 + @level", {level: partyLevel});
+  return table.draw({
+    roll: new Roll("1d100 + @level", {level: getAverageLevel()}),
+    rollMode: CONST.DICE_ROLL_MODES.PRIVATE
+  });
+}
+
+/**
+ * Roll on the rarity and category tables.
+ * @param {string} [catalogName]        The name of the compendium that contains the rolltable.
+ * @returns {Promise<ChatMessage>}      The object with the roll and drawn results.
+ */
+export async function randomLoot({catalogName} = {}) {
+  catalogName ??= "rolltables";
+
+  const tableRarity = await ZHELL.utils.getDocument("Random Loot: Rarity", catalogName, false);
+  const tableType = await ZHELL.utils.getDocument("Random Loot: Type", catalogName, false);
+  const roll = new Roll("1d100 + @level", {level: getAverageLevel()});
   const rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
-  return table.draw({roll, rollMode});
+
+  const rarity = await tableRarity.draw({roll, rollMode, displayChat: false});
+  const type = await tableType.draw({rollMode, displayChat: false});
+
+  return ChatMessage.create({
+    content: `
+    <hr>
+    <div style="text-align: center"><strong>RANDOM<br>LOOT</strong></div>
+    <hr>
+    <div class="flexrow">
+      <div><strong>Rarity</strong></div>
+      <div style="text-align: center">${rarity.results[0].getChatText()}</div>
+      <div style="text-align: center">${rarity.roll.total}</div>
+    </div>
+    <div class="flexrow">
+      <div><strong>Type</strong></div>
+      <div style="text-align: center">${type.results[0].getChatText()}</div>
+      <div style="text-align: center">${type.roll.total}</div>
+    </div>
+    <hr>`,
+    whisper: [game.user.id]
+  });
+}
+
+/**
+ * Get the average level of the party.
+ * @returns {number}
+ */
+function getAverageLevel() {
+  const id = game.settings.get(MODULE, "identifierSettings").players.folderId;
+  const players = game.folders.get(id).contents.filter(a => {
+    game.users.some(u => u.character === a);
+  });
+  const combinedLevel = players.reduce((acc, a) => acc + a.system.details.level, 0);
+  return Math.floor(combinedLevel / players.length);
+}
+
+/**
+ * Show a chat message with all the player's known languages in a table format.
+ * @param {boolean} [whisper]           Whether the message should be whispered to the GM.
+ * @returns {Promise<ChatMessage>}      The created chat message.
+ */
+export async function playerLanguages({whisper = false} = {}) {
+  const id = game.settings.get(MODULE, "identifierSettings").players.folderId;
+  const players = game.folders.get(id).contents.filter(a => {
+    game.users.some(u => u.character === a);
+  });
+
+  const tableBody = players.reduce((actor_acc, actor) => {
+    const {value, custom} = actor.system.traits.languages;
+    let langA = value.map(i => CONFIG.DND5E.languages[i]);
+    let langB = custom?.length ? custom.split(";").map(c => c.trim()) : [];
+    let languages = [...langA, ...langB];
+    return actor_acc + languages.reduce((lang_acc, lang, i) => {
+      const leftCol = (i === 0) ? actor.name : "";
+      return lang_acc + `<tr><td>${leftCol}</td><td>${lang}</td></tr>`;
+    }, "");
+  }, "");
+
+  const content = `
+  <table style="border: none;">
+    <thead>
+      <tr>
+        <td>Name</td>
+        <td>Languages</td>
+      </tr>
+    </thead>
+    <tbody>${tableBody}</tbody>
+  </table>`;
+
+  return ChatMessage.create({
+    content: content,
+    whisper: whisper ? [game.user.id] : [],
+    "flags.core.canPopout": true,
+  });
 }

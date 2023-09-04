@@ -149,5 +149,6 @@ export class IdentifiersMenu extends SettingsMenu {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
+    html[0].querySelectorAll("INPUT").forEach(n => n.addEventListener("focus", event => event.currentTarget.select()));
   }
 }
