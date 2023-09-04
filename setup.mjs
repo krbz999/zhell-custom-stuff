@@ -10,7 +10,6 @@ import {DamageApplicator} from "./scripts/modules/applications/damageApplicator.
 import {sceneControls} from "./scripts/modules/sceneControls.mjs";
 import {ExhaustionHandler} from "./scripts/modules/exhaustion.mjs";
 import {BossBar} from "./scripts/modules/applications/bossBar.mjs";
-import {Lucian} from "./scripts/lucian.mjs";
 import {ContestRoll} from "./scripts/modules/applications/contest-roll.mjs";
 import ActorSheet5eCharacter from "./scripts/modules/documents/character-sheet.mjs";
 import ActorExtension from "./scripts/modules/documents/character.mjs";
@@ -45,7 +44,6 @@ Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
 
 Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
 Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
-Hooks.once("setup", Lucian.init);
 
 Hooks.once("ready", function() {
   const reactionSetting = game.settings.get(MODULE, "trackReactions");
