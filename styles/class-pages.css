@@ -87,6 +87,20 @@
 .zhell-custom-stuff.class-pages .class .image {
   position: absolute;
 }
+.zhell-custom-stuff.class-pages .class .backdrop {
+  width: calc(100% + 2em + 4px);
+  left: calc(-1em - 2px);
+  top: calc(-1em - 2px);
+  -webkit-mask-image: linear-gradient(180deg, black 80%, transparent);
+  mask-image: linear-gradient(180deg, black 80%, transparent);
+  max-width: unset;
+  border-radius: 0;
+  object-fit: cover;
+  height: 25em;
+  object-position: 0 0;
+  border: none;
+  position: relative;
+}
 .zhell-custom-stuff.class-pages .subclass .item .content-link {
   font-size: 50px;
   height: 100px;

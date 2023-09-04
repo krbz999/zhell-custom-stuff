@@ -1,6 +1,11 @@
 import {MODULE} from "../../const.mjs";
 
 export class ClassPages extends Application {
+  static ASSET_PATH = "assets/images/art/classes/";
+  static CLASS_KEY = "zhell-catalogs.classes";
+  static SUBCLASS_KEY = "zhell-catalogs.subclasses";
+  static SPELLS_KEY = "zhell-catalogs.spells";
+
   /** @override */
   constructor(initial) {
     super();
@@ -1741,29 +1746,26 @@ export class ClassPages extends Application {
   async getData(options = {}) {
     const data = await super.getData(options);
 
-    const keys = {class: "zhell-catalogs.classes", subclass: "zhell-catalogs.subclasses", spell: "zhell-catalogs.spells"};
-
     const getIndex = async (key, fields = []) => game.packs.get(key).getIndex({fields: [...fields, "system.description.value"]});
     const nameSort = (a, b) => a.name.localeCompare(b.name);
 
     const indices = await Promise.all([
-      getIndex(keys.class, ["system.identifier"]),
-      getIndex(keys.subclass, ["system.classIdentifier"]),
-      getIndex(keys.spell, ["system.level", "system.school"])
+      getIndex(ClassPages.CLASS_KEY, ["system.identifier"]),
+      getIndex(ClassPages.SUBCLASS_KEY, ["system.classIdentifier"]),
+      getIndex(ClassPages.SPELLS_KEY, ["system.level", "system.school"])
     ]);
 
     this._classes = indices[0].map(cls => cls.system.identifier);
 
     // Array of classes, sorted alphabetically.
     data.classes = await Promise.all(indices[0].map(c => this._enrichData(c, {
-      pack: keys.class,
+      pack: ClassPages.CLASS_KEY,
       identifier: c.system.identifier,
-      //img: `assets/images/tiles/symbols/classes/class_${c.system.identifier}.webp`,
       subclassLabel: game.i18n.localize(`ZHELL.SubclassLabel${c.system.identifier.capitalize()}`)
     })));
 
     // Subclasses split by class identifier.
-    const subclasses = await Promise.all(indices[1].map(s => this._enrichData(s, {pack: keys.subclass})));
+    const subclasses = await Promise.all(indices[1].map(s => this._enrichData(s, {pack: ClassPages.SUBCLASS_KEY})));
     const subclassIds = subclasses.reduce((acc, idx) => {
       const key = idx.system.classIdentifier;
       if (!this._classes.includes(key)) {
@@ -1778,6 +1780,7 @@ export class ClassPages extends Application {
     for (const c of data.classes) {
       // Add all subclasses to the class.
       c.subclasses = subclassIds[c.identifier].sort(nameSort);
+      c.backdrop = ClassPages.ASSET_PATH + c.identifier + ".webp";
 
       // Retrieve and enrich spell descriptions.
       const _spells = this.spellIds[c.identifier].map(id => indices[2].get(id));
