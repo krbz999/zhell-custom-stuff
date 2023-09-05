@@ -159,3 +159,49 @@
   overflow: auto;
   margin-top: 1rem;
 }
+
+.zhell-custom-stuff.class-pages-config form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.zhell-custom-stuff.class-pages-config .header {
+  display: flex;
+  border-bottom: 2px groove;
+}
+.zhell-custom-stuff.class-pages-config .header .label {
+  font-weight: bold;
+  min-width: 5em;
+  max-width: 5em;
+  font-size: unset;
+  text-align: center;
+}
+.zhell-custom-stuff.class-pages-config .spells {
+  overflow: auto;
+}
+.zhell-custom-stuff.class-pages-config .spells .label {
+  font-weight: bold;
+  padding-left: 5px;
+}
+.zhell-custom-stuff.class-pages-config .header > :first-child,
+.zhell-custom-stuff.class-pages-config .spells .form-group > :first-child {
+  min-width: 10em;
+  max-width: 10em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.zhell-custom-stuff.class-pages-config .checkbox {
+  min-width: 5em;
+  max-width: 5em;
+  font-size: unset;
+  text-align: center;
+}
+.zhell-custom-stuff.class-pages-config .form-group {
+  margin: 0;
+}
+.zhell-custom-stuff.class-pages-config .form-group:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+.zhell-custom-stuff.class-pages-config .form-group:not(:has(input:checked)) {
+  background-color: rgba(255, 0, 0, 0.15);
+}
