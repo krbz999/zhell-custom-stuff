@@ -178,11 +178,21 @@ export class ClassPages extends Application {
     const buttons = super._getHeaderButtons();
     if (game.user.isGM) {
       buttons.unshift({
-        class: "class-page",
+        class: "class-pages-config",
         icon: "fa-solid fa-rectangle-list",
         label: "ZHELL.ClassPagesConfig",
         onclick: () => {
           new ClassPagesConfig(this.classes, this).render(true);
+        }
+      }, {
+        class: "class-pages-config-backup",
+        icon: "fa-solid fa-download",
+        label: "ZHELL.ClassPagesConfigDownload",
+        onclick: () => {
+          const data = JSON.stringify(game.settings.get(MODULE, "spell-lists") ?? {});
+          const type = "application/json";
+          const name = "spell-list-backup-" + Date.now();
+          return saveDataToFile(data, type, name);
         }
       });
     }

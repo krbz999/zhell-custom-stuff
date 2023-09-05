@@ -16,6 +16,7 @@
   "DND5E.SpellProgWarden": "Warden",
   "ZHELL.ClassPages": "Class Pages",
   "ZHELL.ClassPagesConfig": "Spell Lists",
+  "ZHELL.ClassPagesConfigDownload": "Download",
   "ZHELL.CraftingCannotRollMore": "You cannot roll any more.",
   "ZHELL.CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
   "ZHELL.CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",
