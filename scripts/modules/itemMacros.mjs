@@ -397,7 +397,7 @@ export class ItemMacroHelpers {
    * @param {color} config.red              The color used for invalid positions.
    * @param {color} config.grn              The color used for valid positions.
    * @param {number} config.alpha           The opacity of the drawn shapes.
-   * @param {boolean} config.highlight     Highlight the gridspace of the current position.
+   * @param {boolean} config.highlight      Highlight the gridspace of the current position.
    * @returns {Promise<object|null>}        A promise that resolves to an object of coordinates.
    */
   static async pickPosition(token, radius, config = {}) {
@@ -494,5 +494,178 @@ export class ItemMacroHelpers {
       drawing.on('rightclick', cancel);
       canvas.tokens.addChild(drawing);
     });
+  }
+}
+
+/* Application and utility class for item macros. */
+export class ItemMacro extends MacroConfig {
+  constructor(item) {
+    super(item);
+    this.item = item;
+  }
+
+  /** @override */
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      template: "modules/zhell-custom-stuff/templates/itemacro-config.hbs",
+      classes: [MODULE, "macro-sheet", "sheet"]
+    });
+  }
+
+  /** @override */
+  async _updateObject(event, formData) {
+    for (const key in formData) {
+      if (!formData[key]) {
+        delete formData[key];
+        formData[`-=${key}`] = null;
+      }
+    }
+    if (!Object.values(formData).some(e => e)) return this.item.update({[`flags.${MODULE}.-=itemacro`]: null});
+    else return this.item.update({[`flags.${MODULE}.itemacro`]: formData});
+  }
+
+  /** @override */
+  async getData() {
+    const options = Object.keys(ZHELL.ITEMACRO).map(key => ({value: key, label: key}));
+    const data = this.item.flags[MODULE]?.itemacro ?? {};
+    return {
+      item: this.item,
+      command: data.command ?? null,
+      options: options,
+      selected: data.api ?? null
+    };
+  }
+
+  /* -------------------------------------- */
+  /*                                        */
+  /*             STATIC METHODS             */
+  /*                                        */
+  /* -------------------------------------- */
+
+  /** Initialize hooks. */
+  static init() {
+    Item.prototype.hasMacro = ItemMacro.hasMacro;
+    Item.prototype.executeMacro = ItemMacro.executeMacro;
+    Item.prototype.getMacro = ItemMacro.getMacro;
+
+    Hooks.once("setup", ItemMacro.replaceRollItem);
+    Hooks.on("renderActorSheet", ItemMacro.renderActorSheet);
+    Hooks.on("getItemSheetHeaderButtons", ItemMacro.getHeaderButtons);
+  }
+
+  /** Replace the standard hotbar macro. */
+  static replaceRollItem() {
+    dnd5e.documents = {...dnd5e.documents};
+    dnd5e.documents.macro = {...dnd5e.documents.macro};
+    dnd5e.documents.macro.rollItem = ItemMacro.rollItem;
+  }
+
+  /**
+   * Replace event listeners for items on an actor sheet if they have item macros.
+   * @param {ActorSheet} sheet
+   * @param {HTMLElement} html
+   */
+  static renderActorSheet(sheet, [html]) {
+    if (sheet.actor.type === "group") return;
+    if (!sheet.isEditable) return;
+
+    const images = html.querySelectorAll(".item .item-image");
+    for (const image of images) {
+      const item = sheet.actor.items.get(image.closest("[data-item-id]")?.dataset.itemId);
+      if (!item?.hasMacro()) continue;
+      const clone = image.cloneNode(false);
+      image.parentNode.replaceChild(clone, image);
+      clone.addEventListener("click", event => item.executeMacro({event}));
+    }
+  }
+
+  /**
+   * Add item macro button in item headers.
+   * @param {ItemSheet} sheet
+   * @param {object[]} buttons
+   */
+  static getHeaderButtons(sheet, buttons) {
+    if (!sheet.isEditable) return;
+    buttons.unshift({
+      icon: "fa-solid fa-sd-card",
+      class: "itemacro",
+      onclick: () => new ItemMacro(sheet.item).render(true)
+    });
+  }
+
+  /**
+   * Combination of the system's getMacroTarget and rollItem.
+   * @param {string} name     The name of the item.
+   * @returns {any}
+   */
+  static rollItem(name) {
+    let actor;
+    const speaker = ChatMessage.getSpeaker();
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    actor ??= game.actors.get(speaker.actor);
+    if (!actor) {
+      ui.notifications.warn(game.i18n.localize("MACRO.5eNoActorSelected"));
+      return null;
+    }
+
+    // Find item in collection
+    const documents = actor.items.filter(item => item.name === name);
+    const type = game.i18n.localize(`DOCUMENT.Item`);
+    if (!documents.length) {
+      ui.notifications.warn(game.i18n.format("MACRO.5eMissingTargetWarn", {actor: actor.name, type, name}));
+      return null;
+    }
+    if (documents.length > 1) {
+      ui.notifications.warn(game.i18n.format("MACRO.5eMultipleTargetsWarn", {actor: actor.name, type, name}));
+    }
+
+    const item = documents[0];
+    if (item.hasMacro()) return item.executeMacro();
+    return item.use();
+  }
+
+  /**
+   * Get whether an item has a macro embedded.
+   * @returns {boolean}
+   */
+  static hasMacro() {
+    const data = this.flags[MODULE]?.itemacro;
+    if (!data) return false;
+    if (data.api in ZHELL.ITEMACRO) return true;
+    else return !!data.command?.trim();
+  }
+
+  /**
+   * Get the embedded macro. The API method, if any, otherwise the command script.
+   * @returns {string}
+   */
+  static getMacro() {
+    const data = this.flags[MODULE]?.itemacro;
+    let body;
+    if (data.api in ZHELL.ITEMACRO) body = `return ZHELL.ITEMACRO.${data.api}(...arguments);`;
+    else body = data.command.trim();
+    return body;
+  }
+
+  /**
+   * Execute an item's macro.
+   * @param {object} [scope={}]     Additional arguments for the item macro.
+   * @returns {any}
+   */
+  static async executeMacro(scope = {}) {
+    if (!this.hasMacro()) return null;
+
+    // Set up variables.
+    const item = this;
+    const actor = item.actor;
+    const speaker = ChatMessage.getSpeaker({actor});
+    const token = actor.token?.object ?? actor.getActiveTokens()[0] ?? null;
+    const character = game.user.character ?? null;
+
+    const body = `(async () => {
+      ${item.getMacro()}
+    })();`;
+    const fn = Function("item", "speaker", "actor", "token", "character", ...Object.keys(scope), body);
+    return fn.call(scope, item, speaker, actor, token, character, ...Object.values(scope));
   }
 }

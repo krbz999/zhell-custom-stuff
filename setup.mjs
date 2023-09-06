@@ -14,6 +14,7 @@ import {ContestRoll} from "./scripts/modules/applications/contest-roll.mjs";
 import ActorSheet5eCharacter from "./scripts/modules/documents/character-sheet.mjs";
 import ActorExtension from "./scripts/modules/documents/character.mjs";
 import PublicAPI from "./scripts/modules/publicAPI.mjs";
+import {ItemMacro} from "./scripts/modules/itemMacros.mjs";
 
 Hooks.once("init", ModuleSettings.init);
 Hooks.once("init", PublicAPI.init);
@@ -83,3 +84,4 @@ Hooks.once("ready", ContestRoll.setupSockets);
 Hooks.once("init", ActorExtension.init);
 Hooks.once("init", ActorSheet5eCharacter.init);
 Hooks.on("applyActiveEffect", GameChangesHandler.evaluateArmorClassBonus);
+Hooks.once("init", ItemMacro.init);
