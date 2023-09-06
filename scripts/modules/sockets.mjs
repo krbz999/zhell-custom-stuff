@@ -1,7 +1,8 @@
 import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 
 export class SocketsHandler {
-  static socketsOn() {
+  static init() {
+    Hooks.on("dropCanvasData", SocketsHandler._onDropData);
     game.socket.on(`world.${game.world.id}`, function(request) {
       return SocketsHandler[request.action]?.(request.data, false);
     });

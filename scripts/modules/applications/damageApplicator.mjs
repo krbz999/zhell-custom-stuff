@@ -465,4 +465,10 @@ export class DamageApplicator extends Application {
 
     message.updateSource({[`flags.${MODULE}.damage`]: {values}, "flags.core.canPopout": true});
   }
+
+  static init() {
+    Hooks.on("renderChatMessage", DamageApplicator._appendToDamageRolls);
+    Hooks.on("dnd5e.preRollDamage", DamageApplicator._appendDamageRollData);
+    Hooks.on("preCreateChatMessage", DamageApplicator._appendMoreDamageRollData);
+  }
 }

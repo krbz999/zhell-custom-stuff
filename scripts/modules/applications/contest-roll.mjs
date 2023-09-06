@@ -117,7 +117,7 @@ export class ContestRoll extends Application {
   /**
    * Setup function for the sockets.
    */
-  static setupSockets() {
+  static init() {
     game.socket.on(`world.${game.world.id}`, data => {
       if (data.action === "contest-roll-render") ContestRoll.receiveRender(data.data);
       else if (data.action === "contest-roll-rerender") ContestRoll.receiveRerender(data.data);

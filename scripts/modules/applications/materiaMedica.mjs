@@ -418,7 +418,7 @@ export class MateriaMedica extends Application {
   }
 
   /** Create the character flag in Special Traits for speed crafting. */
-  static setUpCharacterFlag() {
+  static init() {
     CONFIG.DND5E.characterFlags.speedCrafting = {
       name: "Speed Crafting",
       hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),

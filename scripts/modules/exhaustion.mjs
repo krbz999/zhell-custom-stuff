@@ -47,8 +47,9 @@ export class ExhaustionHandler {
   /**
    * Append the exhaustion methods to the actor prototype.
    */
-  static _appendActorMethods() {
+  static init() {
     Actor.prototype.applyExhaustion = ExhaustionHandler.applyExhaustion;
+    Hooks.on("dnd5e.restCompleted", ExhaustionHandler._longRestExhaustionReduction);
   }
 
   /**

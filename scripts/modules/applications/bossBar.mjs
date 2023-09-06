@@ -176,4 +176,9 @@ export class BossBar extends Application {
       }
     });
   }
+
+  static init() {
+    Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
+    Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
+  }
 }

@@ -252,4 +252,9 @@ export class SheetEdits {
     for (const key of Object.keys(COLOR_DEFAULTS.sheetColors)) stl.setProperty(`--${key}`, colors.sheetColors[key]);
     for (const key of Object.keys(COLOR_DEFAULTS.rarityColors)) stl.setProperty(`--rarity${key.capitalize()}`, colors.rarityColors[key]);
   }
+
+  static init() {
+    Hooks.once("ready", SheetEdits.refreshColors);
+    Hooks.on("renderActorSheet", SheetEdits._performSheetEdits);
+  }
 }
