@@ -39,10 +39,10 @@ export class CombatEnhancements {
    * Hook function to add the 'reaction' effect to an actor when using an item that requires a reaction.
    * The effect is altered to show the name of the item used and is removed at the start of the same actor's
    * turn. This hook only fires during combat and can be toggled to fire for GM, none, or players too.
-   * @param {Item} item     The item that was used.
-   * @returns {boolean}     Whether the effect is now on or off (always true).
+   * @param {Item} item               The item that was used.
+   * @returns {Promise<boolean>}      Whether the effect is now on or off (always true).
    */
-  static _spendReaction(item) {
+  static async _spendReaction(item) {
     const reactionSetting = game.settings.get(MODULE, "trackReactions");
     const valid = ((reactionSetting === 1) && game.user.isGM) || (reactionSetting === 2);
     if (!valid) return;

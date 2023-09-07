@@ -117,7 +117,7 @@ export class ClassPages extends Application {
       }
 
       // Sort the spells.
-      for (const key in c.spellLists) c.spellLists[key].spells.sort(nameSort)
+      for (const spellList of c.spellLists) spellList.spells.sort(nameSort);
       c.hasSpells = _spells.length > 0;
     }
 
