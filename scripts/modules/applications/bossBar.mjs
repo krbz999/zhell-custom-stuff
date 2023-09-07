@@ -64,7 +64,7 @@ export class BossBar extends Application {
    * Redisplay the bossbar when, e.g., refreshing the scene. Hooks on 'canvasReady'.
    * @param {Canvas} canvas     The rendered canvas.
    */
-  static async _renderBossBarOnReady(canvas) {
+  static async _renderBossBarOnCanvasReady(canvas) {
     const scene = canvas.scene;
     const {tokenId, active} = scene.flags[MODULE]?.bossBar ?? {};
     const token = scene.tokens.get(tokenId);
@@ -179,6 +179,6 @@ export class BossBar extends Application {
 
   static init() {
     Hooks.on("updateScene", BossBar._renderBossBarOnSceneUpdate);
-    Hooks.on("canvasReady", BossBar._renderBossBarOnReady);
+    Hooks.on("canvasReady", BossBar._renderBossBarOnCanvasReady);
   }
 }
