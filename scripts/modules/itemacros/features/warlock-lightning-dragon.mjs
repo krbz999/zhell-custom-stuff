@@ -84,7 +84,7 @@ async function LIGHTNING_STEPS(item, speaker, actor, token, character, event, ar
   const targets = canvas.scene.tokens.reduce((acc, tokenDoc) => {
     if (token.document === tokenDoc) return acc;
     if (tokenDoc.disposition !== CONST.TOKEN_DISPOSITIONS.FRIENDLY) return acc;
-    const dist = babonus.getMinimumDistanceBetweenTokens(token, tokenDoc.object);
+    const dist = babonus.getMinimumDistanceBetweenTokens(token, tokenDoc.object, {gridSpaces: true});
     if (dist <= 5) acc.push({name: tokenDoc.id, src: tokenDoc.texture.src});
     return acc;
   }, []);
