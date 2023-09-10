@@ -7,6 +7,7 @@ import {MurkScroller} from "./applications/murkScroller.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {SlotRecoverer} from "./applications/slotRecoverer.mjs";
 import {TargetSequencePicker} from "./applications/targetSequencePicker.mjs";
+import {TreasureCreator} from "./applications/treasure-creator.mjs";
 import {WhisperPlayers} from "./applications/whisperPlayers.mjs";
 import {gameTools} from "./gameTools/_gameTools.mjs";
 import {ITEMACRO, ItemMacroHelpers} from "./itemMacros.mjs";
@@ -57,7 +58,8 @@ export default class PublicAPI {
         slotRecoverer: SlotRecoverer,
         sequencePicker: TargetSequencePicker,
         murkScroller: MurkScroller,
-        contestRoll: ContestRoll
+        contestRoll: ContestRoll,
+        treasureCreator: TreasureCreator
       },
       ITEMACRO: ITEMACRO
     }
