@@ -125,12 +125,12 @@ export class SocketsHandler {
    * @param {object[]} itemData     The array of item data objects.
    * @param {string} tokenId        The id of the token whose actor receives the items.
    */
-  static async grantItems({userId, itemData = [], tokenId}, push = true) {
+  static async createEmbeddedDocuments({userId, itemData = [], tokenId}, push = true) {
     userId ??= _getTargetUser(tokenId);
     if (!userId) return ui.notifications.warn("No user was found able to create the item on the target.");
     if ((game.user.id !== userId) && push) {
       game.socket.emit(`world.${game.world.id}`, {
-        action: "grantItems",
+        action: "createEmbeddedDocuments",
         data: {userId, itemData, tokenId}
       });
     } else if (game.user.id === userId) {
@@ -185,22 +185,70 @@ export class SocketsHandler {
     });
     if (!grant) return;
     ui.notifications.info(`Adding item to ${token.name}!`);
-    return SocketsHandler.grantItems({itemData: [itemData], tokenId: token.id});
+    return SocketsHandler.createEmbeddedDocuments({itemData: [itemData], tokenId: token.id});
+  }
+
+  /**
+   * Delete an item off another player.
+   * @param {string[]} [itemIds=[]]       The ids of items to delete.
+   * @param {string[]} [effectIds=[]]     The ids of effects to delete.
+   * @param {string} actorId              The id of the actor off which to delete documents.
+   */
+  static async deleteEmbeddedDocuments({userId, itemIds = [], effectIds = [], actorId}, push = true) {
+    // Find a user who is able to handle this request.
+    userId ??= _getTargetUser(actorId, true);
+    if (!userId) {
+      ui.notifications.warn("No user was found able to handle the request.");
+      return null;
+    }
+
+    // If you cannot handle it, emit the request.
+    if ((game.user.id !== userId) && push) {
+      game.socket.emit(`world.${game.world.id}`, {
+        action: "deleteEmbeddedDocuments",
+        data: {userId, itemIds, effectIds, actorId}
+      });
+    }
+
+    // If you can handle it, handle it.
+    else if (game.user.id === userId) {
+      const actor = game.actors.get(actorId);
+      return Promise.all([
+        actor.deleteEmbeddedDocuments("Item", itemIds),
+        actor.deleteEmbeddedDocuments("ActiveEffect", effectIds)
+      ]);
+    }
+  }
+
+  /**
+   * Prompt an actor to take a long rest.
+   * @param {string} actorId      The id of the actor to prompt.
+   */
+  static async longRest({userId, actorId}, push = true) {
+    userId ??= _getTargetUser(actorId, true);
+    if ((game.user.id !== userId) && push) {
+      game.socket.emit(`world.${game.world.id}`, {
+        action: "longRest",
+        data: {userId, actorId}
+      });
+    } else if (game.user.id === userId) {
+      const actor = game.actors.get(actorId);
+      return actor.longRest();
+    }
   }
 }
 
 /**
  * Find a user who is active and owns a token, preferring players.
- * @param {string} tokenId      The id of a token.
- * @returns {string|null}       The id of the found user, if any.
+ * @param {string} tokenId                      The id of a token.
+ * @param {boolean} [isActor=false]             Is this an actor id instead of token id?
+ * @param {boolean} [preferAssigned=falsed]     Favor a player who has the actor assigned? Requires `isActor`.
+ * @returns {string|null}                       The id of the found user, if any.
  */
-function _getTargetUser(tokenId) {
-  if (game.user.isGM) return game.user.id;
-  const user = game.users.find(u => {
-    return u.active && !u.isGM && canvas.scene.tokens.get(tokenId).actor.testUserPermission(u, "OWNER");
-  });
-  if (user) return user.id;
-  return _getFirstGM();
+function _getTargetUser(tokenId, isActor = false, preferAssigned = false) {
+  const actor = isActor ? game.actors.get(tokenId) : canvas.scene.tokens.get(tokenId).actor;
+  const owners = game.users.filter(u => u.active && !u.isGM && actor.testUserPermission(u, "OWNER"));
+  return ((!isActor || !preferAssigned) ? owners[0]?.id : owners.find(u => u.character === actor)?.id) ?? _getFirstGM();
 }
 
 /**
