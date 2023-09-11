@@ -1,6 +1,5 @@
 import {MODULE} from "../const.mjs";
 import {SPELL_EFFECTS, STATUS_EFFECTS} from "../../sources/conditions.mjs";
-import {ClassPages} from "./applications/classPages.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -544,19 +543,6 @@ export class GameChangesHandler {
 
   static sceneControls(array) {
     const token = array.find(a => a.name === "token");
-
-    // Render the class page.
-    token.tools.push({
-      name: "class-page",
-      title: "Class Pages",
-      icon: "fa-solid fa-wand-magic-sparkles",
-      button: true,
-      visible: true,
-      onClick: () => {
-        const [initial] = Object.keys(game.user.character?.classes ?? {});
-        return ClassPages.show(initial ?? null);
-      }
-    });
 
     // Render the party features.
     token.tools.push({

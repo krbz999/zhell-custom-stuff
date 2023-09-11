@@ -22,8 +22,7 @@
   "styles": [
     "./styles/styles.css",
     "./styles/sheetEdits.css",
-    "./styles/journalStyles.css",
-    "./styles/class-pages.css"
+    "./styles/journalStyles.css"
   ],
   "languages": [
     {
@@ -37,7 +36,6 @@
     "hotReload": {
       "extensions": ["css"],
       "paths": [
-        "styles/class-pages.css",
         "styles/styles.css"
       ]
     }
