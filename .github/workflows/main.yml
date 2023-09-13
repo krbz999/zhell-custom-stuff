@@ -8,9 +8,9 @@ on:
 jobs:
   zip:
     runs-on: ubuntu-latest
-      steps:
-        - name: Update zip file
-          run: |
+    steps:
+      - name: Update zip file
+        run: |
           git config --global user.name '${{github.actor}}'
           git config --global user.email '${{github.actor}}@users.noreply.github.com'
           git clean -f
