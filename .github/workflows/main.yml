@@ -8,14 +8,15 @@ on:
 jobs:
   zip:
     runs-on: ubuntu-latest
-      - name: Update zip file
-        run: |
-         git config --global user.name '${{github.actor}}'
-         git config --global user.email '${{github.actor}}@users.noreply.github.com'
-         git clean -f
-         git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY"
-         git fetch origin "main"
-         zip -r -q module.zip module.json setup.mjs languages/ scripts/ sources/ styles/ templates/
-         git add module.zip
-         git commit -m "zip-zap-a-rooni"
-         git push -f
+      steps:
+        - name: Update zip file
+          run: |
+          git config --global user.name '${{github.actor}}'
+          git config --global user.email '${{github.actor}}@users.noreply.github.com'
+          git clean -f
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY"
+          git fetch origin "main"
+          zip -r -q module.zip module.json setup.mjs languages/ scripts/ sources/ styles/ templates/
+          git add module.zip
+          git commit -m "zip-zap-a-rooni"
+          git push -f
