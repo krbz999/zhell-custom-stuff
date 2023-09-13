@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "module.json"
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: CreateModuleZip
+        run: zip -r -q module.zip module.json setup.mjs languages/ scripts/ sources/ styles/ templates/
+        
