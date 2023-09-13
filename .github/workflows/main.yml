@@ -12,4 +12,4 @@ jobs:
       - name: Update zip file
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r module.zip . module.json setup.mjs languages/ scripts/ sources/ styles/ templates/
+          args: zip -qq -r module.zip -i module.json setup.mjs languages/ scripts/ sources/ styles/ templates/
