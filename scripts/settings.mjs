@@ -91,13 +91,5 @@ export default class ModuleSettings {
       type: IdentifiersMenu,
       restricted: true
     });
-
-    // Register spell list config.
-    game.settings.register(MODULE, "spell-lists", {
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {}
-    });
   }
 }
