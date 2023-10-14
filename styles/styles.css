@@ -6,7 +6,6 @@
   color: var(--color-text-light-1);
   top: -100px;
 }
-
 #token-hud .col.right .status-effects .status-effect {
   display: inline-grid;
   height: fit-content;
@@ -14,22 +13,18 @@
   grid-template-columns: 2fr 7fr;
   min-width: max-content;
 }
-
 #token-hud .col.right .status-effects .status-effect.active.overlay {
   color: deepskyblue;
   opacity: 1;
   border: none;
 }
-
 #token-hud .col.right .status-effects .status-effect.active {
   color: yellowgreen;
   opacity: 1;
 }
-
 #token-hud .col.right .status-effects .status-effect:is(.active, :hover) > * {
   opacity: 1;
 }
-
 #token-hud .col.right .status-effects .status-effect-img {
   width: 36px;
   height: 36px;
@@ -37,7 +32,6 @@
   border: none;
   opacity: 0.15;
 }
-
 #token-hud .col.right .status-effects .status-effect-name {
   font-size: 18px;
   text-align: left;
@@ -49,18 +43,15 @@
   height: auto !important;
   width: 400px !important;
 }
-
 .zhell-custom-stuff.whisper-dialog .players {
   display: grid;
   grid-template-columns: auto auto auto;
   gap: 3px;
   padding-bottom: 1em;
 }
-
 .zhell-custom-stuff.whisper-dialog textarea {
   resize: none;
 }
-
 .zhell-custom-stuff.whisper-dialog [data-action="player"] {
   border: 1px solid black;
   border-radius: 5px;
@@ -69,7 +60,6 @@
   transform: scale(0.9);
   font-size: 20px;
 }
-
 .zhell-custom-stuff.whisper-dialog [data-action="player"].selected {
   background-color: darkgray;
   transform: scale(1.0);
@@ -80,7 +70,6 @@ button:active:not(.pm-dropdown, :disabled),
 :not(:disabled) a:active {
   filter: brightness(0.7);
 }
-
 .tab#chat {
   margin: -5px 0 0;
 }
@@ -93,13 +82,11 @@ button:active:not(.pm-dropdown, :disabled),
   border: inset 0.3em indianred;
   border-radius: 5px;
 }
-
 :not(.actor) .monster-stat-block :is(.traits, .abilities) {
   border-bottom: 2px groove indianred;
   padding: 0.4em 0;
   margin: 0;
 }
-
 .monster-stat-block .name {
   font-size: 30px;
   font-family: "Modesto Condensed";
@@ -107,39 +94,32 @@ button:active:not(.pm-dropdown, :disabled),
   margin: 0;
   line-height: 28px;
 }
-
 .monster-stat-block .details {
   font-style: italic;
   padding: 3px 0 0 3px;
   margin: 0;
 }
-
 .monster-stat-block .label {
   font-weight: bold;
   white-space: nowrap;
 }
-
 .monster-stat-block .traits .trait {
   margin: 0;
 }
-
 .monster-stat-block .abilities {
   display: flex;
   justify-content: center;
   gap: 5px;
 }
-
 .monster-stat-block .abilities .score {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
 }
-
 .monster-stat-block .abilities .modifier {
   text-align: center;
 }
-
 .monster-stat-block .header {
   font-size: 25px;
   font-family: "Modesto Condensed";
@@ -152,56 +132,46 @@ button:active:not(.pm-dropdown, :disabled),
 .dialog.elemental {
   height: auto;
 }
-
 .dialog.elemental .dialog-content {
   text-align: center;
   font-size: 20px;
   margin: 0.5em 0 1em;
 }
-
 .dialog.elemental .dialog-buttons {
   flex-direction: column;
   gap: 5px;
 }
-
 .dialog.elemental .dialog-button {
   font-size: 25px;
   display: grid;
   align-items: center;
   grid-template-columns: 1fr 2fr;
 }
-
 .dialog.elemental .dialog-button i {
   font-size: 40px;
   padding: 7px;
   margin: 0;
 }
-
 .dialog.elemental .dialog-button.acid:hover {
   color: darkgreen;
   background-color: yellowgreen;
 }
-
 .dialog.elemental .dialog-button.cold:hover {
   color: blue;
   background-color: lightblue;
 }
-
 .dialog.elemental .dialog-button.fire:hover {
   color: red;
   background-color: burlywood;
 }
-
 .dialog.elemental .dialog-button.lightning:hover {
   color: darkblue;
   background-color: cornflowerblue;
 }
-
 .dialog.elemental .dialog-button.thunder:hover {
   color: white;
   background-color: mediumslateblue;
 }
-
 .dialog.elemental .dialog-button.poison:hover {
   color: purple;
   background-color: plum;
@@ -212,37 +182,31 @@ button:active:not(.pm-dropdown, :disabled),
   min-width: 400px;
   height: auto !important;
 }
-
 .zhell-custom-stuff.image-selector .selections {
   margin: 1em 0;
   gap: 1em;
   display: flex;
   flex-direction: column;
 }
-
 .zhell-custom-stuff.image-selector img {
   opacity: 0.2;
   border: none;
   transition: 0.2s;
   width: 80%;
 }
-
 .zhell-custom-stuff.image-selector img:hover {
   opacity: 0.75;
 }
-
 .zhell-custom-stuff.image-selector .row a {
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex: 1;
 }
-
 .zhell-custom-stuff.image-selector .active img {
   opacity: 1;
   filter: drop-shadow(2px 4px 6px black);
 }
-
 .zhell-custom-stuff.image-selector .row {
   display: flex;
   justify-content: space-around;
@@ -254,52 +218,42 @@ button:active:not(.pm-dropdown, :disabled),
   width: 400px !important;
   height: auto !important;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-buttons {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-button {
   display: flex;
   padding: 0.5em 0;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-button:hover {
   color: purple;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-button i {
   font-size: 40px;
   align-self: center;
   transition: 0.2s;
   flex: 1;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-button .label {
   flex: 2;
 }
-
 .zhell-custom-stuff.experimental-elixir .dialog-button:hover i {
   transform: scale(1.5);
 }
-
 .zhell-custom-stuff.experimental-elixir .form-group {
   gap: 1em;
   margin: 0 1em;
 }
-
 .zhell-custom-stuff.experimental-elixir label {
   line-height: var(--line-height-16);
   margin: 0.5em 0;
 }
-
 .zhell-custom-stuff.experimental-elixir .form-fields {
   flex: 0;
   justify-content: center;
 }
-
 .zhell-custom-stuff.experimental-elixir button:disabled {
   text-decoration: line-through;
   color: darkgray;
@@ -311,23 +265,19 @@ button:active:not(.pm-dropdown, :disabled),
   min-width: 430px;
   min-height: 430px;
 }
-
 .zhell-custom-stuff.materia-medica .content {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-
 .zhell-custom-stuff.materia-medica button {
   align-self: center;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results {
   margin: 0.25em;
   overflow-y: auto;
   border: 2px inset;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result {
   display: grid;
   grid-template-columns: 7fr 3fr 0fr;
@@ -335,24 +285,20 @@ button:active:not(.pm-dropdown, :disabled),
   justify-items: center;
   min-height: 2.5em;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result:nth-child(odd) {
   background-color: #afc2ac;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .type {
   font-weight: bold;
   overflow: hidden;
   white-space: nowrap;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .formula {
   overflow: hidden;
   white-space: nowrap;
   padding: 5px;
   font-weight: bold;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables {
   aspect-ratio: 1 / 1;
   display: flex;
@@ -363,26 +309,21 @@ button:active:not(.pm-dropdown, :disabled),
   align-items: center;
   min-height: 100%;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active {
   background-color: darkseagreen;
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables i:before {
   content: "\f00d";
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active i:before {
   content: "\f00c";
 }
-
 .zhell-custom-stuff.materia-medica [data-tab=forage] .foraging {
   padding: 0.5em 1em;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
-
 .zhell-custom-stuff.materia-medica nav.tabs {
   align-items: center;
   font-weight: bold;
@@ -390,73 +331,59 @@ button:active:not(.pm-dropdown, :disabled),
   border-top: 2px groove black;
   margin-bottom: 0.5em;
 }
-
 .zhell-custom-stuff.materia-medica nav .item {
   width: 100%;
   padding: 0.5em 0;
 }
-
 .zhell-custom-stuff.materia-medica .description {
   padding: 0.5em 1em;
 }
-
 .zhell-custom-stuff.materia-medica .form-group .fa-solid {
   flex: 0;
   padding-left: 1em;
 }
-
 .zhell-custom-stuff.materia-medica .item-description {
   padding: 0 1.5em;
   font-style: italic;
 }
-
 .zhell-custom-stuff.materia-medica .note {
   padding: 0 2em;
   font-weight: bold;
 }
-
 .zhell-custom-stuff.materia-medica .tab.active {
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
-
 .zhell-custom-stuff.materia-medica .tab .selections .item {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 1em;
 }
-
 .zhell-custom-stuff.materia-medica .item select {
   min-width: fit-content;
 }
-
 .zhell-custom-stuff.materia-medica .selections {
   overflow-y: auto;
   border: 1px inset;
 }
-
 .zhell-custom-stuff.materia-medica .selection:not(:first-child) {
   border-top: 2px groove;
 }
-
 .zhell-custom-stuff.materia-medica .selection:last-child {
   border-bottom: 2px groove;
 }
-
 .zhell-custom-stuff.materia-medica .selection {
   padding: 1em 0;
 }
-
 .zhell-custom-stuff.materia-medica .selection .item-img {
   border: none;
   border-radius: 1em;
   height: 50px;
   margin-right: 1em;
 }
-
 .zhell-custom-stuff.materia-medica form {
   padding: 0 1em;
 }
@@ -473,12 +400,10 @@ button:active:not(.pm-dropdown, :disabled),
 .dialog.column-dialog {
   height: auto !important;
 }
-
 .dialog.column-dialog .dialog-buttons {
   flex-direction: column;
   gap: 5px;
 }
-
 .dialog.column-dialog .dynamic-tooltip {
   margin: 0 1em;
   font-style: italic;
@@ -498,208 +423,39 @@ button:active:not(.pm-dropdown, :disabled),
   margin: 5px;
   justify-content: space-between;
 }
-
 .zhell-custom-stuff.money-spender .content [data-action="change-denom"] {
   display: inherit;
   font-size: 30px;
   justify-content: inherit;
   padding: 0 2rem;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies {
   display: inherit;
   justify-content: space-around;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency {
   display: inherit;
   flex-direction: column;
   align-items: center;
   width: 4em;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency [data-action="adjust"] {
   background-color: cornsilk;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency [data-action="adjust"]:disabled {
   color: lightgray;
   cursor: default;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency .spent {
   padding: 5px 0;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency .label {
   padding: 5px 0;
   text-transform: uppercase;
 }
-
 .zhell-custom-stuff.money-spender .content .currencies .currency .remaining {
   padding: 5px 0;
   font-style: italic;
-}
-
-/* DAMAGE APPLICATION */
-.zhell-custom-stuff.damage-applicator.app {
-  max-width: fit-content !important;
-  min-width: 350px;
-  min-height: 300px;
-  opacity: 1;
-  transition: opacity 500ms;
-}
-
-.zhell-custom-stuff.damage-applicator.fade {
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-/* Message section */
-.zhell-custom-stuff.damage-applicator .message-section {
-  margin-bottom: 1em;
-}
-
-.zhell-custom-stuff.damage-applicator .damage-types {
-  display: flex;
-  border-top: 1px groove;
-  margin: 0.5em 0 0 0;
-  flex-direction: column;
-}
-
-.zhell-custom-stuff.damage-applicator .damage-total {
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px groove;
-  margin: 0 0 0.5em 0;
-  font-size: 1.4em;
-}
-
-.zhell-custom-stuff.damage-applicator .damage-types .type {
-  padding: 0.25em;
-  display: flex;
-  align-items: center;
-}
-
-.zhell-custom-stuff.damage-applicator .damage-types .type label {
-  flex: 2;
-}
-
-.zhell-custom-stuff.damage-applicator .damage-types .type input {
-  flex: 1;
-}
-
-.zhell-custom-stuff.damage-applicator .buttons {
-  display: flex;
-  gap: 0.5em;
-}
-
-/* Actor section */
-.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"].enabled i:before {
-  content: "\f205";
-}
-
-.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"]:not(.enabled) i:before {
-  content: "\f204";
-}
-
-.zhell-custom-stuff.damage-applicator [data-action="toggle-trait"]:not(.enabled) .trait-label {
-  text-decoration: line-through;
-}
-
-.zhell-custom-stuff.damage-applicator .actor-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  row-gap: 2em;
-}
-
-.zhell-custom-stuff.damage-applicator .actor {
-  overflow: hidden;
-  position: relative;
-}
-
-.zhell-custom-stuff.damage-applicator .actor .label {
-  font-family: 'Modesto Condensed';
-  font-size: 1.5em;
-  border-bottom: 1px groove red;
-  margin: 0.5em 0 0.25em 0;
-}
-
-.zhell-custom-stuff.damage-applicator .actor .header {
-  text-align: center;
-  min-width: 100px;
-  max-width: 100px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.zhell-custom-stuff.damage-applicator .actor .header .name {
-  font-family: 'Modesto Condensed';
-  font-size: 2em;
-  white-space: nowrap;
-}
-
-.zhell-custom-stuff.damage-applicator .actor .header img {
-  border: none;
-  padding: 1em;
-  min-width: 100px;
-  min-height: 100px;
-}
-
-.zhell-custom-stuff.damage-applicator .actor .header .hasPlayer {
-  font-style: italic;
-}
-
-.zhell-custom-stuff.damage-applicator [data-action="remove-actor"] {
-  position: absolute;
-  top: 0.5em;
-  right: 0.5em;
-  display: none;
-}
-
-.zhell-custom-stuff.damage-applicator .actor:hover [data-action="remove-actor"] {
-  display: block;
-}
-
-.zhell-custom-stuff.damage-applicator :is(.trait-section, .functions) {
-  padding: 0 0.5em;
-  display: flex;
-  flex-direction: column;
-}
-
-.zhell-custom-stuff.damage-applicator .trait-section [data-action="toggle-trait"] {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.zhell-custom-stuff.damage-applicator .util {
-  display: flex;
-  align-items: center;
-}
-
-.zhell-custom-stuff.damage-applicator [data-action="toggle-throw"] {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  border: 1px groove;
-  border-radius: 3px;
-  background-color: indianred;
-  align-items: center;
-  min-height: var(--form-field-height);
-  padding: 0.25em;
-}
-
-.zhell-custom-stuff.damage-applicator [data-action="toggle-throw"].success {
-  background-color: darkseagreen;
-}
-
-/* Chatlog buttons */
-.zhell-custom-stuff.damage-applicator .damage-roll-buttons {
-  display: flex;
-  margin: 0.5em 0 0.25em 0;
-  gap: 0.5em;
 }
 
 /* MURK SCROLLER */
@@ -707,18 +463,15 @@ button:active:not(.pm-dropdown, :disabled),
   width: 350px !important;
   height: auto !important;
 }
-
 .zhell-custom-stuff.murk-scroller .track {
   font-size: 25px;
   text-align: center;
   padding-bottom: 0.25em;
   font-family: "Modesto Condensed";
 }
-
 .zhell-custom-stuff.murk-scroller form {
   padding: 0.5em;
 }
-
 .zhell-custom-stuff.murk-scroller .form-fields {
   flex-wrap: nowrap;
 }
@@ -744,16 +497,13 @@ button:active:not(.pm-dropdown, :disabled),
   background: none;
   box-shadow: none;
 }
-
 .zhell-custom-stuff.party-features .window-header {
   display: none;
 }
-
 .zhell-custom-stuff.party-features .window-content {
   border-radius: 20em;
   box-shadow: 0 0 100px var(--color-shadow-dark);
 }
-
 .zhell-custom-stuff.party-features .content {
   gap: 1em;
   display: flex;
@@ -761,7 +511,6 @@ button:active:not(.pm-dropdown, :disabled),
   align-items: center;
   justify-content: center;
 }
-
 .zhell-custom-stuff.party-features [data-action] {
   display: flex;
   min-height: 75px;
@@ -773,13 +522,11 @@ button:active:not(.pm-dropdown, :disabled),
   border-radius: 0.5em;
   box-shadow: none;
 }
-
 .zhell-custom-stuff.party-features [data-action]:disabled {
   color: gray;
   border: 2px inset;
   cursor: default;
 }
-
 .zhell-custom-stuff.party-features [data-action="close"] {
   min-height: 25px;
   font-size: 20px;
@@ -787,27 +534,22 @@ button:active:not(.pm-dropdown, :disabled),
   position: absolute;
   bottom: 2em;
 }
-
 .zhell-custom-stuff.party-features [data-action]:hover:not(:disabled) {
   background-color: azure;
   border-style: inset;
 }
-
 .zhell-custom-stuff.party-features [data-action] .fa-solid {
   transition: 0.3s;
   flex: 1;
 }
-
 .zhell-custom-stuff.party-features [data-action]:hover:not(:disabled) .fa-solid {
   transform: scale(1.25);
 }
-
 .zhell-custom-stuff.party-features [data-action] label {
   display: flex;
   flex-direction: column;
   flex: 3;
 }
-
 .zhell-custom-stuff.party-features [data-action] label .uses {
   font-size: 15px;
   color: gray;
@@ -819,7 +561,6 @@ button:active:not(.pm-dropdown, :disabled),
   flex-direction: column;
   gap: 5px;
 }
-
 .zhell-custom-stuff.font-of-magic .dialog-buttons button {
   display: flex;
   justify-content: space-around;
@@ -832,7 +573,6 @@ button:active:not(.pm-dropdown, :disabled),
   min-height: 800px;
   max-height: 800px;
 }
-
 .dialog.note-util .dialog-buttons {
   display: none;
 }
@@ -848,7 +588,6 @@ button:active:not(.pm-dropdown, :disabled),
   opacity: 0;
   flex-direction: column;
 }
-
 .zhell-custom-stuff.bossbar .bar {
   position: relative;
   height: 4em;
@@ -859,7 +598,6 @@ button:active:not(.pm-dropdown, :disabled),
   display: flex;
   box-shadow: 5px 5px 10px black;
 }
-
 .zhell-custom-stuff.bossbar .progress {
   height: 100%;
   transition: 2s;
@@ -869,7 +607,6 @@ button:active:not(.pm-dropdown, :disabled),
   left: 0;
   bottom: 0;
 }
-
 .zhell-custom-stuff.bossbar .name {
   font-family: "Modesto Condensed";
   font-size: 40px;
@@ -879,7 +616,6 @@ button:active:not(.pm-dropdown, :disabled),
   display: flex;
   justify-content: center;
 }
-
 #bossbar .title {
   font-family: 'Modesto Condensed';
   width: 100%;
@@ -895,7 +631,6 @@ button:active:not(.pm-dropdown, :disabled),
   height: auto !important;
   width: auto !important;
 }
-
 .zhell-custom-stuff.target-sequence .row {
   padding: 0.5em 0;
   margin: 0 0 0.5em 0;
@@ -905,27 +640,22 @@ button:active:not(.pm-dropdown, :disabled),
   border-bottom: 2px groove;
   width: 100%;
 }
-
 .zhell-custom-stuff.target-sequence .target img:hover {
   filter: drop-shadow(0 0 1px red);
 }
-
 .zhell-custom-stuff.target-sequence img {
   width: 100px !important;
   height: 100px !important;
   border: none;
   margin: 0 0.25em;
 }
-
 .zhell-custom-stuff.target-sequence img.default {
   border-radius: 2em;
   opacity: 0.25;
 }
-
 .zhell-custom-stuff.target-sequence .next:last-of-type {
   display: none;
 }
-
 .zhell-custom-stuff.target-sequence .label {
   font-family: "Modesto Condensed";
   font-size: 35px;

@@ -5,7 +5,6 @@
   display: flex;
   flex: 0;
 }
-
 .zhell-custom-stuff.dot-container .dot {
   height: 15px;
   width: 15px;
@@ -16,21 +15,17 @@
   cursor: pointer;
   box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
 }
-
 .zhell-custom-stuff.dot-container .dot:hover,
 .zhell-custom-stuff.dot-container .dot:not(.empty):hover ~ .dot:not(.empty),
 .zhell-custom-stuff.dot-container .dot.empty:has(~.dot.empty:hover) {
   transform: scale(1.2);
 }
-
 .zhell-custom-stuff.dot-container .dot.empty {
   background-color: lightgray;
 }
-
 .zhell-custom-stuff.dot-container .dot.has-more {
   mix-blend-mode: inherit;
 }
-
 .zhell-custom-stuff.dot-container .dot.has-more.empty {
   mix-blend-mode: color-burn;
 }
@@ -39,11 +34,9 @@
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement {
   filter: drop-shadow(0 0 1px black);
 }
-
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement i.attuned {
   color: var(--itemAttuned) !important;
 }
-
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement i.not-attuned {
   color: var(--itemNotAttuned) !important;
 }
@@ -53,12 +46,10 @@
   color: var(--spellPrepared) !important;
   filter: drop-shadow(0 0 1px black);
 }
-
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
   color: var(--spellAlwaysPrepared) !important;
   filter: drop-shadow(0 0 1px black);
 }
-
 .dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
   color: var(--spellNotPrepared) !important;
   filter: drop-shadow(0 0 1px black);
@@ -68,74 +59,49 @@
 .dnd5e.sheet.actor .item.uncommon .item-name h4 {
   color: var(--rarityUncommon) !important;
 }
-
 .dnd5e.sheet.actor .item.rare .item-name h4 {
   color: var(--rarityRare) !important;
 }
-
 .dnd5e.sheet.actor .item.veryrare .item-name h4 {
   color: var(--rarityVeryRare) !important;
 }
-
 .dnd5e.sheet.actor .item.legendary .item-name h4 {
   color: var(--rarityLegendary) !important;
 }
-
 .dnd5e.sheet.actor .item.artifact .item-name h4 {
   color: var(--rarityArtifact) !important;
 }
 
-/* Nuke resources. */
-.dnd5e.sheet.actor .tab.attributes.flexrow .center-pane .attributes {
-  display: none;
-}
-
-/* Rest buttons and 'new day' button. */
+/* Actor sheet edits. */
 .dnd5e.sheet.actor.character .attributes .attribute.hit-dice .attribute-footer {
   display: flex;
   line-height: 15px;
   gap: 2px;
   margin: 0 2px;
 }
-
 .dnd5e.sheet.actor.character .attributes .attribute.hit-dice a.rest {
   flex: 1;
   min-width: 0;
   padding: 0;
   margin: 0;
 }
-
-/* Hide alignment on Character sheets. */
-.dnd5e.sheet.actor.character .summary .alignment {
-  display: none;
-}
-
-/* collapsible items and effect headers. */
 .dnd5e.sheet.actor .items-list .items-header.zhell-header-collapse h3:hover {
   text-shadow: 0 0 8px var(--color-shadow-primary) !important;
   cursor: pointer;
 }
-
-/* Make collapsed header gray text color. */
 .dnd5e.sheet.actor .items-header.flexrow.no-create,
 .dnd5e.sheet.actor .items-header.flexrow.no-create * {
   color: darkgray;
 }
-
-/* Hide spell school from actor sheets. */
-.dnd5e.sheet.actor .spell-school {
-  display: none;
-}
-
-/* Hide 'ol' that follow a collapsed header, and hide all 'All' buttons. */
+.dnd5e.sheet.actor .tab.attributes.flexrow .center-pane .attributes,
+.dnd5e.sheet.actor.character .summary .alignment,
+.dnd5e.sheet.actor .spell-school,
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create + ol + ol,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .item-control.item-create,
 .dnd5e.sheet.actor .items-header.flexrow.no-create .effect-control {
   display: none;
 }
-
-/* Wide counter inputs on the actor sheet. */
 .dnd5e.sheet.actor .counters .counter-value.wide input {
   max-width: 40px;
   width: fit-content;

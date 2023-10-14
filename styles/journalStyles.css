@@ -3,35 +3,28 @@
   margin: auto;
   max-width: fit-content;
 }
-
 .havilon-deity-table thead {
   border-bottom: none;
 }
-
 .havilon-deity-table td {
   font-style: italic;
   font-size: 18px;
   text-align: center;
   padding: 0.25em 1em;
 }
-
 .havilon-deity-table th {
   height: 3em;
   text-align: center;
   padding: 0.25em 1em;
 }
-
 .havilon-deity-table tr:nth-child(even) {
   background-color: inherit;
 }
-
 .havilon-deity-table tbody th {
   background: rgba(0, 0, 0, 0.5);
   color: var(--color-text-light-highlight);
   text-shadow: 1px 1px var(--color-shadow-dark);
 }
-
-/* pantheon half header */
 h1.zhell-pantheon {
   font-size: 40px;
   text-align: center;
@@ -40,16 +33,12 @@ h1.zhell-pantheon {
   text-transform: uppercase;
   background-color: darkgray;
 }
-
 h1.zhell-pantheon.white-half {
   background-color: darkgray;
 }
-
 h1.zhell-pantheon.dark-half {
   background-color: darkolivegreen;
 }
-
-/* deity name header */
 .sheet.journal-entry .journal-entry-page :is(h2, h3).zhell-deity,
 .sheet.journal-entry-page .zhell-deity {
   text-align: center;
@@ -57,20 +46,15 @@ h1.zhell-pantheon.dark-half {
   margin: 0;
   border: none;
 }
-
 h2.zhell-deity.dom {
   font-size: 40px;
 }
-
 h3.zhell-deity.sub {
   font-size: 20px;
 }
-
-/* centered holy symbol img with red hover effect */
 div.zhell-holy-symbol {
   text-align: center;
 }
-
 img.zhell-holy-symbol {
   width: 40%;
   border: none;
@@ -78,30 +62,23 @@ img.zhell-holy-symbol {
   transition: 0.3s;
   padding-top: 1em;
 }
-
 img.zhell-holy-symbol:hover {
   transform: scale(1.3);
   transition: 0.3s;
   filter: drop-shadow(0 0 10px red) !important;
-  /* for unchosen gods */
 }
-
 img.zhell-holy-symbol.draconiz:hover {
   filter: drop-shadow(0 0 10px purple) !important;
 }
-
 img.zhell-holy-symbol.emissary:hover {
   filter: drop-shadow(0 0 10px blue) !important;
 }
-
 img.zhell-holy-symbol.arepo:hover {
   filter: drop-shadow(0 0 10px green) !important;
 }
-
 img.zhell-holy-symbol.murk:hover {
   filter: drop-shadow(0 0 10px green) !important;
 }
-
 img.zhell-holy-symbol.thrizur:hover {
   filter: drop-shadow(0 0 10px darkgreen) !important;
 }
@@ -114,13 +91,11 @@ img.zhell-holy-symbol.thrizur:hover {
   text-align: center;
   border-radius: 50px;
 }
-
 .banned-spell-list > h2 {
   text-align: center;
   text-transform: uppercase;
   font-family: monospace;
 }
-
 .banned-spell-list > p:first-child {
   font-size: 20px;
   font-style: italic;
@@ -129,7 +104,6 @@ img.zhell-holy-symbol.thrizur:hover {
   margin-left: auto;
   margin-right: auto;
 }
-
 .banned-spell-list i.fa-solid.fa-suitcase:before {
   content: "\f00d";
   color: black;
@@ -142,7 +116,6 @@ h1.havilon-race-header {
   font-family: "Modesto Condensed";
   border: none;
 }
-
 .race-item-links {
   gap: 5px;
   display: flex;
@@ -154,14 +127,12 @@ h1.havilon-race-header {
   margin: 20px auto;
   flex-wrap: wrap;
 }
-
 .race-item-links > p {
   margin: 0;
   display: flex;
   flex-grow: 1;
   flex-basis: calc(50% - 5px);
 }
-
 .race-item-links a.content-link {
   font-size: 16px;
   border-radius: 20px;
@@ -171,7 +142,6 @@ h1.havilon-race-header {
   width: 100%;
   text-align: center;
 }
-
 .race-item-links a.content-link > i {
   display: none;
 }
@@ -181,30 +151,25 @@ h1.havilon-race-header {
   display: grid;
   gap: 1em;
 }
-
 .sheet.journal-entry .journal-entry-page .party-feature {
   display: inherit;
   grid-template-columns: 1fr 3fr;
   gap: inherit;
 }
-
 .sheet.journal-entry .journal-entry-page .party-feature-image {
   display: flex;
   align-items: center;
 }
-
 .sheet.journal-entry .journal-entry-page .party-feature-image img {
   border: none;
   border-radius: 1em;
 }
-
 .sheet.journal-entry .journal-entry-page .party-feature-details h1 {
   font-size: 35px;
   text-align: center;
   border: none;
   font-family: "Modesto Condensed";
 }
-
 .sheet.journal-entry .journal-entry-page .party-feature-details p {
   text-align: justify;
   font-size: 15px;
@@ -216,33 +181,26 @@ h1.havilon-race-header {
   font-family: "Modesto Condensed";
   text-align: center;
 }
-
 .sheet.journal-entry .materia-medica p {
   text-align: justify;
 }
-
 .sheet.journal-entry .materia-medica h1 {
   font-size: 40px;
 }
-
 .sheet.journal-entry .materia-medica h2 {
   font-size: 30px;
 }
-
 .sheet.journal-entry .materia-medica h3 {
   font-size: 25px;
 }
-
 .sheet.journal-entry .materia-medica table th {
   text-align: center;
   padding: 15px;
 }
-
 .sheet.journal-entry .materia-medica a.content-link {
   display: block;
   padding: 5px;
 }
-
 .sheet.journal-entry .materia-medica table td:nth-child(2) {
   text-align: center;
 }
