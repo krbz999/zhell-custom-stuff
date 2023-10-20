@@ -1,0 +1,31 @@
+/* Style of the dots. */
+.zhell-custom-stuff.dot-container {
+  flex-direction: row-reverse;
+  gap: 2px;
+  display: flex;
+  flex: 0;
+}
+.zhell-custom-stuff.dot-container .dot {
+  height: 15px;
+  width: 15px;
+  max-height: 15px;
+  max-width: 15px;
+  background-color: var(--usesUnexpended);
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: inset 0 0 4px 0 black, 0 0 4px 0 var(--usesUnexpended);
+}
+.zhell-custom-stuff.dot-container .dot:hover,
+.zhell-custom-stuff.dot-container .dot:not(.empty):hover ~ .dot:not(.empty),
+.zhell-custom-stuff.dot-container .dot.empty:has(~.dot.empty:hover) {
+  transform: scale(1.2);
+}
+.zhell-custom-stuff.dot-container .dot.empty {
+  background-color: lightgray;
+}
+.zhell-custom-stuff.dot-container .dot.has-more {
+  mix-blend-mode: inherit;
+}
+.zhell-custom-stuff.dot-container .dot.has-more.empty {
+  mix-blend-mode: color-burn;
+}

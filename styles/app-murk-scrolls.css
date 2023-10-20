@@ -1,0 +1,17 @@
+/* MURK SCROLLER */
+.zhell-custom-stuff.murk-scroller {
+  width: 350px !important;
+  height: auto !important;
+}
+.zhell-custom-stuff.murk-scroller .track {
+  font-size: 25px;
+  text-align: center;
+  padding-bottom: 0.25em;
+  font-family: "Modesto Condensed";
+}
+.zhell-custom-stuff.murk-scroller form {
+  padding: 0.5em;
+}
+.zhell-custom-stuff.murk-scroller .form-fields {
+  flex-wrap: nowrap;
+}

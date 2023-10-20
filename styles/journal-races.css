@@ -1,0 +1,36 @@
+/* RACES */
+h1.havilon-race-header {
+  text-align: center;
+  font-size: 50px;
+  font-family: "Modesto Condensed";
+  border: none;
+}
+.race-item-links {
+  gap: 5px;
+  display: flex;
+  border: solid;
+  border-radius: 20px;
+  border-width: 2px;
+  width: 90%;
+  padding: 5px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+.race-item-links > p {
+  margin: 0;
+  display: flex;
+  flex-grow: 1;
+  flex-basis: calc(50% - 5px);
+}
+.race-item-links a.content-link {
+  font-size: 16px;
+  border-radius: 20px;
+  padding: 5px;
+  background-image: linear-gradient(180deg, #c7aeae, #6ab7fd);
+  font-family: cursive;
+  width: 100%;
+  text-align: center;
+}
+.race-item-links a.content-link > i {
+  display: none;
+}

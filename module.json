@@ -1,12 +1,12 @@
 {
   "id": "zhell-custom-stuff",
   "title": "Zhell's Custom Stuff",
-  "version": "11.1.0",
+  "version": "11.2.0",
   "authors": [
     {
       "name": "Zhell",
       "url": "https://github.com/krbz999",
-      "discord": "Zhell9201",
+      "discord": "zhell9201",
       "ko-fi": "https://ko-fi.com/zhell",
       "patreon": "https://patreon.com/zhell"
     }
@@ -20,9 +20,34 @@
     "./setup.mjs"
   ],
   "styles": [
-    "./styles/styles.css",
-    "./styles/sheetEdits.css",
-    "./styles/journalStyles.css"
+    "styles/app-column-dialog.css",
+    "styles/app-elemental-dialog.css",
+    "styles/app-exhaustion-dialog.css",
+    "styles/app-experimental-elixir.css",
+    "styles/app-font-of-magic.css",
+    "styles/app-image-selector.css",
+    "styles/app-materia-media.css",
+    "styles/app-mayhem.css",
+    "styles/app-money-spender.css",
+    "styles/app-murk-scrolls.css",
+    "styles/app-note-util.css",
+    "styles/app-party-features.css",
+    "styles/app-target-sequence.css",
+    "styles/app-treasure-dialog.css",
+    "styles/app-whisper-dialog.css",
+    "styles/boss-bar.css",
+    "styles/button-feel.css",
+    "styles/journal-banned-spells.css",
+    "styles/journal-materia-medica.css",
+    "styles/journal-pantheon.css",
+    "styles/journal-party-features.css",
+    "styles/journal-races.css",
+    "styles/monster-stat-block.css",
+    "styles/settings-menu.css",
+    "styles/sheet-colors.css",
+    "styles/sheet-dots.css",
+    "styles/sheet-edits.css",
+    "styles/token-hud.css"
   ],
   "languages": [
     {
@@ -35,12 +60,10 @@
   "flags": {
     "hotReload": {
       "extensions": ["css"],
-      "paths": [
-        "styles/styles.css"
-      ]
+      "paths": []
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",
-  "manifest": "https://raw.githubusercontent.com/krbz999/zhell-custom-stuff/main/module.json",
-  "download": "https://github.com/krbz999/zhell-custom-stuff/raw/main/module.zip"
+  "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
+  "download": "https://github.com/krbz999/zhell-custom-stuff/releases/download/v11.2.0/module.zip"
 }

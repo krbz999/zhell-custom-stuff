@@ -1,0 +1,127 @@
+/* MATERIA MEDICA CRAFTING */
+.zhell-custom-stuff.materia-medica {
+  min-width: 430px;
+  min-height: 430px;
+}
+.zhell-custom-stuff.materia-medica .content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.zhell-custom-stuff.materia-medica button {
+  align-self: center;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results {
+  margin: 0.25em;
+  overflow-y: auto;
+  border: 2px inset;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result {
+  display: grid;
+  grid-template-columns: 7fr 3fr 0fr;
+  align-items: center;
+  justify-items: center;
+  min-height: 2.5em;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result:nth-child(odd) {
+  background-color: #afc2ac;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .type {
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result .formula {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 5px;
+  font-weight: bold;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  border: 1px groove;
+  border-radius: 3px;
+  background-color: indianred;
+  align-items: center;
+  min-height: 100%;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active {
+  background-color: darkseagreen;
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables i:before {
+  content: "\f00d";
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .results .result a.add-forageables.active i:before {
+  content: "\f00c";
+}
+.zhell-custom-stuff.materia-medica [data-tab=forage] .foraging {
+  padding: 0.5em 1em;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+.zhell-custom-stuff.materia-medica nav.tabs {
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 2px groove black;
+  border-top: 2px groove black;
+  margin-bottom: 0.5em;
+}
+.zhell-custom-stuff.materia-medica nav .item {
+  width: 100%;
+  padding: 0.5em 0;
+}
+.zhell-custom-stuff.materia-medica .description {
+  padding: 0.5em 1em;
+}
+.zhell-custom-stuff.materia-medica .form-group .fa-solid {
+  flex: 0;
+  padding-left: 1em;
+}
+.zhell-custom-stuff.materia-medica .item-description {
+  padding: 0 1.5em;
+  font-style: italic;
+}
+.zhell-custom-stuff.materia-medica .note {
+  padding: 0 2em;
+  font-weight: bold;
+}
+.zhell-custom-stuff.materia-medica .tab.active {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.zhell-custom-stuff.materia-medica .tab .selections .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1em;
+}
+.zhell-custom-stuff.materia-medica .item select {
+  min-width: fit-content;
+}
+.zhell-custom-stuff.materia-medica .selections {
+  overflow-y: auto;
+  border: 1px inset;
+}
+.zhell-custom-stuff.materia-medica .selection:not(:first-child) {
+  border-top: 2px groove;
+}
+.zhell-custom-stuff.materia-medica .selection:last-child {
+  border-bottom: 2px groove;
+}
+.zhell-custom-stuff.materia-medica .selection {
+  padding: 1em 0;
+}
+.zhell-custom-stuff.materia-medica .selection .item-img {
+  border: none;
+  border-radius: 1em;
+  height: 50px;
+  margin-right: 1em;
+}
+.zhell-custom-stuff.materia-medica form {
+  padding: 0 1em;
+}

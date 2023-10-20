@@ -1,0 +1,65 @@
+/* PARTY FEATURES APPLICATION */
+.zhell-custom-stuff.party-features {
+  width: 350px !important;
+  aspect-ratio: 3/5 !important;
+  background: none;
+  box-shadow: none;
+}
+.zhell-custom-stuff.party-features .window-header {
+  display: none;
+}
+.zhell-custom-stuff.party-features .window-content {
+  border-radius: 20em;
+  box-shadow: 0 0 100px var(--color-shadow-dark);
+}
+.zhell-custom-stuff.party-features .content {
+  gap: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.zhell-custom-stuff.party-features [data-action] {
+  display: flex;
+  min-height: 75px;
+  font-size: 40px;
+  background-color: navajowhite;
+  align-items: center;
+  transition: 0.3s;
+  border: 2px outset var(--color-border-light-highlight);
+  border-radius: 0.5em;
+  box-shadow: none;
+}
+.zhell-custom-stuff.party-features [data-action]:disabled {
+  color: gray;
+  border: 2px inset;
+  cursor: default;
+}
+.zhell-custom-stuff.party-features [data-action="close"] {
+  min-height: 25px;
+  font-size: 20px;
+  width: 50%;
+  position: absolute;
+  bottom: 2em;
+}
+.zhell-custom-stuff.party-features [data-action]:hover:not(:disabled) {
+  background-color: azure;
+  border-style: inset;
+}
+.zhell-custom-stuff.party-features [data-action] .fa-solid {
+  transition: 0.3s;
+  flex: 1;
+}
+.zhell-custom-stuff.party-features [data-action]:hover:not(:disabled) .fa-solid {
+  transform: scale(1.25);
+}
+.zhell-custom-stuff.party-features [data-action] label {
+  display: flex;
+  flex-direction: column;
+  flex: 3;
+}
+.zhell-custom-stuff.party-features [data-action] label .uses {
+  font-size: 15px;
+  color: gray;
+  height: 15px;
+}

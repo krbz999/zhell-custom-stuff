@@ -1,0 +1,41 @@
+/* Attunement icon. */
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement {
+  filter: drop-shadow(0 0 1px black);
+}
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement i.attuned {
+  color: var(--itemAttuned) !important;
+}
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-detail.attunement i.not-attuned {
+  color: var(--itemNotAttuned) !important;
+}
+
+/* Prepared icon. */
+.dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.active i {
+  color: var(--spellPrepared) !important;
+  filter: drop-shadow(0 0 1px black);
+}
+.dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle.fixed i {
+  color: var(--spellAlwaysPrepared) !important;
+  filter: drop-shadow(0 0 1px black);
+}
+.dnd5e.sheet.actor .tab.spellbook .item-controls .item-control.item-toggle:not(.active):not(.fixed) i {
+  color: var(--spellNotPrepared) !important;
+  filter: drop-shadow(0 0 1px black);
+}
+
+/* RARITY COLORS */
+.dnd5e.sheet.actor .item.uncommon .item-name h4 {
+  color: var(--rarityUncommon) !important;
+}
+.dnd5e.sheet.actor .item.rare .item-name h4 {
+  color: var(--rarityRare) !important;
+}
+.dnd5e.sheet.actor .item.veryrare .item-name h4 {
+  color: var(--rarityVeryRare) !important;
+}
+.dnd5e.sheet.actor .item.legendary .item-name h4 {
+  color: var(--rarityLegendary) !important;
+}
+.dnd5e.sheet.actor .item.artifact .item-name h4 {
+  color: var(--rarityArtifact) !important;
+}

@@ -1,0 +1,26 @@
+/* WHISPER DIALOG */
+.zhell-custom-stuff.whisper-dialog {
+  height: auto !important;
+  width: 400px !important;
+}
+.zhell-custom-stuff.whisper-dialog .players {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 3px;
+  padding-bottom: 1em;
+}
+.zhell-custom-stuff.whisper-dialog textarea {
+  resize: none;
+}
+.zhell-custom-stuff.whisper-dialog [data-action="player"] {
+  border: 1px solid black;
+  border-radius: 5px;
+  text-align: center;
+  transition: 0.15s;
+  transform: scale(0.9);
+  font-size: 20px;
+}
+.zhell-custom-stuff.whisper-dialog [data-action="player"].selected {
+  background-color: darkgray;
+  transform: scale(1.0);
+}

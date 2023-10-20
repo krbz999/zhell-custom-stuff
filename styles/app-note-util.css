@@ -1,0 +1,10 @@
+/** NOTE UTIL */
+.dialog.note-util {
+  min-width: 692px;
+  max-width: 692px;
+  min-height: 800px;
+  max-height: 800px;
+}
+.dialog.note-util .dialog-buttons {
+  display: none;
+}

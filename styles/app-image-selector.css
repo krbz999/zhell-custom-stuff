@@ -1,0 +1,35 @@
+/* ANCHOR SELECTOR DIALOG */
+.zhell-custom-stuff.image-selector {
+  min-width: 400px;
+  height: auto !important;
+}
+.zhell-custom-stuff.image-selector .selections {
+  margin: 1em 0;
+  gap: 1em;
+  display: flex;
+  flex-direction: column;
+}
+.zhell-custom-stuff.image-selector img {
+  opacity: 0.2;
+  border: none;
+  transition: 0.2s;
+  width: 80%;
+}
+.zhell-custom-stuff.image-selector img:hover {
+  opacity: 0.75;
+}
+.zhell-custom-stuff.image-selector .row a {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex: 1;
+}
+.zhell-custom-stuff.image-selector .active img {
+  opacity: 1;
+  filter: drop-shadow(2px 4px 6px black);
+}
+.zhell-custom-stuff.image-selector .row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
