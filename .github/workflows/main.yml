@@ -1,0 +1,45 @@
+name: Release Creation
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Combine CSS files into a single CSS file
+      - name: Combine CSS files
+        run: |
+          cat styles/*.css > module.css
+
+      # Modify styles in module manifest to point only at the combined CSS file
+      - name: Modify Manifest for combined CSS
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "module.json"
+        env:
+          styles: "[\"module.css\"]"
+          flags.hotReload.paths: "[\"module.css\"]"
+
+      # Create zip file
+      - name: Create ZIP archive
+        run: zip -r ./module.zip setup.mjs module.json module.css languages/ scripts/ sources/ templates/
+
+      # Create a release for this specific version.
+      - name: Update Release with Files
+        if: "!github.event.release.prerelease"
+        id: create_version_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          name: ${{ github.event.release.name }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "./module.json, ./module.zip"
+          tag: ${{ github.event.release.tag_name }}
+          body: ${{ github.event.release.body }}
