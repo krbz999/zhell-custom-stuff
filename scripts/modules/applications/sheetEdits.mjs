@@ -19,16 +19,7 @@ export class SheetEdits {
       this._createCharacterSheetCounters();
       this._createExhaustion();
       this._createNewDay();
-      this._createInspirationToggle();
     }
-  }
-
-  /** Make 'Inspiration' a toggle. */
-  _createInspirationToggle() {
-    const insp = this.html[0].querySelector(".inspiration h4");
-    insp.classList.add("rollable");
-    insp.dataset.action = "inspiration";
-    insp.addEventListener("click", this.sheet._onClickInspiration.bind(this.sheet));
   }
 
   /** Set the color of magic items by adding css classes to them. */

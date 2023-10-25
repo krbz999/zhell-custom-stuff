@@ -45,15 +45,6 @@ export default class ActorSheet5eCharacter extends dnd5e.applications.actor.Acto
   }
 
   /**
-   * Toggle inspiration on or off when clicking the 'label'.
-   * @param {PointerEvent} event      The initiating click event.
-   * @returns {Promise<Actor>}        The updated actor.
-   */
-  async _onClickInspiration(event) {
-    return this.document.update({"system.attributes.inspiration": !this.document.system.attributes.inspiration});
-  }
-
-  /**
    * Handle clicking a dot.
    * @param {PointerEvent} event            The initiating click event.
    * @returns {Promise<Actor5e|Item5e>}     The updated actor or item.
