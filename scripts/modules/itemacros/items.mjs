@@ -21,9 +21,11 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
     return;
   }
 
-  const optionsA = Array.fromRange(value).reduce((acc, e) => acc += `<option value="${e + 1}">${e + 1}`, "");
-  const optionsB = Array.fromRange(5).reduce((acc, e) => acc += `<option value="d${(e + 2) * 2}">d${(e + 2) * 2}</option>`, "");
-  const optionsC = ["cold", "fire", "lightning"].reduce((acc, e) => acc += `<option value="${e}">${CONFIG.DND5E.damageTypes[e]}</option>`, "");
+  const optionsA = Array.fromRange(value, 1).reduce((acc, e) => acc + `<option value="${e}">${e}`, "");
+  const optionsB = Array.fromRange(5, 2).reduce((acc, e) => acc + `<option value="d${e * 2}">d${e * 2}</option>`, "");
+  const optionsC = ["cold", "fire", "lightning"].reduce((acc, e) => {
+    return acc + `<option value="${e}">${CONFIG.DND5E.damageTypes[e]}</option>`;
+  }, "");
   const content = `
   <p>Select what you are rerolling.</p>
   <form class="dnd5e">
@@ -44,7 +46,10 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
     callback: async (html, event) => {
       const {number, faces, type} = new FormDataExtended(html[0].querySelector("form")).object;
       await item.update({"system.uses.value": value - Number(number)});
-      return item.clone({"system.damage.parts": [[`${number}${faces}`, type]]}, {keepId: true}).rollDamage({event});
+      const clone = item.clone({"system.damage.parts": [[`${number}${faces}`, type]]}, {keepId: true});
+      clone.prepareData();
+      clone.prepareFinalAttributes();
+      return clone.rollDamage({event});
     }
   });
 }
@@ -144,7 +149,7 @@ async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, even
         {label: "Temp HP", parts: [1]}
       ]
     }
-    const clone = item.cone(itemData, {keepId: true});
+    const clone = item.clone(itemData, {keepId: true});
     clone.prepareData();
     clone.prepareFinalAttributes();
     return clone;
@@ -179,14 +184,11 @@ async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event
 
 async function FREE_USE(item, speaker, actor, token, character, event, args) {
   return item.use({
-    createMeasuredTemplate: false,
-    consumeQuantity: false,
-    consumeRecharge: false,
-    consumeResource: false,
-    consumeSpellLevel: false,
-    consumeSpellSlot: false,
-    consumeUsage: false
-  }, {configureDialog: false});
+    createMeasuredTemplate: null,
+    consumeResource: null,
+    consumeSpellSlot: null,
+    consumeUsage: null
+  });
 }
 
 async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
