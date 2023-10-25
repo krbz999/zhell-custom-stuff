@@ -19,7 +19,6 @@ export class GameChangesHandler {
     Hooks.on("renderTokenHUD", GameChangesHandler._replaceTokenHUD);
     Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
     Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
-    Hooks.on("preCreateActiveEffect", GameChangesHandler._preCreateActiveEffect);
     Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
     Hooks.on("applyActiveEffect", GameChangesHandler.evaluateArmorClassBonus);
     Hooks.on("getSceneConfigHeaderButtons", GameChangesHandler._sceneHeaderView);
@@ -378,23 +377,6 @@ export class GameChangesHandler {
       backgroundColor: "#000000"
     }, sceneData);
     scene.updateSource(data);
-  }
-
-  /**
-   * When an effect is created in an item, set its icon and name to be the item's img
-   * and name unless a different and non-default icon and name are provided.
-   * @param {ActiveEffect} effect     The effect to be created.
-   * @param {object} effectData       The data object used to create the effect.
-   */
-  static _preCreateActiveEffect(effect, effectData) {
-    const data = {};
-    if ((effectData.icon === "icons/svg/aura.svg") || !effectData.icon) {
-      data.icon = effect.parent.img;
-    }
-    if ((effectData.name === "New Effect") || !effectData.name) {
-      data.name = effect.parent.name;
-    }
-    effect.updateSource(data);
   }
 
   /**
