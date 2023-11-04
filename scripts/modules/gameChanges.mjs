@@ -20,7 +20,6 @@ export class GameChangesHandler {
     Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
     Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
     Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
-    Hooks.on("applyActiveEffect", GameChangesHandler.evaluateArmorClassBonus);
     Hooks.on("getSceneConfigHeaderButtons", GameChangesHandler._sceneHeaderView);
     Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);
     Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
@@ -513,14 +512,6 @@ export class GameChangesHandler {
         options: {id, classes: ["dialog", "note-util"]}
       });
     });
-  }
-
-  /** Evaluate roll data in an ac bonus effect. */
-  static evaluateArmorClassBonus(actor, change, current, delta, changes) {
-    const {key, value} = change;
-    if ((key === "system.attributes.ac.bonus") && (typeof value == "string") && value.includes("@")) {
-      changes[key] = dnd5e.utils.simplifyBonus(value, actor.getRollData());
-    }
   }
 
   static sceneControls(array) {
