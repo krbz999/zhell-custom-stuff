@@ -52,7 +52,7 @@ export class GameChangesHandler {
       label: "DND5E.AbilityPty",
       abbreviation: "pty",
       type: "mental",
-      defaults: {vehicle: 0},
+      defaults: {vehicle: 0, npc: 1, character: 1},
       improvement: false
     };
 
@@ -72,7 +72,7 @@ export class GameChangesHandler {
     }, {performDeletions: true});
 
     // Adjust languages.
-    foundry.utils.mergeObject(CONFIG.DND5E.languages, {
+    foundry.utils.mergeObject(CONFIG.DND5E.languages.standard.children, {
       cait: "DND5E.LanguagesCait",
       "-=gnomish": null,
       "-=halfling": null
