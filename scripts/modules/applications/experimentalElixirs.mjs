@@ -176,8 +176,7 @@ export class ExperimentalElixir extends Application {
           icon: data.icon,
           duration: data.duration,
           name: `Experimental Elixir: ${name}`,
-          description: game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, {mod}),
-          flags: {[DEPEND.ET]: {transferBlock: {button: false, chat: false, displayCard: false}}}
+          description: game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, {mod})
         });
       }
       return acc;

@@ -58,7 +58,7 @@ export async function CHAOS_BOLT(item, speaker, actor, token, character, event, 
     /* Async dialog */
     const buttons = damage.dice[0].results.reduce((acc, {result}) => {
       const key = types[result];
-      const label = CONFIG.DND5E.damageTypes[key];
+      const label = CONFIG.DND5E.damageTypes[key].label;
       acc[key] = {label, callback: _rollDamage};
       return acc;
     }, {});
@@ -66,7 +66,7 @@ export async function CHAOS_BOLT(item, speaker, actor, token, character, event, 
 
     async function _rollDamage(html, event) {
       const key = event.currentTarget.dataset.button;
-      const type = CONFIG.DND5E.damageTypes[key];
+      const type = CONFIG.DND5E.damageTypes[key].label;
       let flavor = "<p><strong>Chaos Bolt</strong></p>";
       flavor += `<p>Damage type: ${type}</p>`;
       const chain = totals.length > new Set(totals).size;

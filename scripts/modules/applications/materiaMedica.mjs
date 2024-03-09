@@ -45,10 +45,10 @@ export class MateriaMedica extends Application {
 
   /**
    * The compendium to extract the craftable items from.
-   * @returns {CompendiumCollection|null}
+   * @returns {CompendiumCollection}
    */
   get #pack() {
-    return game.packs.get("zhell-catalogs.materia-medica") ?? null;
+    return game.packs.get("zhell-catalogs.items");
   }
 
   /**
@@ -125,20 +125,20 @@ export class MateriaMedica extends Application {
     data.targetValue = this.#targetValue;
     data.maxRolls = this.maxRolls;
 
+    const ids = this.#craftingTable.map(k => k.id);
+    const items = await this.#pack.getDocuments({_id__in: ids});
+
     // Gather craftable item data. Group by `system.consumableType`.
     for (const idx of this.#craftingTable) {
-      const item = await this.#pack?.getDocument(idx.id);
-      const type = item?.system.consumableType;
-      if (!type) continue;
-
-      idx.item = item;
-      idx.cost = Math.floor(idx.cost * this.#speedCrafting(item));
+      idx.item = items.find(k => k.id === idx.id);
+      const type = idx.item.system.type.value;
+      idx.cost = Math.floor(idx.cost * this.#speedCrafting(idx.item));
       idx.scales = ["+", "*"].includes(idx.scaling);
       if (idx.scales) {
         idx.options = {};
         const min = idx.cost;
         const max = this.#materials;
-        const base = item.system.damage.parts[0][0];
+        const base = idx.item.system.damage.parts[0][0];
         const iter = {
           "+": (x) => x + 1,
           "*": (x) => x * 2
@@ -147,17 +147,17 @@ export class MateriaMedica extends Application {
           if (min * i > max) continue;
           idx.options[min * i] = new Roll(base).alter(i, 0, {multiplyNumeric: true}).formula;
         }
-        idx.selected = this._selectPositions?.[item.id];
+        idx.selected = this._selectPositions?.[idx.item.id];
       }
       data.itemTypes[type] ??= {type, label: `DND5E.Consumable${type.capitalize()}`, items: []};
       data.itemTypes[type].items.push(idx);
-      this.collection.set(item.id, idx);
+      this.collection.set(idx.item.id, idx);
     }
     data.itemTypes = Object.values(data.itemTypes);
 
     /* FORAGING */
     data.forageOptions = this.actor.items.reduce((acc, item) => {
-      const valid = (item.type === "tool") && (item.system.baseItem === "herb") && item.system.prof.hasProficiency;
+      const valid = (item.type === "tool") && (item.system.type.baseItem === "herb") && item.system.prof.hasProficiency;
       if (valid) acc.push({id: item.id, label: item.name});
       return acc;
     }, []).concat([
@@ -286,7 +286,7 @@ export class MateriaMedica extends Application {
     const itemData = game.items.fromCompendium(idx.item);
     const cost = idx.scales ? Number(select.value) : idx.cost;
     const formula = idx.scales ? idx.options[cost] : null;
-    const hasDeliveryMethod = itemData.system.consumableType === "poison";
+    const hasDeliveryMethod = itemData.system.type.value === "poison";
     const method = hasDeliveryMethod ? event.currentTarget.closest(".tab").querySelector("[data-action='delivery-method']") : null;
     const methodCost = method ? this.#methods[method.value].cost : 0;
     const total = (cost || idx.cost) + methodCost;
@@ -296,7 +296,7 @@ export class MateriaMedica extends Application {
       return null;
     }
 
-    if (itemData.system.consumableType === "poison") this._applyDeliveryMethod(itemData, method.value);
+    if (itemData.system.type.value === "poison") this._applyDeliveryMethod(itemData, method.value);
 
     // Replace damage formula and determine if the item should be stacked onto another item.
     if (formula) {
@@ -315,11 +315,11 @@ export class MateriaMedica extends Application {
     if (stack) {
       created = await stack.update({"system.quantity": stack.system.quantity + 1}, {render: false});
     } else {
-      created = await Item.create(itemData, {parent: this.actor, render: false});
+      created = await Item.implementation.create(itemData, {parent: this.actor, render: false});
     }
-    await ChatMessage.create({
+    await ChatMessage.implementation.create({
       content: game.i18n.format("ZHELL.CraftingComplete", {name: this.actor.name, amount: total, link: created.link}),
-      speaker: ChatMessage.getSpeaker({actor: this.actor})
+      speaker: ChatMessage.implementation.getSpeaker({actor: this.actor})
     });
 
     return this.actor.update({[`flags.${MODULE}.materia-medica.value`]: this.#materials - total});

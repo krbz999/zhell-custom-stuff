@@ -2,10 +2,10 @@ import {MODULE} from "../../../const.mjs";
 
 export const sorcerer = {FONT_OF_MAGIC};
 
-async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args) {
+async function FONT_OF_MAGIC(item) {
   const conversionMap = {1: 2, 2: 3, 3: 5, 4: 6, 5: 7};
   const spellPoints = item.system.uses;
-  const spellSlots = actor.system.spells;
+  const spellSlots = item.actor.system.spells;
 
   // array of spell levels for converting points to slots.
   const validLevelsWithSpentSpellSlots = Object.entries(spellSlots).filter(([key, entry]) => {
@@ -43,7 +43,7 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
       callback: pointsToSlot,
     };
   }
-  return new Dialog({title: item.name, buttons}, {id: `font-of-magic-${actor.uuid.replaceAll(".", "-")}`}).render(true);
+  return new Dialog({title: item.name, buttons}, {id: `font-of-magic-${item.actor.uuid.replaceAll(".", "-")}`}).render(true);
 
   // Convert spell slot to sorcery points.
   async function slotToPoints() {
@@ -66,11 +66,14 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
     }, {classes: [MODULE, "dialog", "font-of-magic"]});
     if (!retKey) return null;
 
-    await actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value - 1});
+    await item.actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value - 1});
     const level = (retKey === "pact") ? spellSlots["pact"].level : retKey.at(-1);
     const newPointsValue = Math.clamped(spellPoints.value + Number(level), 0, spellPoints.max);
     await item.update({"system.uses.value": newPointsValue});
-    return ChatMessage.create({speaker, content: `${actor.name} regained ${newPointsValue - spellPoints.value} sorcery points.`});
+    return ChatMessage.implementation.create({
+      speaker: ChatMessage.implementation.getSpeaker({actor: item.actor}),
+      content: `${item.actor.name} regained ${newPointsValue - spellPoints.value} sorcery points.`
+    });
   }
 
   // Convert sorcery points to spell slot.
@@ -92,10 +95,13 @@ async function FONT_OF_MAGIC(item, speaker, actor, token, character, event, args
     }, {classes: [MODULE, "dialog", "font-of-magic"]});
     if (!retKey) return null;
 
-    await actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value + 1});
+    await item.actor.update({[`system.spells.${retKey}.value`]: spellSlots[retKey].value + 1});
     const level = (retKey === "pact") ? spellSlots["pact"].level : retKey.at(-1);
     await item.update({"system.uses.value": Math.clamped(spellPoints.value - conversionMap[level], 0, spellPoints.max)});
     const str = (retKey === "pact") ? "Pact Slot" : `${CONFIG.DND5E.spellLevels[level]} spell slot`;
-    return ChatMessage.create({speaker, content: `${actor.name} regained a ${str}.`});
+    return ChatMessage.create({
+      speaker: ChatMessage.implementation.getSpeaker({actor: item.actor}),
+      content: `${item.actor.name} regained a ${str}.`
+    });
   }
 }

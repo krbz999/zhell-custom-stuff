@@ -1,8 +1,0 @@
-/* BUTTON FEEL */
-button:active:not(.pm-dropdown, :disabled),
-button:not(:disabled) a:active {
-  filter: brightness(0.7);
-}
-.tab#chat {
-  margin: -5px 0 0;
-}

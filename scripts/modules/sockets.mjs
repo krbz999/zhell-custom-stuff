@@ -61,27 +61,6 @@ export class SocketsHandler {
   }
 
   /**
-   * Award loot using Backpack Manager.
-   * @param {string} backpackUuid     The uuid of the backpack actor.
-   */
-  static async awardLoot({backpackUuid}, push = true) {
-    if (push) {
-      ui.notifications.info("Showing awarded loot!");
-      game.socket.emit(`world.${game.world.id}`, {
-        action: "awardLoot",
-        data: {backpackUuid}
-      });
-    }
-    const a = game.user.character;
-    const b = fromUuidSync(backpackUuid);
-    if (a && (b instanceof Actor)) {
-      return game.modules.get("backpack-manager").api.renderManager(a, b, {
-        title: "Awarded Loot", hideOwnInventory: true
-      });
-    } else return null;
-  }
-
-  /**
    * Update other tokens.
    * @param {object[]} updates      The array of update data.
    * @param {object} options        The update options.

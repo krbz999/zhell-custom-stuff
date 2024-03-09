@@ -1,20 +1,8 @@
-import {DEPEND} from "../../const.mjs";
-import {ItemMacroHelpers} from "../itemMacros.mjs";
-import {PIPE} from "./items/drazPipe.mjs";
-
 export const items = {
-  AMULET_OF_EQUILLIBRIUM,
-  FREE_USE,
-  HIT_DIE_APPLY,
-  LANTERN_OF_TRACKING,
-  RING_OF_LIGHT,
-  SCORCHING_CLEAVER,
-  TORCH,
-  WHITEHARBOUR_TEA_SET,
-  PIPE
+  AMULET_OF_EQUILLIBRIUM
 };
 
-async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, event, args) {
+async function AMULET_OF_EQUILLIBRIUM(item) {
   const {value} = item.system.uses;
   if (!value) {
     ui.notifications.warn("You have no uses remaining on the amulet.");
@@ -24,7 +12,7 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
   const optionsA = Array.fromRange(value, 1).reduce((acc, e) => acc + `<option value="${e}">${e}`, "");
   const optionsB = Array.fromRange(5, 2).reduce((acc, e) => acc + `<option value="d${e * 2}">d${e * 2}</option>`, "");
   const optionsC = ["cold", "fire", "lightning"].reduce((acc, e) => {
-    return acc + `<option value="${e}">${CONFIG.DND5E.damageTypes[e]}</option>`;
+    return acc + `<option value="${e}">${CONFIG.DND5E.damageTypes[e].label}</option>`;
   }, "");
   const content = `
   <p>Select what you are rerolling.</p>
@@ -52,180 +40,4 @@ async function AMULET_OF_EQUILLIBRIUM(item, speaker, actor, token, character, ev
       return clone.rollDamage({event});
     }
   });
-}
-
-async function HIT_DIE_APPLY(item, speaker, actor, token, character, event, args) {
-  const use = await item.use();
-  if (!use) return;
-  return actor.rollHitDie(undefined, {dialog: false});
-}
-
-async function RING_OF_LIGHT(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
-
-  if (!item.system.equipped) await item.update({"system.equipped": true}); // Forcefully equip the item.
-
-  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
-  if (has) return has.delete();
-
-  const use = await item.use();
-  if (!use) return;
-
-  const lightData = {bright: 30, dim: 60};
-  return actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
-}
-
-async function TORCH(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
-
-  if (!item.system.equipped) await item.update({"system.equipped": true}); // Forcefully equip the item.
-
-  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
-  if (has) return has.delete();
-
-  const use = await item.use();
-  if (!use) return;
-
-  const lightData = {
-    alpha: 0.05, angle: 360, animation: {type: "flame", speed: 2, intensity: 4},
-    attenuation: 0.5, color: "#ff4d00", bright: 20, dim: 40, coloration: 1, contrast: 0,
-    darkness: {min: 0, max: 1}, luminosity: 0.5, saturation: 0, shadows: 0
-  };
-  return actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
-}
-
-async function WHITEHARBOUR_TEA_SET(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.RG)) return item.use();
-
-  const servings = [
-    {id: foundry.utils.randomID(), uses: 1, label: "Quiant Serving (1 use)"},
-    {id: foundry.utils.randomID(), uses: 2, label: "Psychedelic Serving (2 uses)"}
-  ];
-
-  // get current limited uses and bail out if not enough.
-  const value = item.system.uses.value;
-  const minimum = Math.min(...servings.map(i => i.uses));
-
-  if (value < minimum) {
-    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name}));
-    return;
-  }
-
-  // construct selection options.
-  const options = servings.filter(({uses}) => {
-    return uses <= value;
-  }).reduce((acc, {id, label}) => {
-    return acc + `<option value="${id}">${label}</option>`;
-  }, "");
-
-  const content = ItemMacroHelpers._basicFormContent({label: "Serving Type", type: "select", options});
-
-  new Dialog({
-    title: item.name,
-    content,
-    buttons: {
-      serve: {
-        icon: "<i class='fa-solid fa-mug-hot'></i>",
-        label: "Serve",
-        callback: async (html) => {
-          const id = html[0].querySelector("select").value;
-          const uses = servings.find(i => i.id === id).uses;
-          const clone = createClone(uses);
-          await clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
-          return item.update({"system.uses.value": value - uses});
-        }
-      }
-    }
-  }).render(true);
-
-  function createClone(uses) {
-    const itemData = {"system.uses.per": ""};
-
-    if (uses === 2) {
-      itemData["system.damage.parts"] = [["1d6", "healing"], ["1d6", "temphp"]];
-      itemData["system.actionType.actionType"] = "heal";
-      itemData["flags.rollgroups.config.groups"] = [
-        {label: "Healing", parts: [0]},
-        {label: "Temp HP", parts: [1]}
-      ]
-    }
-    const clone = item.clone(itemData, {keepId: true});
-    clone.prepareData();
-    clone.prepareFinalAttributes();
-    return clone;
-  }
-}
-
-async function LANTERN_OF_TRACKING(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.EM, DEPEND.VAE)) return item.use();
-
-  if (!item.system.equipped) await item.update({"system.equipped": true}); // Forcefully equip the item.
-
-  const has = actor.effects.find(e => e.statuses.has(item.name.slugify({strict: true})));
-  if (has) return has.delete();
-
-  const oilFlask = actor.items.getName("Oil Flask");
-  if (!oilFlask) return ui.notifications.error("You have no Oil Flasks!");
-
-  const quantity = oilFlask.system.quantity;
-  if (!quantity) return ui.notifications.error("You have no Oil Flasks!");
-
-  const use = await item.use();
-  if (!use) return;
-  const lightData = {
-    alpha: 0.05, angle: 360, bright: 30, coloration: 1, dim: 60,
-    luminosity: 0.5, saturation: 0, contrast: 0, shadows: 0,
-    animation: {speed: 2, intensity: 4, reverse: false, type: "flame"},
-    darkness: {min: 0, max: 1}, color: "#ff4d00", attenuation: 0.5
-  };
-  await actor.createEmbeddedDocuments("ActiveEffect", ItemMacroHelpers._constructLightEffectData({item, lightData}));
-  return oilFlask.update({"system.quantity": quantity - 1});
-}
-
-async function FREE_USE(item, speaker, actor, token, character, event, args) {
-  return item.use({
-    createMeasuredTemplate: null,
-    consumeResource: null,
-    consumeSpellSlot: null,
-    consumeUsage: null
-  });
-}
-
-async function SCORCHING_CLEAVER(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.EM)) return item.use();
-
-  const effect = await fromUuid(item.flags[DEPEND.EM].effectUuid);
-  const weapon = actor.items.find(i => i.uuid === effect.origin);
-  const value = weapon.system.uses.value;
-
-  if (value < 3) {
-    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name}));
-    return;
-  }
-
-  const options = Array.fromRange(value, 3).reduce((acc, e) => {
-    if (e > value) return acc;
-    return acc + `<option value="${e}">${e} charges</option>`;
-  }, "");
-
-  const content = ItemMacroHelpers._basicFormContent({label: "Expend Charges:", type: "select", options});
-
-  const expend = await Dialog.prompt({
-    title: weapon.name,
-    label: "Fire Away!",
-    content,
-    callback: (html) => Number(html[0].querySelector("select").value),
-    rejectClose: false
-  });
-  if (!expend) return;
-
-  const val = value - expend;
-  const bonus = (val === 0 && expend >= 4) ? 3 : 0;
-  const parts = [[`${expend + bonus}d6`, "fire"]];
-
-  await weapon.update({"system.uses.value": val});
-  const clone = item.clone({"system.damage.parts": parts}, {keepId: true});
-  clone.prepareData();
-  clone.prepareFinalAttributes();
-  return clone.use({}, {"flags.dnd5e.itemData": clone.toObject()});
 }

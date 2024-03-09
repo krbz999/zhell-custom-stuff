@@ -22,13 +22,11 @@
   "styles": [
     "styles/app-column-dialog.css",
     "styles/app-elemental-dialog.css",
-    "styles/app-exhaustion-dialog.css",
     "styles/app-experimental-elixir.css",
     "styles/app-font-of-magic.css",
     "styles/app-image-selector.css",
     "styles/app-materia-media.css",
     "styles/app-mayhem.css",
-    "styles/app-money-spender.css",
     "styles/app-murk-scrolls.css",
     "styles/app-note-util.css",
     "styles/app-party-features.css",
@@ -36,18 +34,13 @@
     "styles/app-treasure-dialog.css",
     "styles/app-whisper-dialog.css",
     "styles/boss-bar.css",
-    "styles/button-feel.css",
     "styles/journal-banned-spells.css",
     "styles/journal-materia-medica.css",
     "styles/journal-pantheon.css",
     "styles/journal-party-features.css",
     "styles/journal-races.css",
     "styles/monster-stat-block.css",
-    "styles/settings-menu.css",
-    "styles/sheet-colors.css",
-    "styles/sheet-dots.css",
-    "styles/sheet-edits.css",
-    "styles/token-hud.css"
+    "styles/settings-menu.css"
   ],
   "languages": [
     {

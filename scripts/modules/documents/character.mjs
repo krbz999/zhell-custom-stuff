@@ -1,4 +1,5 @@
 export default class ActorExtension {
+  // TODO: this is no longer needed as of v3.1, easy addition of a new spell prog type.
   static init() {
     foundry.utils.mergeObject(CONFIG.DND5E.spellProgression, {
       warden: "DND5E.SpellProgWarden"

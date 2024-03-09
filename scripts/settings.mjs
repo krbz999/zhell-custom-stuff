@@ -1,6 +1,5 @@
-import {COLOR_DEFAULTS, MODULE} from "./const.mjs";
-import {ColorationMenu, IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
-import {SheetEdits} from "./modules/applications/sheetEdits.mjs";
+import {MODULE} from "./const.mjs";
+import {IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 
 export default class ModuleSettings {
   static init() {
@@ -57,24 +56,6 @@ export default class ModuleSettings {
   }
 
   static _registerSettingsMenus() {
-    // Settings that change the colors on character sheets.
-    game.settings.register(MODULE, "colorationSettings", {
-      scope: "client",
-      config: false,
-      type: Object,
-      default: COLOR_DEFAULTS,
-      onChange: SheetEdits.refreshColors
-    });
-
-    game.settings.registerMenu(MODULE, "colorationSettings", {
-      name: "ZHELL.SettingsMenuColorationSettings",
-      hint: "ZHELL.SettingsMenuColorationSettingsHint",
-      label: "ZHELL.SettingsMenuColorationSettings",
-      icon: "fa-solid fa-paint-roller",
-      type: ColorationMenu,
-      restricted: false
-    });
-
     // Settings for various keys, ids, and uuids.
     game.settings.register(MODULE, "identifierSettings", {
       scope: "world",

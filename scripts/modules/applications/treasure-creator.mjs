@@ -236,11 +236,10 @@ export class TreasureCreator extends FormApplication {
       actorUpdates[`system.currency.${key}`] = actor.system.currency[key] + value;
     }
 
-    await Promise.all([
+    return Promise.all([
       actor.updateEmbeddedDocuments("Item", itemUpdates),
       actor.createEmbeddedDocuments("Item", itemCreates),
       actor.update(actorUpdates)
     ]);
-    return ZHELL.utils.awardLoot({backpackUuid: actor.uuid});
   }
 }

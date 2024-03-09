@@ -1,65 +1,14 @@
-import {DEPEND} from "../../../const.mjs";
-import {ItemMacroHelpers} from "../../itemMacros.mjs";
+export const twilight = {TWILIGHT_SANCTUARY};
 
-export const twilight = {EYES_OF_NIGHT, STEPS_OF_NIGHT, TWILIGHT_SANCTUARY};
-
-async function EYES_OF_NIGHT(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.WG)) return item.use();
-  const range = 120;
-  const mod = Math.max(actor.system.abilities.wis.mod, 1);
-  if (!game.user.targets.size.between(1, mod)) {
-    ui.notifications.error(`Please target between 1 and ${mod} creatures.`);
-    return;
-  }
-
-  const name = `Darkvision (${range}ft)`;
-  const updates = {
-    actor: {"system.attributes.senses.darkvision": range},
-    token: {sight: {visionMode: "darkvision", range, ...CONFIG.Canvas.visionModes.darkvision.vision.defaults}}
-  }
-  const options = {
-    name,
-    description: `You are being granted ${range} feet of darkvision.`
-  }
-
-  const use = await item.use();
-  if (!use) return;
-  ui.notifications.info("Granting darkvision to your targets!");
-  for (const target of game.user.targets) warpgate.mutate(target.document, updates, {}, options);
-}
-
-async function STEPS_OF_NIGHT(item, speaker, actor, token, character, event, args) {
-  const use = await item.use();
-  if (!use) return;
-
-  return actor.createEmbeddedDocuments("ActiveEffect", [{
-    name: item.name,
-    origin: item.uuid,
-    changes: [{
-      key: "system.attributes.movement.fly",
-      mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-      value: actor.system.attributes.movement.walk
-    }],
-    duration: {seconds: 60},
-    icon: item.img,
-    statuses: [item.name.slugify({strict: true})],
-    description: "You have a flying speed equal to your walking speed.",
-    "flags.visual-active-effects.data.content": item.system.description.value
-  }]);
-}
-
-async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event, args) {
-  if (!ItemMacroHelpers._getDependencies(DEPEND.SEQ, DEPEND.JB2A)) return item.use();
-
+async function TWILIGHT_SANCTUARY(item) {
   // Constants.
   const status = item.name.slugify({strict: true});
-  const file = "jb2a.markers.circle_of_stars.orangepurple";
 
-  if (!actor.statuses.has(status)) {
+  if (!item.actor.statuses.has(status)) {
     const use = await item.use();
     if (!use) return;
 
-    const [eff] = await actor.createEmbeddedDocuments("ActiveEffect", [{
+    return item.actor.createEmbeddedDocuments("ActiveEffect", [{
       icon: item.img,
       name: item.name,
       origin: item.uuid,
@@ -68,17 +17,13 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
       "duration.seconds": 60,
       "flags.visual-active-effects.data.content": item.system.description.value,
     }]);
-
-    return new Sequence()
-      .effect().attachTo(token).persist().name(item.name).file(file).size(canvas.grid.size * 8)
-      .scaleIn(0, 800, {ease: "easeOutCubic"}).rotateIn(180, 1200, {ease: "easeOutCubic"})
-      .scaleOut(0, 500, {ease: "easeOutCubic"}).fadeOut(500, {ease: "easeOutCubic"})
-      .tieToDocuments(eff)
-      .play({remote: true});
   }
 
   const target = game.user.targets.first();
-  if (!target) return ui.notifications.error("Please target a token.");
+  if (!target) {
+    ui.notifications.error("Please target a token.");
+    return null;
+  }
 
   return new Dialog({
     title: item.name,
@@ -110,7 +55,10 @@ async function TWILIGHT_SANCTUARY(item, speaker, actor, token, character, event,
   }
 
   async function removeEffect() {
-    const content = `${actor.name} ends the charmed or frightened condition on ${target.name}.`;
-    return ChatMessage.create({speaker, content});
+    const content = `${item.actor.name} ends the charmed or frightened condition on ${target.name}.`;
+    return ChatMessage.implementation.create({
+      speaker: ChatMessage.implementation.getSpeaker({actor: item.actor}),
+      content: content
+    });
   }
 }

@@ -1,5 +1,5 @@
 import {MODULE} from "../const.mjs";
-import {SPELL_EFFECTS, STATUS_EFFECTS} from "../../sources/conditions.mjs";
+import {STATUS_EFFECTS} from "../../sources/conditions.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -14,83 +14,63 @@ export class GameChangesHandler {
     }
 
     Hooks.once("setup", GameChangesHandler._setupGameChanges);
-    Hooks.on("renderItemSheet", GameChangesHandler._itemStatusCondition);
     Hooks.on("preUpdateToken", GameChangesHandler._rotateTokensOnMovement);
-    Hooks.on("renderTokenHUD", GameChangesHandler._replaceTokenHUD);
     Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
     Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
     Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
-    Hooks.on("getSceneConfigHeaderButtons", GameChangesHandler._sceneHeaderView);
     Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);
     Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
     Hooks.on("getSceneControlButtons", GameChangesHandler.sceneControls);
-    Hooks.on("visual-active-effects.createEffectButtons", GameChangesHandler._visualActiveEffectsCreateEffectButtons);
   }
 
   // Hooks on setup.
   static _setupGameChanges() {
     // Set note display to always on.
     game.settings.set("core", NotesLayer.TOGGLE_SETTING, true);
-
-    // Adjust the time it takes for tooltips to fade in and out.
-    TooltipManager.TOOLTIP_ACTIVATION_MS = 100;
   }
 
   static _configChanges() {
     // Adjust spell schools.
     foundry.utils.mergeObject(CONFIG.DND5E.spellSchools, {
-      divine: "DND5E.SchoolDivine"
+      divine: {
+        fullKey: "divine",
+        icon: "...svg",
+        label: "DND5E.SchoolDivine",
+        reference: ""
+      }
     });
-
-    // Adjust equipment item subtypes.
-    const toAdd = {wand: "DND5E.EquipmentWand"};
-    foundry.utils.mergeObject(CONFIG.DND5E.equipmentTypes, toAdd);
-    foundry.utils.mergeObject(CONFIG.DND5E.miscEquipmentTypes, toAdd);
 
     // Adjust ability scores.
     CONFIG.DND5E.abilities.pty = {
-      label: "DND5E.AbilityPty",
       abbreviation: "pty",
-      type: "mental",
       defaults: {vehicle: 0, npc: 1, character: 1},
+      fullKey: "piety",
+      label: "DND5E.AbilityPty",
+      reference: "",
+      type: "mental",
       improvement: false
     };
 
-    // Adjust conditions.
-    foundry.utils.mergeObject(CONFIG.DND5E.conditionTypes, {
-      turned: "DND5E.ConTurned"
-    });
-
     // Adjust consumable item subtypes.
     foundry.utils.mergeObject(CONFIG.DND5E.consumableTypes, {
-      drink: "DND5E.ConsumableDrink",
-      elixir: "DND5E.ConsumableElixir",
-      bomb: "DND5E.ConsumableBomb",
-      trap: "DND5E.ConsumableTrap",
-      "-=rod": null,
-      "-=wand": null
-    }, {performDeletions: true});
+      drink: {label: "DND5E.ConsumableDrink"},
+      elixir: {label: "DND5E.ConsumableElixir"},
+      bomb: {label: "DND5E.ConsumableBomb"},
+      trap: {label: "DND5E.ConsumableTrap"}
+    });
 
     // Adjust languages.
     foundry.utils.mergeObject(CONFIG.DND5E.languages.standard.children, {
-      cait: "DND5E.LanguagesCait",
-      "-=gnomish": null,
-      "-=halfling": null
-    }, {performDeletions: true});
-
-    // Adjust weapon properties.
-    foundry.utils.mergeObject(CONFIG.DND5E.weaponProperties, {
-      "-=fir": null,
-      "-=rel": null
-    }, {performDeletions: true});
+      cait: "DND5E.LanguagesCait"
+    });
 
     // Adjust feature item subtypes.
     foundry.utils.mergeObject(CONFIG.DND5E.featureTypes.class.subtypes, {
       primordialEffect: "DND5E.ClassFeature.PrimordialEffect"
     });
 
-    // Replace status conditions.
-    CONFIG.statusEffects = SPELL_EFFECTS.concat(STATUS_EFFECTS).sort((a, b) => a.sort - b.sort);
+    // Add to status conditions.
+    CONFIG.statusEffects.push(...STATUS_EFFECTS);
   }
 
   static _tools() {
@@ -148,7 +128,7 @@ export class GameChangesHandler {
       woodcarver: `${key}.XkkGVigtxh57Wvb2`,
       yarting: `${key}.wVJXpPGzTlETZ3MR`,
       zulkoon: `${key}.kLrbRKBnNatsGTjH`
-    }
+    };
   }
 
   static _weapons() {
@@ -194,19 +174,6 @@ export class GameChangesHandler {
       warhammer: `${key}.YZzXPxRgpYcPh61M`,
       whip: `${key}.KGH7gJe5mvpbRoFZ`
     };
-
-
-  }
-
-  // Add 'View' button to scene headers for the GM.
-  static _sceneHeaderView(app, array) {
-    const viewBtn = {
-      class: `${MODULE}-view-scene`,
-      icon: "fa-solid fa-eye",
-      label: "View Scene",
-      onclick: () => app.document.view()
-    }
-    array.unshift(viewBtn);
   }
 
   /**
@@ -226,9 +193,9 @@ export class GameChangesHandler {
     }, {ids: [], content: ""});
     if (!ids.length) return;
     await actor.deleteEmbeddedDocuments("Item", ids);
-    return ChatMessage.create({
+    return ChatMessage.implementation.create({
       content: `Some of ${actor.name}'s items were destroyed:<ul>${content}</ul>`,
-      speaker: ChatMessage.getSpeaker({actor})
+      speaker: ChatMessage.implementation.getSpeaker({actor})
     });
   }
 
@@ -239,13 +206,13 @@ export class GameChangesHandler {
    * @returns {Promise<TokenDocument[]>}      The created token documents.
    */
   static async _dropActorFolder(canvas, data) {
-    if (!game.user.isGM) return;
-    if (data.type !== "Folder") return;
-    const folder = fromUuidSync(data.uuid);
+    if (!game.user.isGM || (data.type !== "Folder")) return;
+    const folder = await fromUuid(data.uuid);
     if (folder.type !== "Actor") return;
     const [x, y] = canvas.grid.getTopLeft(data.x, data.y);
     ui.notifications.info(`Dropping actors of '${folder.name}' folder.`);
-    const tokenData = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
+    const tokens = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
+    const tokenData = tokens.map(token => token.toObject());
     return canvas.scene.createEmbeddedDocuments("Token", tokenData);
   }
 
@@ -304,65 +271,6 @@ export class GameChangesHandler {
   }
 
   /**
-   * Add a dropdown in unowned items to add a status condition for ET purposes.
-   * @param {ItemSheet} sheet       The item sheet.
-   * @param {HTMLElement} html      The sheet's element.
-   */
-  static async _itemStatusCondition(sheet, html) {
-    if (!sheet.isEditable) return;
-    const list = html[0].querySelector(".items-list.effects-list");
-    if (!list) return;
-
-    const options = CONFIG.statusEffects.filter(s => {
-      return !sheet.document.effects.find(e => e.statuses.has(s.id));
-    }).sort((a, b) => a.name.localeCompare(b.name)).reduce(function(acc, s) {
-      return acc + `<option value="${s.id}">${game.i18n.localize(s.name)}</option>`;
-    }, "");
-
-    if (!options.length) return;
-
-    const div = document.createElement("DIV");
-    div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/statusConditionSelect.hbs");
-    list.append(...div.children);
-
-    const add = html[0].querySelector("[data-effect-type='statusCondition'] a[data-action='statusCondition']");
-    if (add) add.addEventListener("click", async function() {
-      const id = sheet.document.uuid.replaceAll(".", "-") + "-" + "add-status-condition";
-      const effId = await Dialog.wait({
-        title: "Add Status Condition",
-        content: `
-        <form class="dnd5e">
-          <div class="form-group">
-            <label>Status Condition:</label>
-            <div class="form-fields">
-              <select autofocus>${options}</select>
-            </div>
-          </div>
-        </form>`,
-        buttons: {
-          ok: {
-            label: "Add",
-            icon: '<i class="fa-solid fa-check"></i>',
-            callback: (html) => html[0].querySelector("select").value
-          }
-        },
-        default: "ok"
-      }, {id});
-      if (!effId) return;
-      const eff = foundry.utils.deepClone(CONFIG.statusEffects.find(e => e.id === effId));
-      const data = foundry.utils.mergeObject(eff, {
-        statuses: [eff.id],
-        transfer: false,
-        origin: sheet.document.uuid,
-        "flags.effective-transferral.transferrable.self": false,
-        "flags.effective-transferral.transferrable.target": true,
-        name: game.i18n.localize(eff.name)
-      });
-      return sheet.document.createEmbeddedDocuments("ActiveEffect", [data]);
-    });
-  }
-
-  /**
    * Change the defaults of newly created scenes.
    * @param {Scene} scene           The scene document to be created.
    * @param {object} sceneData      The data object used to create the scene.
@@ -376,98 +284,6 @@ export class GameChangesHandler {
       backgroundColor: "#000000"
     }, sceneData);
     scene.updateSource(data);
-  }
-
-  /**
-   * Hook function to replace the token HUD condition selector with a new one
-   * that has images and names, as well as tooltips.
-   * @param {TokenHUD} hud          The token HUD.
-   * @param {HTML} html             The element of the HUD.
-   * @param {object} tokenData      The data of the token related to the HUD.
-   */
-  static _replaceTokenHUD(hud, html, tokenData) {
-    const sorting = CONFIG.statusEffects.reduce((acc, e) => {
-      acc[e.id] = e.sort;
-      return acc;
-    }, {});
-    const innerHTML = Object.values(tokenData.statusEffects).sort((a, b) => {
-      return sorting[a.id] - sorting[b.id];
-    }).reduce((acc, eff) => {
-      const condition = CONFIG.statusEffects.find(e => e.id === eff.id) ?? {};
-      const clss = "status-effect effect-control";
-      const atts = (eff.isActive ? "active" : "") + " " + (eff.isOverlay ? "overlay" : "");
-      const tooltip = condition.description;
-      const name = game.i18n.localize(`ZHELL.StatusCondition${eff.id.capitalize()}`);
-      return acc + `
-      <div src="${eff.src}" class="${clss} ${atts}" data-status-id="${eff.id}" data-tooltip="${tooltip}">
-        <img class="status-effect-img" src="${eff.src}">
-        <div class="status-effect-name">${name}</div>
-      </div>`;
-    }, "");
-    html[0].querySelector(".status-effects").innerHTML = innerHTML;
-  }
-
-  /**
-   * Inject buttons into VAE effects.
-   * @param {ActiveEffect} effect     The active effect being rendered.
-   * @param {object[]} buttons        The array of buttons on this effect.
-   */
-  static _visualActiveEffectsCreateEffectButtons(effect, buttons) {
-    // Item data and type must be added in the effect by this module.
-    const {itemData, types} = effect.flags[MODULE] ?? {};
-    if (!itemData || !types) return;
-
-    const item = new Item.implementation(itemData, {parent: effect.parent});
-    item.prepareData();
-    item.prepareFinalAttributes();
-
-    // Use the item embedded.
-    if (types.includes("use")) {
-      buttons.push({
-        label: `${itemData.name} (Use)`,
-        callback: () => item.use({}, {"flags.dnd5e.itemData": itemData})
-      });
-    }
-
-    // Redisplay the item embedded.
-    if (types.includes("redisplay")) {
-      buttons.push({
-        label: `${itemData.name} (Chat)`,
-        callback: () => item.displayCard()
-      });
-    }
-
-    // Make an attack roll with the item embedded.
-    if (types.includes("attack")) {
-      buttons.push({
-        label: `${itemData.name} (Attack)`,
-        callback: () => item.rollAttack({event})
-      });
-    }
-
-    // Make a damage roll with the item embedded.
-    if (types.includes("damage")) {
-      buttons.push({
-        label: `${itemData.name} (Damage)`,
-        callback: () => item.rollDamage({event})
-      });
-    }
-
-    // Make a healing roll with the item embedded.
-    if (types.includes("healing")) {
-      buttons.push({
-        label: `${itemData.name} (Healing)`,
-        callback: () => item.rollDamage({event})
-      });
-    }
-
-    // Create a measured template from the item embedded.
-    if (types.includes("template")) {
-      buttons.push({
-        label: `${itemData.name} (Template)`,
-        callback: () => dnd5e.canvas.AbilityTemplate.fromItem(item).drawPreview()
-      });
-    }
   }
 
   /**

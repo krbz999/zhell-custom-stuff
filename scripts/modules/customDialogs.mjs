@@ -20,7 +20,7 @@ export async function elementalDialog({types = [], content, title}) {
   const buttons = types.reduce((acc, type) => {
     acc[type] = {
       icon: `<i class="fa-solid fa-${icon[type]}"></i>`,
-      label: CONFIG.DND5E.damageTypes[type],
+      label: CONFIG.DND5E.damageTypes[type].label,
       callback: () => type
     }
     return acc;

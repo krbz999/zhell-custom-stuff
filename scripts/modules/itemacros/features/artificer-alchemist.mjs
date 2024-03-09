@@ -3,8 +3,12 @@ import {ExperimentalElixir} from "../../applications/experimentalElixirs.mjs";
 
 export const alchemist = {EXPERIMENTAL_ELIXIR, ELIXIR_CANNON};
 
-async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event, args) {
-  const app = new ExperimentalElixir({item, speaker, actor});
+async function EXPERIMENTAL_ELIXIR(item) {
+  const app = new ExperimentalElixir({
+    item: item,
+    speaker: ChatMessage.implementation.getSpeaker({actor: item.actor}),
+    actor: item.actor
+  });
   return new Dialog({
     title: "Experimental Elixir",
     buttons: {
@@ -24,8 +28,12 @@ async function EXPERIMENTAL_ELIXIR(item, speaker, actor, token, character, event
   }).render(true);
 }
 
-async function ELIXIR_CANNON(item, speaker, actor, token, character, event, args) {
-  const app = new ExperimentalElixir({item, speaker, actor});
+async function ELIXIR_CANNON(item) {
+  const app = new ExperimentalElixir({
+    item: item,
+    speaker: ChatMessage.implementation.getSpeaker({actor: item.actor}),
+    actor: item.actor
+  });
 
   // The item has 15 max uses. If it has no uses left, prompt for a new type and refill.
   if (!item.system.uses.value) {
@@ -38,7 +46,7 @@ async function ELIXIR_CANNON(item, speaker, actor, token, character, event, args
       render: (html) => {
         html[0].closest(".dialog").querySelectorAll("[data-button]").forEach(n => {
           const string = `ZHELL.ExperimentalElixirType${app.elixirTypes[n.dataset.button].name}`;
-          n.setAttribute("data-tooltip", game.i18n.format(string, {mod: actor.system.abilities.int.mod}));
+          n.setAttribute("data-tooltip", game.i18n.format(string, {mod: item.actor.system.abilities.int.mod}));
           n.setAttribute("data-tooltip-direction", "LEFT");
         });
       }
@@ -60,7 +68,7 @@ async function ELIXIR_CANNON(item, speaker, actor, token, character, event, args
   if (!use) return;
 
   const [itemData] = item.flags[MODULE].itemData;
-  const elixir = new Item.implementation(itemData, {parent: actor});
+  const elixir = new Item.implementation(itemData, {parent: item.actor});
   elixir.prepareData();
   elixir.prepareFinalAttributes();
   return elixir.use({}, {"flags.dnd5e.itemData": itemData});

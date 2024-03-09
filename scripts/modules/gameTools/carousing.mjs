@@ -78,12 +78,12 @@ export async function playerLanguages({whisper = false} = {}) {
 
   const tableBody = players.reduce((actor_acc, actor) => {
     const {value, custom} = actor.system.traits.languages;
-    let langA = value.map(i => CONFIG.DND5E.languages[i]);
     let langB = custom?.length ? custom.split(";").map(c => c.trim()) : [];
-    let languages = [...langA, ...langB];
+    let languages = new Set([...value, ...langB]);
     return actor_acc + languages.reduce((lang_acc, lang, i) => {
       const leftCol = (i === 0) ? actor.name : "";
-      return lang_acc + `<tr><td>${leftCol}</td><td>${lang}</td></tr>`;
+      const label = dnd5e.documents.Trait.keyLabel(`languages:${lang}`);
+      return lang_acc + `<tr><td>${leftCol}</td><td>${label}</td></tr>`;
     }, "");
   }, "");
 
