@@ -26,7 +26,7 @@ export async function BORROWED_KNOWLEDGE(item) {
   return item.actor.createEmbeddedDocuments("ActiveEffect", [{
     name: item.name,
     icon: item.img,
-    duration: ItemMacroHelpers._getItemDuration(item),
+    duration: ActiveEffect.implementation.getEffectDurationFromItem(item),
     changes: [{key: `system.skills.${skl}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 1}],
     statuses: [status],
     description: `<p>You have proficiency in the ${CONFIG.DND5E.skills[skl].label} skill.</p>`

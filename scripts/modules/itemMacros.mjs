@@ -110,37 +110,6 @@ export class ItemMacroHelpers {
   }
 
   /**
-   * Helper function to get duration in seconds from an item's duration.
-   * @param {Item} item     The item from which to retrieve data.
-   * @returns {object}      An object with either 'turns' or 'seconds'.
-   */
-  static _getItemDuration(item) {
-    const duration = item.system.duration;
-
-    if (!duration?.value) return {};
-    let {value, units} = duration;
-
-    // do not bother for these duration types:
-    if (["inst", "perm", "spec"].includes(units)) return {};
-
-    // cases for the remaining units of time:
-    if (units === "round") return {rounds: value};
-    if (units === "turn") return {turns: value};
-    value *= 60;
-    if (units === "minute") return {seconds: value};
-    value *= 60;
-    if (units === "hour") return {seconds: value};
-    value *= 24;
-    if (units === "day") return {seconds: value};
-    value *= 30;
-    if (units === "month") return {seconds: value};
-    value *= 12;
-    if (units === "year") return {seconds: value};
-
-    return {};
-  }
-
-  /**
    * Draw a circle around a token placeable.
    * @param {Token} token         A token placeable.
    * @param {number} radius       The radius of the circle (in ft).
