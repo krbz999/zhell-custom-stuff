@@ -1,3 +1,4 @@
+import {PickPosition} from "./applications/position-picker.mjs";
 import {draconiz} from "./itemacros/boons/draconiz.mjs";
 import {murk} from "./itemacros/boons/murk.mjs";
 import {alchemist} from "./itemacros/features/artificer-alchemist.mjs";
@@ -129,21 +130,25 @@ export class ItemMacroHelpers {
 
   /**
    * Pick a position within a certain number of feet from a token.
-   * @param {Token} token                   The token origin.
-   * @param {number} radius                 The maximum radius, in feet.
-   * @param {object} config                 Additional options to configure the workflow.
-   * @param {string} config.type            The type of restriction ('move' or 'sight').
-   * @param {boolean} config.showImage      Show the given image on the cursor.
-   * @param {string} config.img             The image to show on the cursor, if any.
-   * @param {color} config.red              The color used for invalid positions.
-   * @param {color} config.grn              The color used for valid positions.
-   * @param {number} config.alpha           The opacity of the drawn shapes.
-   * @param {boolean} config.highlight      Highlight the gridspace of the current position.
-   * @param {number} config.width           The width of the position picker.
-   * @param {number} config.height          The height of the position picker.
-   * @returns {Promise<object|null>}        A promise that resolves to an object of coordinates.
+   * @param {Token} token                     The token origin.
+   * @param {number} radius                   The maximum radius, in feet.
+   * @param {object} [config]                 Additional options to configure the workflow.
+   * @param {string} [config.type]            The type of restriction ('move' or 'sight').
+   * @param {boolean} [config.showImage]      Show the given image on the cursor.
+   * @param {string} [config.img]             The image to show on the cursor, if any.
+   * @param {color} [config.red]              The color used for invalid positions.
+   * @param {color} [config.grn]              The color used for valid positions.
+   * @param {number} [config.alpha]           The opacity of the drawn shapes.
+   * @param {boolean} [config.highlight]      Highlight the gridspace of the current position.
+   * @param {number} [config.width]           The width of the position picker.
+   * @param {number} [config.height]          The height of the position picker.
+   * @returns {Promise<object|null>}          A promise that resolves to an object of coordinates.
    */
   static async pickPosition(token, radius, config = {}) {
+    const app = new PickPosition({token: token, radius: radius, config: config});
+
+    return app.pickPosition();
+
     config = foundry.utils.mergeObject({
       type: "move",
       showImage: true,
@@ -154,7 +159,7 @@ export class ItemMacroHelpers {
       highlight: true,
       width: token.document.width,
       height: token.document.height
-    }, config);
+    }, config, {insertKeys: false, enforceTypes: true});
 
     const pointerSprite = new PIXI.Sprite(await loadTexture(config.img));
     const name = `pick-position.${token.id}`;
@@ -243,6 +248,14 @@ export class ItemMacroHelpers {
       drawing.on('pointerover', () => {
         drawing.tint = config.grn;
         pointerSpriteContainer.visible = config.showImage;
+      });
+      drawing.on("mousemove", (...args) => {
+        console.warn(args);
+        const x = canvas.mousePosition.x// - Math.abs(token.document.x - c.x);
+        const y = canvas.mousePosition.y// - Math.abs(token.document.y - c.y);
+        const loc = getPosition(x, y);
+        console.warn({x, y, lx: loc.x, ly: loc.y, in: drawing.containsPoint(loc)});
+        drawing.tint = drawing.containsPoint(loc) ? config.grn : config.red;
       });
       drawing.on('pointerout', () => {
         drawing.tint = config.red;

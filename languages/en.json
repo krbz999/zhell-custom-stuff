@@ -12,6 +12,7 @@
   "DND5E.SchoolDivine": "Divine",
   "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
   "DND5E.SpellProgWarden": "Warden",
+  "DND5E.SpellLevelWarden": "Warden Slot [Level {level}] ({n} Slots)",
   "ZHELL.ApiMethod": "API Method",
   "ZHELL.CraftingCannotRollMore": "You cannot roll any more.",
   "ZHELL.CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
