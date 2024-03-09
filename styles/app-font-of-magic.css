@@ -2,8 +2,9 @@
 .zhell-custom-stuff.font-of-magic .dialog-buttons {
   flex-direction: column;
   gap: 5px;
-}
-.zhell-custom-stuff.font-of-magic .dialog-buttons button {
-  display: flex;
-  justify-content: space-around;
+
+  & button {
+    display: flex;
+    justify-content: space-around;
+  }
 }

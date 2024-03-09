@@ -1,13 +1,15 @@
 /* COLUMN DIALOG */
 .dialog.column-dialog {
   height: auto !important;
-}
-.dialog.column-dialog .dialog-buttons {
-  flex-direction: column;
-  gap: 5px;
-}
-.dialog.column-dialog .dynamic-tooltip {
-  margin: 0 1em;
-  font-style: italic;
-  min-height: 100px;
+
+  .dialog-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .dynamic-tooltip {
+    margin: 0 1em;
+    font-style: italic;
+    min-height: 100px;
+  }
 }

@@ -1,48 +1,53 @@
 /* Elemental dialog coloring */
 .dialog.elemental {
   height: auto;
-}
-.dialog.elemental .dialog-content {
-  text-align: center;
-  font-size: 20px;
-  margin: 0.5em 0 1em;
-}
-.dialog.elemental .dialog-buttons {
-  flex-direction: column;
-  gap: 5px;
-}
-.dialog.elemental .dialog-button {
-  font-size: 25px;
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 2fr;
-}
-.dialog.elemental .dialog-button i {
-  font-size: 40px;
-  padding: 7px;
-  margin: 0;
-}
-.dialog.elemental .dialog-button.acid:hover {
-  color: darkgreen;
-  background-color: yellowgreen;
-}
-.dialog.elemental .dialog-button.cold:hover {
-  color: blue;
-  background-color: lightblue;
-}
-.dialog.elemental .dialog-button.fire:hover {
-  color: red;
-  background-color: burlywood;
-}
-.dialog.elemental .dialog-button.lightning:hover {
-  color: darkblue;
-  background-color: cornflowerblue;
-}
-.dialog.elemental .dialog-button.thunder:hover {
-  color: white;
-  background-color: mediumslateblue;
-}
-.dialog.elemental .dialog-button.poison:hover {
-  color: purple;
-  background-color: plum;
+
+  .dialog-content {
+    text-align: center;
+    font-size: 20px;
+    margin: 0.5em 0 1em;
+  }
+
+  .dialog-buttons {
+    flex-direction: column;
+    gap: 5px;
+
+    .dialog-button {
+      font-size: 25px;
+      display: grid;
+      align-items: center;
+      grid-template-columns: 1fr 2fr;
+
+      & i {
+        font-size: 40px;
+        padding: 7px;
+        margin: 0;
+      }
+
+      &.acid:hover {
+        color: darkgreen;
+        background-color: yellowgreen;
+      }
+      &.cold:hover {
+        color: blue;
+        background-color: lightblue;
+      }
+      &.fire:hover {
+        color: red;
+        background-color: burlywood;
+      }
+      &.lightning:hover {
+        color: darkblue;
+        background-color: cornflowerblue;
+      }
+      &.thunder:hover {
+        color: white;
+        background-color: mediumslateblue;
+      }
+      &.poison:hover {
+        color: purple;
+        background-color: plum;
+      }
+    }
+  }
 }

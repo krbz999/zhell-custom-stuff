@@ -2,45 +2,55 @@
 .zhell-custom-stuff.experimental-elixir {
   width: 400px !important;
   height: auto !important;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-button {
-  display: flex;
-  padding: 0.5em 0;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-button:hover {
-  color: purple;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-button i {
-  font-size: 40px;
-  align-self: center;
-  transition: 0.2s;
-  flex: 1;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-button .label {
-  flex: 2;
-}
-.zhell-custom-stuff.experimental-elixir .dialog-button:hover i {
-  transform: scale(1.5);
-}
-.zhell-custom-stuff.experimental-elixir .form-group {
-  gap: 1em;
-  margin: 0 1em;
-}
-.zhell-custom-stuff.experimental-elixir label {
-  line-height: var(--line-height-16);
-  margin: 0.5em 0;
-}
-.zhell-custom-stuff.experimental-elixir .form-fields {
-  flex: 0;
-  justify-content: center;
-}
-.zhell-custom-stuff.experimental-elixir button:disabled {
-  text-decoration: line-through;
-  color: darkgray;
-  cursor: default;
+
+  .dialog-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .dialog-button {
+      display: flex;
+      padding: 0.5em 0;
+
+      &:disabled {
+        text-decoration: line-through;
+        color: darkgray;
+        cursor: default;
+      }
+
+      &:hover {
+        color: purple;
+
+        & i {
+          transform: scale(1.5);
+        }
+      }
+
+      & i {
+        font-size: 40px;
+        align-self: center;
+        transition: 0.2s;
+        flex: 1;
+      }
+
+      .label {
+        flex: 2;
+      }
+    }
+  }
+
+  .form-group {
+    gap: 1em;
+    margin: 0 1em;
+
+    .form-fields {
+      flex: 0;
+      justify-content: center;
+    }
+  }
+
+  & label {
+    line-height: var(--line-height-16);
+    margin: 0.5em 0;
+  }
 }
