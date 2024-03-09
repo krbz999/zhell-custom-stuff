@@ -48,23 +48,32 @@ export class ItemMacroHelpers {
 
   /**
    * Helper function to return a string of options for each spell slot level for which you have
-   * slots available, including pact slots. Optionally instead levels for which you have expended
-   * spell slots. Optionally with a maximum level. Returns a string (possibly of length 0).
-   * @param {Actor} actor                     The actor with spell slots.
-   * @param {boolean} [missing=false]         Whether to instead find levels for which you have expended slots.
-   * @param {number} [maxLevel=Infinity]      The maximum spell slot level to use as an option.
-   * @returns {string}                        The string of select options.
+   * slots available. Optionally instead levels for which you have expended spell slots.
+   * Optionally with a maximum level.
+   * @param {Actor} actor           The actor with spell slots.
+   * @param {boolean} [missing]     Whether to instead find levels for which you have expended slots.
+   * @param {number} [maxLevel]     The maximum spell slot level to use as an option.
+   * @returns {object}              The select options.
    */
   static _constructSpellSlotOptions(actor, {missing = false, maxLevel = Infinity} = {}) {
-    return Object.entries(actor.system.spells).reduce((acc, [key, data]) => {
-      if ((missing && (data.value >= data.max)) || (!missing && (data.value <= 0))) return acc;
-      if ((data.level > maxLevel) || (key.at(-1) > maxLevel)) return acc;
-      const label = game.i18n.format(`DND5E.SpellLevel${key === "pact" ? "Pact" : "Slot"}`, {
-        level: key === "pact" ? data.level : game.i18n.localize(`DND5E.SpellLevel${key.at(-1)}`),
-        n: `${data.value}/${data.max}`
+    const isValid = (d) => {
+      if (!d.level || !d.max || (d.level > maxLevel)) return false;
+      if (missing) return (d.max - d.value) > 0;
+      else return d.value > 0;
+    };
+
+    const spellLabel = (k, d) => {
+      const type = /spell[0-9]+/.test(k) ? "DND5E.SpellLevelSlot" : `DND5E.SpellLevel${k.capitalize()}`;
+      return game.i18n.format(type, {
+        level: d.level,
+        n: `${d.value}/${d.max}`
       });
-      return acc + `<option value="${key}">${label}</option>`;
-    }, "");
+    };
+
+    return Object.entries(actor.system.spells).reduce((acc, [k, d]) => {
+      if (isValid(d)) acc[k] = spellLabel(k, d);
+      return acc;
+    }, {});
   }
 
   /**

@@ -4,7 +4,7 @@ export const paladin = {DIVINE_SMITE, LAY_ON_HANDS};
 
 async function DIVINE_SMITE(item) {
   const options = ItemMacroHelpers._constructSpellSlotOptions(item.actor);
-  if (!options.length) {
+  if (foundry.utils.isEmpty(options)) {
     ui.notifications.warn("You have no spell slots remaining.");
     return;
   }
