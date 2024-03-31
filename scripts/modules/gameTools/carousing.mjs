@@ -73,7 +73,7 @@ function getAverageLevel() {
 export async function playerLanguages({whisper = false} = {}) {
   const id = game.settings.get(MODULE, "identifierSettings").players.folderId;
   const players = game.folders.get(id).contents.filter(a => {
-    game.users.some(u => u.character === a);
+    return game.users.some(u => u.character === a);
   });
 
   const tableBody = players.reduce((actor_acc, actor) => {
