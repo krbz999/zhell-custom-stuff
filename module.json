@@ -1,7 +1,7 @@
 {
   "id": "zhell-custom-stuff",
   "title": "Zhell's Custom Stuff",
-  "version": "11.2.4",
+  "version": "AUTOMATIC",
   "authors": [
     {
       "name": "Zhell",
@@ -12,9 +12,9 @@
     }
   ],
   "compatibility": {
-    "minimum": "11",
-    "maximum": "11",
-    "verified": "11"
+    "minimum": "12",
+    "maximum": "12",
+    "verified": "12"
   },
   "esmodules": [
     "./setup.mjs"
@@ -53,10 +53,10 @@
   "flags": {
     "hotReload": {
       "extensions": ["css"],
-      "paths": []
+      "paths": ["./styles/*.css"]
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",
   "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
-  "download": "https://github.com/krbz999/zhell-custom-stuff/releases/download/v11.2.4/module.zip"
+  "download": "AUTOMATIC"
 }

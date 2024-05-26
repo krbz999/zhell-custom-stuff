@@ -1,5 +1,4 @@
 import {MODULE} from "../const.mjs";
-import {STATUS_EFFECTS} from "../../sources/conditions.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
@@ -70,7 +69,20 @@ export class GameChangesHandler {
     });
 
     // Add to status conditions.
-    CONFIG.statusEffects.push(...STATUS_EFFECTS);
+    CONFIG.statusEffects.push({
+      id: "reaction",
+      name: "ZHELL.StatusConditionReaction",
+      icon: "assets/images/conditions/reaction.webp",
+      duration: {rounds: 1},
+      description: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>"
+    },
+    {
+      id: "rimed",
+      name: "ZHELL.StatusConditionRimed",
+      icon: "icons/magic/water/barrier-ice-water-cube.webp",
+      description: "<p>Your movement speed has been reduced by 10 feet.</p>",
+      changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10}]
+    });
   }
 
   static _tools() {
@@ -223,7 +235,6 @@ export class GameChangesHandler {
    */
   static _addContextMenuOptions(item, array) {
     GameChangesHandler._moveItemToSharedInventory(item, array);
-    GameChangesHandler._createScrollFromOwnedSpell(item, array);
   }
 
   /**
@@ -252,25 +263,6 @@ export class GameChangesHandler {
   }
 
   /**
-   * Add a context menu option to create a scroll from a spell in an actor's spellbook.
-   * @param {Item5e} spell        The spell that is the target of the context menu.
-   * @param {object[]} array      The array of context menu options.
-   */
-  static _createScrollFromOwnedSpell(spell, array) {
-    if (spell.type !== "spell") return;
-    array.push({
-      name: "Create Scroll",
-      icon: "<i class='fa-solid fa-scroll'></i>",
-      callback: async () => {
-        const scroll = await Item.implementation.createScrollFromSpell(spell, {flags: spell.flags});
-        const itemData = game.items.fromCompendium(scroll, {addFlags: false});
-        ui.notifications.info(`Created scroll from ${spell.name}.`);
-        return spell.actor.createEmbeddedDocuments("Item", [itemData]);
-      }
-    });
-  }
-
-  /**
    * Change the defaults of newly created scenes.
    * @param {Scene} scene           The scene document to be created.
    * @param {object} sceneData      The data object used to create the scene.
@@ -294,8 +286,10 @@ export class GameChangesHandler {
    */
   static _rotateTokensOnMovement(doc, update, options) {
     if (doc.lockRotation || (options.animate === false)) return;
-    if (!foundry.utils.hasProperty(update, "x") && !foundry.utils.hasProperty(update, "y")) return;
-    const ray = new Ray(doc, {x: update.x ?? doc.x, y: update.y ?? doc.y});
+    const x = update.x ?? doc.x;
+    const y = update.y ?? doc.y;
+    if ((x === doc.x) && (y === doc.y)) return;
+    const ray = new Ray(doc, {x, y});
     update.rotation = ray.angle * 180 / Math.PI - 90;
   }
 

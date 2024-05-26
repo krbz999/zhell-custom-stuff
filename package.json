@@ -1,24 +1,25 @@
 {
   "name": "zhell-custom-stuff",
-  "version": "11.2.2",
-  "description": "Personal module for fvtt.",
+  "version": "1.0.0",
+  "description": "Zhell's Custom Stuff",
   "scripts": {
-    "test": "run-func test.js updateManifest"
+    "build": "rollup -c rollup.config.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/krbz999/zhell-custom-stuff.git"
   },
   "keywords": [
-    "fvtt"
+    "fvtt",
+    "module"
   ],
   "author": "Zhell",
-  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/krbz999/zhell-custom-stuff/issues"
+    "url": "https://github.com/krbz999/zhell-custom-stuff"
   },
-  "homepage": "https://github.com/krbz999/zhell-custom-stuff#readme",
-  "dependencies": {
-    "run-func": "^3.0.0"
+  "homepage": "https://github.com/krbz999/zhell-custom-stuff",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rollup": "^4.17.2"
   }
 }
