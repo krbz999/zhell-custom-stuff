@@ -1,75 +1,57 @@
 export default class ActorExtension {
-  // TODO: this is no longer needed as of v3.1, easy addition of a new spell prog type.
   static init() {
     CONFIG.DND5E.spellProgression.warden = "DND5E.SpellProgWarden";
-
     CONFIG.DND5E.spellcastingTypes.warden = {
       label: "DND5E.SpellProgWarden",
+      img: "icons/magic/nature/leaf-rune-glow-green.webp",
+      shortRest: true,
       progression: {
         3: {slots: 1, level: 1},
         4: {slots: 2, level: 1},
-        5: {slots: 2, level: 1},
-        6: {slots: 2, level: 1},
         7: {slots: 2, level: 2},
-        8: {slots: 2, level: 2},
-        9: {slots: 2, level: 2},
-        10: {slots: 2, level: 2},
-        11: {slots: 2, level: 2},
-        12: {slots: 2, level: 2},
         13: {slots: 2, level: 3},
-        14: {slots: 2, level: 3},
-        15: {slots: 2, level: 3},
-        16: {slots: 2, level: 3},
-        17: {slots: 2, level: 3},
-        18: {slots: 2, level: 3},
-        19: {slots: 2, level: 4},
-        20: {slots: 2, level: 4}
+        14: {slots: 2, level: 4}
       }
     };
-
     CONFIG.DND5E.spellPreparationModes.warden = {
       label: "DND5E.SpellProgWarden",
       upcast: true,
       order: 0.75,
-      cantrips: true
+      cantrips: true,
+      prepares: false
     };
 
     Hooks.on("dnd5e.computeWardenProgression", ActorExtension.computeWardenProgression);
     Hooks.on("dnd5e.prepareWardenSlots", ActorExtension.prepareWardenSlots);
-    Hooks.on("dnd5e.preRestCompleted", ActorExtension.preRestCompleted);
+    Hooks.on("dnd5e.buildWardenSpellcastingTable", ActorExtension.buildSpellcastingTable);
   }
 
   static computeWardenProgression(progression, actor, cls, spellcasting, count) {
     progression.warden ??= 0;
-    progression.warden += cls.system.levels;
+    progression.warden += spellcasting.levels;
   }
   static prepareWardenSlots(spells, actor, progression) {
-    let wardenLevel = Math.clamp(progression.warden, 0, CONFIG.DND5E.maxLevel);
-    spells.warden ??= {};
-    const override = Number.isNumeric(spells.warden.override) ? parseInt(spells.warden.override) : null;
-
-    if ((wardenLevel === 0) && (actor.type === "npc") && (override !== null)) {
-      wardenLevel = actor.system.details.spellLevel;
-    }
-
-    const [, wardenConfig] =
-      Object.entries(CONFIG.DND5E.spellcastingTypes.warden.progression)
-        .reverse()
-        .find(([l]) => Number(l) <= wardenLevel) ?? [];
-    if (wardenConfig) {
-      spells.warden.level = wardenConfig.level;
-      if (override === null) spells.warden.max = wardenConfig.slots;
-      else spells.warden.max = Math.max(override, 1);
-      spells.warden.value = Math.min(spells.warden.value || 0, spells.warden.max);
-    } else {
-      spells.warden.max = override || 0;
-      spells.warden.level = spells.warden.max > 0 ? 1 : 0;
-    }
+    const table = CONFIG.DND5E.spellcastingTypes.warden.progression;
+    Actor.implementation.prepareAltSlots(spells, actor, progression, "warden", table);
   }
-  static preRestCompleted(actor, {longRest, updateData}) {
-    if (longRest) return;
-    const warden = actor.system.spells?.warden;
-    if (!warden || !warden.max) return;
-    updateData["system.spells.warden.value"] = warden.max;
+  static buildSpellcastingTable(table, item, spellcasting) {
+    const spells = {warden: {}};
+    table.headers = [[
+      {content: game.i18n.localize("JOURNALENTRYPAGE.DND5E.Class.SpellSlots")},
+      {content: game.i18n.localize("JOURNALENTRYPAGE.DND5E.Class.SpellSlotLevel")}
+    ]];
+    table.cols = [{class: "spellcasting", span: 2}];
+
+    // Loop through each level, gathering "Spell Slots" & "Slot Level" for each one
+    for (const level of Array.fromRange(CONFIG.DND5E.maxLevel, 1)) {
+      const progression = {warden: 0};
+      spellcasting.levels = level;
+      Actor.implementation.computeClassProgression(progression, item, {spellcasting});
+      Actor.implementation.prepareSpellcastingSlots(spells, "warden", progression);
+      table.rows.push([
+        {class: "spell-slots", content: `${spells.warden.max}`},
+        {class: "slot-level", content: spells.warden.level.ordinalString()}
+      ]);
+    }
   }
 }
