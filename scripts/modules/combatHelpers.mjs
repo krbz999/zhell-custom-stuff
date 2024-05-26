@@ -19,23 +19,6 @@ export class CombatEnhancements {
   }
 
   /**
-   * Display the chat card of an ammo item being fired from a weapon when that weapon makes
-   * an attack roll, but only if the ammo has a saving throw associated with it.
-   * @param {Item} weapon                 The item making the attack roll.
-   * @param {D20Roll} roll                The roll result.
-   * @param {object[]} ammoUpdate         The updates to consumed ammo item(s).
-   * @returns {Promise<ChatMessage>}      The displayed chat message.
-   */
-  static async _displaySavingThrowAmmo(weapon, roll, ammoUpdate) {
-    if (!game.settings.get(MODULE, "displaySavingThrowAmmo")) return;
-    if (!ammoUpdate.length) return;
-    const ammoId = ammoUpdate[0]._id;
-    const ammo = weapon.actor.items.get(ammoId);
-    if (!ammo?.hasSave) return;
-    return ammo.displayCard();
-  }
-
-  /**
    * Hook function to add the 'reaction' effect to an actor when using an item that requires a reaction.
    * The effect is altered to show the name of the item used and is removed at the start of the same actor's
    * turn. This hook only fires during combat and can be toggled to fire for GM, none, or players too.
@@ -85,7 +68,6 @@ export class CombatEnhancements {
   }
 
   static init() {
-    Hooks.on("dnd5e.rollAttack", CombatEnhancements._displaySavingThrowAmmo);
     Hooks.on("updateActor", CombatEnhancements._markDefeatedCombatant);
     Hooks.on("updateCombat", CombatEnhancements._rechargeMonsterFeatures);
     Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);

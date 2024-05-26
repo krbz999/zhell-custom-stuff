@@ -29,12 +29,11 @@ export async function mayhem() {
     default: value < max ? "earn" : "spend"
   }, {id: "mayhem-dialog"}).render(true);
 
-
   async function message(html, event) {
     const btn = event.currentTarget.dataset.button;
 
     const add = {earn: 1, spend: -1}[btn];
-    const newValue = Math.clamped(value + add, 0, max);
+    const newValue = Math.clamp(value + add, 0, max);
     if (value === newValue) {
       const info = {
         earn: "You cannot earn more points.",

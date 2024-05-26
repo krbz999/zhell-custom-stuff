@@ -28,16 +28,6 @@ export default class ModuleSettings {
       requiresReload: true
     });
 
-    game.settings.register(MODULE, "displaySavingThrowAmmo", {
-      name: "ZHELL.SettingsDisplayAmmo",
-      hint: "ZHELL.SettingsDisplayAmmoHint",
-      scope: "world",
-      config: true,
-      type: Boolean,
-      default: true,
-      requiresReload: true
-    });
-
     // Whether to track reactions.
     game.settings.register(MODULE, "trackReactions", {
       name: "ZHELL.SettingsTrackReactions",
@@ -50,7 +40,7 @@ export default class ModuleSettings {
       choices: {
         0: "ZHELL.SettingsTrackReactionsChoice0", // none
         1: "ZHELL.SettingsTrackReactionsChoice1", // gm only
-        2: "ZHELL.SettingsTrackReactionsChoice2"  // all
+        2: "ZHELL.SettingsTrackReactionsChoice2" // all
       }
     });
   }

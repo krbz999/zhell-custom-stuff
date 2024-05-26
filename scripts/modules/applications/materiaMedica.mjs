@@ -305,10 +305,10 @@ export class MateriaMedica extends Application {
       itemData.system.description.value = itemData.system.description.value.replace(base, formula);
     }
     const stack = this.actor.items.find(i => {
-      return i.flags.core?.sourceId === itemData.flags.core.sourceId
-        && i.system.description.value === itemData.system.description.value
+      return (i._stats.compendiumSource === itemData._stats.compendiumSource)
+        && (i.system.description.value === itemData.system.description.value)
         && (!formula || (i.system.damage.parts[0][0] === formula))
-        && i.name === itemData.name;
+        && (i.name === itemData.name);
     });
 
     let created;
@@ -424,6 +424,6 @@ export class MateriaMedica extends Application {
       hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),
       section: "Feats",
       type: Boolean
-    }
+    };
   }
 }

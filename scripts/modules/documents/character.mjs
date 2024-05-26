@@ -44,7 +44,7 @@ export default class ActorExtension {
     progression.warden += cls.system.levels;
   }
   static prepareWardenSlots(spells, actor, progression) {
-    let wardenLevel = Math.clamped(progression.warden, 0, CONFIG.DND5E.maxLevel);
+    let wardenLevel = Math.clamp(progression.warden, 0, CONFIG.DND5E.maxLevel);
     spells.warden ??= {};
     const override = Number.isNumeric(spells.warden.override) ? parseInt(spells.warden.override) : null;
 

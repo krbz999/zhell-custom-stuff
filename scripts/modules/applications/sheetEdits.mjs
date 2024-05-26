@@ -25,7 +25,7 @@ export class SheetEdits {
     const input = event.currentTarget;
     const target = this.document;
     const value = dnd5e.utils.parseInputDelta(input, target);
-    if (value !== undefined) input.value = Math.clamped(value, 0, 999);
+    if (value !== undefined) input.value = Math.clamp(value, 0, 999);
   }
 
   static init() {

@@ -15,7 +15,7 @@
           <option value="">-</option>
           {{#each optgroups}}
           <optgroup label="{{label}}">
-            {{selectOptions items sort=true nameAttr="id" labelAttr="name"}}
+            {{selectOptions items sort=true valueAttr="id" labelAttr="name"}}
           </optgroup>
           {{/each}}
           {{/select}}
