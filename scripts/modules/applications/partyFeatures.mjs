@@ -161,7 +161,7 @@ export class PartyFeatures extends Application {
       footer: `Target value: ${targetValue} or lower`
     };
     const content = await renderTemplate("modules/zhell-custom-stuff/templates/partyFeatureMessage.hbs", data);
-    await ChatMessage.create({content, speaker: {alias: this.alias}});
+    await ChatMessage.implementation.create({content, speaker: {alias: this.alias}});
     await new Roll("1d100").toMessage({flavor: data.name, speaker: {alias: this.alias}});
     return this.groupActor.setFlag(MODULE, "partyFeatureUses.intervention.value", uses.value - 1);
   }
@@ -185,7 +185,7 @@ export class PartyFeatures extends Application {
         + " When Divine Intervention resets after performing a successful intervention, the party regains all expended uses of this feature.</p>"
     };
     const content = await renderTemplate("modules/zhell-custom-stuff/templates/partyFeatureMessage.hbs", data);
-    await ChatMessage.create({content, speaker: {alias: this.alias}});
+    await ChatMessage.implementation.create({content, speaker: {alias: this.alias}});
     return this.groupActor.setFlag(MODULE, "partyFeatureUses.inspiration.value", uses.value - 1);
   }
 
@@ -211,7 +211,7 @@ export class PartyFeatures extends Application {
         + " be used again until Divine Intervention has reset.</p>"
     };
     const content = await renderTemplate("modules/zhell-custom-stuff/templates/partyFeatureMessage.hbs", data);
-    await ChatMessage.create({content, speaker: {alias: this.alias}});
+    await ChatMessage.implementation.create({content, speaker: {alias: this.alias}});
     return this.groupActor.setFlag(MODULE, "partyFeatureUses.fragment.value", uses.value - 1);
   }
 
@@ -227,19 +227,20 @@ export class PartyFeatures extends Application {
 /** Utility model for storing keys and maximum uses. */
 class PartyFeaturesModel extends foundry.abstract.DataModel {
   static defineSchema() {
+    const {SchemaField, NumberField} = foundry.data.fields;
     return {
-      intervention: new foundry.data.fields.SchemaField({
-        value: new foundry.data.fields.NumberField({initial: 1}),
-        max: new foundry.data.fields.NumberField({initial: 1})
+      intervention: new SchemaField({
+        value: new NumberField({initial: 1}),
+        max: new NumberField({initial: 1})
       }),
-      inspiration: new foundry.data.fields.SchemaField({
-        value: new foundry.data.fields.NumberField({initial: 7}),
-        max: new foundry.data.fields.NumberField({initial: 7})
+      inspiration: new SchemaField({
+        value: new NumberField({initial: 7}),
+        max: new NumberField({initial: 7})
       }),
-      fragment: new foundry.data.fields.SchemaField({
-        value: new foundry.data.fields.NumberField({initial: 1}),
-        max: new foundry.data.fields.NumberField({initial: 1})
-      }),
+      fragment: new SchemaField({
+        value: new NumberField({initial: 1}),
+        max: new NumberField({initial: 1})
+      })
     };
   }
 }

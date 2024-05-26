@@ -7,7 +7,7 @@ export class TreasureCreator extends FormApplication {
       250: "Compendium.zhell-catalogs.items.Folder.NgE3uJoRxsBiaBxC",
       750: "Compendium.zhell-catalogs.items.Folder.3OY4QM06kZMz5J6c",
       2500: "Compendium.zhell-catalogs.items.Folder.RmXZJ48r0aJWnv47",
-      7500: "Compendium.zhell-catalogs.items.Folder.uwvO3CyurM4anwTW",
+      7500: "Compendium.zhell-catalogs.items.Folder.uwvO3CyurM4anwTW"
     },
     GEMS: {
       10: "Compendium.zhell-catalogs.items.Folder.I0apG37UxncBKtpx",
@@ -15,7 +15,7 @@ export class TreasureCreator extends FormApplication {
       100: "Compendium.zhell-catalogs.items.Folder.Y2fzr7t4vgtXsJFs",
       500: "Compendium.zhell-catalogs.items.Folder.H2aGHKLHEdTNrFyl",
       1000: "Compendium.zhell-catalogs.items.Folder.LJninyP7UWgAZ8NY",
-      5000: "Compendium.zhell-catalogs.items.Folder.E2UT2GWsRYI00PqN",
+      5000: "Compendium.zhell-catalogs.items.Folder.E2UT2GWsRYI00PqN"
     }
   };
   static LOOT_ACTOR = "xNTF7EBch9vSGJnB";
@@ -223,7 +223,7 @@ export class TreasureCreator extends FormApplication {
     const actorUpdates = {};
 
     for (const {item, quantity} of this.items) {
-      const exist = actor.items.find(e => e.flags.core?.sourceId === item.uuid);
+      const exist = actor.items.find(e => e._stats.compendiumSource === item.uuid);
       if (exist) {
         itemUpdates.push({_id: exist.id, "system.quantity": exist.system.quantity + quantity});
       } else {

@@ -261,7 +261,7 @@ export class MateriaMedica extends Application {
         hours: attempts,
         amount: foraged
       }),
-      speaker: ChatMessage.getSpeaker({actor: this.actor})
+      speaker: ChatMessage.implementation.getSpeaker({actor: this.actor})
     });
   }
 
@@ -366,13 +366,6 @@ export class MateriaMedica extends Application {
     itemData.name = `${itemData.name} (${label})`;
     itemData.system.description.value += `<p>${game.i18n.localize(appendix)}</p>`;
     foundry.utils.mergeObject(itemData.system, deliveryMethod.system);
-    if (method === "injury") {
-      foundry.utils.mergeObject(itemData.flags, {
-        "itemacro.macro.type": "script",
-        "itemacro.macro.command": "ZHELL.ITEMACRO.INJURY_POISON(...arguments);",
-        "itemacro.macro.name": itemData.name
-      });
-    }
   }
 
   /*RENDERING METHODS */
