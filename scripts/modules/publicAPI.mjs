@@ -1,8 +1,6 @@
 import {BossBar} from "./applications/bossBar.mjs";
-import {ImageAnchorPicker} from "./applications/imageAnchorPicker.mjs";
 import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {TreasureCreator} from "./applications/treasure-creator.mjs";
-import {WhisperPlayers} from "./applications/whisperPlayers.mjs";
 import {gameTools} from "./gameTools/_gameTools.mjs";
 
 export default class PublicAPI {
@@ -12,7 +10,6 @@ export default class PublicAPI {
         multipleCombatants: PublicAPI._multipleCombatants
       },
       utils: {
-        whisperPlayers: WhisperPlayers.whisperPlayers,
         renderPartyFeatures: PartyFeatures.renderPartyFeatures,
         toggleBossBar: BossBar.toggleBossBar,
         updateBossBar: BossBar.updateBossBar,
@@ -20,7 +17,6 @@ export default class PublicAPI {
         ...gameTools
       },
       applications: {
-        imagePicker: ImageAnchorPicker,
         treasureCreator: TreasureCreator
       }
     };
