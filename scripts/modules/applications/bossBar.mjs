@@ -139,7 +139,7 @@ export class BossBar extends Application {
 
     const hash = {
       selected: (data.tokenId in options) ? data.tokenId : canvas.tokens.controlled[0]?.document.id ?? null,
-      blank: "- Select Token -",
+      blank: "- Select Token -"
     };
 
     const selectOptions = HandlebarsHelpers.selectOptions(options, {hash});

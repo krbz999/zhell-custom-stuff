@@ -1,13 +1,7 @@
 import {MODULE} from "./const.mjs";
-import {IdentifiersMenu} from "./modules/applications/settingsMenu.mjs";
 
 export default class ModuleSettings {
   static init() {
-    ModuleSettings._registerSettings();
-    ModuleSettings._registerSettingsMenus();
-  }
-
-  static _registerSettings() {
     game.settings.register(MODULE, "foragingDC", {
       name: "ZHELL.SettingsForagingDifficulty",
       hint: "ZHELL.SettingsForagingDifficultyHint",
@@ -42,25 +36,6 @@ export default class ModuleSettings {
         1: "ZHELL.SettingsTrackReactionsChoice1", // gm only
         2: "ZHELL.SettingsTrackReactionsChoice2" // all
       }
-    });
-  }
-
-  static _registerSettingsMenus() {
-    // Settings for various keys, ids, and uuids.
-    game.settings.register(MODULE, "identifierSettings", {
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {}
-    });
-
-    game.settings.registerMenu(MODULE, "identifierSettings", {
-      name: "ZHELL.SettingsMenuIdentifierSettings",
-      hint: "ZHELL.SettingsMenuIdentifierSettingsHint",
-      label: "ZHELL.SettingsMenuIdentifierSettings",
-      icon: "fa-solid fa-key",
-      type: IdentifiersMenu,
-      restricted: true
     });
   }
 }

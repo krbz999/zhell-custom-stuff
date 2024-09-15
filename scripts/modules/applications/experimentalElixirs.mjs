@@ -1,4 +1,4 @@
-import {DEPEND, MODULE} from "../../const.mjs";
+import {MODULE} from "../../const.mjs";
 
 export class ExperimentalElixir extends Application {
   /**
@@ -334,7 +334,7 @@ export class ExperimentalElixir extends Application {
     const _checked = this.element[0].querySelectorAll("input:checked");
     button.disabled = !(this.actor.system.spells[`spell${_checked.length}`]?.value > 0);
     if (button.disabled) {
-      const string = !_checked.length ? "PickAtLeastOne" : "NoSpellSlot"
+      const string = !_checked.length ? "PickAtLeastOne" : "NoSpellSlot";
       button.setAttribute("data-tooltip", `ZHELL.ExperimentalElixir${string}`);
     }
     else button.removeAttribute("data-tooltip");

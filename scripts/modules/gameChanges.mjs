@@ -1,5 +1,4 @@
 import {MODULE} from "../const.mjs";
-import {PartyFeatures} from "./applications/partyFeatures.mjs";
 import {mayhem} from "./gameTools/mayhem.mjs";
 
 export class GameChangesHandler {
@@ -326,16 +325,6 @@ export class GameChangesHandler {
 
   static sceneControls(array) {
     const token = array.find(a => a.name === "token");
-
-    // Render the party features.
-    token.tools.push({
-      name: "party-features",
-      title: "Party Features",
-      icon: "fa-solid fa-yin-yang",
-      button: true,
-      visible: true,
-      onClick: PartyFeatures.renderPartyFeatures
-    });
 
     // Show Mayhem dialog.
     if (game.user.isGM) token.tools.push({

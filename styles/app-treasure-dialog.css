@@ -1,8 +1,0 @@
-/* TREASURE CREATOR */
-.zhell-custom-stuff.treasure-creator .form-group button {
-  max-width: 7.5em;
-}
-.zhell-custom-stuff.treasure-creator section.loot {
-  max-height: 400px;
-  overflow: auto;
-}
