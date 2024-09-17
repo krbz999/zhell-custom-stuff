@@ -87,7 +87,7 @@ export class GameChangesHandler {
   static _tools() {
     const key = "zhell-catalogs.items";
 
-    CONFIG.DND5E.toolIds = {
+    for (const [k, v] of Object.entries({
       accordion: `${key}.NtQzLYE9ySGxHLzA`,
       alchemist: `${key}.4tStn8Ym5IHOZMEn`,
       bagpipes: `${key}.s40QkYXMkoc78pnX`,
@@ -139,7 +139,9 @@ export class GameChangesHandler {
       woodcarver: `${key}.XkkGVigtxh57Wvb2`,
       yarting: `${key}.wVJXpPGzTlETZ3MR`,
       zulkoon: `${key}.kLrbRKBnNatsGTjH`
-    };
+    })) {
+      CONFIG.DND5E.tools[k] = {id: v, ability: "int"};
+    }
   }
 
   static _weapons() {
