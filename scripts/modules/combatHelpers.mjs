@@ -70,6 +70,6 @@ export class CombatEnhancements {
   static init() {
     Hooks.on("updateActor", CombatEnhancements._markDefeatedCombatant);
     Hooks.on("updateCombat", CombatEnhancements._rechargeMonsterFeatures);
-    Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);
+    // Hooks.on("dnd5e.useItem", CombatEnhancements._spendReaction);
   }
 }

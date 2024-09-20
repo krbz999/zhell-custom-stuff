@@ -145,48 +145,13 @@ export class GameChangesHandler {
   }
 
   static _weapons() {
-    const key = "zhell-catalogs.items";
+    const key = "Compendium.zhell-catalogs.items.Item";
 
-    CONFIG.DND5E.weaponIds = {
-      battleaxe: `${key}.5YvvZ5KsGgzlVBJg`,
-      blowgun: `${key}.7mIrXgEFREdCZoq6`,
-      club: `${key}.u2OfOMTYwv7xC3E7`,
-      dagger: `${key}.36WDepHXSrp9qxtZ`,
-      dart: `${key}.ssBK4bfm1gx3Q9Fo`,
-      falchion: `${key}.bo4IjSpfdCfwQ5Bu`,
-      flail: `${key}.1emzz8v17oS9h9ex`,
-      glaive: `${key}.pq4htSLwsFByOXg6`,
-      greataxe: `${key}.T7cSFs9R3pGF74b3`,
-      greatclub: `${key}.y9B7EXLlrRukmCNw`,
-      greatsword: `${key}.KXtYXV1G9vpwctfQ`,
-      halberd: `${key}.NcZKj1Re9XxUJHYS`,
-      handcrossbow: `${key}.tq2IZWhRwEpoJCLN`,
-      handaxe: `${key}.zR4BtcctYAOWE7KN`,
-      heavycrossbow: `${key}.zQX0nUPFKzAmWfVP`,
-      javelin: `${key}.JW3iiWOeLeHfMCQW`,
-      lance: `${key}.BzVHGLVLnYXcQGAN`,
-      lightcrossbow: `${key}.sNVv0zBflAVdfLya`,
-      lighthammer: `${key}.8nRG9Jf9u1P8qw4N`,
-      longbow: `${key}.uplzusJQ5sTMsJOg`,
-      longsword: `${key}.dNMYjSSffEzglwww`,
-      mace: `${key}.fECMzleaJX8fqZvG`,
-      maul: `${key}.wcVsUIcWNasTeZGU`,
-      morningstar: `${key}.q4HPiLX1kDF47XKd`,
-      net: `${key}.UKZi1Zva5aIhyTc2`,
-      pike: `${key}.aUze6i3qVTpNnCnR`,
-      quarterstaff: `${key}.oPTWor277Kok0ETq`,
-      rapier: `${key}.yYDQyDeLgwENSebw`,
-      scimitar: `${key}.lHPyj9lRxx7gLchp`,
-      shortbow: `${key}.2r5SFrkBL39wxTas`,
-      shortsword: `${key}.7ixPiAumqBjKBU5u`,
-      sickle: `${key}.sTlhgLxyWg76c1MB`,
-      sling: `${key}.Aa3xDhMzueybrODT`,
-      spear: `${key}.03SkVtPAOdoK6BWB`,
-      trident: `${key}.z8lUzt9KwtyksYO9`,
-      warpick: `${key}.evvPCgenUmPXFSb0`,
-      warhammer: `${key}.YZzXPxRgpYcPh61M`,
-      whip: `${key}.KGH7gJe5mvpbRoFZ`
+    const ids = {
+      falchion: "bo4IjSpfdCfwQ5Bu"
     };
+
+    for (const [k, v] of Object.entries(ids)) CONFIG.DND5E.weaponIds[k] = `${key}.${v}`;
   }
 
   /**
