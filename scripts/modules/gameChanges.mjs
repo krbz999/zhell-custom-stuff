@@ -7,7 +7,6 @@ export class GameChangesHandler {
     GameChangesHandler._configChanges();
 
     if (game.modules.get("zhell-catalogs")?.active) {
-      GameChangesHandler._tools();
       GameChangesHandler._weapons();
     }
 
@@ -49,22 +48,9 @@ export class GameChangesHandler {
       improvement: false
     };
 
-    // Adjust consumable item subtypes.
-    foundry.utils.mergeObject(CONFIG.DND5E.consumableTypes, {
-      drink: {label: "DND5E.ConsumableDrink"},
-      elixir: {label: "DND5E.ConsumableElixir"},
-      bomb: {label: "DND5E.ConsumableBomb"},
-      trap: {label: "DND5E.ConsumableTrap"}
-    });
-
     // Adjust languages.
     foundry.utils.mergeObject(CONFIG.DND5E.languages.standard.children, {
       cait: "DND5E.LanguagesCait"
-    });
-
-    // Adjust feature item subtypes.
-    foundry.utils.mergeObject(CONFIG.DND5E.featureTypes.class.subtypes, {
-      primordialEffect: "DND5E.ClassFeature.PrimordialEffect"
     });
 
     // Add to status conditions.
@@ -82,66 +68,6 @@ export class GameChangesHandler {
       description: "<p>Your movement speed has been reduced by 10 feet.</p>",
       changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10}]
     });
-  }
-
-  static _tools() {
-    const key = "zhell-catalogs.items";
-
-    for (const [k, v] of Object.entries({
-      accordion: `${key}.NtQzLYE9ySGxHLzA`,
-      alchemist: `${key}.4tStn8Ym5IHOZMEn`,
-      bagpipes: `${key}.s40QkYXMkoc78pnX`,
-      brewer: `${key}.0hLh5UuEiqAHFNGy`,
-      calligrapher: `${key}.9A3m86BsFcK3kyuk`,
-      card: `${key}.xpcEdLZpuwatrD1g`,
-      carpenter: `${key}.zSyPecV8GvlwRBnb`,
-      cartographer: `${key}.qByp9O1TXmmvZZlw`,
-      chess: `${key}.sXYKYV74alW1rSZX`,
-      cobbler: `${key}.wYitL12DbabCoAJe`,
-      concertina: `${key}.US8qotundpdkpU0X`,
-      cook: `${key}.eXTMqIA8scnGoKMi`,
-      dice: `${key}.EsX0MGofFkxs7gvD`,
-      disg: `${key}.qJAan3e7Q3VerBPl`,
-      drum: `${key}.BLkHLSjSAg11Irgd`,
-      dulcimer: `${key}.3hpOtqloLx29dW9x`,
-      flute: `${key}.q1Kts9CfnofRKbXy`,
-      forg: `${key}.HGwOzsIewhia3L3n`,
-      glassblower: `${key}.OcB7ewGkA84DOQHp`,
-      glaur: `${key}.0gATC04WyH4JrPWg`,
-      guiro: `${key}.0bn6X8GmJPTb8kee`,
-      harp: `${key}.tfEjBgVmyoE394Nj`,
-      herb: `${key}.Bk0BYIgrgb3WMqj7`,
-      horn: `${key}.lGg5FEecUJx8jvAs`,
-      jeweler: `${key}.mRFujgFSiyNaHIED`,
-      leatherworker: `${key}.8rI5F0h572rFImET`,
-      longhorn: `${key}.qASPf4BtC2c4AEPB`,
-      lute: `${key}.44YtLQgKSkCzK8v9`,
-      lyre: `${key}.kacmOU2zKEnqOjoz`,
-      mason: `${key}.Q7S6lUvCHfPNaCNx`,
-      navg: `${key}.Zl4MTQUqNI9vqHLN`,
-      painter: `${key}.2cPulLXT5TlYeGdj`,
-      panflute: `${key}.FfHnUw4L7R2FM6P5`,
-      pois: `${key}.XSll8MbsWEWmkdC5`,
-      potter: `${key}.XWLsZ87NMbPa7aZq`,
-      recorder: `${key}.bT9cbtnneRrHcoHY`,
-      shawm: `${key}.XODrsxO7bonOv2uy`,
-      smith: `${key}.CFQ2BiMfssksd9O3`,
-      tantan: `${key}.x0MtEjLGydd5MHcf`,
-      thelarr: `${key}.pOlph5kKSqAO6Jvh`,
-      thief: `${key}.7PPZlSR6IpQ4Mvvv`,
-      tinker: `${key}.ASonPC97y4IGqIfO`,
-      tocken: `${key}.JReT6EKOgEeYRpMt`,
-      ukulele: `${key}.8TVfL7rU2IOAnbmk`,
-      viol: `${key}.M6bLWTHz021Bz61B`,
-      wargong: `${key}.Jki4OaxHOBC3HETT`,
-      weaver: `${key}.G0xhjVpUygYbCUue`,
-      whistlestick: `${key}.jNfLEw1hydqd6gFV`,
-      woodcarver: `${key}.XkkGVigtxh57Wvb2`,
-      yarting: `${key}.wVJXpPGzTlETZ3MR`,
-      zulkoon: `${key}.kLrbRKBnNatsGTjH`
-    })) {
-      CONFIG.DND5E.tools[k] = {id: v, ability: "int"};
-    }
   }
 
   static _weapons() {

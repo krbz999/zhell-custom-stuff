@@ -264,7 +264,7 @@ export class ExperimentalElixir extends Application {
         weight: 0.5,
         activation: {type: "action", cost: 1},
         uses: {value: 1, max: 1, per: "charges", autoDestroy: true},
-        consumableType: "elixir",
+        consumableType: "potion",
         damage: {parts},
         actionType: parts.length > 0 ? "heal" : ""
       },
