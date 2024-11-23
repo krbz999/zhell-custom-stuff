@@ -22,7 +22,8 @@
   "styles": [
     "styles/app-experimental-elixir.css",
     "styles/app-materia-media.css",
-    "styles/boss-bar.css"
+    "styles/boss-bar.css",
+    "styles/data-entry.css"
   ],
   "languages": [
     {

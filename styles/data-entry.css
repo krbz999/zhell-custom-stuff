@@ -1,0 +1,105 @@
+.dnd5e2.sheet.item.zhell-data-entry {
+  width: auto !important;
+
+  .sheet-body {
+    display: grid;
+    grid-template-areas: "a b c" "a b c" "d b c" "e b c";
+  }
+
+  .tab {
+    max-width: 400px;
+    display: flex !important;
+  }
+
+  .tab:is([data-tab=description], [data-tab="single-description"]) {
+    grid-area: a;
+  }
+  .tab.details {
+    grid-area: b;
+  }
+  .tab.advancements {
+    grid-area: c;
+  }
+  .tab.activities, .tab.advancement {
+    grid-area: d;
+  }
+  .tab.effects {
+    grid-area: e;
+  }
+  &:not(.container) .tab.contents {
+    display: none !important;
+  }
+  &.container .tab.contents {
+    grid-area: d;
+  }
+  &:is(.container, .class, .subclass, .background, .race, .loot) .tab.effects {
+    display: none !important;
+  }
+
+  &:is(.subclass, .class, .background, .race) {
+    [data-tab=single-description] {
+      grid-area: a;
+    }
+    .tab.details {
+      grid-area: d;
+    }
+    .tab.advancement {
+      grid-area: b;
+    }
+    .tab.activities {
+      display: none !important;
+    }
+    .tab {
+      min-width: 400px;
+    }
+  }
+  &:not(.subclass, .class, .background, .race) .tab:is(.advancement, .advancements) {
+    display: none !important;
+  }
+}
+.dnd5e2.sheet.activity.zhell-data-entry {
+  width: auto !important;
+  max-height: 99%;
+
+  .window-content {
+    display: grid;
+    grid-template-areas: "a b" "a b" "c b";
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .tab {
+    display: flex !important;
+    max-width: 400px;
+  }
+
+  .activity-identity {
+    grid-area: a;
+  }
+  .activity-activation {
+    grid-area: b;
+  }
+  .activity-effect {
+    grid-area: c;
+  }
+}
+.dnd5e2.sheet.zhell-data-entry:is(.item, .activity) {
+  .form-fields:has(label.checkbox) {
+    --num-cols: 6;
+    & label.checkbox {
+      & span {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 1cm;
+      }
+
+      dnd5e-checkbox {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}

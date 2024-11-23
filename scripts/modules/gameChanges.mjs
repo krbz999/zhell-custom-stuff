@@ -6,14 +6,10 @@ export class GameChangesHandler {
   static init() {
     GameChangesHandler._configChanges();
 
-    if (game.modules.get("zhell-catalogs")?.active) {
-      GameChangesHandler._weapons();
-    }
-
     Hooks.once("setup", GameChangesHandler._setupGameChanges);
     Hooks.on("preUpdateToken", GameChangesHandler._rotateTokensOnMovement);
     Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
-    Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
+    // Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
     Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
     Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);
     Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
@@ -23,7 +19,7 @@ export class GameChangesHandler {
   // Hooks on setup.
   static _setupGameChanges() {
     // Set note display to always on.
-    game.settings.set("core", NotesLayer.TOGGLE_SETTING, true);
+    // game.settings.set("core", NotesLayer.TOGGLE_SETTING, true); // not needed with v13.
   }
 
   static _configChanges() {
@@ -68,16 +64,6 @@ export class GameChangesHandler {
       description: "<p>Your movement speed has been reduced by 10 feet.</p>",
       changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10}]
     });
-  }
-
-  static _weapons() {
-    const key = "Compendium.zhell-catalogs.items.Item";
-
-    const ids = {
-      falchion: "bo4IjSpfdCfwQ5Bu"
-    };
-
-    for (const [k, v] of Object.entries(ids)) CONFIG.DND5E.weaponIds[k] = `${key}.${v}`;
   }
 
   /**
@@ -177,12 +163,13 @@ export class GameChangesHandler {
    * @param {object} options        The options for the update.
    */
   static _rotateTokensOnMovement(doc, update, options) {
-    if (doc.lockRotation || (options.animate === false)) return;
-    const x = update.x ?? doc.x;
-    const y = update.y ?? doc.y;
-    if ((x === doc.x) && (y === doc.y)) return;
-    const ray = new Ray(doc, {x, y});
-    update.rotation = ray.angle * 180 / Math.PI - 90;
+    // not needed with v13
+    // if (doc.lockRotation || (options.animate === false)) return;
+    // const x = update.x ?? doc.x;
+    // const y = update.y ?? doc.y;
+    // if ((x === doc.x) && (y === doc.y)) return;
+    // const ray = new Ray(doc, {x, y});
+    // update.rotation = ray.angle * 180 / Math.PI - 90;
   }
 
   /**

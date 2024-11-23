@@ -37,5 +37,16 @@ export default class ModuleSettings {
         2: "ZHELL.SettingsTrackReactionsChoice2" // all
       }
     });
+
+    // Mess up item sheets for improved data entry.
+    game.settings.register(MODULE, "dataEntryItemSheets", {
+      name: "ZHELL.SettingsDataEntryItemSheets",
+      hint: "ZHELL.SettingsDataEntryItemSheetsHint",
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: false,
+      requiresReload: false
+    });
   }
 }
