@@ -62,7 +62,13 @@ export class GameChangesHandler {
       name: "ZHELL.StatusConditionRimed",
       icon: "icons/magic/water/barrier-ice-water-cube.webp",
       description: "<p>Your movement speed has been reduced by 10 feet.</p>",
-      changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10}]
+      changes: Object.keys(CONFIG.DND5E.movementTypes).map(type => {
+        return {
+          key: `system.attributes.movement.${type}`,
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          value: String(-10)
+        };
+      })
     });
   }
 
