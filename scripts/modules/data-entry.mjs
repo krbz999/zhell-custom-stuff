@@ -11,5 +11,6 @@ export default function(sheet, html) {
     html = html[0];
   }
 
+  html = html.closest(".app, .application");
   html.classList.add(...classes);
 }

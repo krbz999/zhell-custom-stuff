@@ -1,5 +1,10 @@
 .dnd5e2.sheet.item.zhell-data-entry {
   width: auto !important;
+  max-height: 95%;
+
+  .window-content {
+    overflow: auto;
+  }
 
   .sheet-body {
     display: grid;
@@ -9,6 +14,17 @@
   .tab {
     max-width: 400px;
     display: flex !important;
+    max-height: unset;
+  }
+
+  .create-child {
+    top: 135px;
+  }
+  & form:is(.tab-activities) .create-child {
+    right: 230px;
+  }
+  & form:is(.tab-effects) .create-child {
+    right: 50px;
   }
 
   .tab:is([data-tab=description], [data-tab="single-description"]) {
