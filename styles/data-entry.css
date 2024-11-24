@@ -1,20 +1,14 @@
 .dnd5e2.sheet.item.zhell-data-entry {
   width: auto !important;
-  max-height: 95%;
-
-  .window-content {
-    overflow: auto;
-  }
 
   .sheet-body {
     display: grid;
-    grid-template-areas: "a b c" "a b c" "d b c" "e b c";
+    grid-template-areas: "desc details actions" "desc details actions" "desc details effects";
+    gap: 1em;
   }
 
   .tab {
-    max-width: 400px;
     display: flex !important;
-    max-height: unset;
   }
 
   .create-child {
@@ -28,25 +22,31 @@
   }
 
   .tab:is([data-tab=description], [data-tab="single-description"]) {
-    grid-area: a;
+    grid-area: desc;
+    width: 400px;
   }
   .tab.details {
-    grid-area: b;
+    grid-area: details;
+    width: 400px;
   }
   .tab.advancements {
-    grid-area: c;
+    grid-area: actions;
+    width: 300px;
   }
   .tab.activities, .tab.advancement {
-    grid-area: d;
+    grid-area: actions;
+    width: 300px;
   }
   .tab.effects {
-    grid-area: e;
+    grid-area: effects;
+    width: 300px;
   }
   &:not(.container) .tab.contents {
     display: none !important;
   }
   &.container .tab.contents {
-    grid-area: d;
+    grid-area: effects;
+    width: 300px;
   }
   &:is(.container, .class, .subclass, .background, .race, .loot) .tab.effects {
     display: none !important;
@@ -54,19 +54,19 @@
 
   &:is(.subclass, .class, .background, .race) {
     [data-tab=single-description] {
-      grid-area: a;
+      grid-area: desc;
+      width: 400px;
     }
     .tab.details {
-      grid-area: d;
+      grid-area: details;
+      width: 400px;
     }
     .tab.advancement {
-      grid-area: b;
+      grid-area: details;
+      width: 400px;
     }
     .tab.activities {
       display: none !important;
-    }
-    .tab {
-      min-width: 400px;
     }
   }
   &:not(.subclass, .class, .background, .race) .tab:is(.advancement, .advancements) {
