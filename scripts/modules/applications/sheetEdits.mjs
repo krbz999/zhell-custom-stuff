@@ -40,6 +40,6 @@ export class SheetEdits {
   static _onClickForaging(event) {
     event.preventDefault();
     event.stopPropagation();
-    return new MateriaMedica(this.document, {}).render(true);
+    return new MateriaMedica({ actor: this.document }).render({ force: true });
   }
 }

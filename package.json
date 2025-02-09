@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Zhell's Custom Stuff",
   "scripts": {
-    "build": "rollup -c rollup.config.mjs"
+    "build": "rollup -c rollup.config.mjs",
+    "createSymlinks": "node ./tools/create-symlinks.mjs",
+    "postinstall": "npm run createSymlinks"
   },
   "repository": {
     "type": "git",
