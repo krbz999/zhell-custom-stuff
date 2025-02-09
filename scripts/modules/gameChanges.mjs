@@ -1,5 +1,5 @@
-import {MODULE} from "../const.mjs";
-import {mayhem} from "./gameTools/mayhem.mjs";
+import { MODULE } from "../const.mjs";
+import { mayhem } from "./gameTools/mayhem.mjs";
 
 export class GameChangesHandler {
   // Hooks on init.
@@ -29,24 +29,24 @@ export class GameChangesHandler {
         fullKey: "divine",
         icon: "...svg",
         label: "DND5E.SchoolDivine",
-        reference: ""
-      }
+        reference: "",
+      },
     });
 
     // Adjust ability scores.
     CONFIG.DND5E.abilities.pty = {
       abbreviation: "pty",
-      defaults: {vehicle: 0, npc: 1, character: 1},
+      defaults: { vehicle: 0, npc: 1, character: 1 },
       fullKey: "piety",
       label: "DND5E.AbilityPty",
       reference: "",
       type: "mental",
-      improvement: false
+      improvement: false,
     };
 
     // Adjust languages.
     foundry.utils.mergeObject(CONFIG.DND5E.languages.standard.children, {
-      cait: "DND5E.LanguagesCait"
+      cait: "DND5E.LanguagesCait",
     });
 
     // Add to status conditions.
@@ -54,8 +54,8 @@ export class GameChangesHandler {
       id: "reaction",
       name: "ZHELL.StatusConditionReaction",
       icon: "assets/images/conditions/reaction.webp",
-      duration: {rounds: 1},
-      description: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>"
+      duration: { rounds: 1 },
+      description: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>",
     },
     {
       id: "rimed",
@@ -66,9 +66,9 @@ export class GameChangesHandler {
         return {
           key: `system.attributes.movement.${type}`,
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          value: String(-10)
+          value: String(-10),
         };
-      })
+      }),
     });
   }
 
@@ -80,18 +80,18 @@ export class GameChangesHandler {
    */
   static async _restItemDeletion(actor, data) {
     const property = data.longRest ? "longRestDestroy" : "shortRestDestroy";
-    const {ids, content} = actor.items.reduce((acc, item) => {
+    const { ids, content } = actor.items.reduce((acc, item) => {
       if (item.flags[MODULE]?.[property]) {
         acc.ids.push(item.id);
         acc.content += `<li>${item.name}</li>`;
       }
       return acc;
-    }, {ids: [], content: ""});
+    }, { ids: [], content: "" });
     if (!ids.length) return;
     await actor.deleteEmbeddedDocuments("Item", ids);
     return ChatMessage.implementation.create({
       content: `Some of ${actor.name}'s items were destroyed:<ul>${content}</ul>`,
-      speaker: ChatMessage.implementation.getSpeaker({actor})
+      speaker: ChatMessage.implementation.getSpeaker({ actor }),
     });
   }
 
@@ -107,7 +107,7 @@ export class GameChangesHandler {
     if (folder.type !== "Actor") return;
     const [x, y] = canvas.grid.getTopLeft(data.x, data.y);
     ui.notifications.info(`Dropping actors of '${folder.name}' folder.`);
-    const tokens = await Promise.all(folder.contents.map(a => a.getTokenDocument({x, y})));
+    const tokens = await Promise.all(folder.contents.map(a => a.getTokenDocument({ x, y })));
     const tokenData = tokens.map(token => token.toObject());
     return canvas.scene.createEmbeddedDocuments("Token", tokenData);
   }
@@ -141,7 +141,7 @@ export class GameChangesHandler {
           if (!create) return;
           const [c] = await inv.createEmbeddedDocuments("Item", [itemData]);
           if (c) await item.delete();
-        }
+        },
       });
     }
   }
@@ -153,11 +153,11 @@ export class GameChangesHandler {
    */
   static _preCreateScene(scene, sceneData) {
     const data = foundry.utils.mergeObject({
-      grid: {type: 2, alpha: 0.1},
+      grid: { type: 2, alpha: 0.1 },
       padding: 0.05,
       fogExploration: false,
       globalLight: true,
-      backgroundColor: "#000000"
+      backgroundColor: "#000000",
     }, sceneData);
     scene.updateSource(data);
   }
@@ -204,7 +204,7 @@ export class GameChangesHandler {
         rejectClose: false,
         title: page.name,
         label: "Close",
-        options: {id, classes: ["dialog", "note-util"]}
+        options: { id, classes: ["dialog", "note-util"] },
       });
     });
   }
@@ -219,7 +219,7 @@ export class GameChangesHandler {
       icon: "fa-solid fa-poo-storm",
       button: true,
       visible: true,
-      onClick: mayhem
+      onClick: mayhem,
     });
   }
 }

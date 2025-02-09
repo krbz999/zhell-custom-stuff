@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import { MODULE } from "../../const.mjs";
 
 export class MateriaMedica extends Application {
   constructor(actor, ...T) {
@@ -16,12 +16,12 @@ export class MateriaMedica extends Application {
       resizable: true,
       scrollY: [".tab .selections"],
       tabs: [
-        {navSelector: ".tabs[data-group='main']", contentSelector: ".content", initial: "forage"},
-        {navSelector: ".tabs[data-group='craft']", contentSelector: ".tab[data-tab='craft']", initial: "potion"}
+        { navSelector: ".tabs[data-group='main']", contentSelector: ".content", initial: "forage" },
+        { navSelector: ".tabs[data-group='craft']", contentSelector: ".tab[data-tab='craft']", initial: "potion" },
       ],
       dragDrop: [],
       closeOnSubmit: false,
-      template: `modules/${MODULE}/templates/materiaMedica.hbs`
+      template: `modules/${MODULE}/templates/materiaMedica.hbs`,
     });
   }
 
@@ -59,23 +59,23 @@ export class MateriaMedica extends Application {
   get #craftingTable() {
     return [
       // potions
-      {id: "KwysQnHpErP39QsZ", cost: 2, magical: true, scaling: "*"},
-      {id: "gFTlhdY6vtVsXU8C", cost: 4, magical: true},
-      {id: "Cg4a3MOxqOyGvKDK", cost: 6, magical: true},
-      {id: "myWY2Xy0GWsS2MEh", cost: 8, magical: true},
-      {id: "AkbBxDOPcEsQFpN1", cost: 10, magical: true},
+      { id: "KwysQnHpErP39QsZ", cost: 2, magical: true, scaling: "*" },
+      { id: "gFTlhdY6vtVsXU8C", cost: 4, magical: true },
+      { id: "Cg4a3MOxqOyGvKDK", cost: 6, magical: true },
+      { id: "myWY2Xy0GWsS2MEh", cost: 8, magical: true },
+      { id: "AkbBxDOPcEsQFpN1", cost: 10, magical: true },
       // poisons
-      {id: "kwBcsGI3dMLuG96M", cost: 2, scaling: "+"},
-      {id: "r3OcEJjhhpNIlxFo", cost: 4},
-      {id: "pZs5VWxoNQWQMTL7", cost: 6},
-      {id: "IFFhdKPlSbsCMc7z", cost: 8},
-      {id: "DWtLIZLw11liaYW9", cost: 10},
+      { id: "kwBcsGI3dMLuG96M", cost: 2, scaling: "+" },
+      { id: "r3OcEJjhhpNIlxFo", cost: 4 },
+      { id: "pZs5VWxoNQWQMTL7", cost: 6 },
+      { id: "IFFhdKPlSbsCMc7z", cost: 8 },
+      { id: "DWtLIZLw11liaYW9", cost: 10 },
       // misc
-      {id: "MBhPt5wCZcQYuZIW", cost: 2},
-      {id: "hYdmn5QbDdZeCRAb", cost: 4},
-      {id: "WOESrV6nTY6vJE8O", cost: 6},
-      {id: "ZUkFIwTYMIcJfZUh", cost: 8},
-      {id: "BtV0RgISbFQeKh4u", cost: 10}
+      { id: "MBhPt5wCZcQYuZIW", cost: 2 },
+      { id: "hYdmn5QbDdZeCRAb", cost: 4 },
+      { id: "WOESrV6nTY6vJE8O", cost: 6 },
+      { id: "ZUkFIwTYMIcJfZUh", cost: 8 },
+      { id: "BtV0RgISbFQeKh4u", cost: 10 },
     ];
   }
 
@@ -85,10 +85,10 @@ export class MateriaMedica extends Application {
    */
   get #methods() {
     return {
-      ingested: {label: "Ingested", cost: 0, appendix: "ZHELL.CraftingTypeIngested"},
-      contact: {label: "Contact", cost: 1, appendix: "ZHELL.CraftingTypeContact"},
-      injury: {label: "Injury", cost: 2, appendix: "ZHELL.CraftingTypeInjury"},
-      inhaled: {label: "Inhaled", cost: 3, appendix: "ZHELL.CraftingTypeInhaled"}
+      ingested: { label: "Ingested", cost: 0, appendix: "ZHELL.CraftingTypeIngested" },
+      contact: { label: "Contact", cost: 1, appendix: "ZHELL.CraftingTypeContact" },
+      injury: { label: "Injury", cost: 2, appendix: "ZHELL.CraftingTypeInjury" },
+      inhaled: { label: "Inhaled", cost: 3, appendix: "ZHELL.CraftingTypeInhaled" },
     };
   }
 
@@ -116,7 +116,7 @@ export class MateriaMedica extends Application {
 
   /** @override */
   async getData() {
-    const data = {itemTypes: {}};
+    const data = { itemTypes: {} };
 
     this.collection = new foundry.utils.Collection();
     this.forageData ??= new foundry.utils.Collection();
@@ -126,7 +126,7 @@ export class MateriaMedica extends Application {
     data.maxRolls = this.maxRolls;
 
     const ids = this.#craftingTable.map(k => k.id);
-    const items = await this.#pack.getDocuments({_id__in: ids});
+    const items = await this.#pack.getDocuments({ _id__in: ids });
 
     // Gather craftable item data. Group by `system.consumableType`.
     for (const idx of this.#craftingTable) {
@@ -141,15 +141,15 @@ export class MateriaMedica extends Application {
         const base = idx.item.system.damage.parts[0][0];
         const iter = {
           "+": (x) => x + 1,
-          "*": (x) => x * 2
+          "*": (x) => x * 2,
         }[idx.scaling];
         for (let i = 1; i <= max; i = iter(i)) {
           if (min * i > max) continue;
-          idx.options[min * i] = new Roll(base).alter(i, 0, {multiplyNumeric: true}).formula;
+          idx.options[min * i] = new Roll(base).alter(i, 0, { multiplyNumeric: true }).formula;
         }
         idx.selected = this._selectPositions?.[idx.item.id];
       }
-      data.itemTypes[type] ??= {type, label: `DND5E.Consumable${type.capitalize()}`, items: []};
+      data.itemTypes[type] ??= { type, label: `DND5E.Consumable${type.capitalize()}`, items: [] };
       data.itemTypes[type].items.push(idx);
       this.collection.set(idx.item.id, idx);
     }
@@ -158,11 +158,11 @@ export class MateriaMedica extends Application {
     /* FORAGING */
     data.forageOptions = this.actor.items.reduce((acc, item) => {
       const valid = (item.type === "tool") && (item.system.type.baseItem === "herb") && item.system.prof.hasProficiency;
-      if (valid) acc.push({id: item.id, label: item.name});
+      if (valid) acc.push({ id: item.id, label: item.name });
       return acc;
     }, []).concat([
-      {id: "nat", label: CONFIG.DND5E.skills.nat.label},
-      {id: "sur", label: CONFIG.DND5E.skills.sur.label}
+      { id: "nat", label: CONFIG.DND5E.skills.nat.label },
+      { id: "sur", label: CONFIG.DND5E.skills.sur.label },
     ]);
     return data;
   }
@@ -193,7 +193,7 @@ export class MateriaMedica extends Application {
     target.disabled = true;
     const canAddMore = target.closest(".foraging").querySelectorAll(".results .result").length < this.maxRolls;
     if (!canAddMore) {
-      ui.notifications.warn("ZHELL.CraftingCannotRollMore", {localize: true});
+      ui.notifications.warn("ZHELL.CraftingCannotRollMore", { localize: true });
       return;
     }
     const type = target.closest(".tab").querySelector("[data-action='forage-method']").value;
@@ -206,8 +206,8 @@ export class MateriaMedica extends Application {
       event,
       dialogOptions: {
         left: event.clientX - 200,
-        top: event.clientY - 180
-      }
+        top: event.clientY - 180,
+      },
     };
 
     let roll;
@@ -225,9 +225,9 @@ export class MateriaMedica extends Application {
       total: roll.total,
       formula: roll.formula,
       type: tool ? tool.name : game.i18n.format("DND5E.SkillPromptTitle", {
-        skill: CONFIG.DND5E.skills[type].label
+        skill: CONFIG.DND5E.skills[type].label,
       }),
-      success: roll.total >= this.#targetValue
+      success: roll.total >= this.#targetValue,
     };
     this.forageData.set(data.id, data);
     return this.render();
@@ -259,9 +259,9 @@ export class MateriaMedica extends Application {
       content: game.i18n.format("ZHELL.CraftingWentForaging", {
         name: this.actor.name,
         hours: attempts,
-        amount: foraged
+        amount: foraged,
       }),
-      speaker: ChatMessage.implementation.getSpeaker({actor: this.actor})
+      speaker: ChatMessage.implementation.getSpeaker({ actor: this.actor }),
     });
   }
 
@@ -271,7 +271,7 @@ export class MateriaMedica extends Application {
    */
   _showDeliveryMethodTooltip(event) {
     const method = event.currentTarget.closest(".form-group").querySelector("[data-action='delivery-method']").value;
-    game.tooltip.activate(event.currentTarget, {text: game.i18n.localize(this.#methods[method].appendix)});
+    game.tooltip.activate(event.currentTarget, { text: game.i18n.localize(this.#methods[method].appendix) });
   }
 
   /**
@@ -292,7 +292,7 @@ export class MateriaMedica extends Application {
     const total = (cost || idx.cost) + methodCost;
 
     if (total > this.#materials) {
-      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", {cost: total}));
+      ui.notifications.warn(game.i18n.format("ZHELL.CraftingMissingMaterials", { cost: total }));
       return null;
     }
 
@@ -313,16 +313,16 @@ export class MateriaMedica extends Application {
 
     let created;
     if (stack) {
-      created = await stack.update({"system.quantity": stack.system.quantity + 1}, {render: false});
+      created = await stack.update({ "system.quantity": stack.system.quantity + 1 }, { render: false });
     } else {
-      created = await Item.implementation.create(itemData, {parent: this.actor, render: false});
+      created = await Item.implementation.create(itemData, { parent: this.actor, render: false });
     }
     await ChatMessage.implementation.create({
-      content: game.i18n.format("ZHELL.CraftingComplete", {name: this.actor.name, amount: total, link: created.link}),
-      speaker: ChatMessage.implementation.getSpeaker({actor: this.actor})
+      content: game.i18n.format("ZHELL.CraftingComplete", { name: this.actor.name, amount: total, link: created.link }),
+      speaker: ChatMessage.implementation.getSpeaker({ actor: this.actor }),
     });
 
-    return this.actor.update({[`flags.${MODULE}.materia-medica.value`]: this.#materials - total});
+    return this.actor.update({ [`flags.${MODULE}.materia-medica.value`]: this.#materials - total });
   }
 
   /**
@@ -334,35 +334,35 @@ export class MateriaMedica extends Application {
     const deliveryMethod = {
       ingested: {
         system: {
-          activation: {condition: "", cost: null, type: "special"},
-          range: {value: null, long: null, units: ""},
-          target: {value: 1, width: null, units: "", type: "creature"}
-        }
+          activation: { condition: "", cost: null, type: "special" },
+          range: { value: null, long: null, units: "" },
+          target: { value: 1, width: null, units: "", type: "creature" },
+        },
       },
       contact: {
         system: {
-          activation: {condition: "", cost: 1, type: "action"},
-          range: {value: null, long: null, units: ""},
-          target: {value: 1, width: null, units: "", type: "object"}
-        }
+          activation: { condition: "", cost: 1, type: "action" },
+          range: { value: null, long: null, units: "" },
+          target: { value: 1, width: null, units: "", type: "object" },
+        },
       },
       injury: {
         system: {
-          activation: {condition: "", cost: 1, type: "action"},
-          range: {value: null, long: null, units: ""},
-          target: {value: 1, width: null, units: "", type: "object"}
-        }
+          activation: { condition: "", cost: 1, type: "action" },
+          range: { value: null, long: null, units: "" },
+          target: { value: 1, width: null, units: "", type: "object" },
+        },
       },
       inhaled: {
         system: {
-          activation: {condition: "", cost: 1, type: "action"},
-          range: {value: null, long: null, units: "self"},
-          target: {value: 5, width: null, units: "ft", type: "cube"}
-        }
-      }
+          activation: { condition: "", cost: 1, type: "action" },
+          range: { value: null, long: null, units: "self" },
+          target: { value: 5, width: null, units: "ft", type: "cube" },
+        },
+      },
     }[method];
 
-    const {label, appendix} = this.#methods[method];
+    const { label, appendix } = this.#methods[method];
     itemData.name = `${itemData.name} (${label})`;
     itemData.system.description.value += `<p>${game.i18n.localize(appendix)}</p>`;
     foundry.utils.mergeObject(itemData.system, deliveryMethod.system);
@@ -416,7 +416,7 @@ export class MateriaMedica extends Application {
       name: "Speed Crafting",
       hint: game.i18n.localize("ZHELL.CraftingCharacterFlag"),
       section: "Feats",
-      type: Boolean
+      type: Boolean,
     };
   }
 }

@@ -1,4 +1,4 @@
-import {MODULE} from "../const.mjs";
+import { MODULE } from "../const.mjs";
 
 export default function(sheet, html) {
   if (!game.settings.get(MODULE, "dataEntryItemSheets")) return;

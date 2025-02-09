@@ -1,4 +1,4 @@
-import {MODULE} from "../const.mjs";
+import { MODULE } from "../const.mjs";
 
 export class CombatEnhancements {
   /**

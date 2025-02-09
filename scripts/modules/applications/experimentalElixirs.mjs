@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import { MODULE } from "../../const.mjs";
 
 export class ExperimentalElixir extends Application {
   /**
@@ -7,8 +7,8 @@ export class ExperimentalElixir extends Application {
    * @param {Item} item           The item being used.
    * @param {object} speaker      The speaker object from Item Macro, for convenience.
    */
-  constructor({actor, item, speaker}) {
-    super({actor, item, speaker});
+  constructor({ actor, item, speaker }) {
+    super({ actor, item, speaker });
     this.actor = actor;
     this.item = item;
     this.rollData = this.actor.getRollData();
@@ -26,7 +26,7 @@ export class ExperimentalElixir extends Application {
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: "modules/zhell-custom-stuff/templates/experimentalElixirs.hbs",
       title: "Experimental Elixir",
-      classes: [MODULE, "experimental-elixir"]
+      classes: [MODULE, "experimental-elixir"],
     });
   }
 
@@ -44,57 +44,57 @@ export class ExperimentalElixir extends Application {
       alacrity: {
         name: "Alacrity",
         data: {
-          changes: [{key: "system.attributes.init.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8"}],
-          duration: {seconds: 60},
-          icon: "icons/magic/movement/trail-streak-zigzag-yellow.webp"
-        }
+          changes: [{ key: "system.attributes.init.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d8" }],
+          duration: { seconds: 60 },
+          icon: "icons/magic/movement/trail-streak-zigzag-yellow.webp",
+        },
       },
       boldness: {
         name: "Boldness",
         data: {
           changes: ["mwak.attack", "rwak.attack", "msak.attack", "rsak.attack", "abilities.save"].map(prop => {
-            return {key: `system.bonuses.${prop}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4"};
+            return { key: `system.bonuses.${prop}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1d4" };
           }),
-          duration: {seconds: 60},
-          icon: "icons/magic/movement/trail-streak-pink.webp"
-        }
+          duration: { seconds: 60 },
+          icon: "icons/magic/movement/trail-streak-pink.webp",
+        },
       },
       flight: {
         name: "Flight",
         data: {
-          changes: [{key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 10}],
-          duration: {seconds: 600},
-          icon: "icons/magic/movement/trail-streak-impact-blue.webp"
-        }
+          changes: [{ key: "system.attributes.movement.fly", mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: 10 }],
+          duration: { seconds: 600 },
+          icon: "icons/magic/movement/trail-streak-impact-blue.webp",
+        },
       },
       healing: {
         name: "Healing",
-        data: {}
+        data: {},
       },
       resilience: {
         name: "Resilience",
         data: {
-          changes: [{key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1"}],
-          duration: {seconds: 600},
-          icon: "icons/magic/defensive/shield-barrier-blue.webp"
-        }
+          changes: [{ key: "system.attributes.ac.bonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "+1" }],
+          duration: { seconds: 600 },
+          icon: "icons/magic/defensive/shield-barrier-blue.webp",
+        },
       },
       swiftness: {
         name: "Swiftness",
         data: {
-          changes: [{key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10}],
-          duration: {seconds: 3600},
-          icon: "icons/magic/movement/pinwheel-turning-blue.webp"
-        }
+          changes: [{ key: "system.attributes.movement.walk", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 10 }],
+          duration: { seconds: 3600 },
+          icon: "icons/magic/movement/pinwheel-turning-blue.webp",
+        },
       },
       transformation: {
         name: "Transformation",
         data: {
           changes: [],
-          duration: {seconds: 600},
-          icon: "icons/magic/movement/abstract-ribbons-red-orange.webp"
-        }
-      }
+          duration: { seconds: 600 },
+          icon: "icons/magic/movement/abstract-ribbons-red-orange.webp",
+        },
+      },
     };
   }
 
@@ -117,7 +117,7 @@ export class ExperimentalElixir extends Application {
       "Rainbow Elixir",
       "Rumble Refreshment",
       "Something-ade",
-      "Sunny Capital"
+      "Sunny Capital",
     ];
     return `Experimental Elixir: ${randomName[Math.floor(Math.random() * randomName.length)]}`;
   }
@@ -146,7 +146,7 @@ export class ExperimentalElixir extends Application {
       "This one's blue-raspberry. Not sure what the 'blue' flavor is caused by but it's DEFINITELY blue.",
       "This one's grape flavored!",
       "This one's Pina Colada.",
-      "This one's strawberry!"
+      "This one's strawberry!",
     ];
     return randomFlavor[Math.floor(Math.random() * randomFlavor.length)];
   }
@@ -156,7 +156,7 @@ export class ExperimentalElixir extends Application {
    * @returns {Promise<string>}     The image.
    */
   async _getRandomImage() {
-    const {files} = await FilePicker.browse("public", "icons/consumables/potions");
+    const { files } = await FilePicker.browse("public", "icons/consumables/potions");
     return files[Math.floor(Math.random() * files.length)];
   }
 
@@ -168,7 +168,7 @@ export class ExperimentalElixir extends Application {
   _getEffectData(types) {
     const mod = this.rollData.abilities.int.mod;
     return types.reduce((acc, type) => {
-      const {data, name} = this.elixirTypes[type];
+      const { data, name } = this.elixirTypes[type];
       if (data.changes) {
         acc.push({
           changes: data.changes,
@@ -176,7 +176,7 @@ export class ExperimentalElixir extends Application {
           icon: data.icon,
           duration: data.duration,
           name: `Experimental Elixir: ${name}`,
-          description: game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, {mod})
+          description: game.i18n.format(`ZHELL.ExperimentalElixirType${name}`, { mod }),
         });
       }
       return acc;
@@ -211,15 +211,15 @@ export class ExperimentalElixir extends Application {
    * @returns {object}          The flag data.
    */
   _getFlagData(parts) {
-    const flags = {[MODULE]: {longRestDestroy: true}};
+    const flags = { [MODULE]: { longRestDestroy: true } };
     if (parts.length > 1) {
       flags.rollgroups = {
         config: {
           groups: [
-            {parts: [0], label: "Healing"},
-            {parts: [1], label: "Temporary HP"}
-          ]
-        }
+            { parts: [0], label: "Healing" },
+            { parts: [1], label: "Temporary HP" },
+          ],
+        },
       };
     }
     return flags;
@@ -234,12 +234,12 @@ export class ExperimentalElixir extends Application {
     const mod = this.rollData.abilities.int.mod;
     let desc = types.reduce((acc, type) => {
       const data = this.elixirTypes[type];
-      const intro = game.i18n.format(`ZHELL.ExperimentalElixirType${type.capitalize()}`, {mod});
+      const intro = game.i18n.format(`ZHELL.ExperimentalElixirType${type.capitalize()}`, { mod });
       return acc + `<p><strong><em>${data.name}.</em></strong> ${intro}</p>`;
     }, "");
     if (this.rollData.classes.artificer.levels >= 9) {
       const name = "Restorative Reagents";
-      const intro = game.i18n.format("ZHELL.ExperimentalElixirTypeRestorativeReagents", {mod});
+      const intro = game.i18n.format("ZHELL.ExperimentalElixirTypeRestorativeReagents", { mod });
       desc += `<p><strong><em>${name}.</em></strong> ${intro}</p>`;
     }
     return desc;
@@ -260,16 +260,16 @@ export class ExperimentalElixir extends Application {
       type: "consumable",
       img: await this._getRandomImage(),
       system: {
-        description: {value: `<p><em>${flavor}</em></p> <hr> ${desc}`},
+        description: { value: `<p><em>${flavor}</em></p> <hr> ${desc}` },
         weight: 0.5,
-        activation: {type: "action", cost: 1},
-        uses: {value: 1, max: 1, per: "charges", autoDestroy: true},
+        activation: { type: "action", cost: 1 },
+        uses: { value: 1, max: 1, per: "charges", autoDestroy: true },
         consumableType: "potion",
-        damage: {parts},
-        actionType: parts.length > 0 ? "heal" : ""
+        damage: { parts },
+        actionType: parts.length > 0 ? "heal" : "",
       },
       effects: this._getEffectData(types),
-      flags: this._getFlagData(parts)
+      flags: this._getFlagData(parts),
     }];
   }
 
@@ -282,7 +282,7 @@ export class ExperimentalElixir extends Application {
       data.elixirs.push({
         key,
         name: value.name,
-        intro: `ZHELL.ExperimentalElixirType${value.name}`
+        intro: `ZHELL.ExperimentalElixirType${value.name}`,
       });
     }
     return data;
@@ -305,17 +305,17 @@ export class ExperimentalElixir extends Application {
     const types = [];
     this.element[0].querySelectorAll("input:checked").forEach(input => types.push(input.value));
     if (!types.length.between(1, this.maxLevel)) {
-      ui.notifications.warn(game.i18n.format("ZHELL.ExperimentalElixirBoundedWarning", {max: this.maxLevel}));
+      ui.notifications.warn(game.i18n.format("ZHELL.ExperimentalElixirBoundedWarning", { max: this.maxLevel }));
     } else {
       await this.close();
       const data = await this.getElixirItemData(types);
       const value = this.actor.system.spells[`spell${types.length}`].value;
-      await this.actor.update({[`system.spells.spell${types.length}.value`]: value - 1});
+      await this.actor.update({ [`system.spells.spell${types.length}.value`]: value - 1 });
       await ChatMessage.create({
         speaker: this.speaker,
         content: game.i18n.format("ZHELL.ExperimentalElixirExpendedSlots", {
-          name: this.actor.name, level: CONFIG.DND5E.spellLevels[types.length]
-        })
+          name: this.actor.name, level: CONFIG.DND5E.spellLevels[types.length],
+        }),
       });
       return this.actor.createEmbeddedDocuments("Item", data);
     }
@@ -347,13 +347,13 @@ export class ExperimentalElixir extends Application {
   async experiment() {
     const value = this.item.system.uses.value;
     if (value < 1) {
-      ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.item.name}));
+      ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: this.item.name }));
       return;
     }
     const roll = await new Roll("(@scale.alchemist.elixirs)d8x8rr8", this.rollData).evaluate();
     await roll.toMessage({
       speaker: this.speaker,
-      flavor: game.i18n.format("ZHELL.ExperimentalElixirRollRandom", {name: this.actor.name})
+      flavor: game.i18n.format("ZHELL.ExperimentalElixirRollRandom", { name: this.actor.name }),
     });
     const keys = Object.keys(this.elixirTypes);
     const types = roll.dice[0].results.filter(i => i.active).map(i => keys[i.result - 1]);
@@ -365,10 +365,10 @@ export class ExperimentalElixir extends Application {
     await ChatMessage.create({
       speaker: this.speaker,
       content: game.i18n.format("ZHELL.ExperimentalElixirCreatedRandomElixirs", {
-        name: this.actor.name, n: data.length
-      })
+        name: this.actor.name, n: data.length,
+      }),
     });
-    await this.item.update({"system.uses.value": value - 1});
+    await this.item.update({ "system.uses.value": value - 1 });
     return this.actor.createEmbeddedDocuments("Item", data);
   }
 }

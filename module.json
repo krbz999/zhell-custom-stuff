@@ -20,10 +20,7 @@
     "./setup.mjs"
   ],
   "styles": [
-    "styles/app-experimental-elixir.css",
-    "styles/app-materia-media.css",
-    "styles/boss-bar.css",
-    "styles/data-entry.css"
+    "styles/styles.css"
   ],
   "languages": [
     {
@@ -35,8 +32,12 @@
   ],
   "flags": {
     "hotReload": {
-      "extensions": ["css"],
-      "paths": ["./styles/*.css"]
+      "extensions": [
+        "css"
+      ],
+      "paths": [
+        "./styles/styles.css"
+      ]
     }
   },
   "url": "https://github.com/krbz999/zhell-custom-stuff",

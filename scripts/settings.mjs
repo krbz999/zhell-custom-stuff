@@ -1,4 +1,4 @@
-import {MODULE} from "./const.mjs";
+import { MODULE } from "./const.mjs";
 
 export default class ModuleSettings {
   static init() {
@@ -9,7 +9,7 @@ export default class ModuleSettings {
       config: true,
       type: Number,
       default: 15,
-      requiresReload: false
+      requiresReload: false,
     });
 
     game.settings.register(MODULE, "markDefeatedCombatants", {
@@ -19,7 +19,7 @@ export default class ModuleSettings {
       config: true,
       type: Boolean,
       default: true,
-      requiresReload: true
+      requiresReload: true,
     });
 
     // Whether to track reactions.
@@ -34,8 +34,8 @@ export default class ModuleSettings {
       choices: {
         0: "ZHELL.SettingsTrackReactionsChoice0", // none
         1: "ZHELL.SettingsTrackReactionsChoice1", // gm only
-        2: "ZHELL.SettingsTrackReactionsChoice2" // all
-      }
+        2: "ZHELL.SettingsTrackReactionsChoice2", // all
+      },
     });
 
     // Mess up item sheets for improved data entry.
@@ -46,7 +46,7 @@ export default class ModuleSettings {
       config: true,
       type: Boolean,
       default: false,
-      requiresReload: false
+      requiresReload: false,
     });
   }
 }

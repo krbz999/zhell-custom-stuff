@@ -22,29 +22,29 @@ export async function mayhem() {
       acc[key] = {
         label: `${key.capitalize()} a point`,
         icon: `<i class="fa-solid fa-arrow-${(key === "earn") ? "up" : "down"}"></i>`,
-        callback: message
+        callback: message,
       };
       return acc;
     }, {}),
-    default: value < max ? "earn" : "spend"
-  }, {id: "mayhem-dialog"}).render(true);
+    default: value < max ? "earn" : "spend",
+  }, { id: "mayhem-dialog" }).render(true);
 
   async function message(html, event) {
     const btn = event.currentTarget.dataset.button;
 
-    const add = {earn: 1, spend: -1}[btn];
+    const add = { earn: 1, spend: -1 }[btn];
     const newValue = Math.clamp(value + add, 0, max);
     if (value === newValue) {
       const info = {
         earn: "You cannot earn more points.",
-        spend: "You have no points to spend."
+        spend: "You have no points to spend.",
       }[btn];
       ui.notifications.info(info);
       return null;
     }
     const blurb = {
       earn: "The GM has gained one point of inspiration.",
-      spend: "The GM has spent one point of inspiration."
+      spend: "The GM has spent one point of inspiration.",
     }[btn];
     const content = `
     <div class="zhell-custom-stuff mayhem">
@@ -52,7 +52,7 @@ export async function mayhem() {
     </div>
     <p>${blurb}</p>
     <p style="text-align: center;">Current stack: <strong>${newValue}</strong></p>`;
-    await ChatMessage.create({content});
+    await ChatMessage.create({ content });
     return game.user.setFlag("world", "mayhem.value", newValue);
   }
 }

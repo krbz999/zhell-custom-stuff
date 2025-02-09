@@ -1,5 +1,5 @@
-import {BossBar} from "./applications/bossBar.mjs";
-import {gameTools} from "./gameTools/_gameTools.mjs";
+import { BossBar } from "./applications/bossBar.mjs";
+import { gameTools } from "./gameTools/_gameTools.mjs";
 
 export default class PublicAPI {
   static init() {
@@ -8,8 +8,8 @@ export default class PublicAPI {
         toggleBossBar: BossBar.toggleBossBar,
         updateBossBar: BossBar.updateBossBar,
         updateBossBarDialog: BossBar.updateBossBarDialog,
-        ...gameTools
-      }
+        ...gameTools,
+      },
     };
   }
 }

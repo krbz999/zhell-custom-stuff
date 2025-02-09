@@ -13,9 +13,9 @@ export async function currentCombatant() {
   // render current combatant.
   const sheet = current.actor.sheet;
   if (sheet.rendered) sheet.maximize();
-  else sheet.render(true, {top: 0, left: 0});
+  else sheet.render(true, { top: 0, left: 0 });
 
   // select and pan to current combatant.
   current.object.control();
-  return canvas.animatePan({...current.object.center, duration: 1000});
+  return canvas.animatePan({ ...current.object.center, duration: 1000 });
 }

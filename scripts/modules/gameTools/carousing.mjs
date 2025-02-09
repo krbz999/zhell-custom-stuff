@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import { MODULE } from "../../const.mjs";
 
 /**
  * Roll on the carousing table.
@@ -6,13 +6,13 @@ import {MODULE} from "../../const.mjs";
  * @param {string} [catalogName]      The name of the compendium that contains the rolltable.
  * @returns {Promise<object>}         The object with the roll and drawn results.
  */
-export async function carousing({tableName, catalogName} = {}) {
+export async function carousing({ tableName, catalogName } = {}) {
   tableName ??= "Carousing";
   catalogName ??= "rolltables";
   const table = await ZHELL.utils.getDocument(tableName, catalogName, false);
   return table.draw({
-    roll: new Roll("1d100 + @level", {level: getAverageLevel()}),
-    rollMode: CONST.DICE_ROLL_MODES.PRIVATE
+    roll: new Roll("1d100 + @level", { level: getAverageLevel() }),
+    rollMode: CONST.DICE_ROLL_MODES.PRIVATE,
   });
 }
 
@@ -21,16 +21,16 @@ export async function carousing({tableName, catalogName} = {}) {
  * @param {string} [catalogName]        The name of the compendium that contains the rolltable.
  * @returns {Promise<ChatMessage>}      The object with the roll and drawn results.
  */
-export async function randomLoot({catalogName} = {}) {
+export async function randomLoot({ catalogName } = {}) {
   catalogName ??= "rolltables";
 
   const tableRarity = await ZHELL.utils.getDocument("Random Loot: Rarity", catalogName, false);
   const tableType = await ZHELL.utils.getDocument("Random Loot: Type", catalogName, false);
-  const roll = new Roll("1d100 + @level", {level: getAverageLevel()});
+  const roll = new Roll("1d100 + @level", { level: getAverageLevel() });
   const rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
 
-  const rarity = await tableRarity.draw({roll, rollMode, displayChat: false});
-  const type = await tableType.draw({rollMode, displayChat: false});
+  const rarity = await tableRarity.draw({ roll, rollMode, displayChat: false });
+  const type = await tableType.draw({ rollMode, displayChat: false });
 
   return ChatMessage.create({
     content: `
@@ -48,7 +48,7 @@ export async function randomLoot({catalogName} = {}) {
       <div style="text-align: center">${type.roll.total}</div>
     </div>
     <hr>`,
-    whisper: [game.user.id]
+    whisper: [game.user.id],
   });
 }
 
@@ -70,14 +70,14 @@ function getAverageLevel() {
  * @param {boolean} [whisper]           Whether the message should be whispered to the GM.
  * @returns {Promise<ChatMessage>}      The created chat message.
  */
-export async function playerLanguages({whisper = false} = {}) {
+export async function playerLanguages({ whisper = false } = {}) {
   const id = game.settings.get(MODULE, "identifierSettings").players.folderId;
   const players = game.folders.get(id).contents.filter(a => {
     return game.users.some(u => u.character === a);
   });
 
   const tableBody = players.reduce((actor_acc, actor) => {
-    const {value, custom} = actor.system.traits.languages;
+    const { value, custom } = actor.system.traits.languages;
     let langB = custom?.length ? custom.split(";").map(c => c.trim()) : [];
     let languages = new Set([...value, ...langB]);
     return actor_acc + languages.reduce((lang_acc, lang, i) => {

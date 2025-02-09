@@ -1,4 +1,4 @@
-import {MODULE} from "../../const.mjs";
+import { MODULE } from "../../const.mjs";
 
 export class BossBar extends Application {
   /**
@@ -16,7 +16,7 @@ export class BossBar extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       popOut: false,
-      template: "modules/zhell-custom-stuff/templates/bossBar.hbs"
+      template: "modules/zhell-custom-stuff/templates/bossBar.hbs",
     });
   }
 
@@ -29,7 +29,7 @@ export class BossBar extends Application {
     const right = (ui.sidebar.element.outerWidth() + 200) + "px";
     const sceneId = this.scene.id;
     const title = this.scene.flags[MODULE]?.bossBar?.title ?? null;
-    return {percent, color, name, right, sceneId, title};
+    return { percent, color, name, right, sceneId, title };
   }
 
   /** @override */
@@ -47,7 +47,7 @@ export class BossBar extends Application {
       el.style.opacity = 0.6;
       return this;
     } else {
-      const {percent, color, name, title} = await this.getData();
+      const { percent, color, name, title } = await this.getData();
       const bar = this.element[0].querySelector(".progress");
       bar.style.backgroundColor = color;
       bar.style.width = percent;
@@ -66,7 +66,7 @@ export class BossBar extends Application {
    */
   static async _renderBossBarOnCanvasReady(canvas) {
     const scene = canvas.scene;
-    const {tokenId, active} = scene.flags[MODULE]?.bossBar ?? {};
+    const { tokenId, active } = scene.flags[MODULE]?.bossBar ?? {};
     const token = scene.tokens.get(tokenId);
 
     document.querySelectorAll("#bossbar").forEach(bar => bar.remove());
@@ -110,7 +110,7 @@ export class BossBar extends Application {
   static async toggleBossBar() {
     if (!game.user.isGM) return null;
     const path = `flags.${MODULE}.bossBar.active`;
-    return canvas.scene.update({[path]: !foundry.utils.getProperty(canvas.scene, path)}, {bossBar: true});
+    return canvas.scene.update({ [path]: !foundry.utils.getProperty(canvas.scene, path) }, { bossBar: true });
   }
 
   /**
@@ -119,13 +119,13 @@ export class BossBar extends Application {
    * @param {string} title        An optional title to display.
    * @param {boolean} active      Whether the boss bar is shown.
    */
-  static async updateBossBar({tokenId, title, active} = {}) {
+  static async updateBossBar({ tokenId, title, active } = {}) {
     if (!game.user.isGM) return null;
     const update = {};
     if (tokenId !== undefined) update.tokenId = tokenId;
     if (title !== undefined) update.title = title;
     if (active !== undefined) update.active = active;
-    return canvas.scene.update({[`flags.${MODULE}.bossBar`]: update}, {bossBar: true});
+    return canvas.scene.update({ [`flags.${MODULE}.bossBar`]: update }, { bossBar: true });
   }
 
   static async updateBossBarDialog() {
@@ -139,10 +139,10 @@ export class BossBar extends Application {
 
     const hash = {
       selected: (data.tokenId in options) ? data.tokenId : canvas.tokens.controlled[0]?.document.id ?? null,
-      blank: "- Select Token -"
+      blank: "- Select Token -",
     };
 
-    const selectOptions = HandlebarsHelpers.selectOptions(options, {hash});
+    const selectOptions = HandlebarsHelpers.selectOptions(options, { hash });
 
     return Dialog.prompt({
       content: `
@@ -173,7 +173,7 @@ export class BossBar extends Application {
         const update = new FormDataExtended(html[0].querySelector("form")).object;
         for (const key in update) if (typeof update[key] === "string") update[key] ||= null;
         return BossBar.updateBossBar(update);
-      }
+      },
     });
   }
 
