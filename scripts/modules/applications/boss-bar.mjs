@@ -1,6 +1,6 @@
 import { MODULE } from "../../const.mjs";
 
-export class BossBar extends Application {
+export default class BossBar extends Application {
   /**
    * @constructor
    * @param {TokenDocument} token     The token document whose actor's health is being shown.
