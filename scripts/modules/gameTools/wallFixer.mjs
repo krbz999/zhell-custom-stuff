@@ -1,4 +1,4 @@
-export async function wallFixer() {
+export default async function wallFixer() {
   let updates;
   if (!event.shiftKey) {
     const { BOTH, LEFT, RIGHT } = CONST.WALL_DIRECTIONS;

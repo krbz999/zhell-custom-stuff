@@ -1,4 +1,4 @@
-export async function mayhem() {
+export default async function mayhem() {
   // mayhem macro.
   // save mayhem dice on user in a flag.
   // max: number of players.
@@ -9,50 +9,57 @@ export async function mayhem() {
     return null;
   }
 
-  const value = game.user.flags.world?.mayhem?.value ?? 0;
-  const max = 5;
+  const { spent = 5, max = 5 } = game.user.getFlag("world", "mayhem") ?? {};
+  const value = Math.clamp(max - spent, 0, max);
 
-  return new Dialog({
-    title: "Mayhem!",
+  const dialogOptions = {
+    window: {
+      title: "Mayhem!",
+      icon: "fa-solid fa-bolt",
+    },
+    buttons: [{
+      action: "earn",
+      label: "Earn a Point",
+      icon: "fa-solid fa-arrow-up",
+      default: !!spent,
+    }, {
+      action: "spend",
+      label: "Spend a Point",
+      icon: "fa-solid fa-arrow-down",
+      default: !!value,
+    }],
+    position: {
+      width: 400,
+      height: "auto",
+    },
+    render: (event, html) => {
+      html.querySelector(".form-footer").classList.add("flexcol");
+      html.querySelector(".form-footer [data-action=earn]").disabled = !spent;
+      html.querySelector(".form-footer [data-action=spend]").disabled = !value;
+    },
+    rejectClose: false,
     content: `
     <p>When a player is reduced to zero hit points, or killed outright, the DM earns one point of inspiration.
     The points stack to a maximum of <strong>${max}</strong> points.</p>
-    <p style="text-align:center">You currently have <strong>${value}</strong> points.</p>`,
-    buttons: ["earn", "spend"].reduce((acc, key) => {
-      acc[key] = {
-        label: `${key.capitalize()} a point`,
-        icon: `<i class="fa-solid fa-arrow-${(key === "earn") ? "up" : "down"}"></i>`,
-        callback: message,
-      };
-      return acc;
-    }, {}),
-    default: value < max ? "earn" : "spend",
-  }, { id: "mayhem-dialog" }).render(true);
+    <p>You currently have <strong>${value}</strong> points.</p>`,
+  };
 
-  async function message(html, event) {
-    const btn = event.currentTarget.dataset.button;
-
-    const add = { earn: 1, spend: -1 }[btn];
-    const newValue = Math.clamp(value + add, 0, max);
-    if (value === newValue) {
-      const info = {
-        earn: "You cannot earn more points.",
-        spend: "You have no points to spend.",
-      }[btn];
-      ui.notifications.info(info);
-      return null;
-    }
-    const blurb = {
-      earn: "The GM has gained one point of inspiration.",
-      spend: "The GM has spent one point of inspiration.",
-    }[btn];
-    const content = `
-    <div class="zhell-custom-stuff mayhem">
-      <i class="fa-solid fa-bolt fa-shake"></i> Mayhem!
-    </div>
-    <p>${blurb}</p>
-    <p style="text-align: center;">Current stack: <strong>${newValue}</strong></p>`;
-    await ChatMessage.create({ content });
-    return game.user.setFlag("world", "mayhem.value", newValue);
+  const result = await foundry.applications.api.DialogV2.wait(dialogOptions);
+  let update;
+  let content;
+  switch (result) {
+    case "earn":
+      update = { "flags.world.mayhem": { spent: spent - 1, max: max } };
+      content = "The GM has earned 1 point of mayhem.";
+      break;
+    case "spend":
+      update = { "flags.world.mayhem": { spent: spent + 1, max: max } };
+      content = "The GM has spent 1 point of mayhem.";
+      break;
+    default:
+      return;
   }
+
+  await getDocumentClass("ChatMessage").create({ content: `<p>${content}</p>` });
+  return game.user.update(update);
 }

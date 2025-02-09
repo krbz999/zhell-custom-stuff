@@ -1,17 +1,7 @@
-import { advanceTime } from "./advanceTime.mjs";
-import { currentCombatant } from "./currentCombatant.mjs";
-import { mayhem } from "./mayhem.mjs";
-import { playerLanguages, carousing, randomLoot } from "./carousing.mjs";
-import { wallFixer } from "./wallFixer.mjs";
-import { whisperDialog } from "./whisper-dialog.mjs";
-
-export const gameTools = {
-  advanceTime,
-  carousing,
-  currentCombatant,
-  mayhem,
-  playerLanguages,
-  randomLoot,
-  wallFixer,
-  whisperDialog,
-};
+export { default as m1 } from "./advanceTime.mjs";
+export { default as m2 } from "./currentCombatant.mjs";
+export { default as m3 } from "./mayhem.mjs";
+export { default as m4 } from "./wallFixer.mjs";
+export { default as m5 } from "./whisper-dialog.mjs";
+export { default as m6 } from "./average-level.mjs";
+export { default as m7 } from "./carousing.mjs";

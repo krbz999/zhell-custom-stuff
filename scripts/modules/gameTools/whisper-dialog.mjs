@@ -1,4 +1,6 @@
-export async function whisperDialog() {
+const { HTMLField, SetField, StringField } = foundry.data.fields;
+
+export default async function whisperDialog() {
   const options = [];
   for (const user of game.users) {
     if (user === game.user) continue;
@@ -6,28 +8,33 @@ export async function whisperDialog() {
     options.push({ selected, value: user.id, label: user.name });
   }
 
-  const usersHTML = new foundry.data.fields.SetField(new foundry.data.fields.StringField()).toFormGroup(
+  const usersHTML = new SetField(new StringField()).toFormGroup(
     { label: "Users", classes: ["stacked"] },
-    { name: "users", options: options, type: "checkboxes" },
+    { name: "users", options: options, type: "checkboxes", sort: true },
   ).outerHTML;
 
-  const textHTML = new foundry.data.fields.HTMLField().toFormGroup(
+  const textHTML = new HTMLField().toFormGroup(
     { label: "Message" },
     { name: "message", value: "", height: 200 },
   ).outerHTML;
 
-  const content = `<fieldset>${usersHTML}${textHTML}</fieldset>`;
-
-  const callback = (event, button) => {
-    const { users, message } = new FormDataExtended(button.form).object;
-    ChatMessage.implementation.create({ content: message, whisper: users });
-  };
-
-  foundry.applications.api.DialogV2.prompt({
+  const result = await foundry.applications.api.DialogV2.prompt({
     rejectClose: false,
-    content: content,
-    ok: { callback: callback },
-    position: { width: 400, height: "auto" },
-    window: { title: "Whisper Users" },
+    content: `<fieldset>${usersHTML}${textHTML}</fieldset>`,
+    ok: {
+      callback: (event, button) => new FormDataExtended(button.form).object,
+      label: "Confirm",
+      icon: "fa-solid fa-message",
+    },
+    position: {
+      width: 400,
+      height: "auto",
+    },
+    window: {
+      title: "Whisper Users",
+      icon: "fa-solid fa-message",
+    },
   });
+  if (!result) return;
+  return getDocumentClass("ChatMessage").create({ content: result.message, whisper: result.users });
 }
