@@ -71,7 +71,18 @@ export default class ModuleSettings {
   /* -------------------------------------------------- */
 
   /**
+   * Should item and activity sheets be butchered?
+   * @type {boolean}
+   */
+  get dataEntry() {
+    return game.settings.get(ZHELL.id, "dataEntry");
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
    * Should npc combatants be marked defeated when reaching 0 hp?
+   * @type {boolean}
    */
   get markDefeatedCombatants() {
     return game.settings.get(ZHELL.id, "markDefeatedCombatants");
