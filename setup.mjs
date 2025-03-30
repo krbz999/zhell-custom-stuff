@@ -15,6 +15,7 @@ globalThis.ZHELL = {
 
 Hooks.once("init", () => {
   ZHELL.settings.register();
+  hooks.systemChanges();
   applications.ui.BossBar.register();
   CONFIG.ui.bossbar = applications.ui.BossBar;
 });

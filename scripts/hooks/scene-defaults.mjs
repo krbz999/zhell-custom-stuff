@@ -5,7 +5,10 @@
  */
 export default function sceneDefaults(scene, sceneData) {
   const data = foundry.utils.mergeObject({
-    grid: { type: 2, alpha: 0.1 },
+    grid: {
+      type: CONST.GRID_TYPES.HEXODDR,
+      alpha: 0.1,
+    },
     padding: 0.05,
     fog: { exploration: false },
     environment: { globalLight: { enabled: true } },

@@ -1,7 +1,10 @@
 {
   "ZHELL": {
     "ABILITY": {
-      "PIETY": "Piety"
+      "PIETY": {
+        "LABEL": "Piety",
+        "SHORT": "pty"
+      }
     },
     "CraftingCannotRollMore": "You cannot roll any more.",
     "CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
