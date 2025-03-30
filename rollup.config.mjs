@@ -1,7 +1,7 @@
 export default {
-  input: "setup.mjs",
+  input: "module.mjs",
   output: {
     file: "module.mjs",
-    format: "esm"
-  }
+    format: "esm",
+  },
 };

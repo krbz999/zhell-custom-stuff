@@ -12,7 +12,7 @@
     }
   ],
   "compatibility": {
-    "minimum": "12",
+    "minimum": "13",
     "maximum": "13",
     "verified": "13"
   },
@@ -33,10 +33,12 @@
   "flags": {
     "hotReload": {
       "extensions": [
-        "css"
+        "css",
+        "hbs"
       ],
       "paths": [
-        "./styles/styles.css"
+        "styles",
+        "templates"
       ]
     }
   },
