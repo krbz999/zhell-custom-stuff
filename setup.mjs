@@ -16,7 +16,7 @@ globalThis.ZHELL = {
 Hooks.once("init", () => {
   ZHELL.settings.register();
   applications.ui.BossBar.register();
-  CONFIG.ui.bossBar = applications.ui.BossBar;
+  CONFIG.ui.bossbar = applications.ui.BossBar;
 });
 Hooks.on("dnd5e.damageActor", hooks.markDefeated);
 Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);

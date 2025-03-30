@@ -27,6 +27,21 @@
       top: 0;
       left: 0;
       bottom: 0;
+
+      &.hp {
+        border-right: 2px solid black;
+        border-radius: 0 0.5em 0.5em 0;
+      }
+
+      &.temp {
+        top: 25%;
+        border-radius: 0 100% 0 0;
+      }
+
+      &.tempmax {
+        right: 0;
+        left: unset;
+      }
     }
 
     .name {
