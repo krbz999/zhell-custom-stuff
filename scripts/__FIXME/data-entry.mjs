@@ -1,7 +1,5 @@
-import { MODULE } from "../const.mjs";
-
 export default function(sheet, html) {
-  if (!game.settings.get(MODULE, "dataEntryItemSheets")) return;
+  if (!game.settings.get(ZHELL.id, "dataEntryItemSheets")) return;
   const classes = ["zhell-data-entry"];
 
   if (sheet.activity) {

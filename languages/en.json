@@ -1,38 +1,48 @@
 {
-  "DND5E.AbilityPty": "Piety",
-  "DND5E.LanguagesCait": "Cait",
-  "DND5E.SchoolDivine": "Divine",
-  "DND5E.ShortRestNormal": "Short Rest (10 minutes)",
-  "DND5E.SpellLevelWarden": "Warden Slot [Level {level}] ({n} Slots)",
-  "DND5E.SpellProgWarden": "Warden",
-  "DND5E.SpellSlotsWarden": "Warden Slots",
-  "ZHELL.CraftingCannotRollMore": "You cannot roll any more.",
-  "ZHELL.CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
-  "ZHELL.CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",
-  "ZHELL.CraftingDescriptionForaging": "You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>{dc}</strong>. Once you are done foraging (maximum of {max} hours), adjust and accept the results.",
-  "ZHELL.CraftingForaging": "Foraging",
-  "ZHELL.CraftingMissingMaterials": "You need at least {cost} foraged materials to create this item.",
-  "ZHELL.CraftingTypeContact": "This poison can be smeared on an object and remains potent until it is touched or washed off.",
-  "ZHELL.CraftingTypeIngested": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
-  "ZHELL.CraftingTypeInhaled": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",
-  "ZHELL.CraftingTypeInjury": "This poison can be applied to weapons, ammunition, trap components, and other objects that deal piercing or slashing damage and remains potent until delivered through a wound or washed off.",
-  "ZHELL.CraftingWentForaging": "{name} went foraging for {hours} hours and found {amount} lbs of forageable goods.",
-  "ZHELL.PartyFeatureFragment": "<p>If the need is great, the party can choose to ignore one single attack roll, damage roll, ability check, or saving throw that they or a creature that they can see has rolled.</p><p>The party must choose to do so immediately after the roll, and before any results of it are applied.</p><p>If so, the creature immediately rerolls and must use the new roll, and this feature cannot be used again until Divine Intervention has reset.</p>",
-  "ZHELL.PartyFeatureInspiration": "<p>When you perform an ability check, you can choose to use your Piety score instead of the normal ability score. You must choose do this before the roll.</p><p>The party can choose to do this a total number of times equal to the amount of divine boons they have received.</p><p>When Divine Intervention resets nine days after performing a successful intervention, the party regains all expended uses of this feature.</p>",
-  "ZHELL.PartyFeatureIntervention": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>",
-  "ZHELL.SettingsCombatantDefeated": "Mark Combatants Defeated",
-  "ZHELL.SettingsCombatantDefeatedHint": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated.",
-  "ZHELL.SettingsDataEntryItemSheets": "Data Entry Sheets",
-  "ZHELL.SettingsDataEntryItemSheetsHint": "Modify item and activity sheets for improved data entry.",
-  "ZHELL.SettingsForagingDifficulty": "Foraging DC",
-  "ZHELL.SettingsForagingDifficultyHint": "The current DC for foraging.",
-  "ZHELL.SettingsTrackReactions": "Track Reactions in Combat",
-  "ZHELL.SettingsTrackReactionsChoice0": "Do not track reactions",
-  "ZHELL.SettingsTrackReactionsChoice1": "Track reactions for the GM",
-  "ZHELL.SettingsTrackReactionsChoice2": "Track reactions for all actors",
-  "ZHELL.SettingsTrackReactionsHint": "Track reactions for combatants when combat is ongoing.",
-  "ZHELL.StatusConditionReaction": "Reaction",
-  "ZHELL.StatusConditionReactionDescription": "You have spent your reaction on {name}. You cannot take another reaction until the start of your next turn.",
-  "ZHELL.StatusConditionRimed": "Rimed",
-  "ZHELL.StatusConditionTargeted": "Targeted"
+  "ZHELL": {
+    "ABILITY": {
+      "PIETY": "Piety"
+    },
+    "CraftingCannotRollMore": "You cannot roll any more.",
+    "CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
+    "CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",
+    "CraftingDescriptionForaging": "You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>{dc}</strong>. Once you are done foraging (maximum of {max} hours), adjust and accept the results.",
+    "CraftingForaging": "Foraging",
+    "CraftingMissingMaterials": "You need at least {cost} foraged materials to create this item.",
+    "CraftingTypeContact": "This poison can be smeared on an object and remains potent until it is touched or washed off.",
+    "CraftingTypeIngested": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
+    "CraftingTypeInhaled": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",
+    "CraftingTypeInjury": "This poison can be applied to weapons, ammunition, trap components, and other objects that deal piercing or slashing damage and remains potent until delivered through a wound or washed off.",
+    "CraftingWentForaging": "{name} went foraging for {hours} hours and found {amount} lbs of forageable goods.",
+    "PartyFeatureFragment": "<p>If the need is great, the party can choose to ignore one single attack roll, damage roll, ability check, or saving throw that they or a creature that they can see has rolled.</p><p>The party must choose to do so immediately after the roll, and before any results of it are applied.</p><p>If so, the creature immediately rerolls and must use the new roll, and this feature cannot be used again until Divine Intervention has reset.</p>",
+    "PartyFeatureInspiration": "<p>When you perform an ability check, you can choose to use your Piety score instead of the normal ability score. You must choose do this before the roll.</p><p>The party can choose to do this a total number of times equal to the amount of divine boons they have received.</p><p>When Divine Intervention resets nine days after performing a successful intervention, the party regains all expended uses of this feature.</p>",
+    "PartyFeatureIntervention": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>",
+    "SETTINGS": {
+      "DATA_ENTRY": {
+        "NAME": "Data Entry Sheets",
+        "HINT": "Modify item and activity sheets for improved data entry."
+      },
+      "FORAGING_DC": {
+        "NAME": "Foraging DC",
+        "HINT": "The current DC for foraging."
+      },
+      "MARK_DEFEATED": {
+        "NAME": "Mark Combatants Defeated",
+        "HINT": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated."
+      },
+      "TRACK_REACTIONS": {
+        "CHOICE_NONE": "Do not track reactions",
+        "CHOICE_GM_ONLY": "Track reactions for the GM",
+        "CHOICE_ALL": "Track reactions for all actors",
+        "NAME": "Track Reactions in Combat",
+        "HINT": "Track reactions for combatants when combat is ongoing."
+      }
+    },
+    "CONDITION": {
+      "REACTION": {
+        "NAME": "Reaction",
+        "DESCRIPTION": "You have spent your reaction on {name}. You cannot take another reaction until the start of your next turn."
+      }
+    }
+  }
 }

@@ -1,0 +1,8 @@
+{{#if active}}
+<div class="bar active">
+  <span class="progress" style="background-color: {{color}}; width: {{hp.pct}}%;"></span>
+  <span class="name">{{actor.name}}</span>
+</div>
+{{else}}
+<div></div>
+{{/if}}

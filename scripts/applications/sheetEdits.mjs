@@ -1,12 +1,11 @@
-import { MODULE } from "../../const.mjs";
-import { MateriaMedica } from "../applications/materiaMedica.mjs";
+import { MateriaMedica } from "./apps/materiaMedica.mjs";
 
 export class SheetEdits {
   /** Create the foraging button and foraged materials input. */
   static async _createCharacterSheetCounters(app, [html]) {
     const div = document.createElement("DIV");
     div.innerHTML = await renderTemplate("modules/zhell-custom-stuff/templates/character-sheet-counters.hbs", {
-      foraged: foundry.utils.getProperty(app.document, `flags.${MODULE}.materia-medica.value`) || 0,
+      foraged: foundry.utils.getProperty(app.document, `flags.${ZHELL.id}.materia-medica.value`) || 0,
     });
     div.querySelectorAll("[data-dtype=Number]").forEach(n => {
       n.addEventListener("focus", event => event.currentTarget.select());

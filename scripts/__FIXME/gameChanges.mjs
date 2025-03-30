@@ -1,75 +1,35 @@
-import { MODULE } from "../const.mjs";
-import { mayhem } from "./gameTools/mayhem.mjs";
-
 export class GameChangesHandler {
   // Hooks on init.
   static init() {
     GameChangesHandler._configChanges();
 
-    Hooks.once("setup", GameChangesHandler._setupGameChanges);
     Hooks.on("preUpdateToken", GameChangesHandler._rotateTokensOnMovement);
     Hooks.on("dnd5e.restCompleted", GameChangesHandler._restItemDeletion);
-    // Hooks.on("dnd5e.getItemContextOptions", GameChangesHandler._addContextMenuOptions);
     Hooks.on("canvasReady", GameChangesHandler._addNoteListeners);
     Hooks.on("dropCanvasData", GameChangesHandler._dropActorFolder);
     Hooks.on("preCreateScene", GameChangesHandler._preCreateScene);
-    Hooks.on("getSceneControlButtons", GameChangesHandler.sceneControls);
-  }
-
-  // Hooks on setup.
-  static _setupGameChanges() {
-    // Set note display to always on.
-    // game.settings.set("core", NotesLayer.TOGGLE_SETTING, true); // not needed with v13.
   }
 
   static _configChanges() {
-    // Adjust spell schools.
-    foundry.utils.mergeObject(CONFIG.DND5E.spellSchools, {
-      divine: {
-        fullKey: "divine",
-        icon: "...svg",
-        label: "DND5E.SchoolDivine",
-        reference: "",
-      },
-    });
-
     // Adjust ability scores.
     CONFIG.DND5E.abilities.pty = {
       abbreviation: "pty",
       defaults: { vehicle: 0, npc: 1, character: 1 },
       fullKey: "piety",
-      label: "DND5E.AbilityPty",
+      label: "ZHELL.ABILITY.PIETY",
       reference: "",
       type: "mental",
       improvement: false,
     };
 
-    // Adjust languages.
-    foundry.utils.mergeObject(CONFIG.DND5E.languages.standard.children, {
-      cait: "DND5E.LanguagesCait",
-    });
-
     // Add to status conditions.
-    CONFIG.statusEffects.push({
+    CONFIG.DND5E.conditionTypes.reaction = {
       id: "reaction",
-      name: "ZHELL.StatusConditionReaction",
-      icon: "assets/images/conditions/reaction.webp",
+      name: "ZHELL.CONDITION.REACTION.NAME",
+      img: "assets/images/conditions/reaction.webp",
       duration: { rounds: 1 },
       description: "<p>You have spent your reaction. You cannot take another reaction until the start of your next turn.</p>",
-    },
-    {
-      id: "rimed",
-      name: "ZHELL.StatusConditionRimed",
-      icon: "icons/magic/water/barrier-ice-water-cube.webp",
-      description: "<p>Your movement speed has been reduced by 10 feet.</p>",
-      changes: Object.keys(CONFIG.DND5E.movementTypes).map(type => {
-        return {
-          key: `system.attributes.movement.${type}`,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          value: String(-10),
-        };
-      }),
-    });
+    };
   }
 
   /**
@@ -81,7 +41,7 @@ export class GameChangesHandler {
   static async _restItemDeletion(actor, data) {
     const property = data.longRest ? "longRestDestroy" : "shortRestDestroy";
     const { ids, content } = actor.items.reduce((acc, item) => {
-      if (item.flags[MODULE]?.[property]) {
+      if (item.flags[ZHELL.id]?.[property]) {
         acc.ids.push(item.id);
         acc.content += `<li>${item.name}</li>`;
       }
@@ -192,7 +152,7 @@ export class GameChangesHandler {
       if (!isNote) return;
       const isActual = object.document.entryId || object.document.pageId;
       if (isActual) return;
-      const src = object.document.flags[MODULE]?.source;
+      const src = object.document.flags[ZHELL.id]?.source;
       if (!src) return;
 
       const page = await fromUuid(src);
@@ -206,20 +166,6 @@ export class GameChangesHandler {
         label: "Close",
         options: { id, classes: ["dialog", "note-util"] },
       });
-    });
-  }
-
-  static sceneControls(array) {
-    const token = array.find(a => a.name === "token");
-
-    // Show Mayhem dialog.
-    if (game.user.isGM) token.tools.push({
-      name: "mayhem-dialog",
-      title: "Mayhem",
-      icon: "fa-solid fa-poo-storm",
-      button: true,
-      visible: true,
-      onClick: mayhem,
     });
   }
 }

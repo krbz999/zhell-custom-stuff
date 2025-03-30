@@ -1,3 +1,50 @@
 @import "app-materia-media.css";
-@import "boss-bar.css";
+
+/** BOSS BAR */
+#boss-bar {
+  position: absolute;
+  top: 1em;
+  pointer-events: none;
+  transition: 200ms all ease;
+  opacity: 0;
+  flex-direction: column;
+  width: 50vw;
+
+  &:has(.active) {
+    opacity: 1;
+  }
+
+  .bar {
+    position: relative;
+    min-height: 4em;
+    overflow: hidden;
+    border-radius: 2em;
+    border: solid 2px grey;
+
+    .progress {
+      transition: 200ms all ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+    }
+
+    .name {
+      font-family: fantasy;
+      font-size: 40px;
+      position: relative;
+      width: 100%;
+      align-self: center;
+      display: flex;
+      justify-content: center;
+      color: rgb(255, 255, 255);
+      text-shadow:
+        -1px -1px 0 black,
+         1px -1px 0 black,
+        -1px  1px 0 black,
+         1px  1px 0 black;
+    }
+  }
+}
+
 @import "data-entry.css";

@@ -44,6 +44,6 @@
   },
   "eslint.enable": true,
   "eslint.validate": ["javascript", "handlebars", "html"],
-  "i18n-ally.localesPaths": ["lang", "foundry/lang"],
+  "i18n-ally.localesPaths": ["languages", "foundry/lang"],
   "i18n-ally.keystyle": "nested"
 }

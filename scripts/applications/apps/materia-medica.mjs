@@ -1,8 +1,6 @@
-import { MODULE } from "../../const.mjs";
-
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
-export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
+export default class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @inheritdoc */
   static DEFAULT_OPTIONS = {
     actor: null,
@@ -12,7 +10,7 @@ export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
       height: 700,
     },
     classes: [
-      MODULE,
+      "zhell-custom-stuff",
       "dnd5e2",
       "materia-medica",
     ],
@@ -45,7 +43,7 @@ export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** @inheritdoc */
   get id() {
-    return `${MODULE}-materia-medica-${this.actor.uuid.replaceAll(".", "-")}`;
+    return `${ZHELL.id}-materia-medica-${this.actor.uuid.replaceAll(".", "-")}`;
   }
 
   /* -------------------------------------------------- */
@@ -61,7 +59,7 @@ export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {number}
    */
   get #targetValue() {
-    return game.settings.get(MODULE, "foragingDC");
+    return game.settings.get(ZHELL.id, "foragingDC");
   }
 
   /**
@@ -77,7 +75,7 @@ export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {number}
    */
   get #materials() {
-    const materials = foundry.utils.getProperty(this.actor, `flags.${MODULE}.materia-medica.value`) ?? 0;
+    const materials = foundry.utils.getProperty(this.actor, `flags.${ZHELL.id}.materia-medica.value`) ?? 0;
     return Number(materials) || 0;
   }
 
@@ -145,7 +143,7 @@ export class MateriaMedica extends HandlebarsApplicationMixin(ApplicationV2) {
     const itemData = game.items.fromCompendium(item);
     Promise.all([
       resolver(),
-      this.actor.update({ [`flags.${MODULE}.materia-medica.value`]: this.#materials - cost }),
+      this.actor.update({ [`flags.${ZHELL.id}.materia-medica.value`]: this.#materials - cost }),
     ]);
   }
 }
