@@ -6,6 +6,9 @@
         "SHORT": "pty"
       }
     },
+    "CRAFTING": {
+      "resources": "Resources"
+    },
     "CraftingCannotRollMore": "You cannot roll any more.",
     "CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
     "CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",

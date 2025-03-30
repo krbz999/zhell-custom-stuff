@@ -146,4 +146,56 @@ export default class MateriaMedica extends HandlebarsApplicationMixin(Applicatio
       this.actor.update({ [`flags.${ZHELL.id}.materia-medica.value`]: this.#materials - cost }),
     ]);
   }
+
+  /* -------------------------------------------------- */
+  /*   Initialization hooks                             */
+  /* -------------------------------------------------- */
+
+  /**
+   * Register sheet hook.
+   * @param {Application} sheet   The character sheet.
+   * @param {jQuery} html         The sheet element.
+   */
+  static async register(sheet, html) {
+    const value = sheet.document.getFlag(ZHELL.id, "materia-medica.value") ?? 0;
+
+    const div = document.createElement("DIV");
+    div.innerHTML = await foundry.applications.handlebars.renderTemplate(
+      "modules/zhell-custom-stuff/templates/materia-medica/sheet-counters.hbs",
+      { foraged: value },
+    );
+    div.querySelectorAll("[data-dtype=Number]").forEach(n => {
+      n.addEventListener("focus", event => event.currentTarget.select());
+      n.addEventListener("change", MateriaMedica.#onChangeInputDeltaCustom.bind(sheet));
+    });
+    div.querySelector("[data-action]").addEventListener("click", MateriaMedica.#onClickForaging.bind(sheet));
+    const parent = html[0].querySelector(".currency");
+
+    if (!parent.querySelector(".forage")) parent.insertAdjacentElement("beforeend", div.firstChild);
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Parse the input when the input field changes.
+   * @param {ChangeEvent} event   The initiating change event.
+   */
+  static #onChangeInputDeltaCustom(event) {
+    const input = event.currentTarget;
+    const target = this.document;
+    const value = dnd5e.utils.parseInputDelta(input, target);
+    if (value !== undefined) input.value = Math.clamp(value, 0, 999);
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Render an instance of this application.
+   * @param {PointerEvent} event    The initiating click event.
+   */
+  static #onClickForaging(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    new MateriaMedica({ actor: this.document }).render({ force: true });
+  }
 }
