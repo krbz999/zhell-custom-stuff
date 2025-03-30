@@ -22,3 +22,4 @@ Hooks.on("dnd5e.damageActor", hooks.markDefeated);
 Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);
 Hooks.on("renderActivitySheet", hooks.dataEntry);
 Hooks.on("renderItemSheet5e", hooks.dataEntry);
+Hooks.on("preCreateScene", hooks.sceneDefaults);
