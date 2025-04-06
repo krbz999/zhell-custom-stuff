@@ -3,13 +3,11 @@ import * as helpers from "./scripts/helpers/_module.mjs";
 import * as hooks from "./scripts/hooks/_module.mjs";
 import * as utils from "./scripts/utils/_module.mjs";
 
-const { Hooks } = foundry.helpers;
-
 globalThis.ZHELL = {
-  id: "zhell-custom-stuff",
-  helpers,
   applications,
+  helpers,
   utils,
+  id: "zhell-custom-stuff",
   settings: new helpers.Settings(),
 };
 

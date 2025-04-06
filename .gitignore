@@ -1,5 +1,6 @@
-zhell-custom-stuff.lock
 _temp_stuff/
-node_modules/
+*.lock
 foundry
 foundry-config.yaml
+node_modules/
+packs/

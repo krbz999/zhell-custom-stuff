@@ -7,19 +7,7 @@
     "createSymlinks": "node ./tools/create-symlinks.mjs",
     "postinstall": "npm run createSymlinks"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/krbz999/zhell-custom-stuff.git"
-  },
-  "keywords": [
-    "fvtt",
-    "module"
-  ],
   "author": "Zhell",
-  "bugs": {
-    "url": "https://github.com/krbz999/zhell-custom-stuff"
-  },
-  "homepage": "https://github.com/krbz999/zhell-custom-stuff",
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^1.0.2",
     "@html-eslint/eslint-plugin": "^0.26.0",
