@@ -3,12 +3,7 @@
  * @param {InstanceType<foundry["documents"]["Actor"]>} actor   The actor.
  */
 export default async function(actor) {
-  if (!ZHELL.settings.markDefeatedCombatants) return;
-  if (!game.user.isActiveGM) return;
-  if (actor.hasPlayerOwner || !actor.inCombat) return;
-  if (actor.system.attributes.hp.pct > 0) return;
-
-  const id = CONFIG.specialStatusEffects.DEFEATED;
-  if (actor.statuses.has(id)) return;
-  await actor.toggleStatusEffect(id, { overlay: true });
+  if (ZHELL.settings.markDefeated(actor)) {
+    await actor.toggleStatusEffect(CONFIG.specialStatusEffects.DEFEATED, { overlay: true });
+  }
 }

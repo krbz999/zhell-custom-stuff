@@ -90,6 +90,11 @@ export default class ModuleSettings {
 
   /* -------------------------------------------------- */
 
+  /**
+   * Should reactions be tracked for this actor?
+   * @param {Actor5e} actor   The actor.
+   * @returns {boolean}
+   */
   trackReactions(actor) {
     switch (game.settings.get(ZHELL.id, "trackReactions")) {
       case 0:
@@ -99,5 +104,20 @@ export default class ModuleSettings {
       case 2:
         return true;
     }
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Should this actor be marked defeated?
+   * @param {Actor5e} actor   The actor.
+   * @returns {boolean}
+   */
+  markDefeated(actor) {
+    if (!this.markDefeatedCombatants) return false;
+    if (!game.user.isActiveGM) return false;
+    if (actor.hasPlayerOwner || !actor.inCombat) return false;
+    if (actor.system.attributes.hp.pct > 0) return false;
+    return !actor.statuses.has(CONFIG.specialStatusEffects.DEFEATED);
   }
 }

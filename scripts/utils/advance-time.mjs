@@ -9,7 +9,7 @@ export default async function advanceTime(s = 60) {
     positive: true,
   }).toFormGroup({}, { autofocus: true, name: "seconds", value: s }).outerHTML;
 
-  const seconds = await foundry.applications.api.DialogV2.prompt({
+  const seconds = await foundry.applications.api.Dialog.input({
     content: `<fieldset>${html}</fieldset>`,
     window: {
       title: "Advance Time",
@@ -19,9 +19,7 @@ export default async function advanceTime(s = 60) {
       width: 400,
       height: "auto",
     },
-    rejectClose: false,
     ok: {
-      callback: (event, button) => new FormDataExtended(button.form).object.seconds,
       label: "Advance",
       icon: "fa-solid fa-clock",
     },

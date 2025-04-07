@@ -60,6 +60,8 @@ export default async function mayhem() {
       return;
   }
 
-  await getDocumentClass("ChatMessage").create({ content: `<p>${content}</p>` });
+  await foundry.utils.getDocumentClass("ChatMessage").create({
+    content: `<p>${content}</p>`,
+  });
   return game.user.update(update);
 }

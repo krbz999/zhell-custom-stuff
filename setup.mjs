@@ -22,4 +22,4 @@ Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);
 Hooks.on("renderActivitySheet", hooks.dataEntry);
 Hooks.on("renderItemSheet5e", hooks.dataEntry);
 Hooks.on("preCreateScene", hooks.sceneDefaults);
-Hooks.on("renderActorSheet5eCharacter2", applications.apps.MateriaMedica.register);
+// Hooks.on("renderActorSheet5eCharacter2", applications.apps.MateriaMedica.register);

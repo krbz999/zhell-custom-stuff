@@ -3,7 +3,7 @@ const { HTMLField, SetField, StringField } = foundry.data.fields;
 export default async function whisperDialog() {
   const options = [];
   for (const user of game.users) {
-    if (user === game.user) continue;
+    if (user.isSelf) continue;
     const selected = canvas.tokens.controlled.some(token => token.actor?.testUserPermission(user, "OWNER"));
     options.push({ selected, value: user.id, label: user.name });
   }
@@ -18,11 +18,9 @@ export default async function whisperDialog() {
     { name: "message", value: "", height: 200 },
   ).outerHTML;
 
-  const result = await foundry.applications.api.DialogV2.prompt({
-    rejectClose: false,
+  const result = await foundry.applications.api.Dialog.input({
     content: `<fieldset>${usersHTML}${textHTML}</fieldset>`,
     ok: {
-      callback: (event, button) => new FormDataExtended(button.form).object,
       label: "Confirm",
       icon: "fa-solid fa-message",
     },
@@ -36,5 +34,7 @@ export default async function whisperDialog() {
     },
   });
   if (!result) return;
-  return getDocumentClass("ChatMessage").create({ content: result.message, whisper: result.users });
+  return foundry.utils.getDocumentClass("ChatMessage").create({
+    content: result.message, whisper: result.users,
+  });
 }
