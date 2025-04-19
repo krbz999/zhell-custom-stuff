@@ -6,16 +6,6 @@ export default class ModuleSettings {
    * @type {Record<string, object>}
    */
   static CONFIGURATION = {
-    foragingDC: {
-      name: "FORAGING_DC.NAME",
-      hint: "FORAGING_DC.HINT",
-      scope: "world",
-      config: true,
-      type: new NumberField({
-        initial: 15,
-      }),
-      requiresReload: false,
-    },
     markDefeatedCombatants: {
       name: "MARK_DEFEATED.NAME",
       hint: "MARK_DEFEATED.HINT",
