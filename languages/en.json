@@ -9,17 +9,6 @@
     "CRAFTING": {
       "resources": "Resources"
     },
-    "CraftingCannotRollMore": "You cannot roll any more.",
-    "CraftingCharacterFlag": "When this actor crafts a magic item with a rarity of common or uncommon, the costs are halved.",
-    "CraftingComplete": "{name} spent {amount} foraged materials to create one {link}.",
-    "CraftingDescriptionForaging": "You are attempting to forage for materials. Select your method of foraging. The current DC is <strong>{dc}</strong>. Once you are done foraging (maximum of {max} hours), adjust and accept the results.",
-    "CraftingForaging": "Foraging",
-    "CraftingMissingMaterials": "You need at least {cost} foraged materials to create this item.",
-    "CraftingTypeContact": "This poison can be smeared on an object and remains potent until it is touched or washed off.",
-    "CraftingTypeIngested": "A creature must swallow an entire dose of this poison to suffer its effects. The dose can be delivered in food or a liquid.",
-    "CraftingTypeInhaled": "This poison takes effect when inhaled. Blowing the powder or releasing the gas subjects creatures in a 5-foot cube in front of you to its effect. The resulting cloud dissipates immediately afterward. Holding one's breath is ineffective against inhaled poisons, as they affect nasal membranes, tear ducts, and other parts of the body.",
-    "CraftingTypeInjury": "This poison can be applied to weapons, ammunition, trap components, and other objects that deal piercing or slashing damage and remains potent until delivered through a wound or washed off.",
-    "CraftingWentForaging": "{name} went foraging for {hours} hours and found {amount} lbs of forageable goods.",
     "PartyFeatureFragment": "<p>If the need is great, the party can choose to ignore one single attack roll, damage roll, ability check, or saving throw that they or a creature that they can see has rolled.</p><p>The party must choose to do so immediately after the roll, and before any results of it are applied.</p><p>If so, the creature immediately rerolls and must use the new roll, and this feature cannot be used again until Divine Intervention has reset.</p>",
     "PartyFeatureInspiration": "<p>When you perform an ability check, you can choose to use your Piety score instead of the normal ability score. You must choose do this before the roll.</p><p>The party can choose to do this a total number of times equal to the amount of divine boons they have received.</p><p>When Divine Intervention resets nine days after performing a successful intervention, the party regains all expended uses of this feature.</p>",
     "PartyFeatureIntervention": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>",
