@@ -119,7 +119,10 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
       },
     });
 
-    Hooks.once("ready", () => ui.bossbar.render({ force: true }));
+    Hooks.once("ready", () => {
+      ui.bossbar.render({ force: true });
+      ui.bossbar.render = foundry.utils.debounce(ui.bossbar.render, 100);
+    });
   }
 
   /* -------------------------------------------------- */
