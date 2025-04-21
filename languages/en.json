@@ -26,6 +26,58 @@
         "HINT": "Track reactions for combatants when combat is ongoing."
       }
     },
+    "CALENDAR": {
+      "DAYS": {
+        "ardere": "Ardere",
+        "ardereAbbr": "Ard",
+        "claudere": "Claudere",
+        "claudereAbbr": "Claud",
+        "canere": "Canere",
+        "canereAbbr": "Can",
+        "saltare": "Saltare",
+        "saltareAbbr": "Salt",
+        "congerere": "Congerere",
+        "congerereAbbr": "Conger",
+        "operiere": "Operiere",
+        "operiereAbbr": "Oper",
+        "glacies": "Glacies",
+        "glaciesAbbr": "Glac",
+        "ventus": "Ventus",
+        "ventusAbbr": "Vent",
+        "lux": "Lux",
+        "luxAbbr": "Lux"
+      },
+      "MONTHS": {
+        "sationemRise": "Sationem's Rise",
+        "sationem": "Sationem",
+        "sationemEnd": "Sationem's End",
+        "sationemRiseAbbr": "Sat-1",
+        "sationemAbbr": "Sat-2",
+        "sationemEndAbbr": "Sat-3",
+        "suntide": "Suntide",
+        "suntideRise": "Suntide's Rise",
+        "suntideEnd": "Suntide's End",
+        "suntideAbbr": "Sun-2",
+        "suntideRiseAbbr": "Sun-1",
+        "suntideEndAbbr": "Sun-3",
+        "maturam": "Maturam",
+        "maturamAbbr": "Mat-2",
+        "maturamRise": "Maturam's Rise",
+        "maturamRiseAbbr": "Mat-1",
+        "maturamEnd": "Maturam's End",
+        "maturamEndAbbr": "Mat-3",
+        "withertide": "Withertide",
+        "withertideAbbr": "Wit-2",
+        "withertideRise": "Withertide's Rise",
+        "withertideRiseAbbr": "Wit-1",
+        "withertideEnd": "Withertide's End",
+        "withertideEndAbbr": "Wit-3",
+        "tenebrae": "Tenebrae",
+        "tenebraeAbbr": "Ten"
+      },
+      "TITLE": "New Age of Havilon",
+      "TEXT": "Calendar of the new age of Havilon, after the rediscovery."
+    },
     "CONDITION": {
       "REACTION": {
         "NAME": "Reaction",
