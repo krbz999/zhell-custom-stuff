@@ -60,4 +60,8 @@
   }
 }
 
+.application {
+  max-height: 100vh;
+}
+
 @import "data-entry.css";
