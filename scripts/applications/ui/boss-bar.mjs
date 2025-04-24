@@ -41,11 +41,15 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
    * @type {Actor|null}
    */
   get actor() {
-    const actor = this._actor ??= game.settings.get(ZHELL.id, "bossbar")?.() ?? null;
+    if (this._actor) return this._actor;
+
+    let actor = null;
+    const uuid = game.settings.get(ZHELL.id, "bossbar");
+    if (uuid) actor = fromUuidSync(uuid);
     if (actor) actor.apps.bossbar = this;
-    return actor;
+    return this._actor = actor;
   }
-  _actor;
+  _actor = null;
 
   /* -------------------------------------------------- */
 
@@ -109,12 +113,14 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
    */
   static register() {
     game.settings.register(ZHELL.id, "bossbar", {
-      type: new foundry.data.fields.ForeignDocumentField(foundry.documents.Actor),
+      type: new foundry.data.fields.DocumentUUIDField({ type: "Actor" }),
       config: false,
       scope: "world",
       onChange: () => {
-        delete ui.bossbar.actor?.apps.bossbar;
-        delete ui.bossbar._actor;
+        if (ui.bossbar._actor) {
+          delete ui.bossbar._actor.apps.bossbar;
+          ui.bossbar._actor = null;
+        }
         ui.bossbar.render();
       },
     });
@@ -127,18 +133,11 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
 
   /* -------------------------------------------------- */
 
-  /** @inheritdoc */
-  close(...args) {
-    // We don't close this application.
-  }
-
-  /* -------------------------------------------------- */
-
   /**
    * Register an actor as the current boss.
-   * @param {Token|TokenDocument|Actor} subject   The token or actor.
+   * @param {Token|TokenDocument|Actor} [subject]   The token or actor. If omitted, set to `null`.
    */
-  static async setBoss(subject) {
+  setBoss(subject) {
     const actor = subject instanceof foundry.documents.Actor
       ? subject
       : subject instanceof foundry.documents.TokenDocument
@@ -146,8 +145,6 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
         : subject instanceof foundry.canvas.placeables.Token
           ? subject.actor
           : null;
-    if (!actor) return false;
-    await game.settings.set(ZHELL.id, "bossbar", actor.id);
-    return true;
+    game.settings.set(ZHELL.id, "bossbar", actor ? actor.uuid : actor);
   }
 }
