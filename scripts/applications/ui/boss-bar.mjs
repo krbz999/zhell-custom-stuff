@@ -129,6 +129,20 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
       ui.bossbar.render({ force: true });
       ui.bossbar.render = foundry.utils.debounce(ui.bossbar.render, 100);
     });
+
+    Hooks.on("getSceneControlButtons", buttons => {
+      Object.assign(buttons.tokens.tools, {
+        setBoss: {
+          button: true,
+          icon: "fa-solid fa-spaghetti-monster-flying",
+          name: "setBoss",
+          onChange: () => ui.bossbar.setBoss(canvas.tokens.controlled[0]),
+          order: 5,
+          title: "ZHELL.BOSSBAR.setBoss",
+          visible: game.user.isGM,
+        },
+      });
+    });
   }
 
   /* -------------------------------------------------- */
