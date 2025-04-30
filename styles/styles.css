@@ -64,4 +64,138 @@
   max-height: 100vh;
 }
 
-@import "data-entry.css";
+.dnd5e2.sheet.item.zhell-data-entry {
+  width: 1258px !important;
+
+  /* grid layout */
+  .window-content {
+    display: grid;
+
+    [data-application-part=header] {
+      grid-area: header;
+    }
+    [data-application-part=tabs] {
+      display: none;
+    }
+    [data-application-part=description] {
+      grid-area: description;
+      width: 400px;
+    }
+    [data-application-part=details] {
+      grid-area: details;
+      width: 450px;
+    }
+
+    &:has([data-application-part=activities]) {
+      grid: "header header header" 0fr
+            "description details activities" auto
+            "description details effects" auto
+            / 400px auto;
+
+      [data-application-part=activities] {
+        grid-area: activities;
+        width: 400px;
+      }
+      [data-application-part=effects] {
+        grid-area: effects;
+        width: 400px;
+      }
+    }
+
+    &:has([data-application-part=advancement]) {
+      grid: "header header header" 0fr
+            "description details advancement" auto
+            / 400px auto;
+
+      [data-application-part=details] {
+        width: 400px;
+      }
+      [data-application-part=advancement] {
+        grid-area: advancement;
+        width: 450px;
+      }
+    }
+
+    &:has([data-application-part=contents]) {
+      grid: "header header header" 0fr
+            "contents description details" auto
+            / 400px auto;
+
+      [data-application-part=details] {
+        width: 400px;
+      }
+      [data-application-part=contents] {
+        grid-area: contents;
+        width: 400px;
+      }
+    }
+  }
+
+  .tab {
+    display: flex !important;
+  }
+
+  .create-child:not(.fake) { display: none; }
+
+  [data-application-part]:has(.create-child.fake) {
+    position: relative;
+  }
+  .create-child.fake {
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 100%;
+    z-index: 1;
+  }
+}
+.dnd5e2.sheet.activity.zhell-data-entry {
+  width: 1250px !important;
+
+  .window-content {
+    display: grid;
+    grid: "header header header" 0fr
+          "identity activation effect" auto
+          "identity activation-time effect" auto
+          "identity activation-consumption effect" auto
+          "identity activation-targeting effect" auto
+          / 400px auto;
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  [data-application-part] {
+    display: flex;
+  }
+
+  [data-application-part=tabs] {
+    display: none;
+  }
+
+  [data-application-part=identity] {
+    width: 400px;
+    grid-area: identity;
+  }
+  [data-application-part=activation] {
+    width: 400px;
+    grid-area: activation;
+
+    [data-tab=time] {
+      display: flex;
+      grid-area: activation-time;
+    }
+    [data-tab=consumption] {
+      display: flex;
+      grid-area: activation-consumption;
+    }
+    [data-tab=activation-targeting] {
+      display: flex;
+      grid-area: activation-targeting;
+    }
+  }
+  [data-application-part=effect] {
+    width: 400px;
+    grid-area: effect;
+  }
+}
