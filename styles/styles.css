@@ -85,48 +85,62 @@
       grid-area: details;
       width: 450px;
     }
+    [data-application-part=contents] {
+      grid-area: contents;
+    }
+    [data-application-part=advancement] {
+      grid-area: advancement;
+    }
+    [data-application-part=effects] {
+      grid-area: effects;
+    }
+    [data-application-part=activities] {
+      grid-area: activities;
+    }
 
+    /* Any item with activities */
     &:has([data-application-part=activities]) {
       grid: "header header header" 0fr
             "description details activities" auto
             "description details effects" auto
             / 400px auto;
 
-      [data-application-part=activities] {
-        grid-area: activities;
-        width: 400px;
-      }
-      [data-application-part=effects] {
-        grid-area: effects;
-        width: 400px;
-      }
+      [data-application-part=activities] { width: 400px; }
+      [data-application-part=effects] { width: 400px; }
     }
 
+    /* Any item with advancements */
     &:has([data-application-part=advancement]) {
       grid: "header header header" 0fr
             "description details advancement" auto
             / 400px auto;
 
-      [data-application-part=details] {
-        width: 400px;
-      }
-      [data-application-part=advancement] {
-        grid-area: advancement;
-        width: 450px;
-      }
+      [data-application-part=details] { width: 400px; }
+      [data-application-part=advancement] { width: 450px; }
     }
 
+    /* Containers */
     &:has([data-application-part=contents]) {
       grid: "header header header" 0fr
             "contents description details" auto
             / 400px auto;
 
-      [data-application-part=details] {
-        width: 400px;
-      }
-      [data-application-part=contents] {
-        grid-area: contents;
-        width: 400px;
+      [data-application-part=details] { width: 400px; }
+      [data-application-part=contents] { width: 400px; }
+    }
+
+    /* Features (both activities and advancements) */
+    &:has([data-application-part=activities]):has([data-application-part=advancement]) {
+      grid: "header header header" 0fr
+            "description details effects" auto
+            "description details activities" auto
+            "description details advancement"
+            / 400px auto;
+
+      [data-application-part=effects],
+      [data-application-part=activities],
+      [data-application-part=advancement] {
+        width: 450px;
       }
     }
   }
