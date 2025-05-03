@@ -1,4 +1,6 @@
-export default async function currentCombatant() {
+export default async function currentCombatant({
+  controlCurrent = true, panToCurrent = true, maximizeCurrent = true, minimizeOthers = true,
+} = {}) {
   const combat = game.combat;
   if (!combat) {
     ui.notifications.warn("No current combat!");
@@ -11,23 +13,21 @@ export default async function currentCombatant() {
     return;
   }
 
-  const minimize = (application) => {
-    if ((application.document?.documentName === "Actor") && (application.document !== current.actor)) {
+  // Minimize all sheets except those that point to the current combatant's actor.
+  for (const application of foundry.applications.instances.values()) {
+    if (!application.hasFrame) continue;
+    if (application.document === current.actor) {
+      if (!maximizeCurrent) continue;
+      if (application.rendered) application.maximize();
+      else application.render({ force: true });
+    } else {
+      if (!minimizeOthers) continue;
       application.minimize();
     }
-  };
-
-  // Close all sheets.
-  for (const application of foundry.applications.instances.values()) minimize(application);
-  for (const application of Object.values(ui.windows)) minimize(application);
-
-  // Render current combatant.
-  const sheet = current.actor.sheet;
-  if (sheet.rendered) sheet.maximize();
-  else sheet.render(true);
+  }
 
   // Select and pan to current combatant.
-  current.object.control({ releaseOthers: true });
-  canvas.animatePan({ ...current.object.center, duration: 1000 });
+  if (controlCurrent) current.object?.control({ releaseOthers: true });
+  if (panToCurrent && current.object) canvas.animatePan({ ...current.object.center, duration: 1000 });
   return current;
 }
