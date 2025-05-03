@@ -11,6 +11,8 @@ export default class HavilonCalendar extends foundry.data.CalendarData {
     const components = super.timeToComponents(time);
     if (components.month < 12) {
       components.dayOfWeek = components.dayOfMonth % this.days.values.length;
+    } else {
+      components.dayOfWeek = 0;
     }
     return components;
   }
