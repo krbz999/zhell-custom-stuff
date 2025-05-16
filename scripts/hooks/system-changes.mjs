@@ -13,6 +13,8 @@ export default function systemChanges() {
     improvement: false,
   };
 
+  if (!ZHELL.settings.pietyScore) delete CONFIG.DND5E.abilities.pty;
+
   // Add to status conditions.
   CONFIG.DND5E.conditionTypes.reaction = {
     id: "reaction",

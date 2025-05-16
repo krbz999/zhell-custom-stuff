@@ -19,8 +19,10 @@ Hooks.once("init", () => {
   applications.ui.BossBar.register();
   CONFIG.ui.bossbar = applications.ui.BossBar;
 
-  CONFIG.time.worldCalendarClass = data.HavilonCalendar;
-  CONFIG.time.worldCalendarConfig = data.HavilonCalendarConfig;
+  if (ZHELL.settings.havilonCalendar) {
+    CONFIG.time.worldCalendarClass = data.HavilonCalendar;
+    CONFIG.time.worldCalendarConfig = data.HavilonCalendarConfig;
+  }
 });
 
 Hooks.on("dnd5e.damageActor", hooks.markDefeated);

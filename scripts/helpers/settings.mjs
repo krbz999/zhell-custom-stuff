@@ -41,6 +41,26 @@ export default class ModuleSettings {
       }),
       requiresReload: false,
     },
+    havilonCalendar: {
+      name: "HAVILON_CALENDAR.NAME",
+      hint: "HAVILON_CALENDAR.HINT",
+      scope: "world",
+      config: true,
+      type: new BooleanField({
+        initial: true,
+      }),
+      requiresReload: true,
+    },
+    pietyScore: {
+      name: "PIETY.NAME",
+      hint: "PIETY.HINT",
+      scope: "world",
+      config: true,
+      type: new BooleanField({
+        initial: false,
+      }),
+      requiresReload: true,
+    },
   };
 
   /* -------------------------------------------------- */
@@ -71,11 +91,31 @@ export default class ModuleSettings {
   /* -------------------------------------------------- */
 
   /**
+   * Use the Havilonian calendar?
+   * @type {boolean}
+   */
+  get havilonCalendar() {
+    return game.settings.get(ZHELL.id, "havilonCalendar");
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
    * Should npc combatants be marked defeated when reaching 0 hp?
    * @type {boolean}
    */
   get markDefeatedCombatants() {
     return game.settings.get(ZHELL.id, "markDefeatedCombatants");
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Is the piety score enabled?
+   * @type {boolean}
+   */
+  get pietyScore() {
+    return game.settings.get(ZHELL.id, "pietyScore");
   }
 
   /* -------------------------------------------------- */
