@@ -1,0 +1,107 @@
+{
+  "ZHELL": {
+    "ABILITY": {
+      "PIETY": {
+        "LABEL": "Piety",
+        "SHORT": "pty"
+      }
+    },
+    "BOSSBAR": {
+      "setBoss": "Set Boss"
+    },
+    "CALENDAR": {
+      "DAYS": {
+        "ardere": "Ardere",
+        "ardereAbbr": "Ard",
+        "claudere": "Claudere",
+        "claudereAbbr": "Claud",
+        "canere": "Canere",
+        "canereAbbr": "Can",
+        "saltare": "Saltare",
+        "saltareAbbr": "Salt",
+        "congerere": "Congerere",
+        "congerereAbbr": "Conger",
+        "operiere": "Operiere",
+        "operiereAbbr": "Oper",
+        "glacies": "Glacies",
+        "glaciesAbbr": "Glac",
+        "ventus": "Ventus",
+        "ventusAbbr": "Vent",
+        "lux": "Lux",
+        "luxAbbr": "Lux"
+      },
+      "MONTHS": {
+        "sationemRise": "Sationem's Rise",
+        "sationem": "Sationem",
+        "sationemEnd": "Sationem's End",
+        "sationemRiseAbbr": "Sat-1",
+        "sationemAbbr": "Sat-2",
+        "sationemEndAbbr": "Sat-3",
+        "suntide": "Suntide",
+        "suntideRise": "Suntide's Rise",
+        "suntideEnd": "Suntide's End",
+        "suntideAbbr": "Sun-2",
+        "suntideRiseAbbr": "Sun-1",
+        "suntideEndAbbr": "Sun-3",
+        "maturam": "Maturam",
+        "maturamAbbr": "Mat-2",
+        "maturamRise": "Maturam's Rise",
+        "maturamRiseAbbr": "Mat-1",
+        "maturamEnd": "Maturam's End",
+        "maturamEndAbbr": "Mat-3",
+        "withertide": "Withertide",
+        "withertideAbbr": "Wit-2",
+        "withertideRise": "Withertide's Rise",
+        "withertideRiseAbbr": "Wit-1",
+        "withertideEnd": "Withertide's End",
+        "withertideEndAbbr": "Wit-3",
+        "tenebrae": "Tenebrae",
+        "tenebraeAbbr": "Ten"
+      },
+      "TITLE": "New Age of Havilon",
+      "TEXT": "Calendar of the new age of Havilon, after the rediscovery."
+    },
+    "CONDITION": {
+      "REACTION": {
+        "NAME": "Reaction",
+        "DESCRIPTION": "You have spent your reaction on {name}. You cannot take another reaction until the start of your next turn."
+      }
+    },
+    "IMAGE_SEARCH": {
+      "CONFIRM": "Confirm",
+      "FILTERS": {
+        "keywordsLabel": "Keywords",
+        "minLabel": "Score",
+        "resultsLabel": "Results",
+        "typeLabel": "Type"
+      },
+      "TITLE": "Image Search"
+    },
+    "PARTY": {
+      "FRAGMENT": "<p>If the need is great, the party can choose to ignore one single attack roll, damage roll, ability check, or saving throw that they or a creature that they can see has rolled.</p><p>The party must choose to do so immediately after the roll, and before any results of it are applied.</p><p>If so, the creature immediately rerolls and must use the new roll, and this feature cannot be used again until Divine Intervention has reset.</p>",
+      "INSPIRATION": "<p>When you perform an ability check, you can choose to use your Piety score instead of the normal ability score. You must choose do this before the roll.</p><p>The party can choose to do this a total number of times equal to the amount of divine boons they have received.</p><p>When Divine Intervention resets nine days after performing a successful intervention, the party regains all expended uses of this feature.</p>",
+      "INTERVENTION": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>"
+    },
+    "SETTINGS": {
+      "HAVILON_CALENDAR": {
+        "NAME": "Enable Havilonian Calendar",
+        "HINT": "Replaces the current calendar configuration and data model with one specific to the Havilon setting."
+      },
+      "MARK_DEFEATED": {
+        "NAME": "Mark Combatants Defeated",
+        "HINT": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated."
+      },
+      "PIETY": {
+        "NAME": "Enable Piety Score",
+        "HINT": "Enables Piety as an additional ability score."
+      },
+      "TRACK_REACTIONS": {
+        "CHOICE_NONE": "Do not track reactions",
+        "CHOICE_GM_ONLY": "Track reactions for the GM",
+        "CHOICE_ALL": "Track reactions for all actors",
+        "NAME": "Track Reactions in Combat",
+        "HINT": "Track reactions for combatants when combat is ongoing."
+      }
+    }
+  }
+}

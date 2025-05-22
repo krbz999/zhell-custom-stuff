@@ -1,0 +1,11 @@
+<section>
+  {{formGroup filters.type.field value=filters.type.value choices=filters.type.choices dataset=filters.type.dataset blank=false label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.typeLabel")}}
+
+  {{formGroup filters.min.field value=filters.min.value min=1 integer=true dataset=filters.min.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.minLabel") placeholder="1"}}
+
+  {{formGroup filters.results.field value=filters.results.value min=1 integer=true dataset=filters.results.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.resultsLabel") placeholder="∞"}}
+
+  <hr>
+
+  {{formGroup filters.keywords.field value=filters.keywords.value dataset=filters.keywords.dataset slug=true label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.keywordsLabel") classes="stacked"}}
+</section>

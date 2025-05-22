@@ -1,0 +1,50 @@
+{
+  "id": "zhell-custom-stuff",
+  "title": "Zhell's Custom Stuff",
+  "version": "AUTOMATIC",
+  "authors": [
+    {
+      "name": "Zhell",
+      "url": "https://github.com/krbz999",
+      "discord": "zhell9201",
+      "ko-fi": "https://ko-fi.com/zhell",
+      "patreon": "https://patreon.com/zhell"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "maximum": "13",
+    "verified": "13"
+  },
+  "esmodules": [
+    "module.mjs"
+  ],
+  "styles": [
+    "styles/styles.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json",
+      "description": "Personal module for replacing or adding to many things."
+    }
+  ],
+  "flags": {
+    "hotReload": {
+      "extensions": [
+        "css",
+        "hbs",
+        "json"
+      ],
+      "paths": [
+        "languages",
+        "styles",
+        "templates"
+      ]
+    }
+  },
+  "url": "https://github.com/krbz999/zhell-custom-stuff",
+  "manifest": "https://github.com/krbz999/zhell-custom-stuff/releases/latest/download/module.json",
+  "download": "AUTOMATIC"
+}

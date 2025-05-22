@@ -1,0 +1,142 @@
+/** BOSS BAR */
+#boss-bar {
+  position: absolute;
+  top: 1em;
+  pointer-events: none;
+  transition: 200ms all ease;
+  opacity: 0;
+  flex-direction: column;
+  width: 50vw;
+
+  &:has(.active) {
+    opacity: 1;
+  }
+
+  .bar {
+    position: relative;
+    min-height: 4em;
+    overflow: hidden;
+    border-radius: 2em;
+    border: solid 2px grey;
+
+    .progress {
+      transition: 200ms all ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+
+      &.hp {
+        border-right: 2px solid black;
+        border-radius: 0 0.5em 0.5em 0;
+      }
+
+      &.temp {
+        top: 25%;
+        border-radius: 0 100% 0 0;
+      }
+
+      &.tempmax {
+        right: 0;
+        left: unset;
+      }
+    }
+
+    .name {
+      font-family: fantasy;
+      font-size: 40px;
+      position: relative;
+      width: 100%;
+      align-self: center;
+      display: flex;
+      justify-content: center;
+      color: rgb(255, 255, 255);
+      text-shadow:
+        -1px -1px 0 black,
+         1px -1px 0 black,
+        -1px  1px 0 black,
+         1px  1px 0 black;
+    }
+  }
+}
+
+.application {
+  max-height: 100vh;
+}
+
+.zhell-custom-stuff.image-search .window-content {
+  display: grid;
+  grid: "filters images" auto
+        "footer footer" 0fr
+         / 350px auto;
+
+  [data-application-part=filters] { grid-area: filters }
+  [data-application-part=images] { grid-area: images }
+  [data-application-part=footer] { grid-area: footer }
+
+  /* -------------------------------------------------- */
+
+  [data-application-part=filters] {
+    .form-group {
+      margin-bottom: 1rem;
+    }
+  }
+
+  [data-application-part=images] {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .scrollable {
+      gap: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+      &.no-score .score { display: none }
+
+      figure {
+        margin: 0;
+        padding: 0;
+        position: relative;
+
+        [data-action=showImage] {
+          position: absolute;
+          top: 2px;
+          right: 2px;
+          opacity: 0;
+        }
+
+        .score {
+          position: absolute;
+          bottom: calc(4px + var(--input-height));
+          left: 4px;
+          text-align: center;
+          font-family: monospace;
+          background-color: black;
+          line-height: var(--input-height);
+          width: var(--input-height);
+          border-radius: 5px;
+        }
+
+        &:hover [data-action=showImage] {
+          opacity: 1;
+        }
+
+        img {
+          object-position: top center;
+          object-fit: cover;
+          aspect-ratio: 1;
+        }
+
+        figcaption {
+          margin: 0;
+          line-height: var(--input-height);
+          overflow: hidden;
+          text-wrap: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  [data-application-part=footer] {}
+}
