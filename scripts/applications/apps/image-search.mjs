@@ -1,6 +1,10 @@
 const { HandlebarsApplicationMixin, Application } = foundry.applications.api;
 
 export default class ImageSearch extends HandlebarsApplicationMixin(Application) {
+  /**
+   * File path records.
+   * @type {Record<string, {portraits: string, subjects: string, tokens: string}>}
+   */
   static FILE_PATHS = {
     "pf2e-tokens-bestiaries": {
       portraits: "portraits",
@@ -8,6 +12,11 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
       tokens: "tokens",
     },
     "pf2e-tokens-monster-core": {
+      portraits: "assets/portraits",
+      subjects: "assets/subjects",
+      tokens: "assets/tokens",
+    },
+    "pf2e-tokens-myth-and-magic": {
       portraits: "assets/portraits",
       subjects: "assets/subjects",
       tokens: "assets/tokens",
@@ -29,6 +38,11 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
   /* -------------------------------------------------- */
 
+  /**
+   * Cache file paths for faster lookup.
+   * @returns {Promise<boolean|null>}   A promise that resolves to `true` when the caching has completed,
+   *                                    or `null` if the caching was aborted for any reason or is redundant.
+   */
   static async fetchImages() {
     if (ImageSearch.#fetched) return null;
 
@@ -72,22 +86,45 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
   /* -------------------------------------------------- */
 
+  /**
+   * @typedef ImageResult
+   * @property {string} filePath        Filepath.
+   * @property {Set<string>} keywords   Keywords.
+   * @property {string} label           Default name of a file.
+   */
+
+  /**
+   * Fetched and cached results.
+   * @type {Record<string, ImageResult[]>}
+   */
   static #fetched;
 
   /* -------------------------------------------------- */
 
+  /**
+   * Cached portrait art.
+   * @type {ImageResult[]}
+   */
   static get PORTRAITS() {
     return ImageSearch.#fetched?.PORTRAITS ?? [];
   }
 
   /* -------------------------------------------------- */
 
+  /**
+   * Cached subject art.
+   * @type {ImageResult[]}
+   */
   static get SUBJECTS() {
     return ImageSearch.#fetched?.SUBJECTS ?? [];
   }
 
   /* -------------------------------------------------- */
 
+  /**
+   * Cached token art.
+   * @type {ImageResult[]}
+   */
   static get TOKENS() {
     return ImageSearch.#fetched?.TOKENS ?? [];
   }
@@ -111,11 +148,10 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   /* -------------------------------------------------- */
 
   /**
-   * Found results segmented into batches of size equal to `BATCH_SIZE`.
-   * This property is re-assigned each time 'results' is re-rendered.
-   * @type {Generator}
+   * Found results. This property is re-assigned each time 'results' is re-rendered.
+   * @type {Iterator}
    */
-  #batches;
+  #results;
 
   /* -------------------------------------------------- */
 
@@ -141,30 +177,29 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   /* -------------------------------------------------- */
 
   /**
-   * Get the next batch of results.
-   * @returns {object[]}    Array of results.
+   * Selected image filepaths.
+   * @type {string[]}
    */
-  #getNextBatch() {
-    return [...(this.#batches.next().value ?? [])];
+  get selected() {
+    return [...this.#selected];
   }
 
   /* -------------------------------------------------- */
 
   /**
-   * Produce batches of `BATCH_SIZE` of the found results.
-   * @param {object[]} iter   The found results.
-   * @yields
+   * Selected image filepaths.
+   * @type {Set<string>}
    */
-  *#segmentizeResults(iter) {
-    iter = Iterator.from(iter);
-    while (true) {
-      const { value, done } = iter.next();
-      if (done) break;
-      yield (function* () {
-        yield value;
-        yield* iter.take(ImageSearch.BATCH_SIZE - 1);
-      })();
-    }
+  #selected = new Set();
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Get the next batch of results.
+   * @returns {object[]}    Array of results.
+   */
+  #getNextBatch() {
+    return [...this.#results.take(ImageSearch.BATCH_SIZE)];
   }
 
   /* -------------------------------------------------- */
@@ -179,7 +214,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     const name = foundry.audio.AudioHelper.getDefaultSoundName(path);
     const words = name.split(" ")
       .map(w => w.toLowerCase().trim())
-      .filter(w => (w.length >= 3) && !ImageSearch.STOP_WORDS.has(w) && !Number.isNumeric(w));
+      .filter(w => (w.length >= 3) && !ImageSearch.STOP_WORDS.has(w) && !/\d+/.test(w));
     return new Set(words);
   }
 
@@ -257,6 +292,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   /** @inheritdoc */
   static DEFAULT_OPTIONS = {
     classes: ["zhell-custom-stuff", "image-search"],
+    tag: "form",
     window: {
       resizable: true,
       title: "ZHELL.IMAGE_SEARCH.TITLE",
@@ -267,8 +303,12 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
       width: 1400,
       height: 1200,
     },
+    form: {
+      closeOnSubmit: true,
+    },
     actions: {
       showImage: ImageSearch.#showImage,
+      selectImage: ImageSearch.#selectImage,
     },
   };
 
@@ -278,6 +318,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   static PARTS = {
     filters: {
       template: "modules/zhell-custom-stuff/templates/apps/image-search/filters.hbs",
+      scrollable: [""],
     },
     images: {
       template: "modules/zhell-custom-stuff/templates/apps/image-search/images.hbs",
@@ -318,6 +359,8 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
         value: this.#filters.results,
         dataset: { change: "results" },
       };
+
+      context.selected = this.selected;
     }
 
     if (options.parts.includes("images")) {
@@ -326,6 +369,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
       let results = foundry.utils.deepClone(ImageSearch[this.#filters.type]);
       for (const result of results) {
         result.score = ImageSearch.getScore(result.keywords, this.#filters.keywords);
+        result.selected = this.#selected.has(result.filePath);
       }
 
       context.hasKeywords = this.#filters.keywords.size;
@@ -335,10 +379,10 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
           .sort((a, b) => b.score - a.score);
       }
 
-      // Show only a limited number of results of restricted.
+      // Show only a limited number of results if restricted.
       if (this.#filters.results > 0) results.splice(this.#filters.results);
 
-      this.#batches = this.#segmentizeResults(results);
+      this.#results = Iterator.from(results);
       context.images = this.#getNextBatch();
     }
 
@@ -443,13 +487,44 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
    * @param {HTMLButtonElement} target    The button that defined the [data-action].
    */
   static #showImage(event, target) {
-    const fig = target.closest("figure");
-    const src = fig.querySelector("img").getAttribute("src");
-    const caption = fig.querySelector("figcaption").textContent;
+    const src = target.closest("[data-src]").dataset.src;
+    const caption = target.closest("[data-caption]").dataset.caption;
     const application = new foundry.applications.apps.ImagePopout({
       caption, src,
       window: { title: caption },
     });
     application.render({ force: true });
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Toggle an image selection.
+   * @this {ImageSearch}
+   * @param {PointerEvent} event          Initiating click event.
+   * @param {HTMLButtonElement} target    The button that defined the [data-action].
+   */
+  static #selectImage(event, target) {
+    const src = target.closest("[data-src]").dataset.src;
+    if (this.#selected.has(src)) this.#selected.delete(src);
+    else this.#selected.add(src);
+    this.element.querySelector(`figure[data-src="${src}"]`)?.classList.toggle("selected", this.#selected.has(src));
+    this.render({ parts: ["filters"] });
+  }
+
+  /* -------------------------------------------------- */
+  /*   Factory methods                                  */
+  /* -------------------------------------------------- */
+
+  /**
+   * Request an image.
+   * @returns {Promise<string[]>}   A promise that resolves to selected image filepaths.
+   */
+  static async create() {
+    const application = new ImageSearch();
+    const { promise, resolve } = Promise.withResolvers();
+    application.addEventListener("close", () => resolve(application.selected), { once: true });
+    application.render({ force: true });
+    return promise;
   }
 }

@@ -1,4 +1,4 @@
-<section>
+<section class="scrollable">
   {{formGroup filters.type.field value=filters.type.value choices=filters.type.choices dataset=filters.type.dataset blank=false label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.typeLabel")}}
 
   {{formGroup filters.min.field value=filters.min.value min=1 integer=true dataset=filters.min.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.minLabel") placeholder="1"}}
@@ -8,4 +8,19 @@
   <hr>
 
   {{formGroup filters.keywords.field value=filters.keywords.value dataset=filters.keywords.dataset slug=true label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.keywordsLabel") classes="stacked"}}
+
+  <hr>
+
+  <h4>{{localize "ZHELL.IMAGE_SEARCH.FILTERS.selections"}}</h4>
+  <section>
+    {{#each selected}}
+    <div class="form-group selection" data-src="{{this}}">
+      <div class="form-fields">
+        <img src="{{this}}" alt="">
+        <span class="filepath">{{this}}</span>
+        <button type="button" class="icon fa-solid fa-trash" data-action="selectImage"></button>
+      </div>
+    </div>
+    {{/each}}
+  </section>
 </section>

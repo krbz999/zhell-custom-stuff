@@ -80,6 +80,25 @@
     .form-group {
       margin-bottom: 1rem;
     }
+
+    .selection {
+      .form-fields {
+        display: grid;
+        grid-template-columns: 3rem 1fr 0fr;
+
+        img {
+          object-fit: cover;
+          object-position: top;
+          aspect-ratio: 1;
+        }
+
+        .filepath {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
   }
 
   [data-application-part=images] {
@@ -98,11 +117,23 @@
         padding: 0;
         position: relative;
 
+        &.selected img {
+          border-color: yellow;
+        }
+
         [data-action=showImage] {
           position: absolute;
           top: 2px;
           right: 2px;
           opacity: 0;
+
+          figure:hover & {
+            opacity: 1;
+          }
+        }
+
+        [data-action=selectImage] {
+          cursor: var(--cursor-pointer);
         }
 
         .score {
@@ -115,10 +146,6 @@
           line-height: var(--input-height);
           width: var(--input-height);
           border-radius: 5px;
-        }
-
-        &:hover [data-action=showImage] {
-          opacity: 1;
         }
 
         img {

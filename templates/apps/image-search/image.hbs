@@ -1,7 +1,6 @@
-<figure>
-  <img src="{{filePath}}" alt="{{label}}">
+<figure class="{{#if selected}} selected {{/if}}" data-src="{{filePath}}" data-caption="{{label}}">
+  <img src="{{filePath}}" alt="{{label}}" data-action="selectImage">
   <figcaption>{{label}}</figcaption>
-
-  <button type="button" data-action="showImage" class="icon fa-solid fa-eye"></button>
+  <button type="button" class="icon fa-solid fa-eye" data-action="showImage"></button>
   <span class="score">{{score}}</span>
 </figure>

@@ -73,6 +73,7 @@
         "keywordsLabel": "Keywords",
         "minLabel": "Score",
         "resultsLabel": "Results",
+        "selections": "Selections",
         "typeLabel": "Type"
       },
       "TITLE": "Image Search"
