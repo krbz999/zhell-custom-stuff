@@ -67,6 +67,14 @@
         "DESCRIPTION": "You have spent your reaction on {name}. You cannot take another reaction until the start of your next turn."
       }
     },
+    "CRAFTING": {
+      "MENU": {
+        "title": "Crafting Recipes",
+        "itemQuantity": "Quantity",
+        "itemResources": "Resources",
+        "dropItemsHere": "Drop Items Here"
+      }
+    },
     "IMAGE_SEARCH": {
       "CONFIRM": "Confirm",
       "FILTERS": {
@@ -84,6 +92,11 @@
       "INTERVENTION": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>"
     },
     "SETTINGS": {
+      "CRAFTING": {
+        "LABEL": "Configure Recipes",
+        "NAME": "Crafting Recipes",
+        "HINT": "Configure the list of crafting recipes, their requirements, and the produced quantity."
+      },
       "HAVILON_CALENDAR": {
         "NAME": "Enable Havilonian Calendar",
         "HINT": "Replaces the current calendar configuration and data model with one specific to the Havilon setting."

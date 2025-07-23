@@ -1,0 +1,19 @@
+<section class="standard-form">
+  <section class="recipes-list scrollable">
+    {{#if ctx.recipes.length}}
+    {{#each ctx.recipes as |v idx|}}
+    <div class="form-group" data-idx="{{idx}}">
+      {{log this level="warn"}}
+      <div class="form-fields">
+        {{formInput @root.ctx.fields.uuid value=v.uuid name=(concat idx ".uuid")}}
+        {{formGroup @root.ctx.fields.resources label=@root.ctx.labels.resources value=v.resources name=(concat idx ".resources") classes="label-top slim"}}
+        {{formGroup @root.ctx.fields.quantity label=@root.ctx.labels.quantity value=v.quantity name=(concat idx ".quantity") classes="label-top slim"}}
+        <button type="button" class="icon fa-solid fa-trash" data-action="removeRecipe"></button>
+      </div>
+    </div>
+    {{/each}}
+    {{else}}
+    <p class="hint">{{localize "ZHELL.CRAFTING.MENU.dropItemsHere"}}</p>
+    {{/if}}
+  </section>
+</section>

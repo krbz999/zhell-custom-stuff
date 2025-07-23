@@ -1,4 +1,6 @@
-const { BooleanField, NumberField } = foundry.data.fields;
+import CraftingRecipesMenu from "../applications/apps/crafting-recipes-menu.mjs";
+
+const { ArrayField, BooleanField, DocumentUUIDField, NumberField, SchemaField } = foundry.data.fields;
 
 export default class ModuleSettings {
   /**
@@ -51,6 +53,24 @@ export default class ModuleSettings {
       }),
       requiresReload: true,
     },
+    craftingRecipesMenu: {
+      name: "CRAFTING.NAME",
+      hint: "CRAFTING.HINT",
+      label: "CRAFTING.LABEL",
+      icon: "fa-solid fa-volcano",
+      type: CraftingRecipesMenu,
+      restricted: true,
+      menu: true,
+    },
+    craftingRecipes: {
+      config: false,
+      scope: "world",
+      type: new ArrayField(new SchemaField({
+        uuid: new DocumentUUIDField({ type: "Item", embedded: false, blank: false, required: true }),
+        resources: new NumberField({ initial: 1, integer: true, min: 1, nullable: false }),
+        quantity: new NumberField({ initial: 1, integer: true, min: 1, nullable: false }),
+      })),
+    },
   };
 
   /* -------------------------------------------------- */
@@ -59,12 +79,21 @@ export default class ModuleSettings {
    * Register settings.
    */
   register() {
-    for (const [id, { name, hint, ...config }] of Object.entries(ModuleSettings.CONFIGURATION)) {
-      game.settings.register(ZHELL.id, id, {
-        ...config,
-        name: `ZHELL.SETTINGS.${name}`,
-        hint: `ZHELL.SETTINGS.${hint}`,
-      });
+    for (const [id, { name, hint, label, menu = false, ...config }] of Object.entries(ModuleSettings.CONFIGURATION)) {
+      if (menu) {
+        game.settings.registerMenu(ZHELL.id, id, {
+          ...config,
+          name: `ZHELL.SETTINGS.${name}`,
+          hint: `ZHELL.SETTINGS.${hint}`,
+          label: `ZHELL.SETTINGS.${label}`,
+        });
+      } else {
+        game.settings.register(ZHELL.id, id, {
+          ...config,
+          name: config.config ? `ZHELL.SETTINGS.${name}` : undefined,
+          hint: config.config ? `ZHELL.SETTINGS.${hint}` : undefined,
+        });
+      }
     }
   }
 
@@ -96,6 +125,32 @@ export default class ModuleSettings {
    */
   get pietyScore() {
     return game.settings.get(ZHELL.id, "pietyScore");
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Configured crafting recipes.
+   * @type {{uuid: string, resources: number, quantity: number}[]}
+   */
+  get craftingRecipes() {
+    return game.settings.get(ZHELL.id, "craftingRecipes");
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Get fully configured and valid crafting recipes.
+   * @returns {Promise<{item: foundry.documents.Item, resources: number, quantity: number}[]>}
+   */
+  async getCraftingRecipes() {
+    const recipes = [];
+    for (const { uuid, resources, quantity } of this.craftingRecipes) {
+      const item = await fromUuid(uuid);
+      if (!item) continue;
+      recipes.push({ item, resources, quantity });
+    }
+    return recipes;
   }
 
   /* -------------------------------------------------- */

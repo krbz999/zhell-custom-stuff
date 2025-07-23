@@ -167,3 +167,21 @@
 
   [data-application-part=footer] {}
 }
+
+#crafting-settings-menu {
+  .recipes-list {
+    min-height: 300px;
+    border: 1px solid var(--dnd5e-color-gold);
+    border-radius: 1em;
+    padding: 1rem;
+
+    .form-group.label-top {
+      display: grid;
+      flex: none;
+    }
+
+    .form-fields:has(.form-group) {
+      align-items: end;
+    }
+  }
+}
