@@ -18,7 +18,7 @@ export default class CraftingRecipesMenu extends HandlebarsApplicationMixin(Appl
       removeRecipe: CraftingRecipesMenu.#removeRecipe,
     },
     window: {
-      title: "ZHELL.CRAFTING.MENU.title",
+      title: "ZHELL.CRAFTING.RECIPES.title",
     },
   };
 
@@ -43,8 +43,8 @@ export default class CraftingRecipesMenu extends HandlebarsApplicationMixin(Appl
       value: ZHELL.settings.craftingRecipes,
       fields: game.settings.settings.get(`${ZHELL.id}.craftingRecipes`).type.element.fields,
       labels: {
-        resources: game.i18n.localize("ZHELL.CRAFTING.MENU.itemResources"),
-        quantity: game.i18n.localize("ZHELL.CRAFTING.MENU.itemQuantity"),
+        resources: game.i18n.localize("ZHELL.CRAFTING.RECIPES.itemResources"),
+        quantity: game.i18n.localize("ZHELL.CRAFTING.RECIPES.itemQuantity"),
       },
     };
 

@@ -8,37 +8,35 @@ export default class CraftingMenu extends HandlebarsApplicationMixin(Application
   /* -------------------------------------------------- */
 
   /**
-   * Consume or receive an amount of resources.
-   * @param {foundry.documents.Actor} actor         The actor.
-   * @param {number} resources                      The amount to consume. Can be negative.
-   * @returns {Promise<foundry.documents.Actor>}    A promise that resolves to the updated actor.
+   * Consume or receive an amount of resources. It is the responsibility of the caller to ensure
+   * that the actor has the required resources available.
+   * @param {CraftingActorConfiguration} actorConfig    Actor configuration.
+   * @returns {Promise<foundry.documents.Actor>}        A promise that resolves to the updated actor.
    */
-  static async consume(actor, resources) {
-    const value = actor.getFlag(ZHELL.id, "crafting.resources") ?? 0;
+  static async consume(actorConfig) {
+    const value = actorConfig.actor.getFlag(ZHELL.id, "crafting.resources") ?? 0;
+    const resources = actorConfig.resources ?? 1;
 
     // Cannot consume more than is available.
     if ((resources > 0) && (resources > value)) {
-      throw new Error(`Actor [${actor.id}] cannot consume [${resources}] resources. Only ${value} available.`);
+      throw new Error(`Actor [${actorConfig.actor.id}] cannot consume [${resources}] resources. Only ${value} available.`);
     }
 
-    return actor.setFlag(ZHELL.id, "crafting.resources", value - resources);
+    return actorConfig.actor.setFlag(ZHELL.id, "crafting.resources", value - resources);
   }
 
   /* -------------------------------------------------- */
 
   /**
-   * Create and item and deduct resources. It is the responsibility of the caller to ensure
-   * that the actor has the required resources available.
-   * @param {CraftingItemConfiguration} itemConfig      Item configuration.
-   * @param {CraftingActorConfiguration} actorConfig    Actor configuration.
-   * @returns {Promise<foundry.documents.Item>}         A promise that resolves to the updated or created item.
+   * Create an item.
+   * @param {foundry.documents.Actor} actor           The actor receiving the item.
+   * @param {CraftingItemConfiguration} itemConfig    Item configuration.
+   * @returns {Promise<foundry.documents.Item>}       A promise that resolves to the updated or created item.
    */
-  static async craftItem(itemConfig, actorConfig) {
+  static async create(actor, itemConfig) {
     itemConfig = foundry.utils.mergeObject({ quantity: 1 }, itemConfig);
-    actorConfig = foundry.utils.mergeObject({ resources: 1 }, actorConfig);
 
-    await CraftingMenu.consume(actorConfig.actor, actorConfig.resources);
-    const existing = actorConfig.actor.items.find(i => {
+    const existing = actor.items.find(i => {
       if (i.type !== itemConfig.item.type) return false;
       if (i._stats.compendiumSource === itemConfig.item.uuid) return true;
       if ((i.name === itemConfig.item.name) && (i.identiifer === itemConfig.item.identifier)) return true;
@@ -50,9 +48,47 @@ export default class CraftingMenu extends HandlebarsApplicationMixin(Application
       return existing.update({ "system.quantity": q });
     }
 
-    const keepId = !actorConfig.actor.items.has(itemConfig.item.id);
+    const keepId = !actor.items.has(itemConfig.item.id);
     const itemData = game.items.fromCompendium(itemConfig.item, { keepId, clearFolder: true });
     foundry.utils.setProperty(itemData, "system.quantity", itemConfig.quantity);
-    return foundry.utils.getDocumentClass("Item").create(itemData, { parent: actorConfig.actor, keepId: true });
+    return foundry.utils.getDocumentClass("Item").create(itemData, { parent: actor, keepId: true });
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Initiate the flow to create an item and deduct resources.
+   * @param {CraftingItemConfiguration} itemConfig      Item configuration.
+   * @param {CraftingActorConfiguration} actorConfig    Actor configuration.
+   * @returns {Promise<foundry.documents.Item|null>}    A promise that resolves to the updated or created item.
+   */
+  static async promptItemCreation(itemConfig, actorConfig) {
+    const value = actorConfig.actor.getFlag(ZHELL.id, "crafting.resources") ?? 0;
+    const resources = actorConfig.resources ?? 1;
+
+    // Cannot consume more than is available.
+    if ((resources > 0) && (resources > value)) {
+      throw new Error(`Actor [${actorConfig.actor.id}] cannot consume [${resources}] resources. Only ${value} available.`);
+    }
+
+    // Cannot gain resources.
+    if (resources < 0) {
+      throw new Error("Cannot gain resources from crafting.");
+    }
+
+    const quantity = itemConfig.quantity ?? 1;
+
+    const confirm = await foundry.applications.api.Dialog.confirm({
+      window: { title: "ZHELL.CRAFTING.CONFIRM.title" },
+      position: { width: 400 },
+      content: `<p>${game.i18n.format("ZHELL.CRAFTING.CONFIRM.content", {
+        quantity, resources, value,
+        item: itemConfig.item.name,
+      })}</p>`,
+    });
+    if (!confirm) return null;
+
+    await CraftingMenu.consume(actorConfig);
+    return CraftingMenu.create(actorConfig.actor, itemConfig);
   }
 }
