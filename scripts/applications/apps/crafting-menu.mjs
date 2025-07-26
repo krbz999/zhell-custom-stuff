@@ -77,6 +77,10 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
       rcp.disabled = !editable || (rcp.resources > value);
     });
 
+    recipes
+      .sort((a, b) => a.item.name.localeCompare(b.item.name))
+      .sort((a, b) => a.resources - b.resources);
+
     return context;
   }
 
