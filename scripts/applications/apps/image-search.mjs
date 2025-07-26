@@ -1,3 +1,5 @@
+/** @import { ImageResult } from "../../_types.mjs" */
+
 const { HandlebarsApplicationMixin, Application } = foundry.applications.api;
 
 export default class ImageSearch extends HandlebarsApplicationMixin(Application) {
@@ -85,13 +87,6 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   }
 
   /* -------------------------------------------------- */
-
-  /**
-   * @typedef ImageResult
-   * @property {string} filePath        Filepath.
-   * @property {Set<string>} keywords   Keywords.
-   * @property {string} label           Default name of a file.
-   */
 
   /**
    * Fetched and cached results.
