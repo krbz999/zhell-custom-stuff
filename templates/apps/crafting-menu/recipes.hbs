@@ -1,0 +1,31 @@
+<section>
+
+  <p class="available">
+    {{localize "ZHELL.CRAFTING.MENU.available"}} <strong>{{ctx.value}}</strong>
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>{{localize "ZHELL.CRAFTING.MENU.item"}}</th>
+        <th>{{localize "ZHELL.CRAFTING.MENU.resources"}}</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {{#each ctx.recipes}}
+      <tr data-name="{{item.name}}" data-item-uuid="{{item.uuid}}" data-item-quantity="{{quantity}}" data-item-resources="{{resources}}">
+        <td>{{{link}}} &times;{{quantity}}</td>
+        <td>
+          {{resources}} <i class="fa-solid fa-tree"></i>
+        </td>
+        <td>
+          <button type="button" class="icon fa-solid fa-volcano" data-action="create" {{disabled disabled}}></button>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+</section>

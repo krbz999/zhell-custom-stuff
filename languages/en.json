@@ -68,9 +68,16 @@
       }
     },
     "CRAFTING": {
+      "MENU": {
+        "title": "Crafting",
+        "available": "Resources available:",
+        "search": "Search recipes",
+        "resources": "Resources",
+        "item": "Item"
+      },
       "CONFIRM": {
         "title": "Craft Item",
-        "content": "Spend {resources} of {value} to create <strong>{quantity}&times;</strong> {item}?"
+        "content": "Spend {resources} of your {value} resources to create {quantity}&times; <strong>{item}</strong>?"
       },
       "RECIPES": {
         "title": "Crafting Recipes",

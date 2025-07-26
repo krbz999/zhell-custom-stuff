@@ -185,3 +185,21 @@
     }
   }
 }
+
+.crafting-menu {
+  max-height: 1000px;
+
+  [data-application-part=search] {
+    margin-top: 1rem;
+  }
+
+  [data-application-part=recipes] {
+    tbody tr td:not(:first-child) {
+      text-align: center;
+
+      button:disabled {
+        cursor: not-allowed;
+      }
+    }
+  }
+}
