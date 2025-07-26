@@ -194,6 +194,14 @@
   }
 
   [data-application-part=recipes] {
+    tbody tr:hover {
+      background-color: hsl(from rgb(119, 0, 83) h s l / 0.25);
+
+      .theme-dark & {
+        background-color: hsl(from rgb(226, 0, 158) h s l / 0.25);
+      }
+    }
+
     tbody tr td:not(:first-child) {
       text-align: center;
 

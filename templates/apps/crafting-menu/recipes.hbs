@@ -1,9 +1,4 @@
 <section>
-
-  <p class="available">
-    {{localize "ZHELL.CRAFTING.MENU.available"}} <strong>{{ctx.value}}</strong>
-  </p>
-
   <table>
     <thead>
       <tr>
@@ -16,7 +11,7 @@
     <tbody>
       {{#each ctx.recipes}}
       <tr data-name="{{item.name}}" data-item-uuid="{{item.uuid}}" data-item-quantity="{{quantity}}" data-item-resources="{{resources}}">
-        <td>{{{link}}} &times;{{quantity}}</td>
+        <td>{{{link}}} {{#if (ne quantity 1)}} &times;{{quantity}} {{/if}}</td>
         <td>
           {{resources}} <i class="fa-solid fa-tree"></i>
         </td>
@@ -27,5 +22,4 @@
       {{/each}}
     </tbody>
   </table>
-
 </section>

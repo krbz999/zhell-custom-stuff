@@ -69,6 +69,7 @@
     },
     "CRAFTING": {
       "MENU": {
+        "tooltipOpen": "Open Crafting Menu",
         "title": "Crafting",
         "available": "Resources available:",
         "search": "Search recipes",

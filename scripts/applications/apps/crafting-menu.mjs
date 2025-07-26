@@ -36,10 +36,13 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     search: {
       template: "modules/zhell-custom-stuff/templates/apps/crafting-menu/search.hbs",
     },
+    details: {
+      template: "modules/zhell-custom-stuff/templates/apps/crafting-menu/details.hbs",
+    },
     recipes: {
       template: "modules/zhell-custom-stuff/templates/apps/crafting-menu/recipes.hbs",
       classes: ["scrollable"],
-      scrollable: ["table"],
+      scrollable: [""],
     },
   };
 

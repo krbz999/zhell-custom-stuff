@@ -28,3 +28,4 @@ Hooks.once("init", () => {
 Hooks.on("dnd5e.damageActor", hooks.markDefeated);
 Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);
 Hooks.on("preCreateScene", hooks.sceneDefaults);
+Hooks.on("renderCharacterActorSheet", hooks.craftingButton);
