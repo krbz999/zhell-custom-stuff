@@ -13,6 +13,8 @@ export default async function(sheet, element, context) {
   button.classList.add("crafting", "gold-button");
   button.dataset.tooltip = "";
   button.ariaLabel = game.i18n.localize("ZHELL.CRAFTING.MENU.tooltipOpen");
+  if (!sheet.isEditable) button.disabled = true;
+
   button.insertAdjacentHTML("beforeend", "<i class=\"fa-solid fa-volcano\" inert></i>");
   button.addEventListener("click", () =>
     new ZHELL.applications.apps.CraftingMenu({ document: sheet.document }).render({ force: true }),

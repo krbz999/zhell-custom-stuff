@@ -70,9 +70,11 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     const value = this.#actor.getFlag(ZHELL.id, "crafting.resources") ?? 0;
     Object.assign(context, { ctx: { recipes, value } });
 
+    const editable = this.#actor.sheet.isEditable;
+
     recipes.forEach(rcp => {
       rcp.link = rcp.item.toAnchor().outerHTML;
-      rcp.disabled = rcp.resources > value;
+      rcp.disabled = !editable || (rcp.resources > value);
     });
 
     return context;
