@@ -1,7 +1,8 @@
-// Roll a monetary value using Individual or Hoard formula, then convert to gem stones or
-// art objects depending on the treasure theme. If hoard, also draw a number of magic items
-// re-drawing the rarity for each item.
-
+/**
+ * Application to roll for random treasure, using individual or hoard formulas.
+ * This creates a final chat message with links to the loot, which can be gp, gem stones,
+ * art objects, and magic items.
+ */
 export default class RandomTreasure extends foundry.applications.api.Dialog {
   /**
    * Theme options.
