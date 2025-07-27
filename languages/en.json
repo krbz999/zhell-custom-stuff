@@ -128,6 +128,16 @@
         "NAME": "Track Reactions in Combat",
         "HINT": "Track reactions for combatants when combat is ongoing."
       }
+    },
+    "TREASURE": {
+      "TITLE": "Draw Random Treasure",
+      "hoard": "Hoard",
+      "partyLevel": "Party Level",
+      "theme": "Treasure Theme",
+      "youReceive": "You receive:",
+      "magicItems": "Magic Items",
+      "gemStones": "Gem Stones",
+      "artObjects": "Art Objects"
     }
   }
 }

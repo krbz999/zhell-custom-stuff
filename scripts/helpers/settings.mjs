@@ -144,13 +144,15 @@ export default class ModuleSettings {
    * @returns {Promise<{item: foundry.documents.Item, resources: number, quantity: number}[]>}
    */
   async getCraftingRecipes() {
-    const recipes = [];
-    for (const { uuid, resources, quantity } of this.craftingRecipes) {
+    const retrieve = async ({ uuid, resources, quantity }) => {
       const item = await fromUuid(uuid);
-      if (!item) continue;
-      recipes.push({ item, resources, quantity });
-    }
-    return recipes;
+      if (!item) return null;
+      return { item, resources, quantity };
+    };
+
+    const recipes = [];
+    for (const recipe of this.craftingRecipes) recipes.push(retrieve(recipe));
+    return Promise.all(recipes).then(results => results.filter(_ => _));
   }
 
   /* -------------------------------------------------- */

@@ -16,8 +16,11 @@ export default async function(sheet, element, context) {
   if (!sheet.isEditable) button.disabled = true;
 
   button.insertAdjacentHTML("beforeend", "<i class=\"fa-solid fa-volcano\" inert></i>");
-  button.addEventListener("click", () =>
-    new ZHELL.applications.apps.CraftingMenu({ document: sheet.document }).render({ force: true }),
-  );
+  button.addEventListener("click", event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    const application = new ZHELL.applications.apps.CraftingMenu({ document: sheet.document });
+    application.render({ force: true }).then(() => button.disabled = false);
+  });
   buttons.insertAdjacentElement("beforeend", button);
 }
