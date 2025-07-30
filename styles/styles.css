@@ -6,56 +6,91 @@
   transition: 200ms all ease;
   opacity: 0;
   flex-direction: column;
-  width: 50vw;
+  width: calc(max(450px, 100vw - 312px - 48px - 50px - 72px - 170px - 24px - 12rem));
 
   &:has(.active) {
     opacity: 1;
   }
 
+  .bars {
+    anchor-name: --boss-bar;
+    width: 100%;
+    box-shadow: inherit;
+    opacity: 0.7;
+  }
+
   .bar {
-    position: relative;
     min-height: 4em;
     overflow: hidden;
-    border-radius: 2em;
-    border: solid 2px grey;
+    border-radius: 4px;
+    box-shadow: 0 0 5px black;
+    display: flex;
+    position: relative;
 
     .progress {
-      transition: 200ms all ease;
       position: absolute;
       top: 0;
-      left: 0;
       bottom: 0;
+      box-shadow: inherit;
+      border-radius: inherit;
 
       &.hp {
-        border-right: 2px solid black;
-        border-radius: 0 0.5em 0.5em 0;
+        z-index: 2;
+        background: linear-gradient(160deg, black 0%, transparent 50%);
       }
 
       &.temp {
-        top: 25%;
-        border-radius: 0 100% 0 0;
+        top: 60%;
+        border-top-left-radius: 0;
+        border-bottom-right-radius: 0;
+        z-index: 3;
+        background: linear-gradient(160deg, rgb(44, 44, 255) 0%, transparent 50%);
       }
 
       &.tempmax {
         right: 0;
-        left: unset;
+        z-index: 1;
+        background: linear-gradient(160deg, rgb(226, 0, 226) 0%, transparent 50%);
       }
     }
 
     .name {
-      font-family: fantasy;
+      position: fixed;
+      overflow: hidden;
+      position-anchor: --boss-bar;
+      top: calc(anchor(bottom) - 15px);
+      border: 2px solid var(--dnd5e-color-gold);
+      color: #cfd2da;
+      border-radius: 4px;
+      z-index: 4;
+      font-family: 'Modesto Condensed';
       font-size: 40px;
-      position: relative;
-      width: 100%;
-      align-self: center;
-      display: flex;
-      justify-content: center;
-      color: rgb(255, 255, 255);
+      justify-self: anchor-center;
+      text-box: trim-both cap alphabetic;
+      box-shadow: inherit;
+      min-width: 300px;
+      min-height: 60px;
+      padding: 0 50px;
+      text-align: center;
+      align-content: center;
+      background-color: black;
       text-shadow:
         -1px -1px 0 black,
          1px -1px 0 black,
         -1px  1px 0 black,
          1px  1px 0 black;
+
+      &::before {
+        content: "";
+        background: url("../../../systems/dnd5e/ui/official/banner-character-dark.webp") no-repeat top center / cover;
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 150px;
+        border-radius: 5px 5px 0 0;
+        opacity: .5;
+        mask-image: linear-gradient(to bottom, black, transparent);
+        z-index: -1
+      }
     }
   }
 }

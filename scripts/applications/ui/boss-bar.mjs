@@ -64,7 +64,7 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
       active: true,
       hpColor: actor.constructor.getHPColor(hp.value, hp.effectiveMax),
       tempPct: hp.temp ? Math.ceil(hp.temp / hp.effectiveMax * 100) : 0,
-      tempMaxPct: hp.tempmax ? Math.ceil(hp.tempmax, hp.effectiveMax) : 0,
+      tempMaxPct: hp.tempmax ? Math.ceil(hp.tempmax / hp.effectiveMax * 100) : 0,
     };
   }
 
@@ -85,7 +85,7 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
 
     const animate = (selector) => {
       const po = oldElement.querySelector(selector);
-      const pn = oldElement.querySelector(selector);
+      const pn = newElement.querySelector(selector);
       if (po && pn) pn.animate([
         { width: po.style.width },
         { width: pn.style.width },
