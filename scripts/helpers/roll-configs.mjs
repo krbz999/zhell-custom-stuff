@@ -33,19 +33,19 @@ const replaceFormulaData = (part, rollData) => {
 
 /* -------------------------------------------------- */
 
-// export const greatWeaponMaster = {
-//   hook: "postBuildDamageRollConfig",
-//   condition: (config, roll, index, options = {}) => {
-//     const { item, actor } = fromConfig(config);
-//     return actor.getFlag("dnd5e", "roll-configs.great-weapon-master")
-//       && item && (item.type === "weapon") && item.system.properties.has("hvy")
-//       && (index === 0) && (!game.combat || (game.combat.combatant?.actor === actor));
-//   },
-//   handler: (config, roll, index, options = {}) => {
-//     // Add PB to damage.
-//     roll.parts.push("@prof");
-//   },
-// };
+export const greatWeaponMaster = {
+  hook: "postBuildDamageRollConfig",
+  condition: (config, roll, index, options = {}) => {
+    const { item, actor } = fromConfig(config);
+    return actor.getFlag("dnd5e", "roll-configs.great-weapon-master")
+      && item && (item.type === "weapon") && item.system.properties.has("hvy")
+      && (index === 0) && (!game.combat || (game.combat.combatant?.actor === actor));
+  },
+  handler: (config, roll, index, options = {}) => {
+    // Add PB to damage.
+    roll.parts.push("@prof");
+  },
+};
 
 /* -------------------------------------------------- */
 
