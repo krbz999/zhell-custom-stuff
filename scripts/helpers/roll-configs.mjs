@@ -4,10 +4,10 @@ const fromConfig = config => {
   return { item, actor, activity: config.subject };
 };
 
-const replaceFormulaData = part => {
+const replaceFormulaData = (part, rollData) => {
   part = String(part);
-  part = /@([a-z.0-9_-]+)/gi.test(part) ? foundry.dice.Roll.replaceFormulaData(part, roll.data) : part;
-  part = /@([a-z.0-9_-]+)/gi.test(part) ? foundry.dice.Roll.replaceFormulaData(part, roll.data) : part;
+  part = /@([a-z.0-9_-]+)/gi.test(part) ? foundry.dice.Roll.replaceFormulaData(part, rollData) : part;
+  part = /@([a-z.0-9_-]+)/gi.test(part) ? foundry.dice.Roll.replaceFormulaData(part, rollData) : part;
   return part;
 };
 
@@ -82,7 +82,7 @@ export const greatWeaponFighting = {
     const rgx = /(\d+)d(\d+)/g;
     const _rgx = /(\d+)d(\d+)min/g;
     roll.parts = roll.parts.map(part => {
-      part = replaceFormulaData(part);
+      part = replaceFormulaData(part, roll.data);
       return _rgx.test(part) ? part : part.replaceAll(rgx, match => `${match}min3`);
     });
   },
