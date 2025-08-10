@@ -29,3 +29,10 @@ Hooks.on("dnd5e.damageActor", hooks.markDefeated);
 Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);
 Hooks.on("preCreateScene", hooks.sceneDefaults);
 Hooks.on("renderCharacterActorSheet", hooks.craftingButton);
+
+for (const { hook, handler, condition } of Object.values(helpers.rollConfigs)) {
+  Hooks.on(`dnd5e.${hook}`, (...args) => {
+    const apply = !!condition(...args);
+    if (apply) handler(...args);
+  });
+}
