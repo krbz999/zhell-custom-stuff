@@ -1,5 +1,5 @@
 <figure class="{{#if selected}} selected {{/if}}" data-src="{{filePath}}" data-caption="{{label}}">
-  <img src="{{filePath}}" alt="{{label}}" data-action="selectImage">
+  <img src="{{filePath}}" alt="{{label}}" data-action="selectImage" loading="lazy" decoding="async">
   <figcaption>{{label}}</figcaption>
   <button type="button" class="icon fa-solid fa-eye" data-action="showImage"></button>
   <span class="score">{{score}}</span>

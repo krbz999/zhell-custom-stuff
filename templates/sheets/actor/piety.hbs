@@ -1,0 +1,11 @@
+<div class="meter-group">
+  <div class="label roboto-condensed-upper">
+    <span>{{localize "ZHELL.PIETY.label"}}</span>
+  </div>
+  <div class="meter piety progress" role="meter" style="--bar-percentage: {{pct}}%;">
+    <div class="label">
+      <span class="value">{{piety.value}}</span>
+    </div>
+    <input type="text" name="flags.zhell-custom-stuff.piety.value" data-dtype="Number" placeholder="1" value="{{piety.value}}" hidden="">
+  </div>
+</div>

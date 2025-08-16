@@ -2,33 +2,60 @@
 
 const { HandlebarsApplicationMixin, Application } = foundry.applications.api;
 
+/**
+ * @typedef ImageResult
+ * @property {string} filePath        Filepath.
+ * @property {Set<string>} keywords   Keywords.
+ * @property {string} label           Default name of a file.
+ */
+
 export default class ImageSearch extends HandlebarsApplicationMixin(Application) {
   /**
-   * File path records.
-   * @type {Record<string, {portraits: string, subjects: string, tokens: string}>}
+   * Set up an index of keywords for every file in the directory.
+   * @returns {Promise<Map<string, Set<string>>|null>}   A promise that resolves to a mapping of filepaths to keywords.
    */
-  static FILE_PATHS = {
-    "pf2e-tokens-bestiaries": {
-      portraits: "portraits",
-      subjects: "subjects",
-      tokens: "tokens",
-    },
-    "pf2e-tokens-monster-core": {
-      portraits: "assets/portraits",
-      subjects: "assets/subjects",
-      tokens: "assets/tokens",
-    },
-    "pf2e-tokens-myth-and-magic": {
-      portraits: "assets/portraits",
-      subjects: "assets/subjects",
-      tokens: "assets/tokens",
-    },
-    "pf2e-tokens-npc-core": {
-      portraits: "assets/portraits",
-      subjects: "assets/subjects",
-      tokens: "assets/tokens",
-    },
-  };
+  static async _createFilePickerIndex() {
+    if (ImageSearch.#fetched) return null;
+
+    const imageResults = [];
+    const extensions = new Set(Object.keys(CONST.FILE_CATEGORIES.IMAGE));
+    const FilePicker = foundry.applications.apps.FilePicker.implementation;
+
+    /**
+     * Helper method for recursive indexing.
+     * @param {string} path
+     * @param {boolean} [root=false]
+     * @param {string} [store='public']
+     * @returns {Promise<void>}
+     */
+    const _createFilePickerIndex = async (path, root = false, store = "public") => {
+      const browse = await FilePicker.browse(store, path);
+
+      if (!root) {
+        for (const file of browse.files) {
+          const ext = file.split(".").at(-1);
+          if (extensions.has(ext)) {
+            const words = ImageSearch.getKeywords(file);
+            if (words.size) {
+              imageResults.push({
+                filePath: file,
+                keywords: words,
+                label: foundry.audio.AudioHelper.getDefaultSoundName(file),
+              });
+            }
+          }
+        }
+      }
+
+      for (const dir of browse.dirs) await _createFilePickerIndex(dir, false, store);
+    };
+
+    await _createFilePickerIndex("icons", true);
+    await _createFilePickerIndex(`systems/${game.system.id}`, true, "data");
+    await _createFilePickerIndex("modules", true, "data");
+
+    ImageSearch.#fetched = imageResults;
+  }
 
   /* -------------------------------------------------- */
 
@@ -41,88 +68,10 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   /* -------------------------------------------------- */
 
   /**
-   * Cache file paths for faster lookup.
-   * @returns {Promise<boolean|null>}   A promise that resolves to `true` when the caching has completed,
-   *                                    or `null` if the caching was aborted for any reason or is redundant.
-   */
-  static async fetchImages() {
-    if (ImageSearch.#fetched) return null;
-
-    const fetched = {
-      PORTRAITS: [],
-      SUBJECTS: [],
-      TOKENS: [],
-    };
-
-    const extensions = new Set(Object.keys(CONST.FILE_CATEGORIES.IMAGE));
-    const Cls = foundry.applications.apps.FilePicker.implementation;
-
-    let rootPath;
-    const fetch = async (path, type, isRoot = true) => {
-      if (isRoot) rootPath = path;
-      const browse = await Cls.browse("data", path);
-      for (const file of browse.files) {
-        const tail = file.replace(rootPath, "").slice(1);
-        if (extensions.has(file.split(".").at(-1))) fetched[type].push({
-          filePath: file,
-          keywords: ImageSearch.getKeywords(tail),
-          label: foundry.audio.AudioHelper.getDefaultSoundName(file),
-        });
-      }
-      for (const dir of browse.dirs) await fetch(dir, type, false);
-    };
-
-    for (const [k, v] of Object.entries(ImageSearch.FILE_PATHS)) {
-      await fetch(`modules/${k}/${v.portraits}`, "PORTRAITS");
-      await fetch(`modules/${k}/${v.subjects}`, "SUBJECTS");
-      await fetch(`modules/${k}/${v.tokens}`, "TOKENS");
-    }
-
-    ImageSearch.#fetched = fetched;
-    for (const k in ImageSearch.#fetched) {
-      ImageSearch.#fetched[k].sort((a, b) => a.label.localeCompare(b.label));
-    }
-
-    return true;
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
    * Fetched and cached results.
-   * @type {Record<string, ImageResult[]>}
+   * @type {ImageResult[]}
    */
   static #fetched;
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Cached portrait art.
-   * @type {ImageResult[]}
-   */
-  static get PORTRAITS() {
-    return ImageSearch.#fetched?.PORTRAITS ?? [];
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Cached subject art.
-   * @type {ImageResult[]}
-   */
-  static get SUBJECTS() {
-    return ImageSearch.#fetched?.SUBJECTS ?? [];
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Cached token art.
-   * @type {ImageResult[]}
-   */
-  static get TOKENS() {
-    return ImageSearch.#fetched?.TOKENS ?? [];
-  }
 
   /* -------------------------------------------------- */
 
@@ -163,7 +112,6 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
    * @type {object}
    */
   #filters = {
-    type: "PORTRAITS",
     keywords: new Set(),
     min: null,
     results: null,
@@ -195,91 +143,6 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
    */
   #getNextBatch() {
     return [...this.#results.take(ImageSearch.BATCH_SIZE)];
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Get keywords from a file name.
-   * @param {string} path     Full or partial file path.
-   * @returns {Set<string>}   Keywords.
-   */
-  static getKeywords(path) {
-    path = path.replaceAll("/", "-");
-    const name = foundry.audio.AudioHelper.getDefaultSoundName(path);
-    const words = name.split(" ")
-      .map(w => w.toLowerCase().trim())
-      .filter(w => (w.length >= 3) && !ImageSearch.STOP_WORDS.has(w) && !/\d+/.test(w));
-    return new Set(words);
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Computes the Levenshtein distance between two strings.
-   * https://en.wikipedia.org/wiki/Levenshtein_distance
-   * Based on this code excerpt by AmitDiwan: https://www.tutorialspoint.com/levenshtein-distance-in-javascript
-   * @param {string} a    First string.
-   * @param {string} b    Other string.
-   * @returns {number}    Levenshtein distance.
-   */
-  static levenshtein(a, b) {
-    if (!a) return b.length;
-    if (!b) return a.length;
-
-    a = a.toLowerCase();
-    b = b.toLowerCase();
-
-    const matrix = [];
-
-    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-    for (let i = 1; i <= b.length; i++) {
-      for (let j = 1; j <= a.length; j++) {
-        const cost = (a[j - 1] === b[i - 1]) ? 0 : 1;
-        matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
-      }
-    }
-
-    return matrix[b.length][a.length];
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Get match score between two keywords.
-   * @param {Set<string>} one     First keywords.
-   * @param {Set<string>} other   Other keywords.
-   * @returns {number}            The score.
-   */
-  static getScore(one, other) {
-    let score = 0;
-
-    one = new Set(Array.from(one).sort((a, b) => b.length - a.length));
-    other = new Set(Array.from(other).sort((a, b) => b.length - a.length));
-
-    const intersection = one.intersection(other);
-    for (const i of intersection) {
-      one.delete(i);
-      other.delete(i);
-      score += 30;
-    }
-
-    for (const o of [...one]) for (const t of other)
-      if (o.includes(t) || t.includes(o)) {
-        one.delete(o);
-        other.delete(t);
-        score += 20;
-      }
-
-    for (const o of one) for (const t of other) {
-      const l = ImageSearch.levenshtein(o, t);
-      const threshold = Math.max(2, Math.ceil(o.length * 0.3));
-      if (l <= threshold) score += 5;
-    }
-
-    return score;
   }
 
   /* -------------------------------------------------- */
@@ -333,12 +196,6 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
     if (options.parts.includes("filters")) {
       const f = context.filters = {};
-      f.type = {
-        field: new foundry.data.fields.StringField(),
-        choices: { PORTRAITS: "Portraits", SUBJECTS: "Subjects", TOKENS: "Tokens" },
-        value: this.#filters.type,
-        dataset: { change: "type" },
-      };
       f.keywords = {
         field: new foundry.data.fields.SetField(new foundry.data.fields.StringField()),
         value: this.#filters.keywords,
@@ -359,9 +216,9 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     }
 
     if (options.parts.includes("images")) {
-      await ImageSearch.fetchImages();
+      await ImageSearch._createFilePickerIndex();
 
-      let results = foundry.utils.deepClone(ImageSearch[this.#filters.type]);
+      let results = foundry.utils.deepClone(ImageSearch.#fetched);
       for (const result of results) {
         result.score = ImageSearch.getScore(result.keywords, this.#filters.keywords);
         result.selected = this.#selected.has(result.filePath);
@@ -424,11 +281,6 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
    */
   static #onChangeFilterInput(event, target) {
     switch (target.dataset.change) {
-      case "type":
-        this.#filters.type = target.value;
-        this.render({ parts: ["images"] });
-        break;
-
       case "results":
         this.#filters.results = Math.max(target.valueAsNumber || 1, 1);
         if (this.#filters.results === 1) this.#filters.results = null;
@@ -467,7 +319,10 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     this.#renderThrottle = true;
     const template = ImageSearch.PARTS.images.templates[0];
     const batch = await Promise.all(
-      this.#getNextBatch().map(k => foundry.applications.handlebars.renderTemplate(template, k)),
+      this.#getNextBatch().map(k => {
+        k.selected = this.#selected.has(k.filePath);
+        return foundry.applications.handlebars.renderTemplate(template, k);
+      }),
     );
     target.querySelector(".scrollable").insertAdjacentHTML("beforeend", batch.join(""));
     this.#renderThrottle = false;
@@ -485,7 +340,8 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     const src = target.closest("[data-src]").dataset.src;
     const caption = target.closest("[data-caption]").dataset.caption;
     const application = new foundry.applications.apps.ImagePopout({
-      caption, src,
+      src,
+      caption: src,
       window: { title: caption },
     });
     application.render({ force: true });
@@ -508,7 +364,92 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   }
 
   /* -------------------------------------------------- */
-  /*   Factory methods                                  */
+  /*   Public Interface                                 */
+  /* -------------------------------------------------- */
+
+  /**
+   * Get match score between two keywords.
+   * @param {Set<string>} one     First keywords.
+   * @param {Set<string>} other   Other keywords.
+   * @returns {number}            The score.
+   */
+  static getScore(one, other) {
+    let score = 0;
+
+    one = new Set(Array.from(one).sort((a, b) => b.length - a.length));
+    other = new Set(Array.from(other).sort((a, b) => b.length - a.length));
+
+    const intersection = one.intersection(other);
+    for (const i of intersection) {
+      one.delete(i);
+      other.delete(i);
+      score += 30;
+    }
+
+    for (const o of [...one]) for (const t of other)
+      if (o.includes(t) || t.includes(o)) {
+        one.delete(o);
+        other.delete(t);
+        score += 20;
+      }
+
+    for (const o of one) for (const t of other) {
+      const l = ImageSearch.levenshtein(o, t);
+      const threshold = Math.max(2, Math.ceil(o.length * 0.3));
+      if (l <= threshold) score += 5;
+    }
+
+    return score;
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Get keywords from a file name.
+   * @param {string} path     Full or partial file path.
+   * @returns {Set<string>}   Keywords.
+   */
+  static getKeywords(path) {
+    path = path.replaceAll("/", "-");
+    const name = foundry.audio.AudioHelper.getDefaultSoundName(path);
+    const words = name.split(" ")
+      .map(w => w.toLowerCase().trim())
+      .filter(w => (w.length >= 3) && !ImageSearch.STOP_WORDS.has(w) && !/\d+/.test(w));
+    return new Set(words);
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Computes the Levenshtein distance between two strings.
+   * https://en.wikipedia.org/wiki/Levenshtein_distance
+   * Based on this code excerpt by AmitDiwan: https://www.tutorialspoint.com/levenshtein-distance-in-javascript
+   * @param {string} a    First string.
+   * @param {string} b    Other string.
+   * @returns {number}    Levenshtein distance.
+   */
+  static levenshtein(a, b) {
+    if (!a) return b.length;
+    if (!b) return a.length;
+
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+
+    const matrix = [];
+
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        const cost = (a[j - 1] === b[i - 1]) ? 0 : 1;
+        matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+      }
+    }
+
+    return matrix[b.length][a.length];
+  }
+
   /* -------------------------------------------------- */
 
   /**

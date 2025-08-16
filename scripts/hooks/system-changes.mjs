@@ -2,19 +2,6 @@
  * Make changes to the 5e system config.
  */
 export default function systemChanges() {
-  // Adjust ability scores.
-  CONFIG.DND5E.abilities.pty = {
-    abbreviation: "ZHELL.ABILITY.PIETY.SHORT",
-    defaults: { vehicle: 0, npc: 1, character: 1 },
-    fullKey: "piety",
-    label: "ZHELL.ABILITY.PIETY.LABEL",
-    reference: "",
-    type: "mental",
-    improvement: false,
-  };
-
-  if (!ZHELL.settings.pietyScore) delete CONFIG.DND5E.abilities.pty;
-
   // Add to status conditions.
   CONFIG.DND5E.conditionTypes.reaction = {
     id: "reaction",
