@@ -11,7 +11,7 @@
     <tbody>
       {{#each ctx.recipes}}
       <tr data-name="{{item.name}}" data-item-uuid="{{item.uuid}}" data-item-quantity="{{quantity}}" data-item-resources="{{resources}}">
-        <td>{{{link}}} {{#if (ne quantity 1)}} &times;{{quantity}} {{/if}}</td>
+        <td>{{{dnd5e-linkForUuid item.uuid}}} {{#if (ne quantity 1)}} &times;{{quantity}} {{/if}}</td>
         <td>
           {{resources}} <i class="fa-solid fa-tree"></i>
         </td>

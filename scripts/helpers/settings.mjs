@@ -141,11 +141,11 @@ export default class ModuleSettings {
 
   /**
    * Get fully configured and valid crafting recipes.
-   * @returns {Promise<{item: foundry.documents.Item, resources: number, quantity: number}[]>}
+   * @returns {Promise<{item: foundry.documents.Item|object, resources: number, quantity: number}[]>}
    */
   async getCraftingRecipes() {
     const retrieve = async ({ uuid, resources, quantity }) => {
-      const item = await fromUuid(uuid);
+      const item = fromUuidSync(uuid);
       if (!item) return null;
       return { item, resources, quantity };
     };

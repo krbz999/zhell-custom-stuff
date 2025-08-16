@@ -73,7 +73,6 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     const editable = this.#actor.sheet.isEditable;
 
     recipes.forEach(rcp => {
-      rcp.link = rcp.item.toAnchor().outerHTML;
       rcp.disabled = !editable || (rcp.resources > value);
     });
 
