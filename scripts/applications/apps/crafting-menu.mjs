@@ -27,6 +27,10 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     actions: {
       create: CraftingMenu.#create,
     },
+    form: {
+      closeOnSubmit: false,
+      submitOnChange: true,
+    },
   };
 
   /* -------------------------------------------------- */
@@ -132,6 +136,25 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
       const input = element.querySelector("search input");
       input.addEventListener("search", CraftingMenu.#onSearch.bind(this));
     }
+
+    else if (partId === "details") {
+      const input = element.querySelector("input");
+      input.addEventListener("focus", event => input.select());
+      input.addEventListener("change", event => {
+        const value = dnd5e.utils.parseInputDelta(input, this.#actor);
+        if (value !== undefined) input.value = Math.max(value, 0);
+      });
+    }
+  }
+
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
+  async _onSubmitForm(formConfig, event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new foundry.applications.ux.FormDataExtended(form);
+    this.#actor.update(formData.object);
   }
 
   /* -------------------------------------------------- */
