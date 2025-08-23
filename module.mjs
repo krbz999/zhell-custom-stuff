@@ -20,6 +20,7 @@ Hooks.once("init", () => {
   hooks.systemChanges();
   applications.ui.BossBar.register();
   CONFIG.ui.bossbar = applications.ui.BossBar;
+  CONFIG.ui.pause = applications.ui.GamePause;
 
   if (ZHELL.settings.havilonCalendar) {
     CONFIG.time.worldCalendarClass = data.HavilonCalendar;
