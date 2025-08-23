@@ -3,7 +3,7 @@ import * as data from "./scripts/data/_module.mjs";
 import * as helpers from "./scripts/helpers/_module.mjs";
 import * as hooks from "./scripts/hooks/_module.mjs";
 import * as utils from "./scripts/utils/_module.mjs";
-import { default as config } from "./scripts/config.mjs";
+import * as config from "./scripts/config.mjs";
 
 globalThis.ZHELL = {
   applications,

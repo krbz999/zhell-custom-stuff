@@ -102,7 +102,26 @@
       "INTERVENTION": "<p>The party can perform divine intervention. Doing so, all players must call upon their deities to intervene on their behalf when their need is great. They must describe the assistance they seek, and select a player to roll a d100.</p><p>If they roll a number equal to or lower than half the sum of their piety scores (rounded down), a deity intervenes in some way. The DM chooses the nature of the intervention.</p><p>If a deity intervenes, this feature cannot be used again for 9 days. Otherwise, it can be used again after the next dawn.</p>"
     },
     "PIETY": {
-      "label": "Piety"
+      "label": "Piety",
+      "DEITY": {
+        "arepo": "Arepo",
+        "thrizur": "Thrizur",
+        "draconiz": "Draconiz"
+      },
+      "CONFIG": {
+        "title": "Configure Piety",
+        "label": "Piety",
+        "FIELDS": {
+          "deity": {
+            "label": "Deity",
+            "hint": "The deity that this character champions."
+          },
+          "value": {
+            "label": "Piety Score",
+            "hint": "This character's current piety score."
+          }
+        }
+      }
     },
     "SETTINGS": {
       "CRAFTING": {

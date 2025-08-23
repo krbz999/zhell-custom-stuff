@@ -1,0 +1,7 @@
+<section class="flexcol">
+  <fieldset class="card">
+    <legend>{{ localize "ZHELL.PIETY.CONFIG.label" }}</legend>
+    {{ formField fields.value value=data.value localize=true rootId=partId label="ZHELL.PIETY.CONFIG.FIELDS.value.label" hint="ZHELL.PIETY.CONFIG.FIELDS.value.hint" name="flags.zhell-custom-stuff.piety.value" }}
+    {{ formField fields.deity value=data.deity options=deityOptions localize=true rootId=partId label="ZHELL.PIETY.CONFIG.FIELDS.deity.label" hint="ZHELL.PIETY.CONFIG.FIELDS.deity.hint" name="flags.zhell-custom-stuff.piety.deity" }}
+  </fieldset>
+</section>

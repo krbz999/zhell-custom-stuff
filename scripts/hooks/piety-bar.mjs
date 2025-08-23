@@ -9,6 +9,7 @@ export default async function(sheet) {
   const context = {
     piety,
     pct: Math.clamp(Math.round(piety.value / max * 100), 0, 100),
+    editable: sheet.isEditable && (sheet._mode === sheet.constructor.MODES.EDIT),
   };
 
   const htmlString = await foundry.applications.handlebars.renderTemplate(template, context);
@@ -21,6 +22,10 @@ export default async function(sheet) {
   input.addEventListener("blur", event => toggleMeter(event, false));
   input.addEventListener("focus", event => input.select());
   input.addEventListener("change", event => dnd5e.utils.parseInputDelta(input, sheet.actor));
+
+  html.querySelector("[data-action=showPietyConfiguration]")?.addEventListener("click", event => {
+    new ZHELL.applications.apps.PietyConfig({ document: sheet.document }).render({ force: true });
+  });
 
   sheet.element.querySelector(".sidebar .card .stats:not(:has(.piety)")?.insertAdjacentElement("beforeend", html);
 }

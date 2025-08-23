@@ -1,6 +1,11 @@
 <div class="meter-group">
   <div class="label roboto-condensed-upper">
     <span>{{localize "ZHELL.PIETY.label"}}</span>
+    {{#if editable}}
+    <button type="button" class="config-button unbutton" data-action="showPietyConfiguration" data-tooltip="" aria-label="{{localize 'ZHELL.PIETY.CONFIG.title'}}">
+      <i class="fa-solid fa-cog" inert></i>
+    </button>
+    {{/if}}
   </div>
   <div class="meter piety progress" role="meter" style="--bar-percentage: {{pct}}%;">
     <div class="label">

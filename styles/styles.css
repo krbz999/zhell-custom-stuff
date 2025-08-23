@@ -258,25 +258,12 @@
 /* -------------------------------------------------- */
 
 .dnd5e2.sheet.actor .meter.piety {
+  --dnd5e-color-piety-1: rgb(66, 62, 9);
+  --dnd5e-color-piety-2: rgb(150, 147, 6);
+
   position: relative;
   height: 25px;
   font-size: var(--font-size-14);
-  --color-dark: rgb(66, 62, 9);
-  --color-light: rgb(150, 147, 6);
-
-  &.progress::before {
-    background: linear-gradient(to right, var(--color-dark) 0%, var(--color-light) 100%);
-    border-inline-end: none;
-  }
-
-  &.progress::before {
-    block-size: unset;
-    clip-path: unset;
-    box-shadow: inset 0 1px 0 1px var(--dnd5e-highlight-40);
-    inset: 1px auto 1px 1px;
-    inline-size: calc(var(--bar-percentage) - 2px);
-    border-radius: 2px;
-  }
 
   input {
     width: 100%;
@@ -286,8 +273,11 @@
     font-weight: bold;
     background: none;
     color: var(--color-text-light-0);
+    position: relative;
 
-    &:hover, &:focus { box-shadow: 0 0 8px var(--dnd5e-color-gold); }
+    &:hover, &:focus {
+      box-shadow: 0 0 8px var(--dnd5e-color-gold);
+    }
   }
 
   > div { height: 100%; }
@@ -300,7 +290,17 @@
     cursor: var(--cursor-pointer);
   }
 
-  input { position: relative; }
+  &.progress::before {
+    block-size: unset;
+    clip-path: unset;
+    box-shadow: inset 0 1px 0 1px var(--dnd5e-highlight-40);
+    inset: 1px auto 1px 1px;
+    inline-size: calc(var(--bar-percentage) - 2px);
+    border-radius: 2px;
+
+    background: linear-gradient(to right, var(--dnd5e-color-piety-1) 0%, var(--dnd5e-color-piety-2) 100%);
+    border-inline-end: none;
+  }
 }
 
 /* -------------------------------------------------- */
