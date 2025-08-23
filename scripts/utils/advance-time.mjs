@@ -1,32 +1,33 @@
-const { NumberField } = foundry.data.fields;
+export default async function advanceTime() {
+  // DAY, HOUR, MINUTE, WEEK, YEAR
+  const convert = type => ui.visualActiveEffects.constructor[`SECONDS_PER_${type}`] ?? 1;
+  const fields = [];
+  const makeFg = (label, input) => fields.push(foundry.applications.fields.createFormGroup({ label, input }));
 
-export default async function advanceTime(s = 60) {
-  const html = new NumberField({
-    label: "Seconds",
-    hint: "Advance time by a number of seconds.",
-    nullable: false,
-    integer: true,
-    positive: true,
-  }).toFormGroup({}, { autofocus: true, name: "seconds", value: s }).outerHTML;
-
-  const seconds = await foundry.applications.api.Dialog.input({
-    content: `<fieldset>${html}</fieldset>`,
-    window: {
-      title: "Advance Time",
-      icon: "fa-solid fa-clock",
-    },
-    position: {
-      width: 400,
-      height: "auto",
-    },
-    ok: {
-      label: "Advance",
-      icon: "fa-solid fa-clock",
-    },
+  let input = foundry.applications.fields.createNumberInput({
+    min: 0, integer: true, value: 0, placeholder: 0, nullable: false, name: "amount",
   });
-  if (!seconds) return;
+  makeFg("Amount", input);
+  input = foundry.applications.fields.createSelectInput({
+    name: "type", options: Object.entries({
+      SECOND: "Seconds",
+      MINUTE: "Minutes",
+      HOUR: "Hours",
+      DAY: "Days",
+      WEEK: "Weeks",
+      YEAR: "Years",
+    }).map(([value, label]) => ({ value, label })),
+  });
+  makeFg("Type", input);
 
-  const result = await game.time.advance(seconds);
-  ui.notifications.info(`Advanced time by ${seconds} seconds.`);
-  return result;
+  const result = await foundry.applications.api.Dialog.input({
+    content: fields.map(field => field.outerHTML).join(""),
+    window: { title: "Advance Time" },
+    position: { width: 400 },
+  });
+  if (!result) return;
+
+  const seconds = result.amount * convert(result.type);
+  await game.time.advance(seconds);
+  ui.notifications.success(`Advanced time by ${seconds} seconds.`);
 }

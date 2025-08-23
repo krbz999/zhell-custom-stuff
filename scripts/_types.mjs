@@ -17,4 +17,6 @@
  * @property {string} filePath        Filepath.
  * @property {Set<string>} keywords   Keywords.
  * @property {string} label           Default name of a file.
+ * @property {boolean} core           Is the filepath a core icon?
+ * @property {number} [score]
  */

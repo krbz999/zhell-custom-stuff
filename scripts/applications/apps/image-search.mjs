@@ -2,17 +2,10 @@
 
 const { HandlebarsApplicationMixin, Application } = foundry.applications.api;
 
-/**
- * @typedef ImageResult
- * @property {string} filePath        Filepath.
- * @property {Set<string>} keywords   Keywords.
- * @property {string} label           Default name of a file.
- */
-
 export default class ImageSearch extends HandlebarsApplicationMixin(Application) {
   /**
    * Set up an index of keywords for every file in the directory.
-   * @returns {Promise<Map<string, Set<string>>|null>}   A promise that resolves to a mapping of filepaths to keywords.
+   * @returns {Promise<void|null>}
    */
   static async _createFilePickerIndex() {
     if (ImageSearch.#fetched) return null;
@@ -41,6 +34,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
                 filePath: file,
                 keywords: words,
                 label: foundry.audio.AudioHelper.getDefaultSoundName(file),
+                core: store === "public",
               });
             }
           }
@@ -53,6 +47,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     await _createFilePickerIndex("icons", true);
     await _createFilePickerIndex(`systems/${game.system.id}`, true, "data");
     await _createFilePickerIndex("modules", true, "data");
+    await _createFilePickerIndex("assets/images", true, "data");
 
     ImageSearch.#fetched = imageResults;
   }
@@ -115,6 +110,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     keywords: new Set(),
     min: null,
     results: null,
+    core: true,
   };
 
   /* -------------------------------------------------- */
@@ -211,6 +207,11 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
         value: this.#filters.results,
         dataset: { change: "results" },
       };
+      f.core = {
+        field: new foundry.data.fields.BooleanField(),
+        value: this.#filters.core,
+        dataset: { change: "core" },
+      };
 
       context.selected = this.selected;
     }
@@ -230,6 +231,8 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
           .filter(r => r.score >= (this.#filters.min ?? 1))
           .sort((a, b) => b.score - a.score);
       }
+
+      if (this.#filters.core) results = results.filter(result => result.core);
 
       // Show only a limited number of results if restricted.
       if (this.#filters.results > 0) results.splice(this.#filters.results);
@@ -295,6 +298,11 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
       case "keywords":
         this.#filters.keywords = new Set(target.value);
+        this.render({ parts: ["images"] });
+        break;
+
+      case "core":
+        this.#filters.core = target.checked;
         this.render({ parts: ["images"] });
         break;
     }

@@ -1,6 +1,7 @@
 <form class="scrollable">
   {{formGroup filters.min.field value=filters.min.value min=1 integer=true dataset=filters.min.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.minLabel") hint=(localize "ZHELL.IMAGE_SEARCH.FILTERS.minHint") placeholder="1"}}
   {{formGroup filters.results.field value=filters.results.value min=1 integer=true dataset=filters.results.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.resultsLabel") hint=(localize "ZHELL.IMAGE_SEARCH.FILTERS.resultsHint") placeholder="∞"}}
+  {{formGroup filters.core.field value=filters.core.value label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.coreLabel") hint=(localize "ZHELL.IMAGE_SEARCH.FILTERS.coreHint")}}
   <hr>
   {{formGroup filters.keywords.field value=filters.keywords.value dataset=filters.keywords.dataset slug=true label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.keywordsLabel") classes="stacked"}}
   <hr>
