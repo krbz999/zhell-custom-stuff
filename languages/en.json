@@ -84,11 +84,13 @@
     "IMAGE_SEARCH": {
       "CONFIRM": "Confirm",
       "FILTERS": {
+        "coreHint": "Show only core icons?",
+        "coreLabel": "Core Only",
         "keywordsLabel": "Keywords",
-        "minLabel": "Score",
         "minHint": "The minimum score required to qualify as a valid result.",
-        "resultsLabel": "Results",
+        "minLabel": "Score",
         "resultsHint": "The maximum number of results that can qualify.",
+        "resultsLabel": "Results",
         "selections": "Selections",
         "typeLabel": "Type"
       },
