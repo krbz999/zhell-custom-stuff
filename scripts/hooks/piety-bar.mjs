@@ -23,10 +23,6 @@ export default async function(sheet) {
   input.addEventListener("focus", event => input.select());
   input.addEventListener("change", event => dnd5e.utils.parseInputDelta(input, sheet.actor));
 
-  html.querySelector("[data-action=showPietyConfiguration]")?.addEventListener("click", event => {
-    new ZHELL.applications.apps.PietyConfig({ document: sheet.document }).render({ force: true });
-  });
-
   sheet.element.querySelector(".sidebar .card .stats:not(:has(.piety)")?.insertAdjacentElement("beforeend", html);
 }
 

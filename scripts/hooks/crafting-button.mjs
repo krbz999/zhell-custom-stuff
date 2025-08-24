@@ -11,6 +11,7 @@ export default async function(sheet, element, context) {
   const button = document.createElement("BUTTON");
   button.type = "button";
   button.classList.add("crafting", "gold-button");
+  button.dataset.action = "openCraftingMenu";
   button.dataset.tooltip = "";
   button.ariaLabel = game.i18n.format("ZHELL.CRAFTING.MENU.tooltipOpen", {
     resources: sheet.document.getFlag(ZHELL.id, "crafting.resources") ?? 0,
@@ -18,11 +19,5 @@ export default async function(sheet, element, context) {
   if (!sheet.isEditable) button.disabled = true;
 
   button.insertAdjacentHTML("beforeend", "<i class=\"fa-solid fa-volcano\" inert></i>");
-  button.addEventListener("click", event => {
-    const button = event.currentTarget;
-    button.disabled = true;
-    const application = new ZHELL.applications.apps.CraftingMenu({ document: sheet.document });
-    application.render({ force: true }).then(() => button.disabled = false);
-  });
   buttons.insertAdjacentElement("beforeend", button);
 }
