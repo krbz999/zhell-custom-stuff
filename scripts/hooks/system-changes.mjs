@@ -23,4 +23,30 @@ export default function systemChanges() {
       application.render({ force: true });
     },
   });
+
+  // Wrap character actor sheet prep to move boons.
+  const original = dnd5e.applications.actor.CharacterActorSheet.prototype._prepareFeaturesContext;
+  dnd5e.applications.actor.CharacterActorSheet.prototype._prepareFeaturesContext = async function(context, options) {
+    context = await original.call(this, context, options);
+
+    const Inventory = customElements.get(this.options.elements.inventory);
+    const columns = Inventory.mapColumns([{ id: "uses", order: 200 }, "recovery", "controls"]);
+    const sections = [{
+      columns,
+      id: "boons",
+      label: "Boons",
+      order: 2500,
+      groups: { origin: "boons" },
+    }];
+    context.sections.push(...Inventory.prepareSections(sections));
+
+    return context;
+  };
+
+  const _original = dnd5e.applications.actor.CharacterActorSheet.prototype._prepareItemFeature;
+  dnd5e.applications.actor.CharacterActorSheet.prototype._prepareItemFeature = async function(item, ctx) {
+    await _original.call(this, item, ctx);
+    if (item.type === "facility") return;
+    if (item.img.includes("havilon")) ctx.groups.origin = "boons";
+  };
 }
