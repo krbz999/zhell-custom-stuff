@@ -15,7 +15,6 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
   /** @inheritdoc */
   static DEFAULT_OPTIONS = {
     classes: ["crafting-menu"],
-    tag: "form",
     position: {
       width: 600,
       height: "auto",
@@ -26,10 +25,6 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     },
     actions: {
       create: CraftingMenu.#create,
-    },
-    form: {
-      closeOnSubmit: false,
-      submitOnChange: true,
     },
   };
 
@@ -42,6 +37,13 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
     },
     details: {
       template: "modules/zhell-custom-stuff/templates/apps/crafting-menu/details.hbs",
+      forms: {
+        form: {
+          submitOnChange: true,
+          closeOnSubmit: false,
+          handler: CraftingMenu.#onUpdateActor,
+        },
+      },
     },
     recipes: {
       template: "modules/zhell-custom-stuff/templates/apps/crafting-menu/recipes.hbs",
@@ -148,17 +150,19 @@ export default class CraftingMenu extends dnd5e.applications.api.Application5e {
   }
 
   /* -------------------------------------------------- */
+  /*   Event Handlers                                   */
+  /* -------------------------------------------------- */
 
-  /** @inheritdoc */
-  async _onSubmitForm(formConfig, event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new foundry.applications.ux.FormDataExtended(form);
+  /**
+   * @this {CraftingMenu}
+   * @param {Event} event
+   * @param {HTMLFormElement} form
+   * @param {foundry.applications.ux.FormDataExtended} formData
+   */
+  static #onUpdateActor(event, form, formData) {
     this.#actor.update(formData.object);
   }
 
-  /* -------------------------------------------------- */
-  /*   Event Handlers                                   */
   /* -------------------------------------------------- */
 
   /**
