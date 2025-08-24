@@ -65,7 +65,24 @@ export default class BossBar extends HandlebarsApplicationMixin(Application) {
       hpColor: actor.constructor.getHPColor(hp.value, hp.effectiveMax),
       tempPct: hp.temp ? Math.ceil(hp.temp / hp.effectiveMax * 100) : 0,
       tempMaxPct: hp.tempmax ? Math.ceil(hp.tempmax / hp.effectiveMax * 100) : 0,
+      effects: actor.appliedEffects.filter(effect => effect.isTemporary).map(effect => this.#prepareStatus(effect)),
     };
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Prepare html for an effect to display.
+   * @param {foundry.documents.ActiveEffect} effect
+   * @returns {string}
+   */
+  #prepareStatus(effect) {
+    return `
+    <li class="item effect" data-effect-id="${effect.id}" data-entry-id="${effect.id}" data-item-name="${effect.name}">
+      <div class="item-name item-tooltip effect-name" data-tooltip="&lt;section class=&quot;loading&quot; data-uuid=&quot;${effect.uuid}&quot;&gt;&lt;i class=&quot;fas fa-spinner fa-spin-pulse&quot;&gt;&lt;/i&gt;&lt;/section&gt;" data-tooltip-class="dnd5e2 dnd5e-tooltip item-tooltip themed theme-light" data-tooltip-direction="LEFT">
+        <img class="item-image gold-icon" src="${effect.img}" alt="${effect.name}">
+      </div>
+    </li>`;
   }
 
   /* -------------------------------------------------- */

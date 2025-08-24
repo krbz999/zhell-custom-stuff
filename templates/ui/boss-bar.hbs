@@ -6,6 +6,11 @@
     <span class="progress temp" style="background-color: {{colors.temp}}; width: {{tempPct}}%;"></span>
   </div>
   <span class="name">{{actor.name}}</span>
+  <section class="effects">
+    <ul>
+      {{#each effects}}{{{this}}}{{/each}}
+    </ul>
+  </section>
 </div>
 {{else}}
 <div></div>

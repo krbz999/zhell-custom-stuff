@@ -59,6 +59,7 @@
       position: fixed;
       overflow: hidden;
       position-anchor: --boss-bar;
+      anchor-name: --boss-bar-name;
       top: calc(anchor(bottom) - 15px);
       border: 2px solid var(--dnd5e-color-gold);
       color: #cfd2da;
@@ -91,6 +92,29 @@
         opacity: .5;
         mask-image: linear-gradient(to bottom, black, transparent);
         z-index: -1
+      }
+    }
+
+    .effects {
+      position: fixed;
+      overflow: hidden;
+      position-anchor: --boss-bar-name;
+      top: anchor(bottom);
+      left: anchor(left);
+      right: anchor(right);
+      margin: 0 1rem;
+
+      ul {
+        margin: 0.25rem 0;
+        padding: 0;
+        list-style-type: none;
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+          max-width: 20px;
+          pointer-events: all;
+        }
       }
     }
   }
