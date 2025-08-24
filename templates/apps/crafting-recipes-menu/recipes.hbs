@@ -1,18 +1,19 @@
 <section class="standard-form">
-  <section class="recipes-list scrollable">
+  <ul class="recipes-list scrollable separated-list">
+    <div class="drop-area">{{localize "ZHELL.CRAFTING.RECIPES.dropItemsHere"}}</div>
     {{#if ctx.recipes.length}}
     {{#each ctx.recipes as |v idx|}}
-    <div class="form-group" data-idx="{{idx}}">
+    <li class="form-group" data-idx="{{idx}}">
       <div class="form-fields">
-        {{formInput @root.ctx.fields.uuid value=v.uuid name=(concat idx ".uuid")}}
+        {{{dnd5e-linkForUuid uuid}}}
         {{formGroup @root.ctx.fields.resources label=@root.ctx.labels.resources value=v.resources name=(concat idx ".resources") classes="label-top slim"}}
         {{formGroup @root.ctx.fields.quantity label=@root.ctx.labels.quantity value=v.quantity name=(concat idx ".quantity") classes="label-top slim"}}
-        <button type="button" class="icon fa-solid fa-trash" data-action="removeRecipe"></button>
+        <button type="button" class="unbutton control-button" data-action="removeRecipe">
+          <i class="fa-solid fa-minus"></i>
+        </button>
       </div>
-    </div>
+    </li>
     {{/each}}
-    {{else}}
-    <p class="hint">{{localize "ZHELL.CRAFTING.RECIPES.dropItemsHere"}}</p>
     {{/if}}
-  </section>
+  </ul>
 </section>

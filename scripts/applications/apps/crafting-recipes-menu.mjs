@@ -1,6 +1,4 @@
-const { HandlebarsApplicationMixin, Application } = foundry.applications.api;
-
-export default class CraftingRecipesMenu extends HandlebarsApplicationMixin(Application) {
+export default class CraftingRecipesMenu extends dnd5e.applications.api.Application5e {
   /** @inheritdoc */
   static DEFAULT_OPTIONS = {
     tag: "form",
@@ -63,7 +61,7 @@ export default class CraftingRecipesMenu extends HandlebarsApplicationMixin(Appl
   async _onRender(context, options) {
     await super._onRender(context, options);
     new foundry.applications.ux.DragDrop.implementation({
-      dropSelector: ".recipes-list",
+      dropSelector: ".drop-area, li .content-link",
       callbacks: {
         drop: CraftingRecipesMenu.#drop.bind(this),
       },
@@ -81,10 +79,18 @@ export default class CraftingRecipesMenu extends HandlebarsApplicationMixin(Appl
     const { uuid, type } = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
     if (type !== "Item") return;
 
+    const target = event.target;
+
     const item = await fromUuid(uuid);
     if (item.isEmbedded || !("quantity" in item.system)) return;
 
-    const value = ZHELL.settings.craftingRecipes.concat({ uuid, quantity: item.system.quantity, resources: 1 });
+    const value = ZHELL.settings.craftingRecipes;
+    if (target.classList.contains("content-link")) {
+      value[target.closest("[data-idx]").dataset.idx].uuid = uuid;
+    } else {
+      value.push({ uuid, quantity: item.system.quantity, resources: 1 });
+    }
+
     game.settings.set(ZHELL.id, "craftingRecipes", value).then(() => this.render());
   }
 

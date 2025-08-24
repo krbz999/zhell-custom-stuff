@@ -98,12 +98,6 @@
 
 /* -------------------------------------------------- */
 
-.application {
-  max-height: 100vh;
-}
-
-/* -------------------------------------------------- */
-
 .zhell-custom-stuff.image-search .window-content {
   display: grid;
   grid: "filters images" auto
@@ -213,10 +207,11 @@
 
 #crafting-settings-menu {
   .recipes-list {
-    min-height: 300px;
-    border: 1px solid var(--dnd5e-color-gold);
-    border-radius: 1em;
-    padding: 1rem;
+    padding: 0.15rem 0;
+
+    [data-idx] {
+      margin: 0.5rem 0;
+    }
 
     .form-group.label-top {
       display: grid;
@@ -226,6 +221,32 @@
     .form-fields:has(.form-group) {
       align-items: end;
     }
+  }
+
+  .drop-area {
+    justify-content: center;
+    font-size: var(--font-size-11);
+    font-style: italic;
+    height: calc(2 * var(--form-field-height));
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    align-content: center;
+    border: var(--dnd5e-border-dashed);
+    border-radius: 4px;
+    padding-inline: 4px;
+  }
+  .content-link {
+    height: var(--form-field-height);
+    text-align: center;
+    border: var(--dnd5e-border-dashed);
+    border-radius: 4px;
+    font-size: var(--font-size-11);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
   }
 }
 
