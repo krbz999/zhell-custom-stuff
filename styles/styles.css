@@ -418,3 +418,64 @@
     filter: hue-rotate(360deg);
   }
 }
+
+/* -------------------------------------------------- */
+
+.logo-container {
+  --logo-w: 350;
+  --logo-h: calc(var(--logo-w) / 2);
+  --speed: 5;
+  --duration-x: calc( (480 - var(--logo-w)) / var(--speed) * 1s);
+  --duration-y: calc( (360 - var(--logo-h)) / var(--speed) * 1s);
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: calc(var(--z-index-canvas) + 2);
+
+  .logo {
+    filter: drop-shadow(0 0 3px black);
+    display: grid;
+    position: absolute;
+    width: calc(var(--logo-w) * 1px);
+    height: calc(var(--logo-h) * 1px);
+    animation:
+      LOGOX var(--duration-x) linear infinite alternate,
+      LOGOY var(--duration-y) linear infinite alternate,
+      colorX calc(var(--duration-x) * 5) step-start infinite,
+      colorY calc(var(--duration-y) * 5) step-start infinite;
+    color:
+      hsl(calc(
+        360 / 25 * (var(--color-y) * 5 + var(--color-x))
+      ) 100% 50%);
+
+    .label {
+      text-align: center;
+      font-size: calc(var(--logo-w) / 10 * 1px);
+    }
+  }
+}
+@keyframes LOGOX {
+  from { left: 0; }
+  to { left: calc(100% - calc(var(--logo-w) * 1px)); }
+}
+@keyframes LOGOY {
+  from { top: 0; }
+  to { top: calc(100% - calc(var(--logo-h) * 1px)); }
+}
+@keyframes colorX {
+  from { --color--x: 0; }
+  20% { --color-x: 2; }
+  40% { --color-x: 4; }
+  60% { --color-x: 1; }
+  80% { --color-x: 3; }
+  to { --color-x: 0; }
+}
+@keyframes colorY {
+  from { --color-y: 0; }
+  20% { --color-y: 2; }
+  40% { --color-y: 4; }
+  60% { --color-y: 1; }
+  80% { --color-y: 3; }
+  to { --color-y: 0; }
+}
