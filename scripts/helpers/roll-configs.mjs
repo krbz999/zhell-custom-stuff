@@ -1,7 +1,8 @@
 const fromConfig = config => {
-  const item = config.subject.item;
-  const actor = item.actor;
-  return { item, actor, activity: config.subject };
+  const activity = config.subject ?? null;
+  const item = activity?.item ?? null;
+  const actor = item?.actor ?? null;
+  return { activity, actor, item };
 };
 
 const replaceFormulaData = (part, rollData) => {
@@ -37,6 +38,7 @@ export const greatWeaponMaster = {
   hook: "postBuildDamageRollConfig",
   condition: (config, roll, index, options = {}) => {
     const { item, actor } = fromConfig(config);
+    if (!item) return false;
     return actor.getFlag("dnd5e", "roll-configs.great-weapon-master")
       && item && (item.type === "weapon") && item.system.properties.has("hvy")
       && (index === 0) && (!game.combat || (game.combat.combatant?.actor === actor));
@@ -69,6 +71,7 @@ export const greatWeaponFighting = {
   hook: "postBuildDamageRollConfig",
   condition: (config, roll, index, options = {}) => {
     const { activity, item, actor } = fromConfig(config);
+    if (!activity) return false;
     return actor.getFlag("dnd5e", "roll-configs.great-weapon-fighting")
       && item && (item.type === "weapon")
       && (activity.actionType === "mwak")
