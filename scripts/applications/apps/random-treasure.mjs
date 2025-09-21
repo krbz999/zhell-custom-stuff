@@ -151,8 +151,7 @@ export default class RandomTreasure extends foundry.applications.api.Dialog {
    * @type {number}
    */
   static get averageLevel() {
-    const { actor: party } = game.settings.get("dnd5e", "primaryParty");
-    const members = party?.system.members.map(m => m.actor).filter(actor => actor.type === "character") ?? [];
+    const members = game.actors.party?.system.members.map(m => m.actor).filter(actor => actor.type === "character") ?? [];
     if (!members.length) return 1;
     return Math.floor(members.reduce((acc, actor) => acc + actor.system.details.level, 0) / members.length);
   }
