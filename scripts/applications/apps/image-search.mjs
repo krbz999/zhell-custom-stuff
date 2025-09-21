@@ -30,18 +30,24 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
           if (extensions.has(ext)) {
             const words = ImageSearch.getKeywords(file);
             if (words.size) {
+              const pkg = file.match(/^(systems|modules)\/([a-zA-Z0-9\-]+)\//)?.[2];
+
               imageResults.push({
                 filePath: file,
                 keywords: words,
                 label: foundry.audio.AudioHelper.getDefaultSoundName(file),
                 core: store === "public",
+                package: pkg,
               });
             }
           }
         }
       }
 
-      for (const dir of browse.dirs) await _createFilePickerIndex(dir, false, store);
+      for (const dir of browse.dirs) {
+        if (dir.includes("/node_modules/")) continue;
+        await _createFilePickerIndex(dir, false, store);
+      }
     };
 
     await _createFilePickerIndex("icons", true);
@@ -111,6 +117,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     min: null,
     results: null,
     core: true,
+    packages: {}
   };
 
   /* -------------------------------------------------- */
@@ -130,6 +137,24 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
    * @type {Set<string>}
    */
   #selected = new Set();
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Data to return from the application.
+   * @type {string[]|null}
+   */
+  #config = null;
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Data to return from the application.
+   * @type {string[]|null}
+   */
+  get config() {
+    return this.#config;
+  }
 
   /* -------------------------------------------------- */
 
@@ -159,8 +184,10 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     },
     form: {
       closeOnSubmit: true,
+      handler: ImageSearch.#onSubmit,
     },
     actions: {
+      copyPath: ImageSearch.#copyPath,
       showImage: ImageSearch.#showImage,
       selectImage: ImageSearch.#selectImage,
     },
@@ -188,6 +215,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
   /** @inheritdoc */
   async _prepareContext(options) {
+    await ImageSearch._createFilePickerIndex();
     const context = {};
 
     if (options.parts.includes("filters")) {
@@ -213,26 +241,32 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
         dataset: { change: "core" },
       };
 
-      context.selected = this.selected;
+      f.packages = foundry.utils.deepClone(this.#filters.packages);
+      for (const fetched of ImageSearch.#fetched) {
+        if (fetched.package) f.packages[fetched.package] ??= 0;
+      }
+
+      context.selected = this.selected.map(filePath => ImageSearch.#fetched.find(k => k.filePath === filePath));
     }
 
     if (options.parts.includes("images")) {
-      await ImageSearch._createFilePickerIndex();
-
-      let results = foundry.utils.deepClone(ImageSearch.#fetched);
-      for (const result of results) {
-        result.score = ImageSearch.getScore(result.keywords, this.#filters.keywords);
-        result.selected = this.#selected.has(result.filePath);
-      }
-
+      const packages = Object.entries(this.#filters.packages).filter(([k, v]) => v === 1).map(([k]) => k);
       context.hasKeywords = this.#filters.keywords.size;
-      if (context.hasKeywords) {
-        results = results
-          .filter(r => r.score >= (this.#filters.min ?? 1))
-          .sort((a, b) => b.score - a.score);
-      }
 
-      if (this.#filters.core) results = results.filter(result => result.core);
+      const results = foundry.utils.deepClone(ImageSearch.#fetched).map(fetched => {
+        if (packages.length && !packages.includes(fetched.package)) return null;
+        if (!this.#filters.packages[fetched.package] === -1) return null;
+        if (this.#filters.core && !fetched.core) return null;
+
+        fetched.score = ImageSearch.getScore(fetched.keywords, this.#filters.keywords);
+        fetched.selected = this.#selected.has(fetched.filePath);
+
+        if (context.hasKeywords && fetched.score >= (this.#filters.min ?? 1)) return null;
+
+        return fetched;
+      }).filter(_ => _);
+
+      results.sort((a, b) => b.score - a.score);
 
       // Show only a limited number of results if restricted.
       if (this.#filters.results > 0) results.splice(this.#filters.results);
@@ -305,6 +339,11 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
         this.#filters.core = target.checked;
         this.render({ parts: ["images"] });
         break;
+
+      case "packages":
+        this.#filters.packages[target.closest("[data-pkg]").dataset.pkg] = target.value;
+        this.render({ parts: ["images"] });
+        break;
     }
   }
 
@@ -358,6 +397,20 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
   /* -------------------------------------------------- */
 
   /**
+   * Copy the file path.
+   * @this {ImageSearch}
+   * @param {PointerEvent} event          Initiating click event.
+   * @param {HTMLButtonElement} target    The button that defined the [data-action].
+   */
+  static #copyPath(event, target) {
+    const src = target.closest("[data-src]").dataset.src;
+    game.clipboard.copyPlainText(src);
+    ui.notifications.info(`Copied filepath '${src}' to clipboard.`);
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
    * Toggle an image selection.
    * @this {ImageSearch}
    * @param {PointerEvent} event          Initiating click event.
@@ -369,6 +422,18 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     else this.#selected.add(src);
     this.element.querySelector(`figure[data-src="${src}"]`)?.classList.toggle("selected", this.#selected.has(src));
     this.render({ parts: ["filters"] });
+  }
+
+  /* -------------------------------------------------- */
+
+  /**
+   * @this {ImageSearch}
+   * @param {SubmitEvent} event                                   The triggering submit event.
+   * @param {HTMLFormElement} form                                The form element.
+   * @param {foundry.applications.ux.FormDataExtended} formData   The form data.
+   */
+  static #onSubmit(event, form, formData) {
+    this.#config = this.selected;
   }
 
   /* -------------------------------------------------- */
@@ -462,12 +527,12 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
 
   /**
    * Request an image.
-   * @returns {Promise<string[]>}   A promise that resolves to selected image filepaths.
+   * @returns {Promise<string[]|null>}    A promise that resolves to selected image filepaths.
    */
   static async create() {
     const application = new ImageSearch();
     const { promise, resolve } = Promise.withResolvers();
-    application.addEventListener("close", () => resolve(application.selected), { once: true });
+    application.addEventListener("close", () => resolve(application.config), { once: true });
     application.render({ force: true });
     return promise;
   }

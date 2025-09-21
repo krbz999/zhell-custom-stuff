@@ -4,14 +4,23 @@
   {{formGroup filters.core.field value=filters.core.value dataset=filters.core.dataset label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.coreLabel") hint=(localize "ZHELL.IMAGE_SEARCH.FILTERS.coreHint")}}
   <hr>
   {{formGroup filters.keywords.field value=filters.keywords.value dataset=filters.keywords.dataset slug=true label=(localize "ZHELL.IMAGE_SEARCH.FILTERS.keywordsLabel") classes="stacked"}}
+
+  {{#each filters.packages as |v k|}}
+  <div class="form-group package" data-pkg="{{k}}">
+    <label for="{{@root.id}}-{{k}}">
+      <filter-state value="{{v}}" id="{{@root.id}}-{{k}}" data-change="packages"></filter-state>
+      <span>{{k}}</span>
+    </label>
+  </div>
+  {{/each}}
   <hr>
   <h4>{{localize "ZHELL.IMAGE_SEARCH.FILTERS.selections"}}</h4>
   <section>
     {{#each selected}}
-    <div class="form-group selection" data-src="{{this}}">
+    <div class="form-group selection" data-src="{{filePath}}" data-caption="{{label}}">
       <div class="form-fields">
-        <img src="{{this}}" alt="">
-        <span class="filepath">{{this}}</span>
+        <img src="{{filePath}}" alt="{{label}}" data-action="showImage">
+        <a class="filepath" data-action="copyPath" data-tooltip="{{label}}">{{filePath}}</a>
         <button type="button" class="icon fa-solid fa-trash" data-action="selectImage"></button>
       </div>
     </div>

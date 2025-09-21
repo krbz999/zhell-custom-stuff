@@ -18,5 +18,6 @@
  * @property {Set<string>} keywords   Keywords.
  * @property {string} label           Default name of a file.
  * @property {boolean} core           Is the filepath a core icon?
+ * @property {string} [package]       The package id, if from a module or system.
  * @property {number} [score]
  */

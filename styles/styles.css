@@ -139,6 +139,15 @@
       margin-bottom: 1rem;
     }
 
+    .form-group.package {
+      margin: 0;
+      padding: 2px 0;
+
+      label {
+        line-height: normal;
+      }
+    }
+
     .selection {
       .form-fields {
         display: grid;
@@ -148,6 +157,7 @@
           object-fit: cover;
           object-position: top;
           aspect-ratio: 1;
+          cursor: var(--cursor-pointer);
         }
 
         .filepath {
