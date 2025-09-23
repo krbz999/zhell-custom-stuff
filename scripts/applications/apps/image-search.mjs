@@ -30,7 +30,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
           if (extensions.has(ext)) {
             const words = ImageSearch.getKeywords(file);
             if (words.size) {
-              const pkg = file.match(/^(systems|modules)\/([a-zA-Z0-9\-]+)\//)?.[2];
+              const pkg = file.match(/^(systems|modules)\/([a-zA-Z0-9-]+)\//)?.[2];
 
               imageResults.push({
                 filePath: file,
@@ -117,7 +117,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     min: null,
     results: null,
     core: true,
-    packages: {}
+    packages: {},
   };
 
   /* -------------------------------------------------- */
@@ -261,7 +261,7 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
         fetched.score = ImageSearch.getScore(fetched.keywords, this.#filters.keywords);
         fetched.selected = this.#selected.has(fetched.filePath);
 
-        if (context.hasKeywords && fetched.score >= (this.#filters.min ?? 1)) return null;
+        if (context.hasKeywords && (fetched.score < (this.#filters.min ?? 1))) return null;
 
         return fetched;
       }).filter(_ => _);
