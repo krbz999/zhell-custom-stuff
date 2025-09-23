@@ -250,12 +250,22 @@ export default class ImageSearch extends HandlebarsApplicationMixin(Application)
     }
 
     if (options.parts.includes("images")) {
-      const packages = Object.entries(this.#filters.packages).filter(([k, v]) => v === 1).map(([k]) => k);
+      const { included, excluded } = Object.entries(this.#filters.packages).reduce((acc, [k, v]) => {
+        switch (v) {
+          case -1:
+            acc.excluded.push(k);
+            break;
+          case 1:
+            acc.included.push(k);
+            break;
+        }
+        return acc;
+      }, { included: [], excluded: [] });
       context.hasKeywords = this.#filters.keywords.size;
 
       const results = foundry.utils.deepClone(ImageSearch.#fetched).map(fetched => {
-        if (packages.length && !packages.includes(fetched.package)) return null;
-        if (!this.#filters.packages[fetched.package] === -1) return null;
+        if (included.length && !included.includes(fetched.package)) return null;
+        if (excluded.includes(fetched.package)) return null;
         if (this.#filters.core && !fetched.core) return null;
 
         fetched.score = ImageSearch.getScore(fetched.keywords, this.#filters.keywords);
