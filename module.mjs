@@ -21,11 +21,15 @@ Hooks.once("init", () => {
   applications.ui.BossBar.register();
   CONFIG.ui.bossbar = applications.ui.BossBar;
   CONFIG.ui.pause = applications.ui.GamePause;
+});
 
-  if (ZHELL.settings.havilonCalendar) {
-    CONFIG.time.worldCalendarClass = data.HavilonCalendar;
-    CONFIG.time.worldCalendarConfig = data.HavilonCalendarConfig;
-  }
+Hooks.once("dnd5e.setupCalendar", () => {
+  CONFIG.DND5E.calendar.calendars.push({
+    value: "havilon",
+    label: data.HavilonCalendarConfig.name,
+    config: data.HavilonCalendarConfig,
+    class: data.HavilonCalendar,
+  });
 });
 
 Hooks.on("dnd5e.damageActor", hooks.markDefeated);

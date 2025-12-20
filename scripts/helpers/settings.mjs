@@ -33,16 +33,6 @@ export default class ModuleSettings {
       }),
       requiresReload: false,
     },
-    havilonCalendar: {
-      name: "HAVILON_CALENDAR.NAME",
-      hint: "HAVILON_CALENDAR.HINT",
-      scope: "world",
-      config: true,
-      type: new BooleanField({
-        initial: true,
-      }),
-      requiresReload: true,
-    },
     pietyScore: {
       name: "PIETY.NAME",
       hint: "PIETY.HINT",
@@ -95,16 +85,6 @@ export default class ModuleSettings {
         });
       }
     }
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Use the Havilonian calendar?
-   * @type {boolean}
-   */
-  get havilonCalendar() {
-    return game.settings.get(ZHELL.id, "havilonCalendar");
   }
 
   /* -------------------------------------------------- */

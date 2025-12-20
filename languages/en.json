@@ -129,10 +129,6 @@
         "NAME": "Crafting Recipes",
         "HINT": "Configure the list of crafting recipes, their requirements, and the produced quantity."
       },
-      "HAVILON_CALENDAR": {
-        "NAME": "Enable Havilonian Calendar",
-        "HINT": "Replaces the current calendar configuration and data model with one specific to the Havilon setting."
-      },
       "MARK_DEFEATED": {
         "NAME": "Mark Combatants Defeated",
         "HINT": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated."

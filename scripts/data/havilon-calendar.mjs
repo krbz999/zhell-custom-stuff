@@ -1,4 +1,4 @@
-export default class HavilonCalendar extends foundry.data.CalendarData {
+export default class HavilonCalendar extends dnd5e.dataModels.calendar.CalendarData5e {
   /** @inheritdoc */
   isLeapYear(year) {
     return false;
