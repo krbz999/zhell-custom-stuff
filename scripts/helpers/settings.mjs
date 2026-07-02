@@ -33,16 +33,6 @@ export default class ModuleSettings {
       }),
       requiresReload: false,
     },
-    pietyScore: {
-      name: "PIETY.NAME",
-      hint: "PIETY.HINT",
-      scope: "world",
-      config: true,
-      type: new BooleanField({
-        initial: false,
-      }),
-      requiresReload: true,
-    },
     craftingRecipesMenu: {
       name: "CRAFTING.NAME",
       hint: "CRAFTING.HINT",
@@ -95,16 +85,6 @@ export default class ModuleSettings {
    */
   get markDefeatedCombatants() {
     return game.settings.get(ZHELL.id, "markDefeatedCombatants");
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Is the piety score enabled?
-   * @type {boolean}
-   */
-  get pietyScore() {
-    return game.settings.get(ZHELL.id, "pietyScore");
   }
 
   /* -------------------------------------------------- */

@@ -18,9 +18,12 @@ export default function systemChanges() {
       const application = new ZHELL.applications.apps.CraftingMenu({ document: this.document });
       application.render({ force: true }).then(() => target.disabled = false);
     },
-    showPietyConfiguration: function(event, target) {
-      const application = new ZHELL.applications.apps.PietyConfig({ document: this.document });
-      application.render({ force: true });
-    },
+    adjustPiety: function(event, target) {
+      const path = "system.attributes.piety.value";
+      const delta = parseInt(target.dataset.delta);
+      const value = foundry.utils.getProperty(this.document, path);
+      const next = value + delta <= 0 ? null : value + delta;
+      this.document.update({ [path]: next });
+    }
   });
 }

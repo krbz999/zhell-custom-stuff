@@ -1,44 +1,41 @@
-export default async function(sheet) {
-  if (!ZHELL.settings.pietyScore) return;
+export default function(sheet) {
+  if (!dnd5e.settings.pietyScore) return;
+  const editable = sheet.isEditable && (sheet._mode === sheet.constructor.MODES.EDIT);
 
-  const template = "modules/zhell-custom-stuff/templates/sheets/actor/piety.hbs";
+  const grp = sheet.element.ownerDocument.createElement("DIV");
+  grp.classList.add("meter-group", "piety");
 
-  const piety = sheet.actor.getFlag(ZHELL.id, "piety") ?? { value: 0 };
-  const max = ZHELL.config.pietyThresholds.find(t => t > piety.value) ?? piety.value;
+  const label = sheet.element.ownerDocument.createElement("DIV");
+  label.classList.add("label", "roboto-condensed-upper");
+  label.insertAdjacentHTML("beforeend", `<span>${_loc("DND5E.PIETY.Label")}</span`);
+  if (editable) {
+    const button = sheet.element.ownerDocument.createElement("BUTTON");
+    button.type = "button";
+    button.classList.add("config-button", "unbutton");
+    button.dataset.action = "showConfiguration";
+    button.dataset.config = "piety";
+    button.dataset.tooltip = "";
+    button.ariaLabel = _loc("DND5E.PIETY.Configure");
+    button.insertAdjacentHTML("beforeend", `<i class="fa-solid fa-fw fa-cog" inert></i>`);
+    label.insertAdjacentElement("Beforeend", button);
+  }
+  grp.insertAdjacentElement("beforeend", label);
 
-  const context = {
-    piety,
-    pct: Math.clamp(Math.round(piety.value / max * 100), 0, 100),
-    editable: sheet.isEditable && (sheet._mode === sheet.constructor.MODES.EDIT),
-  };
+  const buttonGroup = sheet.element.ownerDocument.createElement("DIV");
+  buttonGroup.classList.add("button-group");
+  buttonGroup.insertAdjacentHTML(
+    "beforeend",
+    `<button type="button" data-action="adjustPiety" data-delta="-1" class="icon fa-solid fa-minus config-button unbutton"></button>`,
+  );
+  buttonGroup.insertAdjacentHTML(
+    "beforeend",
+    `<span>${sheet.document.system.attributes.piety.value ?? "0"}</span>`,
+  )
+  buttonGroup.insertAdjacentHTML(
+    "beforeend",
+    `<button type="button" data-action="adjustPiety" data-delta="1" class="icon fa-solid fa-plus config-button unbutton"></button>`,
+  );
 
-  const htmlString = await foundry.applications.handlebars.renderTemplate(template, context);
-  const html = foundry.utils.parseHTML(htmlString);
-
-  const meter = html.querySelector(".meter[role='meter']:has(> input)");
-  meter.addEventListener("click", event => toggleMeter(event, true));
-
-  const input = meter.querySelector(":scope > input");
-  input.addEventListener("blur", event => toggleMeter(event, false));
-  input.addEventListener("focus", event => input.select());
-  input.addEventListener("change", event => dnd5e.utils.parseInputDelta(input, sheet.actor));
-
-  sheet.element.querySelector(".sidebar .card .stats:not(:has(.piety)")?.insertAdjacentElement("beforeend", html);
-}
-
-/* -------------------------------------------------- */
-
-/**
- * Toggle editing piety.
- * @param {PointerEvent} event    The triggering event.
- * @param {boolean} edit          Whether to toggle to the edit state.
- */
-function toggleMeter(event, edit) {
-  const target = event.currentTarget.closest("[role=\"meter\"]");
-  if (event.target.nodeName === "BUTTON") return;
-  const label = target.querySelector(":scope > .label");
-  const input = target.querySelector(":scope > input");
-  label.hidden = edit;
-  input.hidden = !edit;
-  if (edit) input.focus();
+  grp.insertAdjacentElement("beforeend", buttonGroup);
+  sheet.element.querySelector(".sidebar .stats").insertAdjacentElement("beforeend", grp);
 }
