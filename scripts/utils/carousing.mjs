@@ -7,6 +7,6 @@ export default async function carousing() {
   const table = await pack.getDocument(pack.index.getName("Carousing")._id);
   return table.draw({
     roll: foundry.dice.Roll.create("1d100 + @level", { level: ZHELL.utils.getAverageLevel() }),
-    rollMode: CONST.DICE_ROLL_MODES.PRIVATE,
+    messageMode: CONFIG.ChatMessage.modes.gm,
   });
 }
