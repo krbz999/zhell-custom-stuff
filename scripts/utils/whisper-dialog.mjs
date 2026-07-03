@@ -1,3 +1,7 @@
+/**
+ * Whisper to specific users. The initial selection is derived from controlled tokens.
+ * @returns {Promise<ChatMessage|null>}
+ */
 export default async function whisperDialog() {
   const options = [];
   for (const user of game.users) {
@@ -23,17 +27,16 @@ export default async function whisperDialog() {
   const result = await foundry.applications.api.Dialog.input({
     content: `<fieldset>${usersHTML}<hr>${textHTML}</fieldset>`,
     ok: { icon: "fa-solid fa-message" },
-    position: {
-      width: 600,
-      height: "auto",
-    },
+    position: { width: 600 },
     window: {
-      title: "Whisper Users",
+      title: "PERMISSION.MessageWhisper",
       icon: "fa-solid fa-message",
     },
   });
   if (!result || !result.message) return null;
-  return foundry.utils.getDocumentClass("ChatMessage").create({
-    content: result.message, whisper: result.users.length ? result.users : [game.user.id],
+
+  return getDocumentClass("ChatMessage").create({
+    content: result.message,
+    whisper: result.users.length ? result.users : [game.user.id],
   });
 }
