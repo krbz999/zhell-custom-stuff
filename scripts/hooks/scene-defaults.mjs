@@ -4,15 +4,20 @@
  * @param {object} sceneData    The data object used to create the scene.
  */
 export default function sceneDefaults(scene, sceneData) {
-  const data = foundry.utils.mergeObject({
-    grid: {
-      type: CONST.GRID_TYPES.HEXODDR,
-      alpha: 0.1,
-    },
+  const update = foundry.utils.mergeObject({
     padding: 0.05,
-    fog: { exploration: false },
+    grid: { alpha: 0.1, type: CONST.GRID_TYPES.HEXODDR },
+    fog: { mode: CONST.FOG_EXPLORATION_MODES.SHARED },
     environment: { globalLight: { enabled: true } },
-    backgroundColor: "#000000",
-  }, sceneData);
-  scene.updateSource(data);
+  }, sceneData, { insertKeys: false, insertValues: false });
+  scene.updateSource(update);
+
+  scene.levels.forEach(level => {
+    const update = foundry.utils.mergeObject(
+      { background: { color: "#000000" } },
+      sceneData.levels?.find(l => l._id === level.id) ?? {},
+      { insertKeys: false, insertValues: false},
+    );
+    level.updateSource(update);
+  });
 }

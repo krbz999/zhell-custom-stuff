@@ -34,6 +34,7 @@ Hooks.once("dnd5e.setupCalendar", () => {
 
 Hooks.on("dnd5e.damageActor", hooks.markDefeated);
 Hooks.on("dnd5e.postUseActivity", hooks.spendReaction);
+Hooks.on("preCreateLevel", hooks.levelDefaults);
 Hooks.on("preCreateScene", hooks.sceneDefaults);
 Hooks.on("renderCharacterActorSheet", hooks.craftingButton);
 Hooks.on("renderCharacterActorSheet", hooks.pietyBar);
