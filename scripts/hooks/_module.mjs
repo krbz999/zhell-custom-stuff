@@ -1,6 +1,5 @@
 export { default as craftingButton } from "./crafting-button.mjs";
 export { default as levelDefaults }from "./level-defaults.mjs";
-export { default as markDefeated } from "./mark-defeated.mjs";
 export { default as pietyBar } from "./piety-bar.mjs";
 export { default as sceneDefaults } from "./scene-defaults.mjs";
 export { default as spendReaction } from "./spend-reaction.mjs";

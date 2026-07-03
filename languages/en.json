@@ -114,10 +114,6 @@
         "NAME": "Crafting Recipes",
         "HINT": "Configure the list of crafting recipes, their requirements, and the produced quantity."
       },
-      "MARK_DEFEATED": {
-        "NAME": "Mark Combatants Defeated",
-        "HINT": "When a combatant that is not owned by a player is reduced to 0 or less hp, mark it as defeated."
-      },
       "TRACK_REACTIONS": {
         "CHOICE_NONE": "Do not track reactions",
         "CHOICE_GM_ONLY": "Track reactions for the GM",

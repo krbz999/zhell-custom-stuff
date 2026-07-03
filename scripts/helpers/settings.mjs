@@ -8,16 +8,6 @@ export default class ModuleSettings {
    * @type {Record<string, object>}
    */
   static CONFIGURATION = {
-    markDefeatedCombatants: {
-      name: "MARK_DEFEATED.NAME",
-      hint: "MARK_DEFEATED.HINT",
-      scope: "world",
-      config: true,
-      type: new BooleanField({
-        initial: true,
-      }),
-      requiresReload: false,
-    },
     trackReactions: {
       name: "TRACK_REACTIONS.NAME",
       hint: "TRACK_REACTIONS.HINT",
@@ -80,16 +70,6 @@ export default class ModuleSettings {
   /* -------------------------------------------------- */
 
   /**
-   * Should npc combatants be marked defeated when reaching 0 hp?
-   * @type {boolean}
-   */
-  get markDefeatedCombatants() {
-    return game.settings.get(ZHELL.id, "markDefeatedCombatants");
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
    * Configured crafting recipes.
    * @type {{uuid: string, resources: number, quantity: number}[]}
    */
@@ -131,20 +111,5 @@ export default class ModuleSettings {
       case 2:
         return true;
     }
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Should this actor be marked defeated?
-   * @param {Actor5e} actor   The actor.
-   * @returns {boolean}
-   */
-  markDefeated(actor) {
-    if (!this.markDefeatedCombatants) return false;
-    if (!game.user.isActiveGM) return false;
-    if (actor.hasPlayerOwner || !actor.inCombat) return false;
-    if (actor.system.attributes.hp.pct > 0) return false;
-    return !actor.statuses.has(CONFIG.specialStatusEffects.DEFEATED);
   }
 }
